@@ -5,7 +5,7 @@ Python AsyncIO base client for the `Upgrade` gRPC service
 __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
-from collections.abc import Sequence
+from typing import Sequence
 
 ## Common Core modules
 from cc.core.decorators import override

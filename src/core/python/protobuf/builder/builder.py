@@ -171,7 +171,7 @@ __docformat__ = 'javadoc en'
 
 
 ### Standard Python modules
-from collections.abc import Callable, Sequence, Mapping
+from typing import Callable, Sequence, Mapping
 from enum import Enum, IntEnum
 from typing import Container
 

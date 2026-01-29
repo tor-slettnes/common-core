@@ -356,7 +356,7 @@ docker-% docker_%:
 ### Delegate any other target to CMake
 clean_%:
 	@if [ -f "$(CMAKE_TAG)" ]; then \
-		cmake --build --preset "$(BUILD_PRESET)" --target $* $(CMAKE_BUILD_ARGS); \
+		cmake --build --preset "$(BUILD_PRESET)" --target $@ $(CMAKE_BUILD_ARGS); \
 	fi
 
 %:

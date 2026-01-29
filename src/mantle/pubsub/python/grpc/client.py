@@ -73,7 +73,7 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
-from collections.abc import Callable, Iterator, Sequence
+from typing import Callable, Iterator, Sequence
 from threading import Thread
 
 ### Common Core modules

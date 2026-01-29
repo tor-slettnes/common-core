@@ -3,7 +3,7 @@ Python AsyncCIO client for `SysConfig` gRPC service
 '''
 
 ### Standard Python modules
-from collections.abc import Sequence
+from typing import Sequence
 
 ### Common Core modules
 from cc.core.decorators import override

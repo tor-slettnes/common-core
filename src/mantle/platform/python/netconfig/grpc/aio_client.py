@@ -3,7 +3,7 @@ Python AsyncCIO client for `NetConfig` gRPC service
 '''
 
 ### Standard Python modules
-from collections.abc import Mapping
+from typing import Mapping
 
 ### Common Core modules
 from cc.core.decorators import override

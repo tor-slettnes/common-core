@@ -6,7 +6,7 @@ __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
 ### Standard Python modules
-from collections.abc import Sequence
+from typing import Sequence
 
 ## Common Core modules
 from cc.core.decorators import override

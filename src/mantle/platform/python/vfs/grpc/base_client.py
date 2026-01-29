@@ -8,7 +8,7 @@ __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
 ### Standard Python modules
-from collections.abc import abstractmethod, Mapping, Sequence, Iterator
+from typing import abstractmethod, Mapping, Sequence, Iterator
 import io
 import pathlib
 

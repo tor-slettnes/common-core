@@ -62,7 +62,7 @@ Example usage:
   >>> msg=MessageTuple(topic='my topic', value={'six': [1, 2, 3], 'five': False})
   ```
 
-  **Note:** Upon first invocation, `enqueue()` creates a publication queue, as well as a and a worker task to read from this queue and publish the messages in the background.  The preferred queue size can be provided int the `Client()` constructor, above.
+  **Note:** Upon first invocation, `enqueue()` creates a publication queue, as well as a and a worker task to read from this queue and publish the messages in the background.  The preferred queue size can be provided in the `Client()` constructor.
 
 
 * Cancel the subscription
@@ -77,7 +77,7 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
-from collections.abc import Iterator, Sequence
+from typing import Iterator, Sequence
 import asyncio
 
 ### Common Core modules

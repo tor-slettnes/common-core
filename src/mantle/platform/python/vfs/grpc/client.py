@@ -7,7 +7,7 @@ __docformat__ = 'javadoc en'
 
 
 ### Standard Python modules
-from collections.abc import Mapping, Sequence, Iterator
+from typing import Mapping, Sequence, Iterator
 import pathlib
 
 ### Common Core modules

@@ -7,7 +7,7 @@ __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
 ### Standard Python modules
-from collections.abc import Callable, Sequence
+from typing import Callable, Sequence
 from dataclasses import make_dataclass
 from enum import IntEnum
 from typing import Container, Callable

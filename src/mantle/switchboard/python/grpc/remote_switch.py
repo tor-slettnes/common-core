@@ -5,7 +5,7 @@ Switch controlled via a remote gRPC service
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
-from collections.abc import Sequence, Mapping
+from typing import Sequence, Mapping
 from typing import Optional
 from weakref import ref
 

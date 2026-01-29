@@ -6,7 +6,7 @@ __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
 ### Standard Python modules
-from collections.abc import abstractmethod, Sequence
+from typing import abstractmethod, Sequence
 
 ### Common Core modules
 from cc.protobuf.version import version_to_string

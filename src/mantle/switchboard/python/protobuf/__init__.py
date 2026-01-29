@@ -7,7 +7,7 @@ __docformat__ = 'javadoc en'
 
 ### Standard Python modules
 from typing import Optional
-from collections.abc import Mapping, Sequence, Set
+from typing import Mapping, Sequence, Set
 
 ### Modules within package
 from cc.protobuf.utils import native_enum_from_proto

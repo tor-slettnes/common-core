@@ -6,7 +6,7 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
-from collections.abc import Iterator
+from typing import Iterator
 from typing import Optional
 import abc
 import inspect

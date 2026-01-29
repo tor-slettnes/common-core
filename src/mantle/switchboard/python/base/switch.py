@@ -8,7 +8,7 @@ __author__ = 'Tor Slettnes'
 
 ### Standard ProtoBuf modules
 from typing import Optional, Mapping, Set
-from collections.abc import Sequence, Mapping, Callable
+from typing import Sequence, Mapping, Callable
 from abc import abstractmethod
 
 ### Core modules

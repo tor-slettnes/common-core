@@ -6,7 +6,7 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
-from collections.abc import abstractmethod, Callable, Iterator, Sequence
+from typing import abstractmethod, Callable, Iterator, Sequence
 from collections import namedtuple
 from uuid import uuid1
 from dataclasses import dataclass

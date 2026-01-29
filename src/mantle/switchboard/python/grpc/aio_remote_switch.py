@@ -7,7 +7,7 @@ __author__ = 'Tor Slettnes'
 
 
 from typing import Optional
-from collections.abc import Sequence, Mapping
+from typing import Sequence, Mapping
 from weakref import ref
 import asyncio
 

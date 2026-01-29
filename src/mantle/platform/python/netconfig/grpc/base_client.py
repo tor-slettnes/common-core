@@ -6,7 +6,7 @@ __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
 ### Standard python modules
-from collections.abc import Mapping
+from typing import Mapping
 from collections import namedtuple
 
 ### Common Core modules
