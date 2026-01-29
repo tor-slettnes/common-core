@@ -42,12 +42,21 @@ def encodeException(exception: Exception,
 
     output.text = str(exception)
     output.symbol = type(exception).__name__
-    output.domain = domain
-    output.origin = origin
-    output.level = level
+
+    if domain is not None:
+        output.domain = domain
+
+    if origin is not None:
+        output.origin = origin
+
+    output.level = level or Level.FALIED
+
     if timestamp is not None:
         encodeTimestamp(timestamp, output.timestamp)
-    encodeKeyValueMap(attributes, output.attributes)
+
+    if attributes is not None:
+        encodeKeyValueMap(attributes, output.attributes)
+
     return output
 
 def decodeLogLevel(status_level: Level) -> int:

@@ -14,7 +14,7 @@ from abc import abstractmethod
 ### Core modules
 from cc.core.docbase import DocBase
 from cc.core.invocation import safe_invoke
-from cc.protobuf.status import Error
+from cc.protobuf.status import Error, encodeException
 from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
 
 ### Swithboard modules
@@ -829,7 +829,7 @@ class Switch (DocBase):
 
 
     def set_error(self,
-                  error: Error,
+                  error: Error|Exception|str,
                   attributes: Optional[PyValueDict] = None,
                   clear_existing: bool = False,
                   with_interceptors: bool = True,
@@ -841,6 +841,12 @@ class Switch (DocBase):
         Set the switch to FAILED state, with the provided error data.
         Equivalent to `set_target()` with an `error` argument.
         '''
+
+        if isinstance(error, str):
+            error = encodeException(Exception(error))
+
+        elif isinstance(error, Exception):
+            error = encodeException(error)
 
         return self.set_target(
             State.FAILED,
