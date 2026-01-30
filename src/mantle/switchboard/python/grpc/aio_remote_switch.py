@@ -12,7 +12,7 @@ from weakref import ref
 import asyncio
 
 from cc.core.decorators import override
-from cc.protobuf.status import Error
+from cc.protobuf.status import Error, encodeError
 from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
 
 from ..protobuf import (
@@ -185,7 +185,7 @@ class AsyncRemoteSwitch (Switch):
     @override
     async def set_target(self,
                          target_state: Optional[State] = None,
-                         error: Optional[Error] = None,
+                         error: Error|Exception|str|None = None,
                          attributes: Optional[PyValueDict] = None,
                          clear_existing: bool = False,
                          with_interceptors: bool = True,
@@ -198,7 +198,7 @@ class AsyncRemoteSwitch (Switch):
         req = SetTargetRequest(
             switch_name = self.name,
             target_state = target_state,
-            error = error,
+            error = None if error is None else encodeError(error),
             attributes = encodeKeyValueMap(attributes),
             clear_existing = clear_existing,
             with_interceptors = with_interceptors,

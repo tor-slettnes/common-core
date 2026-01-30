@@ -12,7 +12,7 @@ import sys
 
 ### Common Core modules
 from cc.core.decorators import override
-from cc.protobuf.status import encodeException
+from cc.protobuf.status import encodeError
 from cc.protobuf.variant import PyValueList, encodeValueList
 from cc.messaging.grpc import SignalClient, AsyncMixIn
 
@@ -165,7 +165,7 @@ class AsyncClient (AsyncMixIn, SwitchboardBase, SignalClient):
             )
 
         except Exception as e:
-            encodeException(
+            encodeError(
                 e,
                 origin = sys.modules['__main__'].__spec__.name,
                 output = result.error,

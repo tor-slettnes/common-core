@@ -28,20 +28,34 @@ level_map = {
     Level.FATAL+10: logging.FATAL,
 }
 
-def encodeException(exception: Exception,
-                    domain: Domain = Domain.APPLICATION,
-                    origin: str|None = None,
-                    level: Level = Level.ERROR,
-                    timestamp: TimestampType|None = None,
-                    attributes: dict|None = None,
-                    output: Error|None = None,
-                    ) -> Error:
+def encodeError(error: Error|Exception|str,
+                domain: Domain = Domain.APPLICATION,
+                origin: str|None = None,
+                level: Level = Level.ERROR,
+                timestamp: TimestampType|None = None,
+                attributes: dict|None = None,
+                output: Error|None = None,
+                ) -> Error:
+
 
     if output is None:
         output = Error()
 
-    output.text = str(exception)
-    output.symbol = type(exception).__name__
+    if isinstance(error, Error):
+        output.CopyFrom(error)
+
+    elif isinstance(error, Exception):
+        output.text = str(error)
+        output.symbol = type(error).__name__
+
+    elif isinstance(error, str):
+        output.text = error
+
+    else:
+        raise TypeError(
+            "Invalid 'error' type %r; expected 'Error', 'Exception', or 'str'"%(
+                type(error).__name__,
+            ))
 
     if domain is not None:
         output.domain = domain
@@ -49,15 +63,20 @@ def encodeException(exception: Exception,
     if origin is not None:
         output.origin = origin
 
-    output.level = level or Level.FALIED
+    if level is not None:
+        output.level = level
 
     if timestamp is not None:
         encodeTimestamp(timestamp, output.timestamp)
+
+    elif not output.timestamp.ToSeconds():
+        output.timestamp.GetCurrentTime()
 
     if attributes is not None:
         encodeKeyValueMap(attributes, output.attributes)
 
     return output
+
 
 def decodeLogLevel(status_level: Level) -> int:
     '''

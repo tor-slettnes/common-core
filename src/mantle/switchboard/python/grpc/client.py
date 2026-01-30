@@ -14,7 +14,7 @@ import sys
 ### Common Core modules
 from cc.core.decorators import override, virtual
 from cc.core.invocation import method_path
-from cc.protobuf.status import encodeException
+from cc.protobuf.status import encodeError
 from cc.protobuf.variant import PyValueList, encodeValueList
 from cc.messaging.grpc import SignalClient
 
@@ -199,7 +199,7 @@ class Client (SwitchboardBase, SignalClient):
                 type(e).__name__,
                 e
             ))
-            encodeException(
+            encodeError(
                 e,
                 origin = sys.modules['__main__'].__spec__.name,
                 output = result.error,
