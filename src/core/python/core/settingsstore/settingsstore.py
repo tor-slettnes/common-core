@@ -199,13 +199,10 @@ class SettingsStore (dict):
             filepath = pathlib.Path(filepath)
 
         try:
-            parser = type(self).parser_map[filepath.suffix]
+            parser = type(self).parser_map.get(filepath.suffix, self.JSON_SUFFIX)
 
             with filepath.open() as fp:
                 text = fp.read()
-
-        except KeyError as e:
-            raise KeyError("Unsupported settings filename suffix %r"%(filepath,))
 
         except EnvironmentError as e:
             pass
@@ -556,9 +553,9 @@ class SettingsStore (dict):
         search path.
 
         @param basename
-            Stem (with or without a suffix) of the filename we are looking for.
-            If no suffix is provided, each of the supported settings suffixes
-            is tried in turn: `.json`, `.yaml`, '.ini`.
+            Stem (with or without a suffix) of the folder or file name we are
+            looking for. If no suffix is provided, each of the supported
+            filename suffixes is also tried in turn: `.json`, `.yaml`, '.ini`.
 
         @param searchpath
             An iterable over folders in which to look for the specified file.
@@ -570,12 +567,6 @@ class SettingsStore (dict):
         if isinstance(basename, str):
             basename = pathlib.Path(basename)
 
-        if basename.suffix:
-            basenames = [basename]
-        else:
-            basenames = [basename.with_suffix(suffix)
-                         for suffix in cls.parser_suffixes]
-
         filepaths = []
 
         if basename.is_absolute():
@@ -585,10 +576,20 @@ class SettingsStore (dict):
                 if isinstance(folder, str):
                     folder = pathlib.Path(folder)
 
-                for name in basenames:
-                    filepath = folder.joinpath(name)
-                    if filepath.is_file():
-                        filepaths.append(filepath)
+                path = folder.joinpath(basename)
+                if path.is_dir():
+                    filepaths.extend([
+                        candidate for candidate in path.iterdir()
+                        if candidate.suffix in cls.parser_suffixes])
+
+                elif path.is_file():
+                    filepaths.append(path)
+
+                else:
+                    filepaths.extend([
+                        path.with_suffix(suffix)
+                        for suffix in cls.parser_suffixes
+                        if path.with_suffix(suffix).is_file()])
 
         return filepaths
 
