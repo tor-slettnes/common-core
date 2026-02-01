@@ -156,7 +156,7 @@ def encodeValueList(input: PyValueList,
 
     elif input is not None:
         raise TypeError(
-            "encodeValueList() expects a dictionary or list, got %s: %s" % (
+            "encodeValueList() expects a sequence, got %s: %s" % (
                 type(input).__name__,
                 input,
             ))
