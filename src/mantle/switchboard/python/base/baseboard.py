@@ -180,9 +180,10 @@ class SwitchboardBase (DocBase, LogBase):
         '''
 
         store = SettingsStore(filename)
-        if declarations := store.get_value('switches',
-                                           expected_type=list,
-                                           raise_invalid_type=True):
-            self.import_switches(declarations)
+        declarations = store.get_value(
+            'switches',
+            expected_type=list,
+            raise_invalid_type=True)
+        return self.import_switches(declarations)
 
 
