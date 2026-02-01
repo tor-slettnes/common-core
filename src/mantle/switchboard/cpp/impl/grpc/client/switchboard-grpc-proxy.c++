@@ -74,7 +74,8 @@ namespace switchboard::grpc
     }
 
     std::pair<SwitchRef, bool> Proxy::add_switch(
-        const SwitchName &switch_name)
+        const SwitchName &switch_name,
+        bool active)
     {
         auto [sw, inserted] = this->find_or_insert<RemoteSwitch>(
             switch_name,
@@ -82,8 +83,11 @@ namespace switchboard::grpc
 
         if (inserted)
         {
+            sw->status()->active = active;
+
             cc::platform::switchboard::protobuf::AddSwitchRequest req;
             req.set_switch_name(switch_name);
+            req.set_active(active);
             this->call_check(&Stub::AddSwitch, req);
         }
 

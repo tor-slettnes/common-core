@@ -48,14 +48,14 @@ class SwitchboardBase (DocBase, LogBase):
         self.signal_store.disconnect_signal('status', self._on_signal_status)
 
     def _on_signal_spec(self, msg: Signal):
-        if switch := self._get_mapped_switch(msg):
+        if switch := self._get_or_map_switch(msg):
             switch._update_specification(msg.specification)
 
     def _on_signal_status(self, msg: Signal):
-        if switch := self._get_mapped_switch(msg):
+        if switch := self._get_or_map_switch(msg):
             switch._update_status(msg.status)
 
-    def _get_mapped_switch(self, msg: Signal) -> Switch|None:
+    def _get_or_map_switch(self, msg: Signal) -> Switch|None:
         switch = None
 
         if switch_name := msg.mapping_key:
@@ -107,7 +107,7 @@ class SwitchboardBase (DocBase, LogBase):
     @abstractmethod
     def get_or_add_switch(self,
                           switch_name: str,
-                          initial_value: bool|None = None,
+                          initially_active: bool = False,
                           ) -> Switch:
         '''
         Get the named switch, or create it if missing.
@@ -116,9 +116,11 @@ class SwitchboardBase (DocBase, LogBase):
             An existing or new `Switch`
         '''
 
+
     @abstractmethod
     def add_switch(self,
                    switch_name: str,
+                   active: bool = False,
                    ) -> bool:
         '''
         Add a new switch.  Initially this state will have no specifications
@@ -128,6 +130,9 @@ class SwitchboardBase (DocBase, LogBase):
 
         @param switch_name
             Name for the new switch.
+
+        @param active
+            Initial active value
 
         @returns
             True if this switch was added, False if it already existed.

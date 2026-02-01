@@ -25,7 +25,7 @@ namespace switchboard
     {
         using This = LocalSwitch;
         using Super = Switch;
-        friend class SwitchboardStandalone;
+        friend class Central;
 
     protected:
         using Switch::Switch;

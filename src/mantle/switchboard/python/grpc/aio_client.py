@@ -12,56 +12,26 @@ import sys
 
 ### Common Core modules
 from cc.core.decorators import override
+from cc.core.paths import FilePathInput
 from cc.protobuf.status import encodeError
 from cc.protobuf.variant import PyValueList, encodeValueList
 from cc.messaging.grpc import SignalClient, AsyncMixIn
 
 ### Switchboard modules
 from ..protobuf import (
-    AddSwitchRequest, RemoveSwitchRequest, ImportRequest,
     State,
     InterceptorInvocation, InterceptorResult, InterceptorUpdate,
 )
 
-from ..base.baseboard import SwitchboardBase
+from .base_client import BaseClient
 from .aio_remote_switch import AsyncRemoteSwitch
 
-class AsyncClient (AsyncMixIn, SwitchboardBase, SignalClient):
+class AsyncClient (AsyncMixIn, BaseClient):
     '''
-    Switchboard abstract base
+    Python AsyncIO client for Switchboard gRPC service.
     '''
 
-    from .switchboard_service_pb2_grpc import SwitchboardStub as Stub
-
-    def __init__(self,
-                 host: str = "",
-                 wait_for_ready: bool = True,
-                 watch_all: bool = True,
-                 product_name: str|None = None,
-                 project_name: str|None = None,
-                 ):
-        '''
-        @param host
-            IP address or resolvable host name of platform server
-
-        @param product_name
-            Name of the product, used to locate corresponding settings files
-            (e.g. `grpc-endpoints-PRODUCT.yaml`).
-
-        @param project_name
-            Name of code project (e.g. parent code repository). Used to locate
-            corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
-        '''
-
-        SignalClient.__init__(self,
-                              host = host,
-                              wait_for_ready = wait_for_ready,
-                              watch_all = watch_all,
-                              product_name = product_name,
-                              project_name = project_name)
-        SwitchboardBase.__init__(self)
-
-        self.init_intercept()
+    pending_tasks = set()
 
     @override
     def _new_switch(self, switch_name: str) -> AsyncRemoteSwitch:
@@ -70,41 +40,48 @@ class AsyncClient (AsyncMixIn, SwitchboardBase, SignalClient):
 
 
     @override
-    async def get_or_add_switch(self,
-                                switch_name: str,
-                                initial_value: bool|None = None,
-                                ) -> AsyncRemoteSwitch:
+    def get_or_add_switch(self,
+                          switch_name: str,
+                          initially_active: bool = False,
+                          ) -> AsyncRemoteSwitch:
 
-        switch = self.get_switch(switch_name)
-        if switch is None:
-            switch = self.switches.setdefault(
-                switch_name,
-                self._new_switch(switch_name))
+        with self._switch_lock:
+            try:
+                switch = self.switches[switch_name]
+            except KeyError:
+                switch = self.switches[switch_name] = self._new_switch(switch_name)
+                switch.status.active = initially_active
 
-            await self.add_switch(switch_name)
-            if initial_value is not None:
-                await switch.set_active(initial_value)
+                task = asyncio.create_task(
+                    self.add_switch(switch_name, initially_active))
+                self.pending_tasks.add(task)
+                task.add_done_callback(self.pending_tasks.discard)
 
-        return switch
-
+            return switch
 
     @override
-    async def add_switch(self, switch_name: str) -> bool:
-        req = AddSwitchRequest(switch_name = switch_name)
-        return (await self.stub.AddSwitch(req)).value
+    async def add_switch(self,
+                         switch_name: str,
+                         active: bool = False) -> bool:
+        response = await BaseClient.add_switch(**locals())
+        return response.value
 
     @override
     async def remove_switch(self, switch_name: str, propagate: bool = True) -> bool:
-        req = RemoveSwitchRequest(switch_name = switch_name,
-                                  propagate = propagate)
-        return (await self.stub.RemoveSwitch(req)).value
+        response = await BaseClient.remove_switch(**locals())
+        return response.value
 
     @override
     async def import_switches(self,
                               declarations: PyValueList) -> int:
-        req = ImportRequest(
-            declarations = encodeValueList(declarations))
-        return (await self.stub.ImportSwitches(req)).import_count
+        response = await BaseClient.import_switches(**locals())
+        return response.import_count
+
+    @override
+    async def load_switches(self,
+                            filename: FilePathInput):
+        await BaseClient.load_switches(**locals())
+
 
     def init_intercept(self):
         self.interceptor_task = None
@@ -130,33 +107,28 @@ class AsyncClient (AsyncMixIn, SwitchboardBase, SignalClient):
             self.interceptor_update_queue.put(None)
             self.interceptor_task.cancel()
 
+    def enqueue_interceptor_update(self, msg: InterceptorUpdate):
+        self.start_intercepting()
+        self.interceptor_update_queue.put_nowait(msg)
+
     async def _intercept_queue_iterator(self):
         while msg := await self.interceptor_update_queue.get():
             yield msg
 
-    async def enqueue_interceptor_update(self, msg: InterceptorUpdate):
-        '''
-        Enqueue and send an interceptor update to the Switchboard service.
-        '''
-        self.start_intercepting()
-        await self.interceptor_update_queue.put(msg)
-
     async def _intercept_runner(self):
-        runner_tasks = set()
         async for request in self.interceptor_stream:
-            task = asyncio.create_task(self.on_interceptor_invocation(request))
-            runner_tasks.add(task)
-            task.add_done_callback(runner_tasks.discard)
+            task = asyncio.create_task(self._on_interceptor_invocation(request))
+            self.pending_tasks.add(task)
+            task.add_done_callback(self.pending_tasks.discard)
 
-    async def on_interceptor_invocation(self, request: InterceptorInvocation):
+    async def _on_interceptor_invocation(self, request: InterceptorInvocation):
         self.logger.info("%s switch %r interceptor %r starting" % (
             self,
             request.switch_name,
             request.interceptor_name,
         ))
 
-        result = InterceptorResult()
-
+        error = None
         try:
             sw = self.get_switch(request.switch_name, required=True)
             await sw.on_intercept(
@@ -165,34 +137,6 @@ class AsyncClient (AsyncMixIn, SwitchboardBase, SignalClient):
             )
 
         except Exception as e:
-            encodeError(
-                e,
-                origin = sys.modules['__main__'].__spec__.name,
-                output = result.error,
-            )
+            error = e
 
-            self.logger.error("%s switch %r interceptor %r failed: [%s] %s" % (
-                self,
-                request.switch_name,
-                request.interceptor_name,
-                type(e).__name__,
-                e
-            ))
-        else:
-            self.logger.info("%s switch %r interceptor %r completed" % (
-                self,
-                request.switch_name,
-                request.interceptor_name,
-            ))
-
-        update = InterceptorUpdate(
-            switch_name = request.switch_name,
-            interceptor_name = request.interceptor_name,
-            invocation_result = result,
-        )
-        self.logger.warning(
-            "Adding to interceptor queue: %s" % (
-                update,
-            ))
-
-        self.interceptor_update_queue.put_nowait(update)
+        self._return_interceptor_response(request, error)

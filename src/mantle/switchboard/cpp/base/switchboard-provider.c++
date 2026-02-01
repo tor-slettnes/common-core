@@ -107,7 +107,9 @@ namespace switchboard
         return this->switches;
     }
 
-    SwitchRef Provider::get_or_add_switch(const SwitchName &name)
+    SwitchRef Provider::get_or_add_switch(
+        const SwitchName &name,
+        bool active)
     {
         if (SwitchRef sw = this->get_switch(name, false))
         {
@@ -115,7 +117,7 @@ namespace switchboard
         }
         else
         {
-            return this->add_switch(name).first;
+            return this->add_switch(name, active).first;
         }
     }
 

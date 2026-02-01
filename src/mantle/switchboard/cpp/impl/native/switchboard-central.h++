@@ -39,7 +39,8 @@ namespace switchboard
         bool wait_ready() const override;
 
         std::pair<SwitchRef, bool> add_switch(
-            const SwitchName &switch_name) override;
+            const SwitchName &switch_name,
+            bool active = false) override;
 
         uint import_switches(
             const core::types::ValueList &switches) override;

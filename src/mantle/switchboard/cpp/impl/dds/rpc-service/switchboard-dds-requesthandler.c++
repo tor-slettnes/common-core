@@ -45,7 +45,9 @@ namespace switchboard::dds
     {
         logf_debug("Add_switch(%r)", req.switch_name());
 
-        auto [sw, inserted] = this->provider->add_switch(req.switch_name());
+        auto [sw, inserted] = this->provider->add_switch(
+            req.switch_name(),
+            req.active());
         return inserted;
     }
 

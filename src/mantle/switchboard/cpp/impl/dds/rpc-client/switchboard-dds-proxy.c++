@@ -80,7 +80,9 @@ namespace switchboard::dds
         return Provider::get_switch(name, required);
     }
 
-    std::pair<SwitchRef, bool> Proxy::add_switch(const SwitchName &name)
+    std::pair<SwitchRef, bool> Proxy::add_switch(
+        const SwitchName &name,
+        bool active)
     {
         auto [sw, inserted] = this->find_or_insert<RemoteSwitch>(
             name,
@@ -88,7 +90,9 @@ namespace switchboard::dds
 
         if (inserted)
         {
-            this->client()->add_switch(CC::Switchboard::AddSwitchRequest(name));
+            sw->status()->active = active;
+            this->client()->add_switch(
+                CC::Switchboard::AddSwitchRequest(name, active));
         }
         return {sw, inserted};
     }

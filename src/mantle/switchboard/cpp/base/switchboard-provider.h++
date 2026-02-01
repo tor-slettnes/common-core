@@ -54,7 +54,9 @@ namespace switchboard
         ///    Switch name
         /// @param[in] active
         ///    Initial position, if added
-        virtual SwitchRef get_or_add_switch(const SwitchName &name);
+        virtual SwitchRef get_or_add_switch(
+            const SwitchName &name,
+            bool active = false);
 
         /// @brief Find a switch
         /// @param[in] name
@@ -83,7 +85,9 @@ namespace switchboard
         ///    Switch name
         /// @param[in] active
         ///    Initial position
-        virtual std::pair<SwitchRef, bool> add_switch(const SwitchName &name) = 0;
+        virtual std::pair<SwitchRef, bool> add_switch(
+            const SwitchName &name,
+            bool active = false) = 0;
 
         /// @brief Remove an existing switch
         /// @param[in] name

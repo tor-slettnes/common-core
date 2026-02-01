@@ -7,5 +7,9 @@ The `Error` type is
 
 '''
 
-from .status import Error, Level, Domain, \
-    level_map, encodeError, decodeLogLevel, encodeLogLevel
+from .status import (
+    Error, Level, Domain,
+    level_map,
+    encodeError, encodePossibleError,
+    decodeLogLevel, encodeLogLevel,
+)

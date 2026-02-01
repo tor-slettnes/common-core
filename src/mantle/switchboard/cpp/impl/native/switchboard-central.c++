@@ -72,15 +72,19 @@ namespace switchboard
     }
 
     std::pair<SwitchRef, bool> Central::add_switch(
-        const SwitchName &switch_name)
+        const SwitchName &switch_name,
+        bool active)
     {
         const auto &[sw, inserted] = this->find_or_insert<LocalSwitch>(
             switch_name,
             this->shared_from_this());
 
+
         if (inserted)
         {
             sw->set_spec({});
+            sw->status()->active = active;
+            sw->notify_status();
         }
 
         return {sw, inserted};

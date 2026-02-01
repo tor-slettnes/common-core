@@ -72,7 +72,9 @@ namespace switchboard::grpc
     {
         try
         {
-            auto [sw, inserted] = this->provider->add_switch(request->switch_name());
+            auto [sw, inserted] = this->provider->add_switch(
+                request->switch_name(),
+                request->active());
             reply->set_value(inserted);
             return ::grpc::Status::OK;
         }

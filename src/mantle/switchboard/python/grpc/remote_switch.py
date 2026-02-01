@@ -5,38 +5,27 @@ Switch controlled via a remote gRPC service
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
-from typing import Sequence, Mapping
-from typing import Optional
-from weakref import ref
 
+### Standard Python modules
+from typing import Mapping, Optional
+
+### Common Core modules
 from cc.core.decorators import override
-from cc.protobuf.status import Error, encodeError
-from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
+from cc.protobuf.status import Error
+from cc.protobuf.variant import PyValueDict
 
+### Switchboard modules
 from ..protobuf import (
-    Status, State, StateSet, encodeStateSet,
-    InterceptorPhase, ExceptionHandling,
-    Specification, SetSpecificationRequest,
-    Localization, LocalizationMap, Dependency, DependencyMap,
-    AddDependencyRequest, RemoveDependencyRequest, DependencyPolarity,
-    InterceptorUpdate, InterceptorRegistration, InterceptorDeregistration,
-    InterceptorSpec, InterceptorInvocation, InterceptorResult,
-    SetTargetRequest, SetAttributesRequest, CulpritsQuery,
+    Specification, Status, State, StateSet,
+    ExceptionHandling,
+    Dependency, DependencyPolarity,
 )
 
-from ..base.switch import Switch, InterceptorMethod
+from .remote_switch_base import RemoteSwitchBase
 from .switchboard_service_pb2_grpc import SwitchboardStub
 
 
-class RemoteSwitch (Switch):
-
-    def __init__ (self,
-                  name: str,
-                  client: 'Client'):
-
-        Switch.__init__(self, name = name)
-        self.stub = client.stub
-        self.client = ref(client)
+class RemoteSwitch (RemoteSwitchBase):
 
     @override
     def set_specification(self,
@@ -48,18 +37,8 @@ class RemoteSwitch (Switch):
                           active: Optional[bool] = None,
                           update_state: Optional[bool] = None,
                           ):
-
-        req = SetSpecificationRequest(
-            switch_name = self.name,
-            spec = specification,
-            active = active,
-            replace_aliases = replace_aliases,
-            replace_localizations = replace_localizations,
-            replace_dependencies = replace_dependencies,
-            replace_interceptors = replace_interceptors,
-            update_state = update_state)
-
-        return self.stub.SetSpecification(req).value
+        response = RemoteSwitchBase.set_specification(**locals())
+        return response.value
 
 
     @override
@@ -73,18 +52,8 @@ class RemoteSwitch (Switch):
                        reevaluate: Optional[bool] = None,
                        ) -> bool:
 
-        req = AddDependencyRequest(
-            switch_name = self.name,
-            predecessor_name = predecessor_name,
-            dependency = Dependency(
-                trigger_states = encodeStateSet(trigger_states),
-                polarity = polarity,
-                hard = hard,
-                sufficient = sufficient),
-            allow_update = allow_update,
-            reevaluate = reevaluate)
-
-        return self.stub.AddDependency(req).value
+        response = RemoteSwitchBase.add_dependency(**locals())
+        return response.value
 
 
     @override
@@ -93,69 +62,8 @@ class RemoteSwitch (Switch):
                           reevaluate: bool = True,
                           ) -> bool:
 
-        req = RemoveDependencyRequest(
-            switch_name = self.name,
-            predecessor_name = predecessor_name,
-            reevaluate = reevaluate)
-
-        return self.stub.RemoveDependency(req).value
-
-
-    @override
-    def add_interceptor(self,
-                        interceptor_name: str,
-                        state_transitions: StateSet,
-                        callback: InterceptorMethod,
-                        phase: InterceptorPhase = InterceptorPhase.NORMAL,
-                        asynchronous: bool = False,
-                        rerun: bool = False,
-                        on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
-                        on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
-                        immediate: bool = False,
-                        ):
-
-        is_new = Switch.add_interceptor(**locals())
-
-        if client := self.client():
-            spec = InterceptorSpec(
-                state_transitions = encodeStateSet(state_transitions),
-                asynchronous = asynchronous,
-                phase = phase,
-                rerun = rerun,
-                on_cancel = on_cancel,
-                on_error = on_error,
-            )
-
-            registration = InterceptorRegistration(
-                spec = spec,
-                immediate = immediate,
-            )
-
-            update = InterceptorUpdate(
-                switch_name = self.name,
-                interceptor_name = interceptor_name,
-                registration = registration,
-            )
-
-            client.enqueue_interceptor_update(update)
-
-        return is_new
-
-
-    @override
-    def remove_interceptor(self,
-                           interceptor_name: str,
-                           ) -> bool:
-
-        if client := self.client():
-            update = InterceptorUpdate(
-                switch_name = self.name,
-                interceptor_name = interceptor_name,
-                deregistration = InterceptorDeregistration(),
-            )
-            client.enqueue_interceptor_update(update)
-
-        return Switch.remove_interceptor(self, interceptor_name)
+        response = RemoteSwitchBase.remove_dependency(**locals())
+        return response.value
 
 
     @override
@@ -164,21 +72,9 @@ class RemoteSwitch (Switch):
                            state : Optional[int] = None
                            ) -> Optional[Error]:
 
-        req = InterceptorInvocation(
-            switch_name = self.name,
-            interceptor_name = interceptor_name,
-            state = state)
+        response = RemoteSwitchBase.invoke_interceptor(**locals())
+        return response.error
 
-        result = self.stub.InvokeInterceptor(req)
-        return result.error
-
-
-    @override
-    def on_intercept(self,
-                     interceptor_name : str,
-                     state : State):
-        interceptor = self.interceptor_methods[interceptor_name]
-        interceptor(self, interceptor_name, state)
 
     @override
     def set_target(self,
@@ -193,18 +89,8 @@ class RemoteSwitch (Switch):
                    on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
                    ) -> bool:
 
-        req = SetTargetRequest(
-            switch_name = self.name,
-            target_state = target_state,
-            error = None if error is None else encodeError(error),
-            attributes = encodeKeyValueMap(attributes),
-            clear_existing = clear_existing,
-            with_interceptors = with_interceptors,
-            trigger_descendants = trigger_descendants,
-            on_cancel = on_cancel,
-            on_error = on_error)
-
-        return self.stub.SetTarget(req).updated
+        response = RemoteSwitchBase.set_target(**locals())
+        return response.updated
 
 
     @override
@@ -212,21 +98,15 @@ class RemoteSwitch (Switch):
                        attributes: Optional[PyValueDict] = None,
                        clear_existing: bool = False):
 
-        req = SetAttributesRequest(
-            switch_name = self.name,
-            attributes = encodeKeyValueMap(attributes),
-            clear_existing = clear_existing)
-
-        return self.stub.SetAttributes(req).updated
+        response = RemoteSwitchBase.set_attributes(**locals())
+        return response.updated
 
 
     @override
     def get_culprits(self,
                      expected_position: bool = True) -> Mapping[str, Status]:
 
-        req = CulpritsQuery(switch_name = self.name,
-                            expected = expected_position)
-
-        return self.stub.GetCulprits(req).map
+        response = RemoteSwitchBase.et_culprits(**locals())
+        return response.map
 
 

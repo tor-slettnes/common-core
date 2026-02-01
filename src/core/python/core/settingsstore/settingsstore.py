@@ -570,7 +570,7 @@ class SettingsStore (dict):
         filepaths = []
 
         if basename.is_absolute():
-            filepaths.extend(basenames)
+            filepaths.append(basename)
         else:
             for folder in searchpath:
                 if isinstance(folder, str):

@@ -384,14 +384,18 @@ module CC
 
         struct AddSwitchRequest
         {
-            // Switch name to be added or removed
+            // Switch name to be added
             @key
             SwitchName switch_name;
+
+            // Initial value if created.
+            @default(FALSE)
+            boolean active;
         };
 
         struct RemoveSwitchRequest
         {
-            // Switch name to be added or removed
+            // Switch name to be removed
             @key
             SwitchName switch_name;
 

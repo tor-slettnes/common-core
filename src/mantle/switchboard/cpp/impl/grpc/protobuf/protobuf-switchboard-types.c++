@@ -8,6 +8,7 @@
 #include "protobuf-switchboard-types.h++"
 #include "protobuf-event-types.h++"
 #include "protobuf-variant-types.h++"
+#include "protobuf-message.h++"
 #include "protobuf-inline.h++"
 
 namespace cc::protobuf
@@ -48,7 +49,13 @@ namespace cc::protobuf
         states->clear();
         for (int state: items)
         {
-            states->insert(static_cast<switchboard::State>(state));
+            for (uint mask = 0x01; mask <= state; mask <<= 1)
+            {
+                if ((state & mask) != 0x00)
+                {
+                    states->insert(static_cast<switchboard::State>(mask));
+                }
+            }
         }
     }
 

@@ -41,9 +41,19 @@ namespace switchboard::dds
         bool available() const override;
         bool wait_ready() const override;
         SwitchMap get_switches() const override;
-        SwitchRef get_switch(const SwitchName &name, bool required) const override;
-        std::pair<SwitchRef, bool> add_switch(const SwitchName &switch_name) override;
-        bool remove_switch(const SwitchName &switch_name, bool propagate = true) override;
+
+        SwitchRef get_switch(
+            const SwitchName &name,
+            bool required) const override;
+
+        std::pair<SwitchRef, bool> add_switch(
+            const SwitchName &switch_name,
+            bool active = false) override;
+
+        bool remove_switch(
+            const SwitchName &switch_name,
+            bool propagate = true) override;
+
         uint import_switches(const core::types::ValueList &switches) override;
 
     private:

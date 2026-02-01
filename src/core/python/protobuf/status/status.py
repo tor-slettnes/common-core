@@ -28,10 +28,30 @@ level_map = {
     Level.FATAL+10: logging.FATAL,
 }
 
+
+def encodePossibleError(error: Error|Exception|str,
+                        domain: Domain = Domain.APPLICATION,
+                        origin: str|None = None,
+                        level: Level = Level.ERROR,
+                        symbol: str|None = None,
+                        code: int|None = None,
+                        timestamp: TimestampType|None = None,
+                        attributes: dict|None = None,
+                        output: Error|None = None,
+                        ) -> Error|None:
+
+    if error:
+        return encodeError(**locals())
+    else:
+        return None
+
+
 def encodeError(error: Error|Exception|str,
                 domain: Domain = Domain.APPLICATION,
                 origin: str|None = None,
                 level: Level = Level.ERROR,
+                symbol: str|None = None,
+                code: int|None = None,
                 timestamp: TimestampType|None = None,
                 attributes: dict|None = None,
                 output: Error|None = None,
@@ -65,6 +85,12 @@ def encodeError(error: Error|Exception|str,
 
     if level is not None:
         output.level = level
+
+    if symbol is not None:
+        output.symbol = symbol
+
+    if code is not None:
+        output.code = code
 
     if timestamp is not None:
         encodeTimestamp(timestamp, output.timestamp)
