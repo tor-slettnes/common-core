@@ -141,6 +141,7 @@ class SignalStore:
             (Message.__name__, self.signal_type)
 
         self.slots = {}
+        self.async_tasks = set()
 
 
     def descriptor(self) -> Descriptor:
@@ -225,6 +226,26 @@ class SignalStore:
         '''
         selector = msg.DESCRIPTOR.oneofs[0].name
         return msg.WhichOneof(selector) or ""
+
+
+    def signal_filter(self, match_all: bool = False) -> Filter:
+        '''
+        Return a ProtoBuf Filter message that may be provided to peer in
+        order to capture applicable Signal messages into this store.
+
+        The filter matches all available signals if `match_all` is True,
+        otherwise it matches signals that are currently connected.
+        '''
+        if match_all or self.ALL_SIGNALS in self.slots:
+            return Filter(polarity=False)
+        else:
+            return Filter(
+                polarity = True,
+                indices = [self.field_number(signal_name)
+                           for signal_name in self.slots
+                           if signal_name is not self.ALL_SIGNALS],
+            )
+
 
     def connect_all(self,
                     slot: Slot):
@@ -339,25 +360,6 @@ class SignalStore:
         self.connect_signal(
             name,
             lambda signal: slot(getattr(signal, name)))
-
-
-    def signal_filter(self, match_all: bool = False) -> Filter:
-        '''
-        Return a ProtoBuf Filter message that may be provided to peer in
-        order to capture applicable Signal messages into this store.
-
-        The filter matches all available signals if `match_all` is True,
-        otherwise it matches signals that are currently connected.
-        '''
-        if match_all or self.ALL_SIGNALS in self.slots:
-            return Filter(polarity=False)
-        else:
-            return Filter(
-                polarity = True,
-                indices = [self.field_number(signal_name)
-                           for signal_name in self.slots
-                           if signal_name is not self.ALL_SIGNALS],
-            )
 
 
     def disconnect_signal_data(self,
@@ -476,7 +478,9 @@ class SignalStore:
             ))
 
         if asyncio.iscoroutine(result):
-            asyncio.create_task(result)
+            task = asyncio.create_task(result)
+            self.async_tasks.add(task)
+            task.add_done_callback(self.async_tasks.discard)
 
     def _mapping_controls(self, signal: SignalMessage) -> tuple[MappingAction, str]:
         try:
