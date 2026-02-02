@@ -7,9 +7,9 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Standard ProtoBuf modules
-from typing import Optional, Mapping, Set
-from typing import Sequence, Mapping, Callable
+from typing import Optional, Mapping, Sequence, Set, Callable
 from abc import abstractmethod
+from weakref import ref
 
 ### Core modules
 from cc.core.decorators import virtual
@@ -42,8 +42,10 @@ class Switch (DocBase):
 
     def __init__(self,
                  name: str,
+                 board: 'SwitchboardBase',
                  ):
         self.name = name
+        self.board = ref(board)
         self.specification = Specification()
         self.status = Status()
         self.subscriptions = {}
@@ -471,6 +473,33 @@ class Switch (DocBase):
         Return a map of dependencies for this switch. @sa add_dependency().
         '''
         return self.specification.dependencies.map
+
+    @property
+    def successors(self) -> Mapping[str, 'Switch']:
+        pass
+
+    @property
+    def predecessors(self) -> Mapping[str, 'Switch']:
+        predecessors = {}
+        if board := self.board:
+            for predecessor_name, dep in self.dependencies.items():
+                if predecessor := board.get_switch(predecessor_name):
+                    predecessors[predecessor_name] = predecessor
+        return predecessors
+
+
+
+    @property
+    def ultimate_ancestors(self) -> Mapping[str, 'Switch']:
+        ancestors = {}
+        if board := self.board:
+            if self.is_primary or not self.dependencies:
+                ancestors[self.name] = self
+            else:
+                for predecessor_name, dep in self.dependencies.items():
+                    if predecessor := board.get_switch(predecessor_name):
+                        ancestors.update(predecessor.ultimate_ancestors())
+        return ancestors
 
 
     @abstractmethod
@@ -911,7 +940,7 @@ class Switch (DocBase):
 
 
     @abstractmethod
-    def get_culprits(self, expected_position: bool = True) -> Mapping[str, Status]:
+    def get_culprits(self, expected_position: bool = True) -> Mapping[str, 'Switch']:
         '''
         Obtain root causes for a switch not being in the expected positiion.
 

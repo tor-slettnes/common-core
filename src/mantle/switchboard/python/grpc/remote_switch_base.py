@@ -7,7 +7,6 @@ __author__ = 'Tor Slettnes'
 
 from typing import Mapping
 from typing import Optional
-from weakref import ref
 
 from cc.core.decorators import override
 from cc.protobuf.status import Error, encodeError
@@ -35,9 +34,14 @@ class RemoteSwitchBase (Switch):
                   name: str,
                   client: 'Client'):
 
-        Switch.__init__(self, name = name)
+        Switch.__init__(self, name, client)
         self.stub = client.stub
-        self.client = ref(client)
+
+    def client(self):
+        if board := self.board():
+            return board
+        else:
+            return None
 
     @override
     def set_specification(self,
