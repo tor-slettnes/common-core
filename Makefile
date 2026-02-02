@@ -14,6 +14,7 @@ Available targets:
   release            Build, test and create release packages
   package            Create packages (currently only deb)
   debs, deb          Create Debian packages
+  debs-arm           Cross-compile Debian packages for ARM64 (with Docker)
   wheels             Create Python wheel packages
   install            Install built components
   install/strip      Install and strip debug symbols

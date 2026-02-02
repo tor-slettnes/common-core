@@ -37,25 +37,6 @@ class Client (BaseClient):
         '''Obtain a new Switch instance in response to update signals from server'''
         return RemoteSwitch(switch_name, self)
 
-
-    @override
-    def get_or_add_switch(self,
-                          switch_name: str,
-                          initially_active: bool = False,
-                          ) -> RemoteSwitch:
-
-        with self._switch_lock:
-            try:
-                switch = self.switches[switch_name]
-            except KeyError:
-                switch = self.switches[switch_name] = self._new_switch(switch_name)
-                switch.status.active = initially_active
-
-                self.add_switch(switch_name, initially_active)
-
-            return switch
-
-
     @override
     def add_switch(self,
                    switch_name: str,
