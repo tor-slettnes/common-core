@@ -297,16 +297,13 @@ class SwitchboardBase (DocBase, LogBase):
                 cls.status_handlers.pop(switch_name, None)
 
 
-    @classmethod
-    def _invoke_specification_handler(cls, switch: Switch, msg: Signal):
-        if handlers := cls.specification_handlers.get(msg.mapping_key):
+    def _invoke_specification_handler(self, switch: Switch, msg: Signal):
+        if handlers := self.specification_handlers.get(msg.mapping_key):
             for handler in handlers:
-                safe_invoke_maybe_async(handler, args = (switch,))
+                safe_invoke_maybe_async(handler, args=(self, switch))
 
-    @classmethod
-    def _invoke_status_handler(cls, switch: Switch, msg: Signal):
-        if handlers := cls.status_handlers.get(msg.mapping_key):
+    def _invoke_status_handler(self, switch: Switch, msg: Signal):
+        if handlers := self.status_handlers.get(msg.mapping_key):
             if state_handlers := handlers.get(msg.status.current_state):
                 for handler in state_handlers:
-                    safe_invoke_maybe_async(handler, args = (switch,))
-
+                    safe_invoke_maybe_async(handler, args=(self, switch))
