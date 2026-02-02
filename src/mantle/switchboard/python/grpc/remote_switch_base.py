@@ -65,7 +65,7 @@ class RemoteSwitchBase (Switch):
 
     @override
     def add_dependency(self,
-                       predecessor_name: str,
+                       predecessor: str,
                        trigger_states: StateSet = State.SETTLED,
                        polarity: DependencyPolarity = DependencyPolarity.POSITIVE,
                        hard: bool = False,
@@ -74,9 +74,12 @@ class RemoteSwitchBase (Switch):
                        reevaluate: Optional[bool] = None,
                        ) -> BoolValue:
 
+        if isinstance(predecessor, Switch):
+            predecessor = predecessor.name
+
         req = AddDependencyRequest(
             switch_name = self.name,
-            predecessor_name = predecessor_name,
+            predecessor_name = predecessor,
             dependency = Dependency(
                 trigger_states = encodeStateSet(trigger_states),
                 polarity = polarity,
@@ -90,13 +93,16 @@ class RemoteSwitchBase (Switch):
 
     @override
     def remove_dependency(self,
-                          predecessor_name: str,
+                          predecessor: str,
                           reevaluate: bool = True,
                           ) -> BoolValue:
 
+        if isinstance(predecessor, Switch):
+            predecessor = predecessor.name
+
         req = RemoveDependencyRequest(
             switch_name = self.name,
-            predecessor_name = predecessor_name,
+            predecessor_name = predecessor,
             reevaluate = reevaluate)
 
         return self.stub.RemoveDependency(req)

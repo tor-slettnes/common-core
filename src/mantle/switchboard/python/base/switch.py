@@ -475,7 +475,7 @@ class Switch (DocBase):
 
     @abstractmethod
     def add_dependency(self,
-                       predecessor_name: str,
+                       predecessor: str,
                        trigger_states: StateSet = State.SETTLED,
                        polarity: DependencyPolarity = DependencyPolarity.POSITIVE,
                        hard: bool = False,
@@ -486,8 +486,9 @@ class Switch (DocBase):
         '''
         Add a new upstream dependency (direct ancestor) to this switch.
 
-        @param predecessor_name
-            Name of the switch on which we are adding a dependency.
+        @param predecessor
+            Either an existing Switch or the name of the switch on which we are
+            adding a dependency.
 
         @param trigger_states
             A bitmask representing which of the predecessor's state transitions
@@ -524,14 +525,16 @@ class Switch (DocBase):
 
     @abstractmethod
     def remove_dependency(self,
-                          predecessor_name: str,
+                          predecessor: str,
                           reevaluate: bool = True,
                           ) -> bool:
         '''
         Remove an existing dependency from a switch.
 
-        @param predecessor_name
-           Name of predecessor that is being removed
+        @param predecessor
+           Either an existing switch or the name of one that is to be removed as
+           predecessor.
+
         @param reevaluate
            Recalculate state after removing dependency
         '''

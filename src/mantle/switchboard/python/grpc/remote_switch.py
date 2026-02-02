@@ -43,7 +43,7 @@ class RemoteSwitch (RemoteSwitchBase):
 
     @override
     def add_dependency(self,
-                       predecessor_name: str,
+                       predecessor: str,
                        trigger_states: StateSet = State.SETTLED,
                        polarity: DependencyPolarity = DependencyPolarity.POSITIVE,
                        hard: bool = False,
@@ -58,7 +58,7 @@ class RemoteSwitch (RemoteSwitchBase):
 
     @override
     def remove_dependency(self,
-                          predecessor_name: str,
+                          predecessor: str,
                           reevaluate: bool = True,
                           ) -> bool:
 
