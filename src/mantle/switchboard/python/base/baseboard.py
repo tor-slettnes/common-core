@@ -31,6 +31,8 @@ class SwitchboardBase (DocBase, LogBase):
     '''
 
     signal_store = switchboard_signals
+    SPEC_SIGNAL = 'specification'
+    STATUS_SIGNAL = 'status'
 
     def __init__(self, logger: Logger|None = None):
         LogBase.__init__(self, logger = logger)
@@ -40,20 +42,30 @@ class SwitchboardBase (DocBase, LogBase):
         self._connect_signals()
 
     def _connect_signals(self):
-        self.signal_store.connect_signal('specification', self._on_signal_spec)
-        self.signal_store.connect_signal('status', self._on_signal_status)
+        self.signal_store.connect_signal(
+            self.SPEC_SIGNAL,
+            self._on_signal_spec)
+
+        self.signal_store.connect_signal(
+            self.STATUS_SIGNAL,
+            self._on_signal_status)
 
     def _disconnect_signals(self):
-        self.signal_store.disconnect_signal('specification', self._on_signal_spec)
-        self.signal_store.disconnect_signal('status', self._on_signal_status)
+        self.signal_store.disconnect_signal(
+            self.SPEC_SIGNAL,
+            self._on_signal_spec)
+
+        self.signal_store.disconnect_signal(
+            self.STATUS_SIGNAL,
+            self._on_signal_status)
 
     def _on_signal_spec(self, msg: Signal):
         if switch := self._get_or_map_switch(msg):
-            switch._update_specification(msg.specification)
+            return switch.update_specification(msg.specification)
 
     def _on_signal_status(self, msg: Signal):
         if switch := self._get_or_map_switch(msg):
-            switch._update_status(msg.status)
+            return switch.update_status(msg.status)
 
     def _get_or_map_switch(self, msg: Signal) -> Switch|None:
         switch = None

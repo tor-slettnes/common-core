@@ -13,7 +13,7 @@ import sys
 
 ### Common Core modules
 from cc.core.decorators import override, virtual
-from cc.core.invocation import method_path
+from cc.core.invocation import method_path, invoke_maybe_async
 from cc.protobuf.status import encodeError
 from cc.protobuf.variant import PyValueList, encodeValueList
 from cc.protobuf.wellknown import BoolValue
@@ -91,7 +91,8 @@ class BaseClient (SwitchboardBase, SignalClient):
             except KeyError:
                 switch = self.switches[switch_name] = self._new_switch(switch_name)
                 switch.status.active = initially_active
-                self.add_switch(switch_name, initially_active)
+                invoke_maybe_async(self.add_switch,
+                                   args = (switch_name, initially_active))
 
             return switch
 

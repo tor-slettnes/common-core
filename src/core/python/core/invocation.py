@@ -59,7 +59,10 @@ def stack_trace(tb=None):
     return "".join(msg)
 
 
-def invocation(method, args, kwargs):
+def invocation(
+        method: Callable,
+        args: Sequence = (),
+        kwargs: Mapping = {}):
     arglist  = [ "%r"%(arg,) for arg in args ]
     arglist += [ "%s=%r"%item for item in kwargs.items() ]
     return "%s(%s)"%(method.__name__, ", ".join(arglist))
@@ -81,3 +84,68 @@ def method_path(method: Callable) -> str:
         interceptor.__name__,
     ))
 
+
+async_tasks = set()
+
+def invoke_async(
+        function: Callable,
+        args: Sequence = (),
+        kwargs: Mapping = {}):
+    '''
+    Invoke an AsyncIO coroutine as a new task.  A reference is kept to this
+    task in order to prevent it from disappearing mid-execution; see
+    <https://docs.python.org/3/library/asyncio-task.html#creating-tasks>.
+    '''
+    result = function(*args, **kwargs)
+    task = asyncio.create_task(function(*args, **kwargs))
+    async_tasks.add(task)
+    task.add_done_callback(async_tasks.discard)
+
+
+def invoke_maybe_async(
+        function: Callable,
+        args: Sequence = (),
+        kwargs: Mapping = {}):
+    '''
+    Invoke a function that may or may not be an AsyncIO coroutine.
+
+    If invoking the function with the specified arguments returns a coroutine
+    object, it is lauched in a new asyncio task. A reference is kept to this
+    task in order to prevent it from disappearing mid-execution; see
+    <https://docs.python.org/3/library/asyncio-task.html#creating-tasks>.
+    '''
+
+    result = function(*args, **kwargs)
+    if asyncio.iscoroutine(result):
+        task = asyncio.create_task(result)
+        async_tasks.add(task)
+        task.add_done_callback(async_tasks.discard)
+    else:
+        return result
+
+
+def safe_invoke_maybe_async(
+        function      : Callable,
+        args        : Sequence = (),
+        kwargs      : Mapping = {},
+        description : Optional[str] = None,
+        log_call    : Optional[Callable[[str], None]] = logging.debug,
+        log_failure : Optional[Callable[[str], None]] = logging.error) -> None:
+    '''
+    Invoke a possibly-asynchrnonous callable (function) and catch exception.
+
+    Any exceptions raised invoking the function are logged, but not propagated
+    back to the caller.
+
+    If invoking the function with the specified arguments returns a coroutine
+    object, it is lauched in a new asyncio task. A reference is kept to this
+    task in order to prevent it from disappearing mid-execution; see
+    <https://docs.python.org/3/library/asyncio-task.html#creating-tasks>.
+    '''
+
+    safe_invoke(
+        function = invoke_maybe_async,
+        kwargs = dict(function=function, args=args, kwargs=kwargs),
+        description = description,
+        log_call = log_call,
+        log_failure = log_failure)

@@ -12,6 +12,7 @@ from weakref import ref
 import asyncio
 
 from cc.core.decorators import override
+from cc.core.invocation import safe_invoke_maybe_async
 from cc.protobuf.status import Error, encodeError
 from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
 
@@ -22,10 +23,17 @@ from ..protobuf import (
     InterceptorResult,
 )
 
+from ..base import SubscriptionCallback
 from .remote_switch_base import RemoteSwitchBase
 from .switchboard_service_pb2_grpc import SwitchboardStub
 
 class AsyncRemoteSwitch (RemoteSwitchBase):
+
+    pending_callbacks = set()
+
+    @override
+    def publish_update_to(self, callback: SubscriptionCallback):
+        safe_invoke_maybe_async(callback, args = (self,))
 
     @override
     async def set_specification(self,

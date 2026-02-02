@@ -251,12 +251,15 @@ submodule/protos: protos/Makefile
 protos/Makefile:
 	@git submodule update --init protos
 
-.PHONY: python_shell
-python_shell:
+.PHONY: repl python_shell
+repl python_shell:
 	@env PYTHONPATH=$(INSTALL_DIR)/$(PYTHON_INSTALL_DIR) $(PYTHON)
 
-.PHONY: python_shell/%
-python_shell/%:
+.PHONY: async_repl
+async_repl:
+	@env PYTHONPATH=$(INSTALL_DIR)/$(PYTHON_INSTALL_DIR) $(PYTHON) -m asyncio
+
+repl/% python_shell/%:
 	@echo "Launching interactive Python prompt with module: $*"
 	@env PYTHONPATH=$(INSTALL_DIR)/$(PYTHON_INSTALL_DIR) $(PYTHON) -i -m $*
 

@@ -12,7 +12,7 @@ from typing import Optional, Callable, Mapping, Union, Sequence
 import asyncio
 
 ### Modules withn package
-from ...core.invocation import safe_invoke
+from ...core.invocation import safe_invoke_maybe_async
 from ..utils import native_enum_from_proto
 from ..dissecter import dissect_message
 
@@ -467,20 +467,14 @@ class SignalStore:
                  slot: Slot,
                  signal: SignalMessage):
 
-        result = safe_invoke(
+        result = safe_invoke_maybe_async(
             slot,
-            (signal,),
-            {},
-            "Signal %s slot %s(%s)"%(
+            args = (signal,),
+            description = "Signal %s slot %s(%s)"%(
                 signal_name,
                 slot.__name__,
                 dissect_message(signal),
             ))
-
-        if asyncio.iscoroutine(result):
-            task = asyncio.create_task(result)
-            self.async_tasks.add(task)
-            task.add_done_callback(self.async_tasks.discard)
 
     def _mapping_controls(self, signal: SignalMessage) -> tuple[MappingAction, str]:
         try:

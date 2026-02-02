@@ -12,6 +12,7 @@ from typing import Sequence, Mapping, Callable
 from abc import abstractmethod
 
 ### Core modules
+from cc.core.decorators import virtual
 from cc.core.docbase import DocBase
 from cc.core.invocation import safe_invoke
 from cc.protobuf.status import Error, encodeError
@@ -29,6 +30,7 @@ from ..protobuf import (
 
 InterceptorName = str
 InterceptorMethod = Callable[['Switch', 'InterceptorName', 'State'], None]
+SubscriptionCallback = Callable[['Switch'], None]
 
 class Switch (DocBase):
     '''
@@ -44,32 +46,34 @@ class Switch (DocBase):
         self.name = name
         self.specification = Specification()
         self.status = Status()
-        self.callbacks = {}
+        self.subscriptions = {}
         self.interceptor_methods = {}
 
     def __repr__ (self):
         return "Switch(%r, %s)"%(self.name, self.current_state.name)
 
-    def _update_specification(self, specification: Specification):
+    def update_specification(self, specification: Specification):
         self.specification.CopyFrom(specification)
-        self._invoke_callbacks("specification")
+        return self.publish_update()
 
-    def _update_status(self, status: Status):
+    def update_status(self, status: Status):
         self.status.CopyFrom(status)
-        self._invoke_callbacks("status")
+        return self.publish_update()
 
-    def _invoke_callbacks(self, notification_type: str):
-        for (handle, callback) in self.callbacks.items():
-            safe_invoke(callback,
-                        args = (self,),
-                        description = ('Switch %s notification callback %r'%
-                                       (notification_type, handle,)))
+    def publish_update(self):
+        for (handle, callback) in self.subscriptions.items():
+            self.publish_update_to(callback)
+
+    def publish_update_to(self, callback: SubscriptionCallback):
+        safe_invoke(callback, args = (self,))
 
     def subscribe_updates(self,
                           handle   : str,
-                          callback : Callable[["Switch"], None]):
+                          callback : SubscriptionCallback,
+                          immediate: bool = False):
         '''
-        Register a callback to be invoked whenever this switch changes specification or status
+        Register a callback to be invoked whenever this switch changes
+        specification or status
 
         @param handle
             Unique handle for this callback. If a callback is already
@@ -78,9 +82,14 @@ class Switch (DocBase):
         @param callback
             Method to be invoked whenever this switch changes specification or state.
             Must take this switch instance as its sole argument.
+
+        @param immediate
+            Immediately invoke calback with current status.
         '''
 
-        self.callbacks[handle] = callback
+        self.subscriptions[handle] = callback
+        if immediate:
+            self.publish_update_to(callback)
 
 
     def unsubscribe_updates(self,
@@ -95,7 +104,7 @@ class Switch (DocBase):
             True if the specified handle was found and removed, False otherwise.
         '''
 
-        return self.callbacks.pop(handle, None) is not None
+        return self.subscriptions.pop(handle, None) is not None
 
 
     @abstractmethod
@@ -398,7 +407,8 @@ class Switch (DocBase):
 
         @see set_localization()
         '''
-        self._update_spec(state_texts=texts)
+        self.set_localization(language_code,
+                              state_texts = texts)
 
 
     @property

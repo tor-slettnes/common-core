@@ -12,6 +12,7 @@ import sys
 
 ### Common Core modules
 from cc.core.decorators import override
+from cc.core.invocation import invoke_async
 from cc.core.paths import FilePathInput
 from cc.protobuf.status import encodeError
 from cc.protobuf.variant import PyValueList, encodeValueList
@@ -31,33 +32,10 @@ class AsyncClient (AsyncMixIn, BaseClient):
     Python AsyncIO client for Switchboard gRPC service.
     '''
 
-    pending_tasks = set()
-
     @override
     def _new_switch(self, switch_name: str) -> AsyncRemoteSwitch:
         '''Obtain a new Switch instance in response to update signals from server'''
         return AsyncRemoteSwitch(switch_name, self)
-
-
-    @override
-    def get_or_add_switch(self,
-                          switch_name: str,
-                          initially_active: bool = False,
-                          ) -> AsyncRemoteSwitch:
-
-        with self._switch_lock:
-            try:
-                switch = self.switches[switch_name]
-            except KeyError:
-                switch = self.switches[switch_name] = self._new_switch(switch_name)
-                switch.status.active = initially_active
-
-                task = asyncio.create_task(
-                    self.add_switch(switch_name, initially_active))
-                self.pending_tasks.add(task)
-                task.add_done_callback(self.pending_tasks.discard)
-
-            return switch
 
     @override
     async def add_switch(self,
@@ -116,10 +94,9 @@ class AsyncClient (AsyncMixIn, BaseClient):
             yield msg
 
     async def _intercept_runner(self):
-        async for request in self.interceptor_stream:
-            task = asyncio.create_task(self._on_interceptor_invocation(request))
-            self.pending_tasks.add(task)
-            task.add_done_callback(self.pending_tasks.discard)
+        with asyncio.TaskGroup() as tg:
+            async for request in self.interceptor_stream:
+                tg.create_task(self._on_interceptor_invocation(request))
 
     async def _on_interceptor_invocation(self, request: InterceptorInvocation):
         self.logger.info("%s switch %r interceptor %r starting" % (
