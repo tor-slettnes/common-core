@@ -52,11 +52,6 @@ def switch_status_handler(switch_name: str,
         '''
         Function decorator for Switchboard status updates
         '''
-        print("status_handler_decorator.add_status_handler(%r, %s, %s)" % (
-            function.__name__,
-            switch_name,
-            states))
-
         SwitchboardBase.add_status_handler(function, switch_name, states)
         return function
 
