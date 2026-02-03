@@ -476,29 +476,63 @@ class Switch (DocBase):
 
     @property
     def successors(self) -> Mapping[str, 'Switch']:
-        pass
+        '''
+        Return a map of immediate successors to this switch, i.e., switches
+        with a direct dependency on this one.
+        '''
+        successors = {}
+        if board := self.board():
+            for candidate in board.switches.values():
+                if self.name in candidate.dependencies:
+                    successors[candidate.name] = candidate
+        return successors
 
     @property
     def predecessors(self) -> Mapping[str, 'Switch']:
+        '''
+        Return a map of immediate ancestors to this switch, i.e., switches
+        that are direct dependencies of this one.
+        '''
         predecessors = {}
-        if board := self.board:
+        if board := self.board():
             for predecessor_name, dep in self.dependencies.items():
                 if predecessor := board.get_switch(predecessor_name):
                     predecessors[predecessor_name] = predecessor
         return predecessors
 
+    @property
+    def all_ancestors(self) -> Mapping[str, 'Switch']:
+        '''
+        Return a map of all direct and indirect ancestors to this switch, as
+        determined by following its dependencies recursively until a candidate
+        either has no further dependencies or its `is_primary` flag is True.
+        '''
+
+        ancestors = {}
+        if board := self.board():
+            for predecessor_name, dep in self.dependencies.items():
+                if predecessor := board.get_switch(predecessor_name):
+                    ancestors[predecessor_name] = predecessor
+                    ancestors.update(predecessor.all_ancestors)
+        return ancestors
 
 
     @property
     def ultimate_ancestors(self) -> Mapping[str, 'Switch']:
+        '''
+        Return a map of ultimate ancestors to this switch, as determined by
+        following its dependencies recursively until a candidate either has no
+        further dependencies or its `is_primary` flag is True.
+        '''
+
         ancestors = {}
-        if board := self.board:
-            if self.is_primary or not self.dependencies:
-                ancestors[self.name] = self
-            else:
-                for predecessor_name, dep in self.dependencies.items():
-                    if predecessor := board.get_switch(predecessor_name):
-                        ancestors.update(predecessor.ultimate_ancestors())
+        if board := self.board():
+            for predecessor_name, dep in self.dependencies.items():
+                if predecessor := board.get_switch(predecessor_name):
+                    if predecessor.is_primary or not predecessor.dependencies:
+                        ancestors[predecessor.name] = predecessor
+                    else:
+                        ancestors.update(predecessor.ultimate_ancestors)
         return ancestors
 
 
