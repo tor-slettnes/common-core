@@ -241,9 +241,18 @@ class SignalClient (GenericClient):
             **kwargs)
 
         self.signal_reader = self.create_reader()
-        if watch_all:
-            self.start_watching()
 
+        self.logger.debug("%s created %s()"%(
+            self,
+            type(self.signal_reader).__name__,
+        ))
+
+        self.watch_all = watch_all
+
+    def initialize(self):
+        GenericClient.initialize(self)
+        if self.watch_all:
+            self.start_watching()
 
     def start_notify_signals(self,
                              callback: Slot,

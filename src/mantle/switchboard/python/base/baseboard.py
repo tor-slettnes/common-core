@@ -11,6 +11,7 @@ from abc import abstractmethod
 from typing import Callable
 from threading import Lock
 from logging import Logger
+import os
 
 ### Core modules
 from cc.core.docbase import DocBase
@@ -30,18 +31,15 @@ from ..protobuf import (
 from .switch import Switch
 from .signals import switchboard_signals
 
-UpdateHandler = Callable[[Switch], None]
-
 class SwitchboardBase (DocBase, LogBase):
     '''
     Switchboard abstract base
     '''
 
     signal_store = switchboard_signals
-    specification_handlers = {}
-    status_handlers = {}
     SPEC_SIGNAL = 'specification'
     STATUS_SIGNAL = 'status'
+
 
     def __init__(self, logger: Logger|None = None):
         LogBase.__init__(self, logger = logger)
@@ -74,7 +72,6 @@ class SwitchboardBase (DocBase, LogBase):
 
         elif switch := self._get_or_map_switch(msg):
             switch.update_specification(msg.specification)
-            self._invoke_specification_handler(switch, msg)
 
     def _on_signal_status(self, msg: Signal):
         if msg.mapping_action == MappingAction.REMOVAL:
@@ -82,7 +79,6 @@ class SwitchboardBase (DocBase, LogBase):
 
         elif switch := self._get_or_map_switch(msg):
             switch.update_status(msg.status)
-            self._invoke_status_handler(switch, msg)
 
     def _get_or_map_switch(self, msg: Signal) -> Switch|None:
         switch = None
@@ -128,7 +124,7 @@ class SwitchboardBase (DocBase, LogBase):
                 return switch
 
         if required:
-            raise KeyError(f"No such switch: {name}")
+            raise KeyError(f"No such switch: {switch_name}")
 
         return None
 
@@ -219,91 +215,3 @@ class SwitchboardBase (DocBase, LogBase):
             expected_type=list,
             raise_invalid_type=True)
         return self.import_switches(declarations)
-
-    @classmethod
-    def add_specification_handler(cls,
-                                  callback: UpdateHandler,
-                                  switch_name: str,
-                                  ):
-        '''
-        Register handler to receive specification updates for the
-        specified switch name.
-        '''
-
-        cls.specification_handlers.setdefault(switch_name, []).append(callback)
-
-
-
-    @classmethod
-    def remove_specification_handler(cls,
-                                     callback: UpdateHandler,
-                                     switch_name: str,
-                                     ):
-        '''
-        Unregister handler from receiving specification updates for the
-        specified switch name.
-        '''
-
-        if handlers := cls.specification_handlers.get(switch_name):
-            try:
-                handlers.remove(callback)
-            except ValueError:
-                pass
-            else:
-                if not handlers:
-                    cls.specification_handlers.pop(switch_name, None)
-
-
-    @classmethod
-    def add_status_handler(cls,
-                           callback: UpdateHandler,
-                           switch_name: str,
-                           states: StateMask|StateSet,
-                           ):
-        '''
-        Register handler to to receive status updates matching the specified
-        switch name and state mask.
-        '''
-
-
-        handlers = cls.status_handlers.setdefault(switch_name, {})
-        for state in encodeStateSet(states):
-            handlers.setdefault(state, []).append(callback)
-
-
-    @classmethod
-    def remove_status_handler(cls,
-                              callback: UpdateHandler,
-                              switch_name: str,
-                              states: StateMask|StateSet,
-                              ):
-        '''
-        Unregister handler from receiving status updates matching the
-        specified switch name and state mask.
-        '''
-
-        if handlers := cls.status_handlers.setdefault(switch_name, {}):
-            for state in encodeStateSet(states):
-                if state_handlers := handlers.get(state):
-                    try:
-                        state_handlers.remove(callback)
-                    except ValueError:
-                        pass
-                    else:
-                        if not state_handlers:
-                            handlers.pop(state, None)
-
-            if not handlers:
-                cls.status_handlers.pop(switch_name, None)
-
-
-    def _invoke_specification_handler(self, switch: Switch, msg: Signal):
-        if handlers := self.specification_handlers.get(msg.mapping_key):
-            for handler in handlers:
-                safe_invoke_maybe_async(handler, args=(self, switch))
-
-    def _invoke_status_handler(self, switch: Switch, msg: Signal):
-        if handlers := self.status_handlers.get(msg.mapping_key):
-            if state_handlers := handlers.get(msg.status.current_state):
-                for handler in state_handlers:
-                    safe_invoke_maybe_async(handler, args=(self, switch))
