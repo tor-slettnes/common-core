@@ -1,5 +1,5 @@
 from ..protobuf import (
-    State, StateMask, StateSet,
+    Signal, Specification, Status, State, StateMask, StateSet,
     ExceptionHandling, InterceptorPhase, DependencyPolarity,
     encodeStateSet, encodeLocalization, encodeLocalizationMap,
 )

@@ -5,7 +5,7 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-from typing import Callable, Sequence, Mapping, Optional, Any
+from typing import Callable, Coroutine, Sequence, Mapping, Optional, Any
 
 import sys
 import traceback
@@ -85,7 +85,23 @@ def method_path(method: Callable) -> str:
     ))
 
 
-async_tasks = set()
+class AsyncTasks (set):
+    '''
+    Collection of asynchronous tasks. A reference is kept to tasks in order
+    to prevent them from disappearing mid-execution; see
+    <https://docs.python.org/3/library/asyncio-task.html#creating-tasks>.
+    '''
+
+    def add_coroutine(self, coroutine: Coroutine):
+        self.add(asyncio.create_task(coroutine))
+
+    def add(self, task: asyncio.Task):
+        task.add_done_callback(self.discard)
+        set.add(self, task)
+
+
+async_tasks = AsyncTasks()
+
 
 def invoke_async(
         function: Callable,
@@ -96,10 +112,7 @@ def invoke_async(
     task in order to prevent it from disappearing mid-execution; see
     <https://docs.python.org/3/library/asyncio-task.html#creating-tasks>.
     '''
-    result = function(*args, **kwargs)
-    task = asyncio.create_task(function(*args, **kwargs))
-    async_tasks.add(task)
-    task.add_done_callback(async_tasks.discard)
+    async_tasks.add_coroutine(function(*args, **kwargs))
 
 
 def invoke_maybe_async(
@@ -117,9 +130,7 @@ def invoke_maybe_async(
 
     result = function(*args, **kwargs)
     if asyncio.iscoroutine(result):
-        task = asyncio.create_task(result)
-        async_tasks.add(task)
-        task.add_done_callback(async_tasks.discard)
+        async_tasks.add_coroutine(result)
     else:
         return result
 
