@@ -6,4 +6,4 @@ from ..protobuf import (
 from .signals import switchboard_signals
 from .switch import Switch, InterceptorName, InterceptorMethod, SubscriptionCallback
 from .baseboard import SwitchboardBase
-from .observer import SwitchboardObserver, UpdateHandler
+from .observer import SwitchboardObserver, HandlerSpec, MAP_UPDATE

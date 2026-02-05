@@ -14,7 +14,7 @@ import asyncio
 ### Modules withn package
 from ...core.invocation import safe_invoke_maybe_async
 from ..utils import native_enum_from_proto
-from ..dissecter import dissect_message
+from ..dissecter import decode_message
 
 ### Generated from `.../protos/cc/protobuf/signal/signal.proto`
 from .signal_pb2 import Filter, MappingAction
@@ -473,7 +473,7 @@ class SignalStore:
             description = "Signal %s slot %s(%s)"%(
                 signal_name,
                 slot.__name__,
-                dissect_message(signal),
+                decode_message(signal),
             ))
 
     def _mapping_controls(self, signal: SignalMessage) -> tuple[MappingAction, str]:

@@ -39,8 +39,9 @@ class CachingSignalStore (SignalStore):
         SignalStore.init_signals(self)
 
         self._cache = {}
-        self._completion_deadline = None
+        self._cache_lock = threading.Lock()
         self._completion_event = threading.Event()
+        self._completion_deadline = None
 
 
     @override
@@ -210,8 +211,9 @@ class CachingSignalStore (SignalStore):
         Emit a cached (previously emitted) signal to a specific slot/receiver.
         '''
 
-        if self._cache:
-            for key, signal in self.get_cached_signal_messages(signal_name).items():
+        with self._cache_lock:
+            cached_map = self.get_cached_signal_messages(signal_name)
+            for key, signal in cached_map.items():
                 self._emit_to(signal_name, slot, signal)
 
 
@@ -238,8 +240,12 @@ class CachingSignalStore (SignalStore):
             yet not been received.
         '''
 
-        signal_map = self.get_cached_signal_messages(signal_name, wait_complete)
-        return {key: getattr(value, signal_name) for (key, value) in signal_map.items()}
+        with self._cache_lock:
+            cached_map = self.get_cached_signal_messages(signal_name, wait_complete)
+            return {
+                key: getattr(value, signal_name)
+                for (key, value) in cached_map.items()
+            }
 
 
     def get_cached_signal(self,
@@ -277,12 +283,13 @@ class CachingSignalStore (SignalStore):
             been received.
         '''
 
-        try:
-            signal = self.get_cached_signal_messages(signal_name, wait_complete)[mapping_key]
-        except KeyError:
-            return fallback() if isinstance(fallback, type) else fallback
-        else:
-            return getattr(signal, signal_name)
+        with self._cache_lock:
+            try:
+                signal = self.get_cached_signal_messages(signal_name, wait_complete)[mapping_key]
+            except KeyError:
+                return fallback() if isinstance(fallback, type) else fallback
+            else:
+                return getattr(signal, signal_name)
 
 
     def get_cached_signal_messages(self,
@@ -320,9 +327,10 @@ class CachingSignalStore (SignalStore):
 
 
     def _update_cache(self, signal_name, action, key, msg):
-        datamap = self._cache.setdefault(signal_name, {})
-        if action == MappingAction.REMOVAL:
-            datamap.pop(key, None)
-        else:
-            #datamap[key] = getattr(msg, signal_name)
-            datamap[key] = msg
+        with self._cache_lock:
+            datamap = self._cache.setdefault(signal_name, {})
+            if action == MappingAction.REMOVAL:
+                datamap.pop(key, None)
+            else:
+                #datamap[key] = getattr(msg, signal_name)
+                datamap[key] = msg

@@ -261,7 +261,7 @@ def dissecter_instance(function: Callable) -> MessageDissecter:
             return message_dissecter
 
 
-def dissect_response(function: Callable) -> Callable:
+def decode_response(function: Callable) -> Callable:
     '''
     Function decorator that will dissect a ProtoBuf return value into a
     native Python object.
@@ -274,7 +274,7 @@ def dissect_response(function: Callable) -> Callable:
 
     return wrapper
 
-def dissect_message(message: Message) -> object:
+def decode_message(message: Message) -> object:
     '''
     Dissect a message using the generic 
     '''
