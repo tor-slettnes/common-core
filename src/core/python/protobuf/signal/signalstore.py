@@ -252,8 +252,7 @@ class SignalStore:
         '''
         Connect a handler to _all_ signals in this store.
         '''
-
-        self.slots.setdefault(self.ALL_SIGNALS, []).append(slot)
+        self.connect_signal(self.ALL_SIGNALS, slot)
 
 
     def disconnect_all(self,
@@ -299,7 +298,9 @@ class SignalStore:
                 "Message type %s does not have a %r field" %
                 (self.signal_type.__name__, name))
 
-        self.slots.setdefault(name, []).append(slot)
+        slots = self.slots.setdefault(name, [])
+        if not slot in slots:
+            slots.append(slot)
 
 
     def disconnect_signal(self,

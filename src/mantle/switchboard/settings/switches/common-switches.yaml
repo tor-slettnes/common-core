@@ -92,6 +92,7 @@ switches:
           ACTIVE      : "Switchboard is ready"
           DEACTIVATING: "Switchboard is uninitializing"
           INACTIVE    : "Switchboard it not ready"
+    active: true
 
   # - name: "Ethernet:Link"
   #   localizations:

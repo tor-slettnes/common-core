@@ -1,9 +1,10 @@
-#!/usr/bin/echo Do not invoke directly.
-#===============================================================================
-## @file version.py
-## @brief Utility functions for data types from `version.proto`
-## @author Tor Slettnes
-#===============================================================================
+'''
+version.py - Utility functions for data types from `version.proto`
+'''
+
+__author__ = "Tor Slettnes"
+__docformat__ = "javadoc en"
+
 
 ### Standard Python modules
 import re

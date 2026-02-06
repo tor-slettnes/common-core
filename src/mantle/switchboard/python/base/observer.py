@@ -37,17 +37,18 @@ class SwitchboardObserver:
     '''
     Mix-in base class for capturing Switchboard updates via decorated methods.
 
+    In order to actually receive updates, the object that contains the decorated
+    methods must invoke `self.connect_switchboard_signals()`.
+
     **Example Usage:**
 
     ```python
-    from cc.protobuf.signal import MappingAction as Action
     from cc.platform.switchboard.base import SwitchboardObserver, Signal, State
 
 
     class MyClass (SwitchboardObserver):
 
-        def __init__ (self):
-            ### Connect to and start receiving switchboard signals
+        def __init__(self):
             self.connect_switchboard_signals()
 
         @SwitchboardObserver.specification_handler("MySwitch")
@@ -69,10 +70,8 @@ class SwitchboardObserver:
     SPEC_SIGNAL = 'specification'
     STATUS_SIGNAL = 'status'
 
-    _handler_map = {
-        SPEC_SIGNAL: [],
-        STATUS_SIGNAL: [],
-    }
+    _spec_handlers = []
+    _status_handlers = []
 
     @classmethod
     def specification_handler(cls,
@@ -80,13 +79,11 @@ class SwitchboardObserver:
                               actions: Set[MappingAction] = MAP_UPDATE):
         '''
         Generate a decorator function to register a handler for Switchboard
-        specification updates.  The decorated function may optionally be an
-        AsyncIO coroutine.
+        specification updates. The decorated method may optionally return an
+        AsyncIO coroutine (as with `async def`).
 
-
-        The decorated method must be a member of the SwitchboardObserver
-        subclass that inherits this method, and may optionally be an AsyncIO
-        coroutine.
+        In order to actually receive updates, the object that contains the
+        decorated methods must invoke `self.connect_switchboard_signals()`.
 
         **Inputs:**
 
@@ -117,7 +114,7 @@ class SwitchboardObserver:
                 actions = actions,
                 method = method)
 
-            cls._handler_map[cls.SPEC_SIGNAL].append(handler)
+            cls._spec_handlers.append(handler)
             return method
 
         return decorator
@@ -131,8 +128,11 @@ class SwitchboardObserver:
                        ):
         '''
         Generate a decorator function to register a handler for Switchboard
-        status updates.  The decorated function may optionally be an AsyncIO
-        coroutine.
+        status updates. The decorated method may optionally return an AsyncIO
+        coroutine (as with `async def`).
+
+        In order to actually receive updates, the object that contains the
+        decorated methods must invoke `self.connect_switchboard_signals()`.
 
         **Inputs:**
 
@@ -171,7 +171,7 @@ class SwitchboardObserver:
                 states = encodeStateSet(states),
                 method = method)
 
-            cls._handler_map[cls.STATUS_SIGNAL].append(handler)
+            cls._status_handlers.append(handler)
             return method
 
         return decorator
@@ -179,7 +179,6 @@ class SwitchboardObserver:
 
     def __del__(self):
         self.disconnect_switchboard_signals()
-
 
     def connect_switchboard_signals(self):
         '''
@@ -232,20 +231,19 @@ class SwitchboardObserver:
         update.
         '''
         return all((
-            msg.mapping_key,
-            handler.pattern.match(msg.mapping_key),
             msg.mapping_action in handler.actions,
             (handler.states is None) or (msg.status.current_state in handler.states),
+            handler.pattern.match(msg.mapping_key),
             getattr(type(self), handler.method.__name__, None) == handler.method,
         ))
 
     def _invoke_specification_handlers(self, msg: Signal):
-        for handler in self._handler_map[self.SPEC_SIGNAL]:
+        for handler in self._spec_handlers:
             if self._handler_matches(handler, msg):
                 safe_invoke_maybe_async(handler.method, args=(self, msg))
 
     def _invoke_status_handlers(self, msg: Signal):
-        for handler in self._handler_map[self.STATUS_SIGNAL]:
+        for handler in self._status_handlers:
             if self._handler_matches(handler, msg):
                 safe_invoke_maybe_async(handler.method, args=(self, msg))
 

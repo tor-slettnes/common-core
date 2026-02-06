@@ -1,5 +1,5 @@
 '''
-Package `cc.protobuf.version` - Structure version container
+Package `cc.protobuf.version` - Version structure container
 '''
 
 ### Generated from `.../protos/cc/protobuf/version/version.proto`
