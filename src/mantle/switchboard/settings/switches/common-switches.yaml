@@ -10,12 +10,11 @@
 ## downstream/client applications, such as high-level instrument control
 ## applications for each product.
 ##
-## Switches are listed in the "switches" section by name, following a subset
-## of the following generic template (where applicable, defaults are indicated):
+## Switches are mapped by name, following a subset of the following generic
+## template (where applicable, defaults are indicated):
 ##
 ## @code{.yaml}
-## switches:
-##   - name: "Switch Name"
+## "Switch Name":
 ##     active: false
 ##     localizations:
 ##       - en:
@@ -49,12 +48,11 @@
 ## The various texts may be used to compose user-facing or log messages. For instance, given this:
 ##
 ## @code{.yaml}
-## switches:
-##   - name: "Door:Open"
+## "Door:Open":
 ##     state texts:
 ##       ACTIVE: "the door is open"
 ##
-##   - name: "Door:Locked"
+## "Door:Locked":
 ##     target texts:
 ##       ON: "lock the door"
 ##     dependencies:
@@ -80,8 +78,7 @@
 ## Generally, a switch's specification (like its status) may be updated at runtime; for 
 ## instance it may add or remove dependencies based on various conditions.
 
-switches:
-  - name: "Switchboard:Ready"
+"Switchboard:Ready":
     localizations:
       - language: "en"
         description: "Switchboard service status"
@@ -94,7 +91,9 @@ switches:
           INACTIVE    : "Switchboard it not ready"
     active: true
 
-  # - name: "Ethernet:Link"
+
+
+  # "Ethernet:Link":
   #   localizations:
   #     - language: "en"
   #       description: "Ethernet status"
@@ -102,7 +101,7 @@ switches:
   #         ACTIVE   : "an Ethernet cable is plugged in"
   #         INACTIVE : "no Ethernet cable is plugged in"
 
-  # - name: "WiFi:Enabled"
+  # "WiFi:Enabled":
   #   localizations:
   #     - language: "en"
   #       description: "WiFi antenna"
@@ -111,7 +110,7 @@ switches:
   #         INACTIVE: "WiFi is disabled"
   #         FAILED  : "WiFi could not be enabled"
 
-  # - name: "WiFi:Carrier"
+  # "WiFi:Carrier":
   #   aliases: ["WiFi:Link"]
   #   localizations:
   #     - language: "en"
@@ -125,7 +124,7 @@ switches:
   #     - predecessor: "WiFi:Enabled"
   #       automatic: true
 
-  # - name: "Network:Link"
+  # "Network:Link":
   #   localizations:
   #     - language: "en"
   #       description: "Network connection"
@@ -140,7 +139,7 @@ switches:
   #       automatic: true
   #       sufficient: true
 
-  # - name: "Network:Active"
+  # "Network:Active":
   #   localizations:
   #     - language: "en"
   #       description: "Network status"
@@ -154,7 +153,7 @@ switches:
   #     - predecessor: "Network:Link"
   #       automatic: true
 
-  # - name: "Internet:Available"
+  # "Internet:Available":
   #   localizations:
   #     - language: "en"
   #       description: "Internet access"
@@ -168,7 +167,7 @@ switches:
   #     - predecessor: "Network:Active"
   #       automatic: true
 
-  # - name: "Cloud:Available"
+  # "Cloud:Available":
   #   localizations:
   #     - language: "en"
   #       description: "Cloud connection"

@@ -36,6 +36,15 @@ namespace core::status
     {
     }
 
+    Event::Event(const types::KeyValueMap &kvmap,
+                 Level default_level)
+        : Super(kvmap),
+          text_(kvmap.get(FIELD_TEXT).as_string()),
+          level_(kvmap.get(FIELD_LEVEL).convert_to<Level>(default_level)),
+          origin_(kvmap.get(FIELD_ORIGIN).as_string())
+    {
+    }
+
     Event &Event::operator=(Event &&other) noexcept
     {
         Super::operator=(std::move(other));

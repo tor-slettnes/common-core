@@ -97,6 +97,11 @@ namespace switchboard::grpc
             const switchboard::protobuf::ImportRequest *request,
             switchboard::protobuf::ImportResponse *reply) override;
 
+        ::grpc::Status ExportSwitches(
+            ::grpc::ServerContext *context,
+            const switchboard::protobuf::ExportRequest *request,
+            switchboard::protobuf::ExportResponse *reply) override;
+
         ::grpc::Status SetSpecification(
             ::grpc::ServerContext *context,
             const switchboard::protobuf::SetSpecificationRequest *request,

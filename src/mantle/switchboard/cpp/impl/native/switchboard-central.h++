@@ -43,14 +43,23 @@ namespace switchboard
             bool active = false) override;
 
         uint import_switches(
-            const core::types::ValueList &switches) override;
+            const core::types::KeyValueMap &switches,
+            bool replace_specifications,
+            bool replace_statuses) override;
+
+        core::types::KeyValueMap export_switches(
+            const std::optional<SwitchSelection> &selection,
+            bool include_specifications,
+            bool include_statuses) const override;
 
     private:
         void import_switch(
             const std::string &name,
-            const core::types::KeyValueMap &spec);
+            const core::types::KeyValueMap &declaration,
+            bool replace_specification,
+            bool replace_status);
 
-        static Specification import_spec(
+        static void import_spec(
             const SwitchRef &sw,
             const core::types::KeyValueMap &kvmap);
 
@@ -61,5 +70,24 @@ namespace switchboard
             const SwitchRef &sw,
             const std::string &predecessor_name,
             const core::types::KeyValueMap &dep_map);
+
+        static void import_status(
+            const SwitchRef &sw,
+            const core::types::KeyValueMap &status);
+
+        SwitchMap find_regex_matches(
+            const std::vector<std::string> &patterns) const;
+
+        SwitchMap find_glob_matches(
+            const std::vector<std::string> &patterns) const;
+
+        static core::types::KeyValueMap export_switch(
+            const SwitchRef &sw,
+            bool include_specification,
+            bool include_status);
+
+        static void export_status(
+            const SwitchRef &sw,
+            core::types::TaggedValueList *tvlist);
     };
 };  // namespace switchboard

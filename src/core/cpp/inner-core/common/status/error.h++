@@ -50,6 +50,8 @@ namespace core::status
               const dt::TimePoint &timepoint = {},
               const types::KeyValueMap &attributes = {});
 
+        Error(const types::KeyValueMap &kvmap);
+
         Error &operator=(Error &&other) noexcept;
         Error &operator=(const Error &other) noexcept;
         bool equivalent(const Event &other) const noexcept override;

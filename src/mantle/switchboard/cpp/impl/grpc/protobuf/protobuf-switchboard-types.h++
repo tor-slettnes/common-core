@@ -36,7 +36,7 @@ namespace cc::protobuf
                 cc::platform::switchboard::protobuf::SwitchIdentifier *msg);
 
     void decode(const cc::platform::switchboard::protobuf::SwitchIdentifier &msg,
-                std::string &name);
+                std::string *name);
 
     //==========================================================================
     // SwitchIdentifiers
@@ -52,6 +52,16 @@ namespace cc::protobuf
 
     void encode(const switchboard::SwitchSet &set,
                 cc::platform::switchboard::protobuf::SwitchIdentifiers *msg);
+
+    //==========================================================================
+    // SwitchSelection
+
+    void encode(const switchboard::SwitchSelection &pattern,
+                cc::platform::switchboard::protobuf::SwitchSelection *msg);
+
+    void decode(const cc::platform::switchboard::protobuf::SwitchSelection &msg,
+                switchboard::SwitchSelection *pattern);
+
 
     //==========================================================================
     // Specification

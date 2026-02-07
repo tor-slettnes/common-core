@@ -42,6 +42,8 @@ namespace core::types
         Loggable(Loggable &&src);
         Loggable(const Loggable &src);
 
+        Loggable(const types::KeyValueMap &kvmap);
+
         virtual ~Loggable() {}  // Hack to ensure class is polymorphic
 
         Loggable &operator=(Loggable &&other) noexcept;

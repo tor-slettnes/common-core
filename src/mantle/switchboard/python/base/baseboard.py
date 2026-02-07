@@ -8,7 +8,7 @@ __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
 from abc import abstractmethod
-from typing import Callable
+from typing import Callable, Sequence, Mapping
 from threading import Lock
 from logging import Logger
 import os
@@ -21,12 +21,13 @@ from cc.core.invocation import safe_invoke_maybe_async
 from cc.core.settingsstore import SettingsStore
 from cc.protobuf.dissecter import message_dissecter
 from cc.protobuf.signal import SignalStore, MappingAction
-from cc.protobuf.variant import PyValueList
+from cc.protobuf.variant import PyValueMap
 
 ### Modules within package
 from ..protobuf import (
     Signal, InterceptorUpdate,
     State, StateMask, StateSet, encodeStateSet,
+    SwitchSelectionInput,
 )
 from .switch import Switch
 from .signals import switchboard_signals
@@ -184,7 +185,9 @@ class SwitchboardBase (DocBase, LogBase):
 
     @abstractmethod
     def import_switches(self,
-                        declarations: PyValueList) -> int:
+                        declarations: PyValueMap,
+                        replace_specifications: bool = False,
+                        replace_statuses: bool = False) -> int:
         '''
         Import switches from a list of key/value declarations, like those
         found in settings files.
@@ -196,8 +199,40 @@ class SwitchboardBase (DocBase, LogBase):
             Number of switches that were added
         '''
 
+    @abstractmethod
+    def export_switches(self,
+                        selection: SwitchSelectionInput|None = None,
+                        include_specifications: bool = False,
+                        include_statuses: bool = True) -> Mapping[str, Mapping]:
+        '''
+        Export switches to dictionary, in a format that can subsequently be
+        imported with `import_switches()`.
+
+        @param selection
+            Switch name patterns to include in export.  These may be strings
+            representing individual switches, shell-style globbing expressions,
+            or compiled regular expression objects.
+
+        Shell-style globbing
+            syntax using '*', '?', or '[a-z]' ranges is supported. By default
+            all switches are exported.
+
+        @param include_specifications
+            Include switch specifications in export
+
+        @param include_statuses
+            Include current switch statuses in export
+
+        @return
+            A list of dictionaries, each representing one switch
+        '''
+
+
+
     def load_switches(self,
-                      filename: FilePathInput):
+                      filename: FilePathInput,
+                      replace_specifications: bool = False,
+                      replace_statuses: bool = False):
         '''
         Load switches from a settings file.  Valid file formats are those
         supported by `cc.core.settingsstore.SettingsStore`, including JSON,
@@ -205,13 +240,40 @@ class SwitchboardBase (DocBase, LogBase):
 
         The settings schema is described in `common-swiches.yaml`, normally
         installed under `/usr/share/common-core/settings/switches/`.
-        At the root of the settings tree, a `"switches"` key should map to a
-        list of declarations containing, at minimum, a `"name"` key.
+        At the root of the settings tree, switch names are mapped to
+        corresponding declarations.
         '''
 
-        store = SettingsStore(filename)
-        declarations = store.get_value(
-            'switches',
-            expected_type=list,
-            raise_invalid_type=True)
+        declarations = SettingsStore(filename)
         return self.import_switches(declarations)
+
+
+    @abstractmethod
+    def save_switches(self,
+                      filename: FilePathInput,
+                      selection: SwitchSelectionInput|None = None,
+                      include_specifications: bool = False,
+                      include_statuses: bool = True):
+
+        '''
+        Save switches to a JSON file.
+
+        @param filename
+            Output filename. Relative names are resolved with respect to the
+            default host-specific setting folder; see
+            `cc.core.settingsstore.SettingsStore` for details.
+
+        @param switch_names
+            A list of switches to include in export. By default all switches are
+            exported.
+
+        @param include_specifications
+            Include switch specifications in export
+
+        @param include_statuses
+            Include current switch statuses in export
+
+        The settings schema is described in `common-swiches.yaml`, normally
+        installed under `/usr/share/common-core/settings/switches/`.
+        This file can later be imported using `load_switches()`.
+        '''

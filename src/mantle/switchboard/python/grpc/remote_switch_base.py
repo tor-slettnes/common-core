@@ -10,7 +10,7 @@ from typing import Optional
 
 from cc.core.decorators import override
 from cc.protobuf.status import Error, encodeError
-from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
+from cc.protobuf.variant import PyValueMap, encodeKeyValueMap
 from cc.protobuf.wellknown import BoolValue
 
 from ..protobuf import (
@@ -195,7 +195,7 @@ class RemoteSwitchBase (Switch):
     def set_target(self,
                    target_state: Optional[State] = None,
                    error: Error|Exception|str|None = None,
-                   attributes: Optional[PyValueDict] = None,
+                   attributes: Optional[PyValueMap] = None,
                    clear_existing: bool = False,
                    with_interceptors: bool = True,
                    trigger_descendants: bool = True,
@@ -220,7 +220,7 @@ class RemoteSwitchBase (Switch):
 
     @override
     def set_attributes(self,
-                       attributes: Optional[PyValueDict] = None,
+                       attributes: Optional[PyValueMap] = None,
                        clear_existing: bool = False) -> SetAttributesResponse:
 
         req = SetAttributesRequest(

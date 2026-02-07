@@ -26,6 +26,12 @@ namespace core::types
         *this = std::move(src);
     }
 
+    Loggable::Loggable(const types::KeyValueMap &kvmap)
+        : timepoint_(kvmap.get(FIELD_TIME).as_timepoint()),
+          attributes_(kvmap.get(FIELD_ATTRIBUTES).as_kvmap())
+    {
+    }
+
     Loggable &Loggable::operator=(Loggable &&other) noexcept
     {
         std::swap(this->timepoint_, other.timepoint_);

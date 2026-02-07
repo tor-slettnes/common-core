@@ -105,11 +105,36 @@ namespace switchboard::dds
     }
 
     uint Proxy::import_switches(
-        const core::types::ValueList &switches)
+        const core::types::KeyValueMap &declarations,
+        bool replace_specifications,
+        bool replace_statuses)
     {
-        return this->client()->import_switches(
-            idl::encoded<CC::Variant::ValueList>(switches));
+        CC::Switchboard::ImportRequest req;
+        idl::encode(declarations, &req.declarations());
+        req.replace_specifications(replace_specifications);
+        req.replace_statuses(replace_statuses);
+        return this->client()->import_switches(req);
     }
+
+
+    core::types::KeyValueMap Proxy::export_switches(
+        const std::optional<SwitchSelection> &selection,
+        bool include_specifications,
+        bool include_statuses) const
+    {
+        CC::Switchboard::ExportRequest req;
+        if (selection)
+        {
+            req.selection(
+                idl::encoded<CC::Switchboard::SwitchSelection>(
+                    *selection));
+        }
+        req.include_specifications(include_specifications);
+        req.include_statuses(include_statuses);
+        return idl::decoded<core::types::KeyValueMap>(
+            this->client()->export_switches(req));
+    }
+
 
     bool Proxy::wait_for_service(
         const core::dt::Duration &timeout) const

@@ -27,29 +27,9 @@ namespace switchboard
 
     void Switch::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        auto deps = std::make_shared<core::types::ValueList>();
-        deps->reserve(this->dependencies().size());
-        for (const auto &[pred_name, dep] : this->dependencies())
-        {
-            deps->emplace_back(dep->as_tvlist());
-        }
-
-        auto icepts = std::make_shared<core::types::ValueList>();
-        icepts->reserve(this->interceptors().size());
-        for (const auto &[name, icept] : this->interceptors())
-        {
-            icepts->emplace_back(icept->as_tvlist());
-        }
-
-        tvlist->extend({
-            {"name", this->name()},
-            {"aliases", core::types::ValueList::create_from(this->aliases())},
-            {"primary", this->primary()},
-            {"dependencies", deps},
-            {"interceptors", icepts},
-            {"state", core::str::convert_from(this->state())},
-            {"active", this->active()},
-        });
+        tvlist->emplace_back("name", this->name());
+        this->spec()->to_tvlist(tvlist);
+        this->status()->to_tvlist(tvlist);
     }
 
     const SwitchName &Switch::name() const noexcept

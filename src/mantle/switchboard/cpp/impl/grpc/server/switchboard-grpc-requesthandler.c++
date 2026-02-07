@@ -111,8 +111,39 @@ namespace switchboard::grpc
         try
         {
             uint count = this->provider->import_switches(
-                cc::protobuf::decoded<core::types::ValueList>(request->declarations()));
+                cc::protobuf::decoded<core::types::KeyValueMap>(request->declarations()),
+                request->replace_specifications(),
+                request->replace_statuses());
             reply->set_import_count(count);
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
+    }
+
+    ::grpc::Status RequestHandler::ExportSwitches(
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::ExportRequest *request,
+        switchboard::protobuf::ExportResponse *reply)
+    {
+        try
+        {
+            std::optional<SwitchSelection> selection;
+            if (request->has_selection())
+            {
+                selection = cc::protobuf::decoded<SwitchSelection>(
+                    request->selection());
+            }
+
+            cc::protobuf::encode(
+                this->provider->export_switches(
+                    selection,
+                    request->include_specifications(),
+                    request->include_statuses()),
+                reply->mutable_declarations());
+
             return ::grpc::Status::OK;
         }
         catch (...)

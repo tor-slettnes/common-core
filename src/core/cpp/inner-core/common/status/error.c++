@@ -46,6 +46,14 @@ namespace core::status
     {
     }
 
+    Error::Error(const types::KeyValueMap &kvmap)
+        : Super(kvmap, Level::ERROR),
+          domain_(kvmap.get(FIELD_DOMAIN).convert_to<Domain>()),
+          code_(kvmap.get(FIELD_CODE).as_sint64()),
+          symbol_(kvmap.get(FIELD_SYMBOL).as_string())
+    {
+    }
+
     Error &Error::operator=(Error &&other) noexcept
     {
         Super::operator=(std::move(other));

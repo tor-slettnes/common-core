@@ -54,7 +54,15 @@ namespace switchboard::dds
             const SwitchName &switch_name,
             bool propagate = true) override;
 
-        uint import_switches(const core::types::ValueList &switches) override;
+        uint import_switches(
+            const core::types::KeyValueMap &declarations,
+            bool replace_specifications,
+            bool replace_statuses) override;
+
+        core::types::KeyValueMap export_switches(
+            const std::optional<SwitchSelection> &selection,
+            bool include_specifications,
+            bool include_statuses) const override;
 
     private:
         bool wait_for_service(const core::dt::Duration &timeout) const;

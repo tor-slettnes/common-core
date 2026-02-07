@@ -108,7 +108,18 @@ namespace switchboard
     }
 
     //==========================================================================
-    /// @struct Localization
+    // SwitchSelection
+
+    void SwitchSelection::to_tvlist(core::types::TaggedValueList *tvlist) const
+    {
+        tvlist->append("patterns",
+                       core::types::ValueList::create_shared_from(this->patterns));
+        tvlist->append("ix_regex", this->is_regex);
+    }
+
+
+    //==========================================================================
+    // Localization
 
     void Localization::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
@@ -141,7 +152,7 @@ namespace switchboard
     }
 
     //==========================================================================
-    /// @class Specification
+    // Specification
 
     bool operator==(const Specification &lhs, const Specification &rhs)
     {

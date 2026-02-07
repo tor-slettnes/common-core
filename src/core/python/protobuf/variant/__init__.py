@@ -12,5 +12,5 @@ from .variant import \
     PyValueList, ValueList, encodeValueList, decodeValueList, \
     PyTaggedValue, TaggedValue, encodeTaggedValue, decodeTaggedValue, \
     PyTaggedValueList, TaggedValueList, encodeTaggedValueList, decodeTaggedValueList, \
-    PyValueDict, KeyValueMap, encodeKeyValueMap, decodeKeyValueMap, keyValueMap, \
+    PyValueMap, KeyValueMap, encodeKeyValueMap, decodeKeyValueMap, keyValueMap, \
     is_tagged_list

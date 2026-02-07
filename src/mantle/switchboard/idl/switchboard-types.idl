@@ -77,6 +77,7 @@ module CC
 
         // Various size limits
         const uint32 MAX_SWITCHES = 1024;
+        const uint32 MAX_NAME_PATTERNS = 64;
         const uint32 MAX_ALIASES = 32;
         const uint32 MAX_DEPENDENCIES = 64;
         const uint32 MAX_INTERCEPTORS = 64;
@@ -93,7 +94,7 @@ module CC
         typedef string ParticipantName;
         typedef string LanguageCode;
         typedef string Text;
-        typedef sequence<SwitchName, MAX_ALIASES> AliasList;
+        typedef sequence<SwitchName, MAX_ALIASES> NameList;
 
 
 
@@ -337,7 +338,7 @@ module CC
             @optional
             boolean is_primary;
 
-            AliasList aliases;
+            NameList aliases;
 
             // Human readable descriptions of what the switch represents, keyed
             // by language code.. If not explicitly provided as part of an
@@ -404,6 +405,47 @@ module CC
             boolean propagate;
         };
 
+
+        struct ImportRequest
+        {
+            // Map of switch names to corresponding declarations, which should
+            // ahere to the same structure as in switch settings files.
+            Variant::TaggedValueList declarations;
+
+            // Replace existing specifications when importing
+            boolean replace_specifications;
+
+            // Replace existing statuses when importing
+            boolean replace_statuses;
+        };
+
+
+        struct SwitchSelection
+        {
+            // Switch name pattern.  Shell-style globbing using wildcards
+            // ('*' and '?')  or character ranges ('[A-Z]') are supported.
+            sequence<string, MAX_NAME_PATTERNS> patterns;
+
+            // The pattern is a regular expression.
+            boolean is_regex;
+        };
+
+
+        struct ExportRequest
+        {
+
+            // Switches to include in export.
+            // If not specified, export all switches.
+            @optional
+            SwitchSelection selection;
+
+            // Include switch specifications in export
+            boolean include_specifications;
+
+            // Include switch statuses in export
+            @default(TRUE)
+            boolean include_statuses;
+        };
 
         //======================================================================
         // Switch Status

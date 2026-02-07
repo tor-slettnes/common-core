@@ -12,7 +12,7 @@ from typing import Mapping, Optional
 ### Common Core modules
 from cc.core.decorators import override
 from cc.protobuf.status import Error
-from cc.protobuf.variant import PyValueDict
+from cc.protobuf.variant import PyValueMap
 
 ### Switchboard modules
 from ..protobuf import (
@@ -80,7 +80,7 @@ class RemoteSwitch (RemoteSwitchBase):
     def set_target(self,
                    target_state: Optional[State] = None,
                    error: Error|Exception|str|None = None,
-                   attributes: Optional[PyValueDict] = None,
+                   attributes: Optional[PyValueMap] = None,
                    clear_existing: bool = False,
                    with_interceptors: bool = True,
                    trigger_descendants: bool = True,
@@ -95,7 +95,7 @@ class RemoteSwitch (RemoteSwitchBase):
 
     @override
     def set_attributes(self,
-                       attributes: Optional[PyValueDict] = None,
+                       attributes: Optional[PyValueMap] = None,
                        clear_existing: bool = False):
 
         response = RemoteSwitchBase.set_attributes(**locals())

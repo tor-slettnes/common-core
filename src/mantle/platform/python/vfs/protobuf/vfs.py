@@ -13,7 +13,7 @@ from .vfs_types_pb2 import \
 from cc.protobuf.utils import native_enum_from_proto
 from cc.protobuf.wellknown import decodeTimestamp
 from cc.protobuf.variant import (
-    PyTaggedValueList,  PyValueDict,
+    PyTaggedValueList,  PyValueMap,
     encodeTaggedValueList, decodeKeyValueMap, encodeKeyValueMap,
 )
 from cc.core.types import OCT8
@@ -123,7 +123,7 @@ def pathRequest(path: VFSPathInput|None = None,
 
 def locateRequest(root: VFSPathInput,
                   filename_masks: str|Sequence[str],
-                  attribute_filters: PyValueDict | PyTaggedValueList,
+                  attribute_filters: PyValueMap | PyTaggedValueList,
                   with_attributes: bool,
                   include_hidden: bool,
                   ignore_case: bool):

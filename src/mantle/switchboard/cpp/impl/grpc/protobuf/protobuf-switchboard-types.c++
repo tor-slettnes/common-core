@@ -67,9 +67,9 @@ namespace cc::protobuf
         msg->set_switch_name(name);
     }
 
-    void decode(const cc::platform::switchboard::protobuf::SwitchIdentifier &msg, std::string &name)
+    void decode(const cc::platform::switchboard::protobuf::SwitchIdentifier &msg, std::string *name)
     {
-        name = msg.switch_name();
+        *name = msg.switch_name();
     }
 
     //==========================================================================
@@ -103,6 +103,24 @@ namespace cc::protobuf
             msg->add_switch_names(sw->name());
         }
     }
+
+    //==========================================================================
+    // SwitchSelection
+
+    void encode(const switchboard::SwitchSelection &patterns,
+                cc::platform::switchboard::protobuf::SwitchSelection *msg)
+    {
+        assign_repeated(patterns.patterns, msg->mutable_patterns());
+        msg->set_is_regex(patterns.is_regex);
+    }
+
+    void decode(const cc::platform::switchboard::protobuf::SwitchSelection &msg,
+                switchboard::SwitchSelection *patterns)
+    {
+        assign_to_vector(msg.patterns(), &patterns->patterns);
+        patterns->is_regex = msg.is_regex();
+    }
+
 
     //==========================================================================
     // Specification

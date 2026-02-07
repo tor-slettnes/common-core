@@ -44,6 +44,9 @@ namespace core::status
               const dt::TimePoint &timepoint = {},
               const types::KeyValueMap &attributes = {});
 
+        Event(const types::KeyValueMap &kvmap,
+              Level default_level = {});
+
         Event &operator=(Event &&other) noexcept;
         Event &operator=(const Event &other) noexcept;
         bool operator==(const Event &other) const noexcept;

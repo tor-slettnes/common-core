@@ -16,7 +16,7 @@ from cc.core.decorators import virtual
 from cc.core.docbase import DocBase
 from cc.core.invocation import safe_invoke
 from cc.protobuf.status import Error, encodeError
-from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
+from cc.protobuf.variant import PyValueMap, encodeKeyValueMap
 
 ### Swithboard modules
 from ..protobuf import (
@@ -811,7 +811,7 @@ class Switch (DocBase):
     def set_target(self,
                    target_state: Optional[State],
                    error: Error|Exception|str|None = None,
-                   attributes: Optional[PyValueDict] = None,
+                   attributes: Optional[PyValueMap] = None,
                    clear_existing: bool = False,
                    with_interceptors: bool = True,
                    trigger_descendants: bool = True,
@@ -877,7 +877,7 @@ class Switch (DocBase):
 
     def set_active(self,
                    active: bool,
-                   attributes: Optional[PyValueDict] = None,
+                   attributes: Optional[PyValueMap] = None,
                    clear_existing: bool = False,
                    with_interceptors: bool = True,
                    trigger_descendants: bool = True,
@@ -906,7 +906,7 @@ class Switch (DocBase):
 
     def set_error(self,
                   error: Error|Exception|str,
-                  attributes: Optional[PyValueDict] = None,
+                  attributes: Optional[PyValueMap] = None,
                   clear_existing: bool = False,
                   with_interceptors: bool = True,
                   trigger_descendants: bool = True,
@@ -930,7 +930,7 @@ class Switch (DocBase):
             on_error = on_error)
 
     def set_auto(self,
-                 attributes: Optional[PyValueDict] = None,
+                 attributes: Optional[PyValueMap] = None,
                  clear_existing: bool = False,
                  with_interceptors: bool = True,
                  trigger_descendants: bool = True,
@@ -956,7 +956,7 @@ class Switch (DocBase):
 
     @abstractmethod
     def set_attributes(self,
-                       attributes: Optional[PyValueDict] = None,
+                       attributes: Optional[PyValueMap] = None,
                        clear_existing: bool = False):
         '''
         Assign arbitrary key/value pairs to this switch.
@@ -964,7 +964,7 @@ class Switch (DocBase):
         '''
 
     @property
-    def attributes(self) -> PyValueDict:
+    def attributes(self) -> PyValueMap:
         '''
         Return a dictinoary of arbitrary key/value pairs currently associated
         with this switch.

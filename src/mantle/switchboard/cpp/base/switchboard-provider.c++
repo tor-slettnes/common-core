@@ -26,18 +26,40 @@ namespace switchboard
         return this->implementation_;
     }
 
-    bool Provider::load(const fs::path &filename)
+    bool Provider::load(const fs::path &filename,
+                        bool replace_specifications,
+                        bool replace_statuses)
     {
         core::SettingsStore store(filename);
+        uint count = this->import_switches(
+            store,
+            replace_specifications,
+            replace_statuses);
+        logf_info("Added %r switches from %r", count, filename);
+        return (count > 0);
+    }
 
-        if (auto switches = store.get(SETTINGS_SECTION_SWITCHES).get_valuelist_ptr())
+    bool Provider::save(const fs::path &filename,
+                        bool include_specifications,
+                        bool include_statuses)
+    {
+        core::SettingsStore store;
+        store.update(this->export_switches(
+            {},
+            include_specifications,
+            include_statuses));
+
+        try
         {
-            uint count = this->import_switches(*switches);
-            logf_info("Added %r switches from %r", count, filename);
-            return (count > 0);
+            store.save_to(filename);
+            return true;
         }
-        else
+        catch (...)
         {
+            logf_error(
+                "Failed so save switches to %r: %s",
+                filename,
+                std::current_exception());
             return false;
         }
     }
@@ -175,7 +197,6 @@ namespace switchboard
             return false;
         }
     }
-
 
     std::shared_ptr<Provider> provider;
 }  // namespace switchboard

@@ -142,6 +142,16 @@ namespace switchboard
             "folder(s).",
             std::bind(&Options::load_file, this));
 
+
+        this->add_command(
+            "save",
+            {"FILENAME[.json]"},
+            "Save switches from to specified JSON file. A '.json' suffix is "
+            "added if missing. The file is created in this client, and unless "
+            "its path is absolute, will be written to the machine-specific "
+            "folder folderd(s).",
+            std::bind(&Options::save_file, this));
+
         this->add_command(
             "add",
             {"SWITCH"},
@@ -455,6 +465,13 @@ namespace switchboard
         std::string filename = this->get_arg("FILENAME");
         this->provider->load(filename);
     }
+
+    void Options::save_file()
+    {
+        std::string filename = this->get_arg("FILENAME");
+        this->provider->save(filename);
+    }
+
 
     void Options::add_switch()
     {

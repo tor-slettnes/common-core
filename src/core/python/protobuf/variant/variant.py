@@ -25,7 +25,7 @@ from .variant_pb2 import Value, ValueList, \
 PyValue = None|bool|int|float|str|bytes|Duration|TimestampType|list|tuple|dict
 PyTaggedValue = tuple[str, PyValue]
 PyValueList = Sequence[PyValue]
-PyValueDict = Mapping[str, PyValue]
+PyValueMap = Mapping[str, PyValue]
 PyTaggedValueList = Sequence[PyTaggedValue]
 
 
@@ -216,7 +216,7 @@ def decodeTaggedValue(input: TaggedValue) -> PyTaggedValue:
 #-------------------------------------------------------------------------------
 # TaggedValueList
 
-def encodeTaggedValueList(input: PyTaggedValueList|PyValueDict,
+def encodeTaggedValueList(input: PyTaggedValueList|PyValueMap,
                           output: TaggedValueList|None = None) -> TaggedValueList:
     '''
     Encode a Python-native list of (tag, value) items to a
@@ -271,7 +271,7 @@ def decodeTaggedValueList(input: TaggedValueList|Sequence[Value]) -> PyTaggedVal
 #-------------------------------------------------------------------------------
 # KeyValueMap
 
-def encodeKeyValueMap(input: PyValueDict,
+def encodeKeyValueMap(input: PyValueMap,
                       output: KeyValueMap|None = None) -> KeyValueMap:
     '''
     Encode a `protobuf.variant.KeyValueMap` instance to a native Python
@@ -301,7 +301,7 @@ def encodeKeyValueMap(input: PyValueDict,
     return output
 
 
-def decodeKeyValueMap(input: KeyValueMap) -> PyValueDict:
+def decodeKeyValueMap(input: KeyValueMap) -> PyValueMap:
     '''
     Decode a `protobuf.variant.KeyValueMap` instance to a native Python dictionary.
     '''

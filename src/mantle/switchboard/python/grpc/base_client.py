@@ -8,6 +8,7 @@ __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
 from abc import abstractmethod
+import re
 import sys
 
 
@@ -15,14 +16,16 @@ import sys
 from cc.core.decorators import override, virtual
 from cc.core.invocation import method_path, invoke_maybe_async
 from cc.protobuf.status import encodeError
-from cc.protobuf.variant import PyValueList, encodeValueList
+from cc.protobuf.variant import PyValueMap, encodeKeyValueMap
 from cc.protobuf.wellknown import BoolValue
 from cc.messaging.grpc import SignalClient
 
 ### Switchboard modules
 from ..protobuf import (
-    AddSwitchRequest, RemoveSwitchRequest, ImportRequest, ImportResponse,
+    AddSwitchRequest, RemoveSwitchRequest,
+    ImportRequest, ImportResponse, ExportRequest, ExportResponse,
     State, InterceptorInvocation, InterceptorResult, InterceptorUpdate,
+    SwitchSelectionInput, encodeSwitchSelection
 )
 from ..base.baseboard import SwitchboardBase
 from .remote_switch import RemoteSwitch
@@ -116,12 +119,30 @@ class BaseClient (SwitchboardBase, SignalClient):
 
     @override
     def import_switches(self,
-                        declarations: PyValueList,
-                        ) -> ImportResponse:
+                        declarations: PyValueMap,
+                        replace_specifications: bool = False,
+                        replace_statuses: bool = False) -> ImportResponse:
 
         req = ImportRequest(
-            declarations = encodeValueList(declarations))
+            declarations = encodeKeyValueMap(declarations),
+            replace_specifications = replace_specifications,
+            replace_statuses = replace_statuses)
+
         return self.stub.ImportSwitches(req)
+
+    @override
+    def export_switches(self,
+                        selection: SwitchSelectionInput|None = None,
+                        include_specifications: bool = False,
+                        include_statuses: bool = True) -> ExportResponse:
+
+        req = ExportRequest(
+            selection = encodeSwitchSelection(selection),
+            include_specifications = include_specifications,
+            include_statuses = include_statuses)
+
+        return self.stub.ExportSwitches(req)
+
 
     @abstractmethod
     def init_intercept(self):

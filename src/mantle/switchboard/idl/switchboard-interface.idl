@@ -42,8 +42,11 @@ module CC
             // Remove an existing switch
             boolean remove_switch(RemoveSwitchRequest req);
 
-            // Import switches from a key/value list
-            uint32 import_switches(Variant::ValueList req);
+            // Import switches from a list of key/value maps
+            uint32 import_switches(ImportRequest req);
+
+            // Export switches to a list of key/value maps.
+            Variant::TaggedValueList export_switches(ExportRequest req);
 
             /// Update specifications on a switch
             boolean set_specification(SetSpecificationRequest req);

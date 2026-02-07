@@ -7,6 +7,7 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
+from typing import Sequence, Mapping
 from threading import Thread, Lock
 from queue import Queue
 import sys
@@ -14,13 +15,16 @@ import sys
 ### Common Core modules
 from cc.core.decorators import override, virtual
 from cc.core.invocation import method_path
+from cc.core.paths import FilePathInput
+from cc.core.settingsstore import SettingsStore
 from cc.protobuf.status import encodeError
-from cc.protobuf.variant import PyValueList, encodeValueList
+from cc.protobuf.variant import PyValueMap, decodeKeyValueMap
 
 ### Switchboard modules
 from ..protobuf import (
     State,
     InterceptorInvocation, InterceptorResult, InterceptorUpdate,
+    SwitchSelectionInput,
 )
 
 from .base_client import BaseClient
@@ -54,9 +58,38 @@ class Client (BaseClient):
 
     @override
     def import_switches(self,
-                        declarations: PyValueList) -> int:
+                        declarations: PyValueMap,
+                        replace_specifications: bool = False,
+                        replace_statuses: bool = False) -> int:
         response = BaseClient.import_switches(**locals())
         return response.import_count
+
+    @override
+    def export_switches(self,
+                        selection: SwitchSelectionInput|None = None,
+                        include_specifications: bool = False,
+                        include_statuses: bool = True) -> Mapping[str, Mapping]:
+        response = BaseClient.export_switches(**locals())
+        return decodeKeyValueMap(response.declarations)
+
+    @override
+    def save_switches(self,
+                      filename: FilePathInput,
+                      selection: SwitchSelectionInput|None = None,
+                      include_specifications: bool = False,
+                      include_statuses: bool = True):
+
+        declarations = self.export_switches(
+            selection,
+            include_specifications,
+            include_statuses,
+        )
+
+        store = SettingsStore()
+        store.update(declarations)
+        return store.save(filename)
+
+
 
     def init_intercept(self):
         self.interceptor_thread = None

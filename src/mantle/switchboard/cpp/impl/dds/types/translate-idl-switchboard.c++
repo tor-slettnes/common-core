@@ -52,16 +52,33 @@ namespace idl
 
     // CC::Switchboard::AliasList
     void encode(switchboard::SwitchAliases native,
-                CC::Switchboard::AliasList *idl)
+                CC::Switchboard::NameList *idl)
     {
         idl->insert(idl->end(), native.begin(), native.end());
     }
 
-    void decode(CC::Switchboard::AliasList idl,
+    void decode(CC::Switchboard::NameList idl,
                 switchboard::SwitchAliases *native)
     {
         native->insert(idl.begin(), idl.end());
     }
+
+
+    // CC::Switchboard::SwitchSelection
+    void encode(const switchboard::SwitchSelection &native,
+                CC::Switchboard::SwitchSelection *idl)
+    {
+        idl->patterns(native.patterns);
+        idl->is_regex(native.is_regex);
+    }
+
+    void decode(const CC::Switchboard::SwitchSelection &idl,
+                switchboard::SwitchSelection *native)
+    {
+        native->patterns = idl.patterns();
+        native->is_regex = idl.is_regex();
+    }
+
 
     // CC::Switchboard::Localization
     void encode(const switchboard::LanguageCode &language_code,

@@ -31,7 +31,14 @@ namespace switchboard
         virtual bool available() const = 0;
         virtual bool wait_ready() const = 0;
 
-        bool load(const fs::path &filename);
+        bool load(const fs::path &filename,
+                  bool replace_specifications = false,
+                  bool replace_statuses = false);
+
+        bool save(const fs::path &filename,
+                  bool include_specifications = false,
+                  bool include_statuses = true);
+
 
         /// @returns
         ///    Iterator to beginning of Switch map.
@@ -101,14 +108,37 @@ namespace switchboard
             bool propagate = true);
 
 
-        /// @brief Import switches from a list of key/value variants
-        /// @param[in] switches
-        ///     A variant list containing switch declarations in the form
-        ///     of key/value pairs matching those in a settings file.
+        /// @brief Import switches from a key/value map
+        /// @param[in] declarations
+        ///     Switch names mapped to corresponding declarations, structured
+        ///     like those those in a declarations file.
+        /// @param[in] include_specifications
+        ///     Parse and update switch specifications from the provided maps.
+        /// @param[in] include_specs
+        ///     Parse and update switch statuses from the provided maps.
 
         virtual uint import_switches(
-            const core::types::ValueList &switches) = 0;
+            const core::types::KeyValueMap &declarations,
+            bool replace_specifications = false,
+            bool replace_statuses = false) = 0;
 
+
+        /// @brief Export switches to a key/value map
+        /// @param[in] selection
+        ///     Switch name patterns to include in export.
+        ///     If not provided, all switches are exported.
+        /// @param[in] include_specifications
+        ///     Include specifications in the generated map
+        /// @param[in] include_status
+        ///     Include current switch statuses in generated map
+        /// @return
+        ///     Switch names mapped to corresponding declarations.
+        ///     These may subsequently be imported.
+
+        virtual core::types::KeyValueMap export_switches(
+            const std::optional<SwitchSelection> &selection,
+            bool include_specifications = false,
+            bool include_statuses = true) const = 0;
 
         // Operations pertaining to indivdiual switches
 

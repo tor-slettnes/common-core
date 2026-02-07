@@ -15,6 +15,9 @@
 #include "types/value.h++"
 #include "status/error.h++"
 
+#include <variant>
+#include <regex>
+
 namespace switchboard
 {
     define_log_scope("switch");
@@ -107,6 +110,7 @@ namespace switchboard
     std::ostream &operator<<(std::ostream &stream, DependencyPolarity eh);
     std::istream &operator>>(std::istream &stream, DependencyPolarity &eh);
 
+
     //==========================================================================
     // Type aliases
 
@@ -134,6 +138,18 @@ namespace switchboard
     using InterceptorName = std::string;
     using InterceptorRef = std::shared_ptr<Interceptor>;
     using InterceptorMap = core::types::ValueMap<InterceptorName, InterceptorRef>;
+
+    //==========================================================================
+    // SwitchSelection
+
+    struct SwitchSelection : public core::types::Listable
+    {
+        std::vector<std::string> patterns;
+        bool is_regex = false;
+
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+    };
+
 
     //==========================================================================
     // Localization

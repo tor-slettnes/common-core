@@ -42,6 +42,7 @@ namespace switchboard
         void get_interceptors();
         void get_specs();
         void load_file();
+        void save_file();
         void add_switch();
         void remove_switch();
         void add_alias();

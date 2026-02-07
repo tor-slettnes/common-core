@@ -105,11 +105,31 @@ namespace switchboard::grpc
     }
 
     uint Proxy::import_switches(
-        const core::types::ValueList &switches)
+        const core::types::KeyValueMap &declarations,
+        bool replace_specifications,
+        bool replace_statuses)
     {
         cc::platform::switchboard::protobuf::ImportRequest req;
-        cc::protobuf::encode(switches, req.mutable_declarations());
+        cc::protobuf::encode(declarations, req.mutable_declarations());
+        req.set_replace_specifications(replace_specifications);
+        req.set_replace_statuses(replace_statuses);
         return this->call_check(&Stub::ImportSwitches, req).import_count();
+    }
+
+    core::types::KeyValueMap Proxy::export_switches(
+        const std::optional<SwitchSelection> &selection,
+        bool include_specifications,
+        bool include_statuses) const
+    {
+        cc::platform::switchboard::protobuf::ExportRequest req;
+        if (selection)
+        {
+            cc::protobuf::encode(*selection, req.mutable_selection());
+        }
+        req.set_include_specifications(include_specifications);
+        req.set_include_statuses(include_statuses);
+        return cc::protobuf::decoded<core::types::KeyValueMap>(
+            this->call_check(&Stub::ExportSwitches, req).declarations());
     }
 
     void Proxy::on_spec_update(

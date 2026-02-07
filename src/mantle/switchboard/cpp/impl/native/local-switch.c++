@@ -178,10 +178,13 @@ namespace switchboard
         if (reevaluate || (this->state() != target_state))
         {
             bool proceed = true;
-            State transition_state = This::transition_state(target_state);
-            if (transition_state != STATE_UNSET)
+            if (State transition_state = This::transition_state(target_state))
             {
-                logf_debug("Switch %r entering transition state %r", this->name(), transition_state);
+                logf_debug(
+                    "Switch %r entering transition state %r",
+                    this->name(),
+                    transition_state);
+
                 if (this->state() == transition_state)
                 {
                     proceed = !this->pending();

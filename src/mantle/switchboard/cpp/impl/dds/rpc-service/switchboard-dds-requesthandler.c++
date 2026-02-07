@@ -60,10 +60,30 @@ namespace switchboard::dds
     }
 
     std::uint32_t RequestHandler::import_switches(
-        const CC::Variant::ValueList &req)
+        const CC::Switchboard::ImportRequest &req)
     {
         return this->provider->import_switches(
-            idl::decoded<core::types::ValueList>(req));
+            idl::decoded<core::types::KeyValueMap>(req.declarations()),
+            req.replace_specifications(),
+            req.replace_statuses());
+    }
+
+    CC::Variant::TaggedValueList RequestHandler::export_switches(
+        const CC::Switchboard::ExportRequest &req)
+    {
+        std::optional<SwitchSelection> opt_patterns;
+        if (auto *idl_patterns = req.selection().get_ptr())
+        {
+            opt_patterns = SwitchSelection();
+            opt_patterns->patterns = idl_patterns->patterns();
+            opt_patterns->is_regex = idl_patterns->is_regex();
+        }
+
+        return idl::encoded<CC::Variant::TaggedValueList>(
+            this->provider->export_switches(
+                opt_patterns,
+                req.include_specifications(),
+                req.include_statuses()));
     }
 
     bool RequestHandler::set_specification(
@@ -165,7 +185,7 @@ namespace switchboard::dds
         if (SwitchRef sw = this->provider->get_switch(req.switch_name(), true))
         {
             core::status::Error::ptr error;
-            if (auto error_data = req.error().get_ptr())
+            if (auto *error_data = req.error().get_ptr())
             {
                 idl::decode_shared(*error_data, &error);
             }
