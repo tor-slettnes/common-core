@@ -25,6 +25,11 @@ namespace switchboard
         // static constexpr StateMask DEFAULT_TRIGGERS = STATE_SETTLED;
         static const StateSet DEFAULT_TRIGGERS;
 
+        friend bool operator==(const Dependency &lhs, const Dependency &rhs);
+        friend bool operator!=(const Dependency &lhs, const Dependency &rhs);
+        friend bool operator==(const DependencyRef &lhs, const DependencyRef &rhs);
+        friend bool operator!=(const DependencyRef &lhs, const DependencyRef &rhs);
+
     protected:
         Dependency(
             const std::weak_ptr<Provider> &provider,
@@ -64,4 +69,5 @@ namespace switchboard
         bool hard_;
         bool sufficient_;
     };
+
 }  // namespace switchboard

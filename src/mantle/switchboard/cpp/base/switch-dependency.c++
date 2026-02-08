@@ -11,6 +11,33 @@
 namespace switchboard
 {
     //==========================================================================
+    // Operators
+
+    bool operator==(const Dependency &lhs, const Dependency &rhs)
+    {
+        return ((lhs.predecessor_name() == rhs.predecessor_name()) &&
+                (lhs.trigger_states() == rhs.trigger_states()) &&
+                (lhs.polarity() == rhs.polarity()) &&
+                (lhs.hard() == rhs.hard()) &&
+                (lhs.sufficient() == rhs.sufficient()));
+    }
+
+    bool operator!=(const Dependency &lhs, const Dependency &rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    bool operator==(const DependencyRef &lhs, const DependencyRef &rhs)
+    {
+        return core::types::equivalent(lhs, rhs);
+    }
+
+    bool operator!=(const DependencyRef &lhs, const DependencyRef &rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    //==========================================================================
     /// @class Dependency
 
     Dependency::Dependency(

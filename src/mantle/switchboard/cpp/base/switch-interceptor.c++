@@ -35,6 +35,36 @@ namespace switchboard
     }
 
     //==========================================================================
+    // Operators
+
+    bool operator==(const Interceptor &lhs, const Interceptor &rhs)
+    {
+        return ((lhs.name() == rhs.name()) &&
+                (lhs.owner() == rhs.owner()) &&
+                (lhs.state_transitions() == rhs.state_transitions()) &&
+                (lhs.phase() == rhs.phase()) &&
+                (lhs.asynchronous() == rhs.asynchronous()) &&
+                (lhs.rerun() == rhs.rerun()) &&
+                (lhs.on_cancel() == rhs.on_cancel()) &&
+                (lhs.on_error() == rhs.on_error()));
+    }
+
+    bool operator!=(const Interceptor &lhs, const Interceptor &rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    bool operator==(const InterceptorRef &lhs, const InterceptorRef &rhs)
+    {
+        return core::types::equivalent(lhs, rhs);
+    }
+
+    bool operator!=(const InterceptorRef &lhs, const InterceptorRef &rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    //==========================================================================
     // Interceptor
 
     Interceptor::Interceptor(const std::string &name,

@@ -45,6 +45,11 @@ namespace switchboard
     {
         using This = Interceptor;
 
+        friend bool operator==(const Interceptor &lhs, const Interceptor &rhs);
+        friend bool operator!=(const Interceptor &lhs, const Interceptor &rhs);
+        friend bool operator==(const InterceptorRef &lhs, const InterceptorRef &rhs);
+        friend bool operator!=(const InterceptorRef &lhs, const InterceptorRef &rhs);
+
     protected:
         Interceptor(const std::string &name,
                     const std::string &owner = {},
