@@ -189,20 +189,20 @@ namespace switchboard
 
         if (!this->interceptors.empty())
         {
-            core::types::TaggedValueList interceptors;
+            core::types::KeyValueMap interceptors;
             for (const auto &[name, spec] : this->interceptors)
             {
-                interceptors.append_if_value(name, spec->as_kvmap());
+                interceptors.insert_or_assign(name, spec->as_kvmap());
             }
             tvlist->append("interceptors", interceptors);
         }
 
         if (!this->dependencies.empty())
         {
-            core::types::TaggedValueList dependencies;
-            for (const auto &[predecessor, spec] : this->dependencies)
+            core::types::KeyValueMap dependencies;
+            for (const auto &[predecessor_name, spec] : this->dependencies)
             {
-                dependencies.append_if_value(predecessor, spec->as_kvmap());
+                dependencies.insert_or_assign(predecessor_name, spec->as_kvmap());
             }
             tvlist->append("dependencies", dependencies);
         }

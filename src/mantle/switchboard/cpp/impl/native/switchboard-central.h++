@@ -53,7 +53,7 @@ namespace switchboard
             bool include_statuses) const override;
 
     private:
-        void import_switch(
+        bool import_switch(
             const std::string &name,
             const core::types::KeyValueMap &declaration,
             bool replace_specification,

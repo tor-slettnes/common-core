@@ -27,6 +27,7 @@ namespace switchboard
                const std::shared_ptr<switchboard::Provider> &provider);
 
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        void to_stream(std::ostream &ostream) const override;
 
     public:
         // return a reference to the Switchboard provider to which this switch belongs

@@ -16,6 +16,7 @@ namespace switchboard
                          const Specification &spec)
     {
         logf_debug("%s: %s", sw_name, spec);
+
     }
 
     void log_status_update(core::signal::MappingAction change,

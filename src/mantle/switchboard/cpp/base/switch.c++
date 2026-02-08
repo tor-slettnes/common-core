@@ -22,7 +22,6 @@ namespace switchboard
           spec_ref(std::make_shared<Specification>()),
           status_ref(std::make_shared<Status>())
     {
-        logf_debug("Created switch %r", this->name());
     }
 
     void Switch::to_tvlist(core::types::TaggedValueList *tvlist) const
@@ -30,6 +29,15 @@ namespace switchboard
         tvlist->emplace_back("name", this->name());
         this->spec()->to_tvlist(tvlist);
         this->status()->to_tvlist(tvlist);
+    }
+
+    void Switch::to_stream(std::ostream &ostream) const
+    {
+        ostream << "Switch("
+                << std::quoted(this->name())
+                << ", "
+                << this->state()
+                << ")";
     }
 
     const SwitchName &Switch::name() const noexcept

@@ -28,7 +28,6 @@ namespace switchboard
     constexpr auto SETTING_SPEC_DEPENDENCIES = "dependencies";
     constexpr auto SETTING_SPEC_INTERCEPTORS = "interceptors";
     constexpr auto SETTING_SPEC_LOCALIZATIONS = "localizations";
-    constexpr auto SETTING_LOC_LANGUAGE = "language";
     constexpr auto SETTING_LOC_DESCRIPTION = "description";
     constexpr auto SETTING_LOC_STATE_TEXTS = "state texts";
     constexpr auto SETTING_LOC_ACTIVATE_TEXT = "activate text";
@@ -85,25 +84,54 @@ namespace switchboard
         {
             sw->set_spec({});
             sw->status()->active = active;
+            logf_info("Created switch: %s", sw->name());
             sw->notify_status();
         }
+
 
         return {sw, inserted};
     }
 
-    uint Central::import_switches(const core::types::KeyValueMap &switches,
+    uint Central::import_switches(const core::types::KeyValueMap &declarations,
                                   bool replace_specifications,
                                   bool replace_statuses)
     {
         uint count = 0;
-        for (const auto &[name, declaration]: switches)
+        for (const auto &[name, declaration] : declarations)
         {
-            this->import_switch(name,
-                                declaration.get_kvmap(),
-                                replace_specifications,
-                                replace_statuses);
-                count += 1;
+            count += this->import_switch(name,
+                                         declaration.get_kvmap(),
+                                         replace_specifications,
+                                         replace_statuses);
         }
+
+        // std::vector<std::pair<SwitchRef, bool>> switches;
+        // switches.reserve(declarations.size());
+
+        // for (const auto &[name, declaration] : declarations)
+        // {
+        //     bool default_active = declaration.get(SETTING_SWITCH_ACTIVE).as_bool();
+        //     const auto &[sw, inserted] = this->add_switch(name, default_active);
+        //     switches.emplace_back(sw, inserted);
+        //     count += inserted;
+        // }
+
+        // for (const auto &[sw, inserted]: switches)
+        // {
+        //     if (inserted || replace_specifications)
+        //     {
+        //         this->import_spec(sw, declarations.get(sw->name()).get_kvmap());
+        //     }
+        // }
+
+        // for (const auto &[sw, inserted]: switches)
+        // {
+        //     if (inserted || replace_statuses)
+        //     {
+        //         this->import_status(sw, declarations.get(sw->name()).get_kvmap());
+        //     }
+        // }
+
         return count;
     }
 
@@ -132,30 +160,26 @@ namespace switchboard
         return declarations;
     }
 
-    void Central::import_switch(
+    bool Central::import_switch(
         const std::string &name,
-        const core::types::KeyValueMap &spec,
+        const core::types::KeyValueMap &declaration,
         bool replace_specification,
         bool replace_status)
     {
-        bool default_active = spec.get(SETTING_SWITCH_ACTIVE).as_bool();
+        bool default_active = declaration.get(SETTING_SWITCH_ACTIVE).as_bool();
         auto [sw, inserted] = this->add_switch(name, default_active);
 
         if (inserted || replace_specification)
         {
-            this->import_spec(sw, spec);
+            this->import_spec(sw, declaration);
         }
 
         if (inserted || replace_status)
         {
-            this->import_status(sw, spec);
+            this->import_status(sw, declaration);
         }
 
-        logf_debug("Imported switch %s: specification=%b, status=%b, result=%s",
-                   name,
-                   inserted || replace_specification,
-                   inserted || replace_status,
-                   *sw);
+        return inserted;
     }
 
     void Central::import_spec(
@@ -172,37 +196,18 @@ namespace switchboard
 
         spec.aliases.insert(aliases.begin(), aliases.end());
 
-        for (const auto &localization : spec_map.get(SETTING_SPEC_LOCALIZATIONS).get_valuelist())
+        for (const auto &[language, decl] : spec_map.get(SETTING_SPEC_LOCALIZATIONS).get_kvmap())
         {
-            if (const auto &language_value = localization.get(SETTING_LOC_LANGUAGE))
-            {
-                spec.localizations.emplace(
-                    language_value.as_string(),
-                    This::import_localization(localization.get_kvmap()));
-            }
-            else
-            {
-                logf_notice("Ignoring switch %r localization without \"language\" key: %s",
-                            sw->name(),
-                            localization);
-            }
+            spec.localizations.emplace(
+                language,
+                This::import_localization(decl.get_kvmap()));
         }
 
-        for (const auto &dependency : spec_map.get(SETTING_SPEC_DEPENDENCIES).get_valuelist())
+        for (const auto &[predecessor, decl]: spec_map.get(SETTING_SPEC_DEPENDENCIES).get_kvmap())
         {
-            if (const auto &predecessor_value = dependency.get(SETTING_DEP_PREDECESSOR))
-            {
-                std::string predecessor = predecessor_value.as_string();
-                spec.dependencies.emplace(
-                    predecessor,
-                    This::import_dependency(sw, predecessor, dependency.get_kvmap()));
-            }
-            else
-            {
-                logf_notice("Ignoring switch %r dependency without \"predecessor\" key: %s",
-                            sw->name(),
-                            dependency);
-            }
+            spec.dependencies.emplace(
+                predecessor,
+                This::import_dependency(sw, predecessor, decl.get_kvmap()));
         }
 
         sw->set_spec(spec);
@@ -341,7 +346,7 @@ namespace switchboard
         SwitchMap matches;
         for (const auto &[name, sw] : this->switches)
         {
-            for (const std::string &pattern: patterns)
+            for (const std::string &pattern : patterns)
             {
                 if (core::platform::path->filename_match(pattern, name, true))
                 {

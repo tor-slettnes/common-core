@@ -1,11 +1,11 @@
 # -*- yaml -*-
 #==============================================================================
 ## @file common-switches.yaml
-## @brief Switch configuraion
+## @brief Common Switch declarations
 ## @author Tor Slettnes
 #==============================================================================
 
-## Specifications for global, product-agnostic switches provided by the
+## Declarations for global, product-agnostic switches provided by the
 ## switchboard application itself.  Additional switches maybe defined by
 ## downstream/client applications, such as high-level instrument control
 ## applications for each product.
@@ -32,7 +32,7 @@
 ##
 ##     primary: false
 ##     dependencies:
-##       - predecessor name: "Predecessor Switch Name"
+##       "Predecessor Switch Name":
 ##         trigger states: [ ACTIVE, INACTIIVE, FAILED ]
 ##         automatic: false
 ##         polarity: POSITIVE
@@ -80,22 +80,20 @@
 
 "Switchboard:Ready":
     localizations:
-      - language: "en"
+      "en":
         description: "Switchboard service status"
         activate text: "bring up Switchboard"
         deactivate text: "bring down Switchboard"
         state texts:
-          ACTIVATING  : "Switchboard is initializing"
           ACTIVE      : "Switchboard is ready"
-          DEACTIVATING: "Switchboard is uninitializing"
           INACTIVE    : "Switchboard it not ready"
-    active: true
+    state: ACTIVE
 
 
 
   # "Ethernet:Link":
   #   localizations:
-  #     - language: "en"
+  #     "en":
   #       description: "Ethernet status"
   #       state texts:
   #         ACTIVE   : "an Ethernet cable is plugged in"
@@ -103,7 +101,7 @@
 
   # "WiFi:Enabled":
   #   localizations:
-  #     - language: "en"
+  #     "en":
   #       description: "WiFi antenna"
   #       state texts:
   #         ACTIVE  : "WiFi is enabled"
@@ -113,7 +111,7 @@
   # "WiFi:Carrier":
   #   aliases: ["WiFi:Link"]
   #   localizations:
-  #     - language: "en"
+  #     "en":
   #       description: "WiFi signal"
   #       activate text: "connect to WiFi"
   #       deactivate text: "disconnect from WiFi"
@@ -121,27 +119,27 @@
   #         ACTIVE: "a WiFi access point is available"
   #         INACTIVE: "no WiFi access point is available"
   #   dependencies:
-  #     - predecessor: "WiFi:Enabled"
+  #     "WiFi:Enabled":
   #       automatic: true
 
   # "Network:Link":
   #   localizations:
-  #     - language: "en"
+  #     "en":
   #       description: "Network connection"
   #       state texts:
   #         ACTIVE: "a network connection exists"
   #         INACTIVE: "no network connection exists"
   #   dependencies:
-  #     - predecessor: "Ethernet:Link"
+  #     "Ethernet:Link":
   #       automatic: true
   #       sufficient: true
-  #     - predecessor: "WiFi:Link"
+  #     "WiFi:Link":
   #       automatic: true
   #       sufficient: true
 
   # "Network:Active":
   #   localizations:
-  #     - language: "en"
+  #     "en":
   #       description: "Network status"
   #       activate text: "activate network connection"
   #       deactivate_text: "deactivate network connection"
@@ -150,12 +148,12 @@
   #         INACTIVE: "no network connection is active"
   #         FAILED: "network connection could not be activated"
   #   dependencies:
-  #     - predecessor: "Network:Link"
+  #     "Network:Link":
   #       automatic: true
 
   # "Internet:Available":
   #   localizations:
-  #     - language: "en"
+  #     "en":
   #       description: "Internet access"
   #       activate_text: "connect to the Internet"
   #       deactivate_text: "disconnect from the Internet"
@@ -164,12 +162,12 @@
   #         INACTIVE: "no Internet connection is available"
   #         FAILED: "the instrument could not connect to the internet"
   #   dependencies:
-  #     - predecessor: "Network:Active"
+  #     "Network:Active":
   #       automatic: true
 
   # "Cloud:Available":
   #   localizations:
-  #     - language: "en"
+  #     "en":
   #       description: "Cloud connection"
   #       activate_text: "connect to the cloud"
   #       deactivate_text: "disconnect from the cloud"
@@ -178,5 +176,5 @@
   #         INACTIVE: "the instrument is not connected do the cloud"
   #         FAILED: "the instrument could not connect to the cloud"
   #   dependencies:
-  #     - predecessor: "Internet:Available"
+  #     "Internet:Available":
   #       automatic: true

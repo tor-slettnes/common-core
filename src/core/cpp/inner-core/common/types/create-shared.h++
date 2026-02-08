@@ -60,6 +60,7 @@ namespace core::types
     {
     };
 
+
     template <class T>
     bool equivalent(const std::shared_ptr<T> &lhs, const std::shared_ptr<T> &rhs);
 }  // namespace core::types
