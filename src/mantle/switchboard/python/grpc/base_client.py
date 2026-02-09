@@ -121,7 +121,7 @@ class BaseClient (SwitchboardBase, SignalClient):
     def import_switches(self,
                         declarations: PyValueMap,
                         replace_specifications: bool = False,
-                        replace_statuses: bool = False) -> ImportResponse:
+                        replace_statuses: bool = True) -> ImportResponse:
 
         req = ImportRequest(
             declarations = encodeKeyValueMap(declarations),

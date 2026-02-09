@@ -33,7 +33,7 @@ namespace switchboard
 
         bool load(const fs::path &filename,
                   bool replace_specifications = false,
-                  bool replace_statuses = false);
+                  bool replace_statuses = true);
 
         bool save(const fs::path &filename,
                   bool include_specifications = false,
@@ -120,7 +120,7 @@ namespace switchboard
         virtual uint import_switches(
             const core::types::KeyValueMap &declarations,
             bool replace_specifications = false,
-            bool replace_statuses = false) = 0;
+            bool replace_statuses = true) = 0;
 
 
         /// @brief Export switches to a key/value map

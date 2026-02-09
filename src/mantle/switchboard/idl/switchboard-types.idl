@@ -416,6 +416,7 @@ module CC
             boolean replace_specifications;
 
             // Replace existing statuses when importing
+            @default(TRUE)
             boolean replace_statuses;
         };
 

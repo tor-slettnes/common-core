@@ -112,8 +112,8 @@ namespace switchboard::grpc
         {
             uint count = this->provider->import_switches(
                 cc::protobuf::decoded<core::types::KeyValueMap>(request->declarations()),
-                request->replace_specifications(),
-                request->replace_statuses());
+                request->has_replace_specifications() ? request->replace_specifications() : false,
+                request->has_replace_statuses() ? request->replace_statuses() : true);
             reply->set_import_count(count);
             return ::grpc::Status::OK;
         }
@@ -137,13 +137,12 @@ namespace switchboard::grpc
                     request->selection());
             }
 
-            cc::protobuf::encode(
-                this->provider->export_switches(
-                    selection,
-                    request->include_specifications(),
-                    request->include_statuses()),
-                reply->mutable_declarations());
+            core::types::KeyValueMap declarations = this->provider->export_switches(
+                selection,
+                request->has_include_specifications() ? request->include_specifications() : false,
+                request->has_include_statuses() ? request->include_statuses() : true);
 
+            cc::protobuf::encode(declarations, reply->mutable_declarations());
             return ::grpc::Status::OK;
         }
         catch (...)
