@@ -98,6 +98,8 @@ class SwitchboardObserver:
         **Example:**
 
         ```python
+        from cc.platform.switchboard.protobuf import Signal
+
         @SwitchboardObserver.specification_handler('Devices:*:Online')
         async def on_device_online_spec(self, msg: Signal):
             device_name = ' '.join(msg.mapping_key.split(':')[1:-1])
@@ -151,7 +153,7 @@ class SwitchboardObserver:
         **Example:**
 
         ```python
-        from cc.platform.switchboard.protobuf import Signal
+        from cc.platform.switchboard.protobuf import Signal, State
 
         @SwitchboardObserver.status_handler('Device:*:Online', State.ACTIVE|State:INACTIVE)
         async def on_devices_online_status(self, msg: Signal):
@@ -231,10 +233,10 @@ class SwitchboardObserver:
         update.
         '''
         return all((
+            getattr(type(self), handler.method.__name__, None) == handler.method,
             msg.mapping_action in handler.actions,
             (handler.states is None) or (msg.status.current_state in handler.states),
             handler.pattern.match(msg.mapping_key),
-            getattr(type(self), handler.method.__name__, None) == handler.method,
         ))
 
     def _invoke_specification_handlers(self, msg: Signal):

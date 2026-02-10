@@ -48,6 +48,8 @@ class GenericClient (Base):
     ## settings, such as target host/port.
     service_name = None
 
+
+
     def __init__(self,
                  host: str|None = None,
                  wait_for_ready: bool = False,
@@ -99,8 +101,8 @@ class GenericClient (Base):
         self.wait_for_ready   = wait_for_ready
         self.intercept_errors = intercept_errors
         self.service_address  = self.realaddress(host, "host", "port", "localhost", 8080)
-        self.channel          = self.create_channel()
-        self.stub             = self.Stub(self.channel)
+        self._stub            = None
+        self._channel         = None
 
         #self.channel.subscribe(self._channelChange)
 
@@ -114,6 +116,18 @@ class GenericClient (Base):
     @property
     def host(self) -> str:
         return self._joinAddress(self.service_address)
+
+    @property
+    def stub(self) -> Stub:
+        if not self._stub:
+            self._stub = self.Stub(self.channel)
+        return self._stub
+
+    @property
+    def channel(self) -> grpc.Channel | grpc.aio.Channel:
+        if not self._channel:
+            self._channel = self.create_channel()
+        return self._channel
 
     def create_channel(self) -> grpc.Channel:
         # self._channel = grpc.insecure_channel(self.host)
