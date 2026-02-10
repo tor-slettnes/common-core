@@ -140,7 +140,7 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
                            expected_position: bool = True) -> Mapping[str, Status]:
 
         response = await RemoteSwitchBase.get_culprits(**locals())
-        return response.map
+        return decode_message(response).map
 
 
     @override
