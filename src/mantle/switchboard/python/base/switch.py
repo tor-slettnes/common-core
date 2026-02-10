@@ -982,3 +982,12 @@ class Switch (DocBase):
           Dictionary of conflicting upstream state names and their corresponding states.
         '''
 
+    @abstractmethod
+    def get_errors(self) -> Mapping[str, Error]:
+        '''
+        Obtain errors assigned to this switch and its ancestors.
+
+        @returns
+          Dictionary of errors assigned to this switch and its ancestors
+        '''
+

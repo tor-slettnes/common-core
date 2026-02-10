@@ -196,7 +196,7 @@ namespace cc::protobuf
         auto *map = msg->mutable_map();
         for (const auto &[id, status] : statusmap)
         {
-            encode(*status, &(*map)[id]);
+            encode_shared(status, &(*map)[id]);
         }
     }
 
@@ -209,6 +209,21 @@ namespace cc::protobuf
             decode_shared(protostatus, &(*statusmap)[id]);
         }
     }
+
+    //==========================================================================
+    // ErrorMap
+
+    void encode(const switchboard::ErrorMap &errormap,
+                cc::platform::switchboard::protobuf::ErrorMap *msg)
+    {
+        msg->clear_map();
+        auto *map = msg->mutable_map();
+        for (const auto &[sw, error]: errormap)
+        {
+            encode_shared(error, &(*map)[sw->name()]);
+        }
+    }
+
 
     //==========================================================================
     // Aliases

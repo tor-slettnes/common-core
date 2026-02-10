@@ -501,6 +501,8 @@ namespace switchboard::grpc
     {
         try
         {
+            SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
+            cc::protobuf::encode(sw->errors(), reply);
             return ::grpc::Status::OK;
         }
         catch (...)

@@ -16,6 +16,7 @@ from cc.protobuf.wellknown import BoolValue
 from ..protobuf import (
     Status, StatusMap, State, StateSet, encodeStateSet,
     InterceptorPhase, ExceptionHandling,
+    SwitchIdentifier,
     Specification, SetSpecificationRequest,
     Localization, LocalizationMap, Dependency, DependencyMap,
     AddDependencyRequest, RemoveDependencyRequest, DependencyPolarity,
@@ -240,4 +241,7 @@ class RemoteSwitchBase (Switch):
 
         return self.stub.GetCulprits(req)
 
-
+    @override
+    def get_errors(self) -> Mapping[str, Error]:
+        req = SwitchIdentifier(switch_name = self.name)
+        return self.stub.GetErrors(req)

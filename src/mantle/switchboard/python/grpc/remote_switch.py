@@ -12,6 +12,7 @@ from typing import Mapping, Optional
 ### Common Core modules
 from cc.core.decorators import override
 from cc.protobuf.status import Error
+from cc.protobuf.dissecter import decode_message
 from cc.protobuf.variant import PyValueMap
 
 ### Switchboard modules
@@ -106,7 +107,11 @@ class RemoteSwitch (RemoteSwitchBase):
     def get_culprits(self,
                      expected_position: bool = True) -> Mapping[str, Status]:
 
-        response = RemoteSwitchBase.et_culprits(**locals())
+        response = RemoteSwitchBase.get_culprits(**locals())
         return response.map
 
 
+    @override
+    def get_errors(self) -> Mapping[str, Error]:
+        response = RemoteSwitchBase.get_errors(**locals())
+        return decode_message(response).map

@@ -92,6 +92,13 @@ namespace cc::protobuf
                 switchboard::StatusMap *statusmap);
 
     //==========================================================================
+    // ErrorMap
+
+    void encode(const switchboard::ErrorMap &errormap,
+                cc::platform::switchboard::protobuf::ErrorMap *msg);
+
+
+    //==========================================================================
     // Aliases
 
     void encode(const std::set<switchboard::SwitchName> &aliases,

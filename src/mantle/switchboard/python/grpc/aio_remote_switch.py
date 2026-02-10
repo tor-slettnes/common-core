@@ -138,5 +138,11 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
     async def get_culprits(self,
                            expected_position: bool = True) -> Mapping[str, Status]:
 
-        response = await RemoteSwitchBase.et_culprits(**locals())
+        response = await RemoteSwitchBase.get_culprits(**locals())
         return response.map
+
+
+    @override
+    async def get_errors(self) -> Mapping[str, Error]:
+        response = await RemoteSwitchBase.get_errors(**locals())
+        return decode_message(response).map
