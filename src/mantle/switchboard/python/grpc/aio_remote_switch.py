@@ -14,6 +14,7 @@ import asyncio
 from cc.core.decorators import override
 from cc.core.invocation import safe_invoke_maybe_async
 from cc.protobuf.status import Error, encodeError
+from cc.protobuf.dissecter import decode_message
 from cc.protobuf.variant import PyValueMap, encodeKeyValueMap
 
 from ..protobuf import (
