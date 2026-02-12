@@ -12,7 +12,7 @@ set(LIB_DEPS
 )
 
 set(SOURCES
-  local-switch.c++
+  central-switch.c++
   switchboard-central.c++
 )
 

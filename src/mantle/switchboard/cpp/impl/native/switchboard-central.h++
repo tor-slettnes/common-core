@@ -16,7 +16,7 @@ namespace switchboard
     /// @class Central
     /// @brief Authoritative/central switchboard provider
     ///
-    /// This implements a collection of authoritative @sa LocalSwitch instances,
+    /// This implements a collection of authoritative @sa CentralSwitch instances,
     /// either loaded from a configuration file at startup or added later.
     ///
     /// Most likely there will be only one `Central` instance in a deployed

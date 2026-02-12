@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "switchboard-central.h++"
-#include "local-switch.h++"
+#include "central-switch.h++"
 #include "switch-dependency.h++"
 #include "platform/symbols.h++"
 #include "platform/path.h++"
@@ -76,7 +76,7 @@ namespace switchboard
         const SwitchName &switch_name,
         bool active)
     {
-        const auto &[sw, inserted] = this->find_or_insert<LocalSwitch>(
+        const auto &[sw, inserted] = this->find_or_insert<CentralSwitch>(
             switch_name,
             this->shared_from_this());
 

@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file local-switch.h++
-/// @brief Switch managed locally
+/// @file central-switch.h++
+/// @brief Authoritative switch managed by SwitchboardCentral
 /// @author Tor Slettnes
 //==============================================================================
 
@@ -17,13 +17,13 @@ namespace switchboard
     using ThreadMap = std::unordered_map<SwitchRef, std::thread>;
 
     //==========================================================================
-    /// @class LocalSwitch
+    /// @class CentralSwitch
     /// @brief Local Switch implementation, e.g. in Switchboard service or client.
 
-    class LocalSwitch : public Switch,
-                        public core::types::enable_create_shared<LocalSwitch>
+    class CentralSwitch : public Switch,
+                          public core::types::enable_create_shared<CentralSwitch>
     {
-        using This = LocalSwitch;
+        using This = CentralSwitch;
         using Super = Switch;
         friend class Central;
 
@@ -31,7 +31,7 @@ namespace switchboard
         using Switch::Switch;
 
     public:
-        ~LocalSwitch();
+        ~CentralSwitch();
 
         void set_spec(
             const Specification &spec) override;

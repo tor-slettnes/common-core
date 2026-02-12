@@ -1,23 +1,23 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file local-switch.c++
-/// @brief Switch managed locally
+/// @file central-switch.c++
+/// @brief Authoritative switch managed by SwitchboardCentral
 /// @author Tor Slettnes
 //==============================================================================
 
-#include "local-switch.h++"
+#include "central-switch.h++"
 #include "status/exceptions.h++"
 
 namespace switchboard
 {
 
-    LocalSwitch::~LocalSwitch()
+    CentralSwitch::~CentralSwitch()
     {
         signal_status.clear(this->name());
         signal_spec.clear(this->name());
     }
 
-    bool LocalSwitch::add_dependency(const DependencyRef &dependency,
+    bool CentralSwitch::add_dependency(const DependencyRef &dependency,
                                      bool allow_update,
                                      bool reevaluate)
     {
@@ -41,7 +41,7 @@ namespace switchboard
         }
     }
 
-    bool LocalSwitch::remove_dependency(SwitchName predecessor_name,
+    bool CentralSwitch::remove_dependency(SwitchName predecessor_name,
                                         bool reevaluate)
     {
         bool erased = this->spec_ref->dependencies.erase(predecessor_name);
@@ -56,7 +56,7 @@ namespace switchboard
         return erased;
     }
 
-    bool LocalSwitch::add_interceptor(const InterceptorRef &interceptor,
+    bool CentralSwitch::add_interceptor(const InterceptorRef &interceptor,
                                       bool immediate)
     {
         auto [it, inserted] = this->spec_ref->interceptors.insert_or_assign(
@@ -77,7 +77,7 @@ namespace switchboard
         return inserted;
     }
 
-    bool LocalSwitch::remove_interceptor(
+    bool CentralSwitch::remove_interceptor(
         const InterceptorName &id)
     {
         if (this->spec_ref->interceptors.erase(id))
@@ -91,14 +91,14 @@ namespace switchboard
         }
     }
 
-    void LocalSwitch::set_spec(
+    void CentralSwitch::set_spec(
         const Specification &spec)
     {
         Switch::set_spec(spec);
         this->notify_spec();
     }
 
-    void LocalSwitch::update_spec(
+    void CentralSwitch::update_spec(
         const std::optional<bool> &primary,
         const SwitchAliases &aliases,
         bool replace_aliases,
@@ -159,7 +159,7 @@ namespace switchboard
         }
     }
 
-    bool LocalSwitch::set_target(
+    bool CentralSwitch::set_target(
         State target_state,
         const core::status::Error::ptr &error,
         const core::types::KeyValueMap &attributes,
@@ -239,7 +239,7 @@ namespace switchboard
         return false;
     }
 
-    bool LocalSwitch::set_attributes(const core::types::KeyValueMap &attributes,
+    bool CentralSwitch::set_attributes(const core::types::KeyValueMap &attributes,
                                      bool clear_existing)
     {
         if (StatusRef status = this->status())
@@ -261,7 +261,7 @@ namespace switchboard
         }
     }
 
-    bool LocalSwitch::set_current_state(
+    bool CentralSwitch::set_current_state(
         State state,
         bool invoke_interceptors,
         bool trigger_descendants,
@@ -305,7 +305,7 @@ namespace switchboard
         return success;
     }
 
-    bool LocalSwitch::invoke_interceptors(
+    bool CentralSwitch::invoke_interceptors(
         State state,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -317,7 +317,7 @@ namespace switchboard
         return result;
     }
 
-    bool LocalSwitch::invoke_interceptors(
+    bool CentralSwitch::invoke_interceptors(
         State state,
         InterceptorPhase phase,
         ExceptionHandling on_cancel,
@@ -388,7 +388,7 @@ namespace switchboard
         }
     }
 
-    bool LocalSwitch::handle_cancel(
+    bool CentralSwitch::handle_cancel(
         const std::unordered_set<InterceptorRef> &interceptors,
         State state,
         ExceptionHandling eh)
@@ -417,7 +417,7 @@ namespace switchboard
                                       EH_IGNORE);
     }
 
-    bool LocalSwitch::handle_errors(
+    bool CentralSwitch::handle_errors(
         const std::unordered_map<InterceptorRef, std::exception_ptr> &exceptions,
         State state,
         ExceptionHandling eh)
@@ -459,7 +459,7 @@ namespace switchboard
         }
     }
 
-    bool LocalSwitch::handle_diversion(const core::status::Error::ptr &error,
+    bool CentralSwitch::handle_diversion(const core::status::Error::ptr &error,
                                        ExceptionHandling eh,
                                        ExceptionHandling eh_default)
     {
@@ -501,7 +501,7 @@ namespace switchboard
         }
     }
 
-    ThreadMap LocalSwitch::update_descendants(bool invoke_interceptors)
+    ThreadMap CentralSwitch::update_descendants(bool invoke_interceptors)
     {
         ThreadMap threads;
 
@@ -534,17 +534,17 @@ namespace switchboard
         return threads;
     }
 
-    void LocalSwitch::notify_spec()
+    void CentralSwitch::notify_spec()
     {
         signal_spec.emit_if_changed(this->name(), *this->spec());
     }
 
-    void LocalSwitch::notify_status()
+    void CentralSwitch::notify_status()
     {
         signal_status.emit_if_changed(this->name(), *this->status());
     }
 
-    State LocalSwitch::transition_state(State target_state) noexcept
+    State CentralSwitch::transition_state(State target_state) noexcept
     {
         switch (target_state)
         {
@@ -562,7 +562,7 @@ namespace switchboard
         }
     }
 
-    bool LocalSwitch::target_position(State state, bool current) noexcept
+    bool CentralSwitch::target_position(State state, bool current) noexcept
     {
         switch (state)
         {
