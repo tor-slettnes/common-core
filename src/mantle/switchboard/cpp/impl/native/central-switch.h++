@@ -72,7 +72,7 @@ namespace switchboard
             const core::types::KeyValueMap &attributes = {},
             bool clear_existing = false,
             bool invoke_interceptors = true,
-            bool trigger_descendants = true,
+            CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
             bool reevaluate = false,
             ExceptionHandling on_cancel = EH_DEFAULT,
             ExceptionHandling on_error = EH_DEFAULT) override;
@@ -84,8 +84,8 @@ namespace switchboard
     private:
         bool set_current_state(
             State state,
-            bool invoke_interceptors = false,
-            bool trigger_descendants = false,
+            bool invoke_interceptors,
+            CascadeStyle cascade_descendants = CascadeStyle::ASYNC,
             ExceptionHandling on_cancel = EH_DEFAULT,
             ExceptionHandling on_error = EH_DEFAULT);
 
@@ -116,7 +116,8 @@ namespace switchboard
             ExceptionHandling eh_default);
 
         ThreadMap update_descendants(
-            bool invoke_interceptors = true);
+            bool invoke_interceptors,
+            CascadeStyle cascade_descendants);
 
         void notify_spec();
         void notify_status();

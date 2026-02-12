@@ -409,13 +409,24 @@ namespace switchboard::grpc
         try
         {
             SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
+
+            bool invoke_interceptors =
+                request->has_invoke_interceptors()
+                    ? request->invoke_interceptors()
+                    : true;
+
+            CascadeStyle cascade_descendants =
+                request->has_cascade_descendants()
+                    ? cc::protobuf::decoded<switchboard::CascadeStyle>(request->cascade_descendants())
+                    : CascadeStyle::ASYNC;
+
             bool updated = sw->set_target(
                 cc::protobuf::decoded<switchboard::State>(request->target_state()),
                 cc::protobuf::decoded_shared<core::status::Error>(request->error()),
                 cc::protobuf::decoded<core::types::KeyValueMap>(request->attributes()),
                 request->clear_existing(),
-                request->with_interceptors(),
-                request->trigger_descendants(),
+                invoke_interceptors,
+                cascade_descendants,
                 request->reevaluate(),
                 cc::protobuf::decoded<switchboard::ExceptionHandling>(request->on_cancel()),
                 cc::protobuf::decoded<switchboard::ExceptionHandling>(request->on_error()));

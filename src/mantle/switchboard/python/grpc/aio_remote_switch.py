@@ -19,7 +19,7 @@ from cc.protobuf.variant import PyValueMap, encodeKeyValueMap
 
 from ..protobuf import (
     Specification, Status, State, StateSet,
-    ExceptionHandling,
+    ExceptionHandling, CascadeStyle,
     Dependency, DependencyPolarity,
     InterceptorResult,
 )
@@ -115,8 +115,8 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
                          error: Error|Exception|str|None = None,
                          attributes: Optional[PyValueMap] = None,
                          clear_existing: bool = False,
-                         with_interceptors: bool = True,
-                         trigger_descendants: bool = True,
+                         invoke_interceptors: bool = True,
+                         cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
                          reevaluate: bool = False,
                          on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
                          on_error: ExceptionHandling = ExceptionHandling.DEFAULT,

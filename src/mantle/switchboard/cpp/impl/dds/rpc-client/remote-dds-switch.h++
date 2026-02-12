@@ -69,7 +69,7 @@ namespace switchboard::dds
             const core::types::KeyValueMap &attributes = {},
             bool clear_existing = false,
             bool invoke_interceptors = true,
-            bool trigger_descendants = true,
+            CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
             bool reevaluate = false,
             ExceptionHandling on_cancel = EH_DEFAULT,
             ExceptionHandling on_error = EH_DEFAULT) override;

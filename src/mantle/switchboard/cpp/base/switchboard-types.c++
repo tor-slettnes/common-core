@@ -36,7 +36,7 @@ namespace switchboard
 
     StateSet::StateSet(StateMask mask)
     {
-        for (const auto &[state, _]: state_names)
+        for (const auto &[state, _] : state_names)
         {
             if ((state & mask) != 0x00)
             {
@@ -48,7 +48,7 @@ namespace switchboard
     std::uint32_t StateSet::to_mask() const
     {
         std::uint32_t mask = 0;
-        for (State state: *this)
+        for (State state : *this)
         {
             mask |= static_cast<std::uint32_t>(state);
         }
@@ -57,7 +57,7 @@ namespace switchboard
 
     void StateSet::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        for (const auto &[state, name]: state_names)
+        for (const auto &[state, name] : state_names)
         {
             if (this->count(state))
             {
@@ -65,7 +65,6 @@ namespace switchboard
             }
         }
     }
-
 
     //==========================================================================
     // Exception Handling
@@ -86,6 +85,29 @@ namespace switchboard
     std::istream &operator>>(std::istream &stream, ExceptionHandling &eh)
     {
         return exceptionhandling_names.from_stream(stream, &eh, EH_DEFAULT);
+    }
+
+    //==========================================================================
+    // CascadeStyle: How to propagate state change to descendants.
+
+    const core::types::SymbolMap<CascadeStyle> cascadestyle_names = {
+        {CascadeStyle::NONE, "NONE"},
+        {CascadeStyle::ASYNC, "ASYNC"},
+        {CascadeStyle::WAIT_DIRECT, "WAIT_DIRECT"},
+        {CascadeStyle::WAIT_RECURSIVE, "WAIT_RECURSIVE"},
+    };
+
+    std::ostream &operator<<(std::ostream &stream, CascadeStyle style)
+    {
+        return cascadestyle_names.to_stream(stream, style);
+    }
+
+    std::istream &operator>>(std::istream &stream, CascadeStyle &style)
+    {
+        return cascadestyle_names.from_stream(
+            stream,
+            &style,
+            CascadeStyle::DEFAULT);
     }
 
     //==========================================================================
@@ -116,7 +138,6 @@ namespace switchboard
                        core::types::ValueList::create_shared_from(this->patterns));
         tvlist->append("ix_regex", this->is_regex);
     }
-
 
     //==========================================================================
     // Localization

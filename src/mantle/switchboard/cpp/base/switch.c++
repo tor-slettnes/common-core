@@ -495,7 +495,7 @@ namespace switchboard
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
         bool invoke_interceptors,
-        bool trigger_descendants,
+        CascadeStyle cascade_descendants,
         bool reevaluate,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -506,7 +506,7 @@ namespace switchboard
             attributes,
             clear_existing,
             invoke_interceptors,
-            trigger_descendants,
+            cascade_descendants,
             reevaluate,
             on_cancel,
             on_error);
@@ -517,7 +517,7 @@ namespace switchboard
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
         bool invoke_interceptors,
-        bool trigger_descendants,
+        CascadeStyle cascade_descendants,
         bool reevaluate,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -528,7 +528,7 @@ namespace switchboard
             attributes,
             clear_existing,
             invoke_interceptors,
-            trigger_descendants,
+            cascade_descendants,
             reevaluate,
             on_cancel,
             on_error);
@@ -538,7 +538,7 @@ namespace switchboard
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
         bool invoke_interceptors,
-        bool trigger_descendants,
+        CascadeStyle cascade_descendants,
         bool reevaluate,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -549,7 +549,7 @@ namespace switchboard
             attributes,
             clear_existing,
             invoke_interceptors,
-            trigger_descendants,
+            cascade_descendants,
             reevaluate,
             on_cancel,
             on_error);

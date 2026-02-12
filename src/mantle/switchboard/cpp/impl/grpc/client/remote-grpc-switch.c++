@@ -125,8 +125,8 @@ namespace switchboard::grpc
         const core::status::Error::ptr &error,
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
-        bool with_interceptors,
-        bool trigger_descendants,
+        bool invoke_interceptors,
+        CascadeStyle cascade_descendants,
         bool reevaluate,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -145,8 +145,9 @@ namespace switchboard::grpc
         cc::protobuf::encode_shared(error, req.mutable_error());
         cc::protobuf::encode(attributes, req.mutable_attributes());
         req.set_clear_existing(clear_existing);
-        req.set_with_interceptors(with_interceptors);
-        req.set_trigger_descendants(trigger_descendants);
+        req.set_invoke_interceptors(invoke_interceptors);
+        req.set_cascade_descendants(
+            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::CascadeStyle>(cascade_descendants));
         req.set_reevaluate(reevaluate);
         req.set_on_cancel(
             cc::protobuf::encoded<::cc::platform::switchboard::protobuf::ExceptionHandling>(on_cancel));

@@ -126,9 +126,9 @@ class AsyncClient (AsyncMixIn, BaseClient):
             yield msg
 
     async def _intercept_runner(self):
-        with asyncio.TaskGroup() as tg:
-            async for request in self.interceptor_stream:
-                tg.create_task(self._on_interceptor_invocation(request))
+        tg = asyncio.TaskGroup()
+        async for request in self.interceptor_stream:
+            tg.create_task(self._on_interceptor_invocation(request))
 
     async def _on_interceptor_invocation(self, request: InterceptorInvocation):
         self.logger.info("%s switch %r interceptor %r starting" % (

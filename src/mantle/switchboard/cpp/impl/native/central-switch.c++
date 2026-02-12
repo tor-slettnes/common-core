@@ -165,7 +165,7 @@ namespace switchboard
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
         bool invoke_interceptors,
-        bool trigger_descendants,
+        CascadeStyle cascade_descendants,
         bool reevaluate,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -198,7 +198,7 @@ namespace switchboard
                     proceed = this->set_current_state(
                         transition_state,
                         invoke_interceptors,
-                        trigger_descendants,
+                        cascade_descendants,
                         on_cancel,
                         on_error);
                 }
@@ -226,7 +226,7 @@ namespace switchboard
                 return this->set_current_state(
                     target_state,
                     invoke_interceptors,
-                    trigger_descendants,
+                    cascade_descendants,
                     EH_IGNORE,
                     EH_IGNORE);
             }
@@ -264,18 +264,18 @@ namespace switchboard
     bool CentralSwitch::set_current_state(
         State state,
         bool invoke_interceptors,
-        bool trigger_descendants,
+        CascadeStyle cascade_descendants,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
     {
         bool success = true;
         Status &status = *this->status_ref;
 
-        logf_debug("Switch %r: state=%s, invoke_interceptors=%b, trigger_descendants=%b",
+        logf_debug("Switch %r: state=%s, invoke_interceptors=%b, cascade_descendants=%s",
                    this->name(),
                    state,
                    invoke_interceptors,
-                   trigger_descendants);
+                   cascade_descendants);
 
         status.current_state = state;
         if (Switch::is_settled(state))
@@ -290,18 +290,30 @@ namespace switchboard
             status.pending = false;
         }
 
-        if (trigger_descendants)
-        {
-            ThreadMap threads = this->update_descendants(invoke_interceptors);
+        this->notify_status();
 
-            // Ignore descendant resuls for now.
-            for (auto &[sw, thread] : threads)
+        if (cascade_descendants != CascadeStyle::NONE)
+        {
+            ThreadMap threads = this->update_descendants(
+                invoke_interceptors,
+                cascade_descendants);
+
+            if (cascade_descendants == CascadeStyle::ASYNC)
             {
-                thread.detach();
+                for (auto &[sw, thread] : threads)
+                {
+                    thread.detach();
+                }
+            }
+            else
+            {
+                for (auto &[sw, thread]: threads)
+                {
+                    thread.join();
+                }
             }
         }
 
-        this->notify_status();
         return success;
     }
 
@@ -483,7 +495,10 @@ namespace switchboard
             return false;
 
         case EH_ABORT:
-            this->set_current_state(this->settled_state());
+            this->set_current_state(
+                this->settled_state(), // state
+                false,                 // invoke_interceptors,
+                CascadeStyle::NONE);   // cascade_descendants,
             return true;
 
         case EH_REVERT:
@@ -493,7 +508,7 @@ namespace switchboard
                 {},                     // attributes
                 false,                  // clear_existing
                 true,                   // invoke_interceptors
-                false);                 // trigger_descendants
+                CascadeStyle::NONE);    // cascade_descendants
             return true;
 
         default:
@@ -501,9 +516,18 @@ namespace switchboard
         }
     }
 
-    ThreadMap CentralSwitch::update_descendants(bool invoke_interceptors)
+    ThreadMap CentralSwitch::update_descendants(
+        bool invoke_interceptors,
+        CascadeStyle cascade_descendants)
     {
         ThreadMap threads;
+
+        if (cascade_descendants == CascadeStyle::WAIT_DIRECT)
+        {
+            // If we are waiting only for these direct descentant, do not
+            // cascade further to indirect ones.
+            cascade_descendants = CascadeStyle::ASYNC;
+        }
 
         for (SwitchRef sw : this->get_successors())
         {
@@ -524,7 +548,7 @@ namespace switchboard
                                     core::types::KeyValueMap(),  // attributes
                                     false,                       // clear_existing
                                     invoke_interceptors,         // invoke_interceptors
-                                    true,                        // trigger_descendants
+                                    cascade_descendants,         // cascade_descendants
                                     false,                       // reevaluate
                                     EH_DEFAULT,                  // on_cancel
                                     EH_DEFAULT));                // on_error

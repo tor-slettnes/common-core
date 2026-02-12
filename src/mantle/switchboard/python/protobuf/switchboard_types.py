@@ -16,7 +16,7 @@ from cc.protobuf.utils import native_enum_from_proto
 
 ### Generated from `.../protos/cc/platform/switchboard/protobuf/switchboard_types.proto`
 from .switchboard_types_pb2 import (
-    DependencyPolarity, InterceptorPhase, ExceptionHandling, State,
+    DependencyPolarity, InterceptorPhase, ExceptionHandling, CascadeStyle, State,
     Localization, LocalizationMap, SwitchSelection,
 )
 
@@ -24,6 +24,7 @@ from .switchboard_types_pb2 import (
 DependencyPolarity = native_enum_from_proto(DependencyPolarity)
 InterceptorPhase   = native_enum_from_proto(InterceptorPhase)
 ExceptionHandling  = native_enum_from_proto(ExceptionHandling)
+CascadeStyle       = native_enum_from_proto(CascadeStyle)
 State              = native_enum_from_proto(State)
 StateMask          = int
 StateSet           = Set[State] | Sequence[State] | State | StateMask

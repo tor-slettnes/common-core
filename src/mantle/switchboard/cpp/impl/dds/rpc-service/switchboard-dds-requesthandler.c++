@@ -195,7 +195,7 @@ namespace switchboard::dds
                 idl::decoded<core::types::KeyValueMap>(req.attributes()),
                 req.clear_existing(),
                 req.invoke_interceptors(),
-                req.trigger_descendants(),
+                idl::decoded<switchboard::CascadeStyle>(req.cascade_descendants()),
                 req.reevaluate(),
                 idl::decoded<switchboard::ExceptionHandling>(req.on_cancel()),
                 idl::decoded<switchboard::ExceptionHandling>(req.on_error()));

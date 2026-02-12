@@ -66,8 +66,8 @@ namespace switchboard::grpc
             const core::status::Error::ptr &error = {},
             const core::types::KeyValueMap &attributes = {},
             bool clear_existing = false,
-            bool with_interceptors = true,
-            bool trigger_descendants = true,
+            bool invoke_interceptors = true,
+            CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
             bool reevaluate = false,
             ExceptionHandling on_cancel = ExceptionHandling::EH_DEFAULT,
             ExceptionHandling on_error = ExceptionHandling::EH_DEFAULT) override;

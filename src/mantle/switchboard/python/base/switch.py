@@ -24,7 +24,7 @@ from ..protobuf import (
     Dependency, DependencyMap, DependencyPolarity,
     Localization, LocalizationMap, encodeLocalization, encodeLocalizationMap,
     InterceptorSpec, InterceptorPhase,
-    ExceptionHandling,
+    ExceptionHandling, CascadeStyle,
     LanguageCode, LanguageChoice, LocalizationsInput,
 )
 
@@ -813,8 +813,8 @@ class Switch (DocBase):
                    error: Error|Exception|str|None = None,
                    attributes: Optional[PyValueMap] = None,
                    clear_existing: bool = False,
-                   with_interceptors: bool = True,
-                   trigger_descendants: bool = True,
+                   invoke_interceptors: bool = True,
+                   cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
                    reevaluate: bool = False,
                    on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
                    on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
@@ -843,16 +843,16 @@ class Switch (DocBase):
         @param clear_existing
             Clear all existing attributes before setting those provided here.
 
-        @param with_interceptors
+        @param invoke_interceptors
             Run interceptors associated with each state transition (e.g.  if
             `target_state` is ACTIVE, first run interceptors for ACTIVATING, and
             if successful, those for ACTIVE).
 
-        @param trigger_descendants
-            Propagate the update to the switch's descendants, starting with its
-            immediate successors. Only switches with dependencies that include
-            the corresponding state transition(s) of this switch are
-            reevaluated.
+        @param cascade_descendants
+            Whether and how to cascade the state change, if any, the switch's
+            descendants, starting with its immediate successors. Only switches
+            with dependencies that include the corresponding state transition(s)
+            of this switch are reevaluated.
 
         @param reevaluate
             Make the transition (via the applicable pending state) even if the
@@ -879,8 +879,8 @@ class Switch (DocBase):
                    active: bool,
                    attributes: Optional[PyValueMap] = None,
                    clear_existing: bool = False,
-                   with_interceptors: bool = True,
-                   trigger_descendants: bool = True,
+                   invoke_interceptors: bool = True,
+                   cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
                    reevaluate: bool = False,
                    on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
                    on_error: ExceptionHandling = ExceptionHandling.DEFAULT):
@@ -896,8 +896,8 @@ class Switch (DocBase):
             target_state = (State.INACTIVE, State.ACTIVE)[bool(active)],
             attributes = attributes,
             clear_existing = clear_existing,
-            with_interceptors = with_interceptors,
-            trigger_descendants = trigger_descendants,
+            invoke_interceptors = invoke_interceptors,
+            cascade_descendants = cascade_descendants,
             reevaluate = reevaluate,
             on_cancel = on_cancel,
             on_error = on_error)
@@ -908,8 +908,8 @@ class Switch (DocBase):
                   error: Error|Exception|str,
                   attributes: Optional[PyValueMap] = None,
                   clear_existing: bool = False,
-                  with_interceptors: bool = True,
-                  trigger_descendants: bool = True,
+                  invoke_interceptors: bool = True,
+                  cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
                   reevaluate: bool = True,
                   on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
                   on_error: ExceptionHandling = ExceptionHandling.DEFAULT):
@@ -923,8 +923,8 @@ class Switch (DocBase):
             error = encodeError(error),
             attributes = attributes,
             clear_existing = clear_existing,
-            with_interceptors = with_interceptors,
-            trigger_descendants = trigger_descendants,
+            invoke_interceptors = invoke_interceptors,
+            cascade_descendants = cascade_descendants,
             reevaluate = reevaluate,
             on_cancel = on_cancel,
             on_error = on_error)
@@ -932,8 +932,8 @@ class Switch (DocBase):
     def set_auto(self,
                  attributes: Optional[PyValueMap] = None,
                  clear_existing: bool = False,
-                 with_interceptors: bool = True,
-                 trigger_descendants: bool = True,
+                 invoke_interceptors: bool = True,
+                 cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
                  reevaluate: bool = False,
                  on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
                  on_error: ExceptionHandling = ExceptionHandling.DEFAULT):
@@ -947,8 +947,8 @@ class Switch (DocBase):
             target_state = None,
             attributes = attributes,
             clear_existing = clear_existing,
-            with_interceptors = with_interceptors,
-            trigger_descendants = trigger_descendants,
+            invoke_interceptors = invoke_interceptors,
+            cascade_descendants = cascade_descendants,
             reevaluate = reevaluate,
             on_cancel = on_cancel,
             on_error = on_error)

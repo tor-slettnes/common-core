@@ -124,7 +124,7 @@ namespace switchboard
         /// @param[in] spec
         ///    Specification
         /// @note
-        ///    This does not propagate changes to descendants.
+        ///    This does not cascade changes to descendants.
         virtual void set_spec(
             const Specification &spec);
 
@@ -296,9 +296,14 @@ namespace switchboard
         ///    Invoke any associated interceptors (handlers) after each
         ///    state transition.
         ///
-        /// @param[in] trigger_descendants
+        /// @param[in] cascade_descendants
         ///    Trigger any direct descendants to reevaluate their state based
         ///    on this and its other dependencies after each state transition.
+        ///
+        /// @param[in] descendant_propagation
+        ///    Whether and how to trigger descendants to reevaluate their state
+        ///    based on this and its other dependencies after the state change,
+        ///    if any.
         ///
         /// @param[in] reevaluate
         ///    Make the state transition even if the switch is already in the
@@ -330,8 +335,9 @@ namespace switchboard
         ///   (b) If `invoke_interceptors` is true, any corresponding interceptors
         ///       are invoked.
         ///
-        ///   (c) If `trigger_descendants` is true, any direct descendants with
-        ///       triggers for the corresponding state are reevaluated.
+        ///   (c) If `cascade_descendants` is anything other than
+        ///       `CascadeStyle::NONE`, any successors with dependency triggers
+        ///       for the corresponding state are reevaluated.
         ///
         ///   (d) Any interceptors that were invoked in step (b) whose
         ///       `asynchronous` flag is not set are allowed to complete.
@@ -348,6 +354,11 @@ namespace switchboard
         ///       the switch's current state is changed accordingly, and steps
         ///       (b) through (d) are repated for this state.
         ///
+        ///   (g) If `cascade_descendants` is either `CascadeStyle::WAIT_DIRECT`
+        ///       or `CascadeStyle::WAIT_RECURSIVE`, the call blocks until all
+        ///       direct or indirect descendants, respectively, have completed
+        ///       their updates in response to this state change.
+        ///
         ///   Thus, note that it is possible for the switch to be diverted to
         ///   `STATE_FAILED` either before or after the intended operation is
         ///   complete.
@@ -358,7 +369,7 @@ namespace switchboard
             const core::types::KeyValueMap &attributes = {},
             bool clear_existing = false,
             bool invoke_interceptors = true,
-            bool trigger_descendants = true,
+            CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
             bool reevaluate = false,
             ExceptionHandling on_cancel = EH_DEFAULT,
             ExceptionHandling on_error = EH_DEFAULT) = 0;
@@ -369,7 +380,7 @@ namespace switchboard
                         const core::types::KeyValueMap &attributes = {},
                         bool clear_existing = false,
                         bool invoke_interceptors = true,
-                        bool trigger_descendants = true,
+                        CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
                         bool reevaluate = false,
                         ExceptionHandling on_cancel = EH_DEFAULT,
                         ExceptionHandling on_error = EH_DEFAULT);
@@ -380,7 +391,7 @@ namespace switchboard
                        const core::types::KeyValueMap &attributes = {},
                        bool clear_existing = false,
                        bool invoke_interceptors = true,
-                       bool trigger_descendants = true,
+                       CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
                        bool reevaluate = false,
                        ExceptionHandling on_cancel = EH_DEFAULT,
                        ExceptionHandling on_error = EH_IGNORE);
@@ -391,7 +402,7 @@ namespace switchboard
         bool set_auto(const core::types::KeyValueMap &attributes = {},
                       bool clear_existing = false,
                       bool invoke_interceptors = true,
-                      bool trigger_descendants = true,
+                      CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
                       bool reevaluate = false,
                       ExceptionHandling on_cancel = EH_DEFAULT,
                       ExceptionHandling on_error = EH_DEFAULT);

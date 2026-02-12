@@ -8,7 +8,7 @@ from .switchboard_types import (
     TargetTextsInput,
     LocalizationInput, LocalizationsInput,
     encodeLocalization, encodeLocalizationMap,
-    DependencyPolarity, InterceptorPhase, ExceptionHandling,
+    DependencyPolarity, InterceptorPhase, ExceptionHandling, CascadeStyle,
     State, StateMask, StateSet, encodeStateSet,
     SwitchNamePattern, SwitchSelectionInput, encodeSwitchSelection,
 )

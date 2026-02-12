@@ -455,6 +455,21 @@ namespace cc::protobuf
     }
 
     //==========================================================================
+    // CascadeStyle
+
+    void encode(switchboard::CascadeStyle native,
+                cc::platform::switchboard::protobuf::CascadeStyle *proto)
+    {
+        *proto = static_cast<cc::platform::switchboard::protobuf::CascadeStyle>(native);
+    }
+
+    void decode(cc::platform::switchboard::protobuf::CascadeStyle proto,
+                switchboard::CascadeStyle *native)
+    {
+        *native = static_cast<switchboard::CascadeStyle>(proto);
+    }
+
+    //==========================================================================
     // SwitchInfo
 
     void encode(const switchboard::Switch &sw,

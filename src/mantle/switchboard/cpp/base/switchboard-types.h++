@@ -77,7 +77,6 @@ namespace switchboard
     const StateSet PENDING_STATES = {STATE_ACTIVATING, STATE_DEACTIVATING, STATE_FAILING};
     const StateSet ACTIVATION_STATES = {STATE_ACTIVATING, STATE_DEACTIVATING};
 
-
     core::types::ValueList operator<<(core::types::ValueList &list, const StateSet StateSet);
 
     //==========================================================================
@@ -110,6 +109,22 @@ namespace switchboard
     std::ostream &operator<<(std::ostream &stream, DependencyPolarity eh);
     std::istream &operator>>(std::istream &stream, DependencyPolarity &eh);
 
+    //==========================================================================
+    // Cascading: How to propagate state change to descendants.
+
+    enum class CascadeStyle
+    {
+        NONE,            // Do not cascade state change
+        ASYNC,           // Update descendant states asynchronously
+        WAIT_DIRECT,     // Wait for direct successors to complete update
+        WAIT_RECURSIVE,  // Wait for all descendants to compllete update
+
+        DEFAULT = ASYNC,
+    };
+
+    extern const core::types::SymbolMap<CascadeStyle> cascadestyle_names;
+    std::ostream &operator<<(std::ostream &stream, CascadeStyle style);
+    std::istream &operator>>(std::istream &stream, CascadeStyle &style);
 
     //==========================================================================
     // Type aliases
@@ -149,7 +164,6 @@ namespace switchboard
 
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
-
 
     //==========================================================================
     // Localization

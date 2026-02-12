@@ -194,6 +194,15 @@ namespace cc::protobuf
                 switchboard::ExceptionHandling *native);
 
     //==========================================================================
+    // CascadeStyle
+
+    void encode(switchboard::CascadeStyle native,
+                cc::platform::switchboard::protobuf::CascadeStyle *proto);
+
+    void decode(cc::platform::switchboard::protobuf::CascadeStyle proto,
+                switchboard::CascadeStyle *native);
+
+    //==========================================================================
     // SwitchInfo
 
     void encode(const switchboard::Switch &sw,
