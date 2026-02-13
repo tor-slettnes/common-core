@@ -114,63 +114,6 @@ class RemoteSwitchBase (Switch):
 
 
     @override
-    def add_interceptor(self,
-                        interceptor_name: str,
-                        state_transitions: StateSet,
-                        callback: InterceptorMethod,
-                        phase: InterceptorPhase = InterceptorPhase.NORMAL,
-                        asynchronous: bool = False,
-                        rerun: bool = False,
-                        on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
-                        on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
-                        immediate: bool = False,
-                        ):
-
-        is_new = Switch.add_interceptor(**locals())
-
-        if client := self.client():
-            spec = InterceptorSpec(
-                state_transitions = encodeStateSet(state_transitions),
-                asynchronous = asynchronous,
-                phase = phase,
-                rerun = rerun,
-                on_cancel = on_cancel,
-                on_error = on_error,
-            )
-
-            registration = InterceptorRegistration(
-                spec = spec,
-                immediate = immediate,
-            )
-
-            update = InterceptorUpdate(
-                switch_name = self.name,
-                interceptor_name = interceptor_name,
-                registration = registration,
-            )
-
-            client.enqueue_interceptor_update(update)
-
-        return is_new
-
-
-    @override
-    def remove_interceptor(self,
-                           interceptor_name: str,
-                           ) -> bool:
-
-        if client := self.client():
-            update = InterceptorUpdate(
-                switch_name = self.name,
-                interceptor_name = interceptor_name,
-                deregistration = InterceptorDeregistration(),
-            )
-            client.enqueue_interceptor_update(update)
-
-        return Switch.remove_interceptor(self, interceptor_name)
-
-
-    @override
     def invoke_interceptor(self,
                            interceptor_name : str,
                            state : Optional[int] = None
@@ -183,14 +126,6 @@ class RemoteSwitchBase (Switch):
 
         return self.stub.InvokeInterceptor(req)
 
-
-    @override
-    def on_intercept(self,
-                     interceptor_name : str,
-                     state : State):
-
-        interceptor = self.interceptor_methods[interceptor_name]
-        return interceptor(self, interceptor_name, state)
 
     @override
     def set_target(self,

@@ -3,7 +3,31 @@ from ..protobuf import (
     ExceptionHandling, InterceptorPhase, DependencyPolarity,
     encodeStateSet, encodeLocalization, encodeLocalizationMap,
 )
-from .signals import switchboard_signals
-from .switch import Switch, InterceptorName, InterceptorMethod, SubscriptionCallback
-from .baseboard import SwitchboardBase
-from .observer import SwitchboardObserver, HandlerSpec, MAP_UPDATE
+
+from .signals import (
+    switchboard_signals,
+)
+
+from .switch import (
+    Switch,
+    InterceptorName,
+    InterceptorMethod,
+    SwitchUpdateSubscriber,
+)
+
+from .baseboard import (
+    SwitchboardBase,
+)
+
+from .observer import (
+    SwitchboardObserver,
+    HandlerSpec,
+    MAP_UPDATE,
+)
+
+from .subscriber import (
+    DecoratedInterceptorSpec,
+    SwitchboardSubscriber,
+)
+
+

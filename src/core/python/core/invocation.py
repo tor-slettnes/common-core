@@ -12,6 +12,7 @@ import traceback
 import inspect
 import logging
 import asyncio
+import multiprocessing
 
 def check_type(argument: object,
                expected_type: type):
@@ -73,16 +74,29 @@ def caller_frame(hops: int = 1):
     return stack[hops+1]
 
 
+def process_name() -> str:
+    '''
+    Return the name of the currently runningn process
+    '''
+    return multiprocessing.current_process().name
+
+
+def main_module_path() -> str:
+    '''
+    Return the fully qualified name of the main module
+    '''
+    try:
+        return sys.modules['__main__'].__spec__.name
+    except (KeyError, AttributeError):
+        return ''
+
+
 def method_path(method: Callable) -> str:
     '''
-    Obtain code context (module, class, method name) of the provided
-    instance method.
+    Obtain code context (module, qualified name) of the provided method.
     '''
-    return '.'.join((
-        method.__module__,
-        type(method.__self__).__name__,
-        interceptor.__name__,
-    ))
+
+    return '.'.join((method.__module__, method.__qualname__))
 
 
 class AsyncTasks (set):

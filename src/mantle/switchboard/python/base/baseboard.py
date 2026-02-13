@@ -25,7 +25,9 @@ from cc.protobuf.variant import PyValueMap
 
 ### Modules within package
 from ..protobuf import (
-    Signal, InterceptorUpdate,
+    Signal,
+    InterceptorRegistration, InterceptorDeregistration,
+    InterceptorInvocation, InterceptorResult,
     State, StateMask, StateSet, encodeStateSet,
     SwitchSelectionInput,
 )
@@ -37,14 +39,16 @@ class SwitchboardBase (DocBase, LogBase):
     Switchboard abstract base
     '''
 
-    signal_store = switchboard_signals
     SPEC_SIGNAL = 'specification'
     STATUS_SIGNAL = 'status'
+    signal_store = switchboard_signals
+    initialized = False
 
 
     def __init__(self, logger: Logger|None = None):
         LogBase.__init__(self, logger = logger)
 
+        self.init_intercept()
         self.switches = {}
         self._switch_lock = Lock()
         self._connect_signals()
@@ -97,6 +101,15 @@ class SwitchboardBase (DocBase, LogBase):
                         switch = self.switches.pop(switch_name, None)
 
         return switch
+
+
+    @abstractmethod
+    def initialize(self):
+        self.initialized = True
+
+    @abstractmethod
+    def deinitialize(self):
+        self.initialized = False
 
 
     @abstractmethod
@@ -228,7 +241,6 @@ class SwitchboardBase (DocBase, LogBase):
         '''
 
 
-
     def load_switches(self,
                       filename: FilePathInput,
                       replace_specifications: bool = False,
@@ -280,3 +292,51 @@ class SwitchboardBase (DocBase, LogBase):
         installed under `/usr/share/common-core/settings/switches/`.
         This file can later be imported using `load_switches()`.
         '''
+
+
+    @abstractmethod
+    def init_intercept(self):
+        '''
+        Initialize interception handling.
+        '''
+        self.interceptor_methods = {}
+
+
+    @abstractmethod
+    def register_interceptor(self,
+                             switch_name: str,
+                             interceptor_name: str,
+                             registration: InterceptorRegistration,
+                             method: Callable[[InterceptorInvocation], None],
+                             ) -> bool:
+        '''
+        Register an interceptor method to be invoked whenever the specified
+        switch changes state.
+
+        @return
+            True if the interceptor was added
+        '''
+        mapping_key = switch_name, interceptor_name
+        is_new = mapping_key not in self.interceptor_methods
+        self.interceptor_methods[mapping_key] = method
+        return is_new
+
+
+    @abstractmethod
+    def deregister_interceptor(self,
+                               switch_name: str,
+                               interceptor_name: str,
+                               ) -> bool:
+        '''
+        Unregister an previusly registered interceptor method.
+
+        @return
+            True if the interceptor existed and was removed.
+        '''
+
+        try:
+            del self.interceptor_method[switch_name, interceptor_name]
+        except KeyError:
+            return False
+        else:
+            return True

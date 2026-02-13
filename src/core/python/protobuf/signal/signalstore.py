@@ -418,7 +418,7 @@ class SignalStore:
         field indicated by `signal_name` set to `value`.
         '''
 
-        signal = self.signal_type(**{signal_name: value})
+        msg = self.create_signal_message(**locals())
         self.emit(signal)
 
 
@@ -435,6 +435,20 @@ class SignalStore:
          * the field indicated by `signal_name` set to `value`.
         '''
 
+        msg = self.create_signal_message(**locals())
+        self.emit(msg)
+
+
+    def create_signal_message(
+            self,
+            signal_name: str,
+            key: str|None = None,
+            value: Message|None = None,
+            action: MappingAction|None = None):
+        '''
+        Create a new signal message from sepcified inputs.
+        '''
+
         kwargs = {}
         if action:
             kwargs.update(mapping_action = action)
@@ -445,7 +459,7 @@ class SignalStore:
         if signal_name:
             kwargs.update({signal_name: value})
 
-        self.emit(self.signal_type(**kwargs))
+        return self.signal_type(**kwargs)
 
 
     @classmethod

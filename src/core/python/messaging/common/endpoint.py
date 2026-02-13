@@ -93,7 +93,10 @@ class Endpoint (DocBase, LogBase):
 
 
     def __repr__ (self):
-        return ".".join((self.__module__, type(self).__name__)) + "()"
+        return "%s.%s()"%(
+            self.__module__,
+            type(self).__name__,
+        )
 
     @classmethod
     def inherit_docstrings(cls, subclass):

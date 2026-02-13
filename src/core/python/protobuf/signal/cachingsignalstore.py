@@ -212,40 +212,16 @@ class CachingSignalStore (SignalStore):
         '''
 
         with self._cache_lock:
-            cached_map = self.get_cached_signal_messages(signal_name)
-            for key, signal in cached_map.items():
-                self._emit_to(signal_name, slot, signal)
+            cached_map = self.get_cached_map(signal_name)
+            for key, value in cached_map.items():
+                msg = self.create_signal_message(
+                    signal_name = signal_name,
+                    key = key,
+                    value = value,
+                    action = MappingAction.ADDITION if key else None,
+                )
 
-
-    def get_cached_map(self,
-                       signal_name: str,
-                       wait_complete: bool = False,
-                       ) -> dict[str, Message]:
-        '''
-        Get a specific signal map from the local cache.
-
-        @param signal_name
-            Signal name, corresponding to a field of the Signal message
-            streamed from the server's `watch()` method.
-
-        @param wait_complete
-            If the specified signal does not yet exist in the local cache, wait
-            until a initial completion event has been received from the server.
-
-        @exception KeyError
-            The specified `signal_name` is not known
-
-        @returns
-            The cached value map, or None if the specified mapping signal has
-            yet not been received.
-        '''
-
-        with self._cache_lock:
-            cached_map = self.get_cached_signal_messages(signal_name, wait_complete)
-            return {
-                key: getattr(value, signal_name)
-                for (key, value) in cached_map.items()
-            }
+                self._emit_to(signal_name, slot, msg)
 
 
     def get_cached_signal(self,
@@ -285,17 +261,15 @@ class CachingSignalStore (SignalStore):
 
         with self._cache_lock:
             try:
-                signal = self.get_cached_signal_messages(signal_name, wait_complete)[mapping_key]
+                return self.get_cached_map(signal_name, wait_complete)[mapping_key]
             except KeyError:
                 return fallback() if isinstance(fallback, type) else fallback
-            else:
-                return getattr(signal, signal_name)
 
 
-    def get_cached_signal_messages(self,
-                                   signal_name: str,
-                                   wait_complete: bool = False,
-                                   ) -> dict[str, SignalMessage]:
+    def get_cached_map(self,
+                       signal_name: str,
+                       wait_complete: bool = False,
+                       ) -> dict[str, SignalMessage]:
         '''
         Get a specific signal map from the local cache.
 
@@ -329,8 +303,9 @@ class CachingSignalStore (SignalStore):
     def _update_cache(self, signal_name, action, key, msg):
         with self._cache_lock:
             datamap = self._cache.setdefault(signal_name, {})
+
             if action == MappingAction.REMOVAL:
                 datamap.pop(key, None)
-            else:
-                #datamap[key] = getattr(msg, signal_name)
-                datamap[key] = msg
+
+            elif value := getattr(msg, signal_name, None):
+                datamap[key] = value

@@ -24,7 +24,7 @@ from ..protobuf import (
     InterceptorResult,
 )
 
-from ..base import SubscriptionCallback
+from ..base import SwitchUpdateSubscriber
 from .remote_switch_base import RemoteSwitchBase
 from .switchboard_service_pb2_grpc import SwitchboardStub
 
@@ -33,7 +33,7 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
     pending_callbacks = set()
 
     @override
-    def publish_update_to(self, callback: SubscriptionCallback):
+    def publish_update_to(self, callback: SwitchUpdateSubscriber):
         safe_invoke_maybe_async(callback, args = (self,))
 
     @override
@@ -99,14 +99,6 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
 
         result = await self.stub.InvokeInterceptor(req)
         return result.error
-
-    @override
-    async def on_intercept(self,
-                           interceptor_name : str,
-                           state : State) -> InterceptorResult:
-        response = RemoteSwitchBase.on_intercept(**locals())
-        if asyncio.iscoroutine(response):
-            await response
 
 
     @override

@@ -20,7 +20,7 @@ from ..protobuf import (
     Signal, State, StateMask, StateSet, encodeStateSet,
 )
 
-from .signals   import switchboard_signals
+from .signals   import switchboard_signals, CachingSignalStore
 from .switch    import Switch
 
 @dataclass
@@ -72,6 +72,9 @@ class SwitchboardObserver:
 
     _spec_handlers = []
     _status_handlers = []
+
+    signal_store = None
+
 
     @classmethod
     def specification_handler(cls,
@@ -182,18 +185,22 @@ class SwitchboardObserver:
     def __del__(self):
         self.disconnect_switchboard_signals()
 
-    def connect_switchboard_signals(self):
+    def connect_switchboard_signals(self,
+                                    signal_store: CachingSignalStore = switchboard_signals):
         '''
         Connect to Switchboard signal store to start observing switchboard
         update events.
         '''
-        switchboard_signals.connect_signal(
+
+        signal_store.connect_signal(
             self.SPEC_SIGNAL,
             self._invoke_specification_handlers)
 
-        switchboard_signals.connect_signal(
+        signal_store.connect_signal(
             self.STATUS_SIGNAL,
             self._invoke_status_handlers)
+
+        self.signal_store = signal_store
 
 
     def disconnect_switchboard_signals(self):
@@ -201,13 +208,16 @@ class SwitchboardObserver:
         Disconnect from Switchboard signal store.
         '''
 
-        switchboard_signals.disconnect_signal(
-            self.STATUS_SIGNAL,
-            self._invoke_status_handlers)
+        if signal_store := self.signal_store:
+            signal_store.disconnect_signal(
+                self.STATUS_SIGNAL,
+                self._invoke_status_handlers)
 
-        switchboard_signals.disconnect_signal(
-            self.SPEC_SIGNAL,
-            self._invoke_specification_handlers)
+            signal_store.disconnect_signal(
+                self.SPEC_SIGNAL,
+                self._invoke_specification_handlers)
+
+            self.signal_store = None
 
 
     @classmethod

@@ -94,6 +94,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
 
 
     def init_intercept(self):
+        BaseClient.init_intercept(self)
         self.interceptor_task = None
         self.interceptor_update_queue = None
 
@@ -126,26 +127,28 @@ class AsyncClient (AsyncMixIn, BaseClient):
             yield msg
 
     async def _intercept_runner(self):
-        tg = asyncio.TaskGroup()
-        async for request in self.interceptor_stream:
-            tg.create_task(self._on_interceptor_invocation(request))
+        async with asyncio.TaskGroup() as tg:
+            async for request in self.interceptor_stream:
+                tg.create_task(self._on_interceptor_invocation(request))
 
-    async def _on_interceptor_invocation(self, request: InterceptorInvocation):
-        self.logger.info("%s switch %r interceptor %r starting" % (
+    async def _on_interceptor_invocation(self, invocation: InterceptorInvocation):
+        self.logger.debug("%s switch %r interceptor %r starting" % (
             self,
-            request.switch_name,
-            request.interceptor_name,
+            invocation.switch_name,
+            invocation.interceptor_name,
         ))
 
-        error = None
-        try:
-            sw = self.get_switch(request.switch_name, required=True)
-            await sw.on_intercept(
-                interceptor_name = request.interceptor_name,
-                state = State(request.state),
-            )
+        mapping_key = invocation.switch_name, invocation.interceptor_name
 
-        except Exception as e:
-            error = e
+        if method := self.interceptor_methods.get(mapping_key):
+            try:
+                result = method(invocation)
+                if asyncio.iscoroutine(result):
+                    await result
 
-        self._return_interceptor_response(request, error)
+            except Exception as e:
+                error = e
+            else:
+                error = None
+
+        self._return_interceptor_response(invocation, error)

@@ -8,6 +8,7 @@ __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
 from abc import abstractmethod
+from typing import Callable
 import re
 import sys
 
@@ -24,14 +25,15 @@ from cc.messaging.grpc import SignalClient
 from ..protobuf import (
     AddSwitchRequest, RemoveSwitchRequest,
     ImportRequest, ImportResponse, ExportRequest, ExportResponse,
-    State, InterceptorInvocation, InterceptorResult, InterceptorUpdate,
+    State, InterceptorResult, InterceptorUpdate,
+    InterceptorRegistration, InterceptorDeregistration, InterceptorInvocation,
     SwitchSelectionInput, encodeSwitchSelection
 )
 from ..base.baseboard import SwitchboardBase
 from .remote_switch import RemoteSwitch
 
 
-class BaseClient (SwitchboardBase, SignalClient):
+class BaseClient (SignalClient, SwitchboardBase):
     '''
     Switchboard abstract gRPC base client.
 
@@ -46,6 +48,7 @@ class BaseClient (SwitchboardBase, SignalClient):
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `cc.messaging.grpc.GenericClient` base to instantiate `self.stub`.
     from .switchboard_service_pb2_grpc import SwitchboardStub as Stub
+
 
     def __init__(self,
                  host: str = "",
@@ -67,17 +70,16 @@ class BaseClient (SwitchboardBase, SignalClient):
             corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
         '''
 
-        SwitchboardBase.__init__(self)
         SignalClient.__init__(
             self,
             host = host,
             wait_for_ready = wait_for_ready,
             watch_all = watch_all,
+            signal_store = SwitchboardBase.signal_store,
             product_name = product_name,
             project_name = project_name,
         )
-
-        self.init_intercept()
+        SwitchboardBase.__init__(self)
 
     def __del__(self):
         self.stop_intercepting()
@@ -145,12 +147,6 @@ class BaseClient (SwitchboardBase, SignalClient):
 
 
     @abstractmethod
-    def init_intercept(self):
-        '''
-        Initialize interception handling.
-        '''
-
-    @abstractmethod
     def is_intercepting(self) -> bool:
         '''
         Indicate whether the the client is operating any interceptors.
@@ -203,6 +199,12 @@ class BaseClient (SwitchboardBase, SignalClient):
                 origin = sys.modules['__main__'].__spec__.name,
                 output = result.error,
             )
+        else:
+            self.logger.error("%s switch %r interceptor %r completed" % (
+                self,
+                request.switch_name,
+                request.interceptor_name,
+            ))
 
         self.enqueue_interceptor_update(
             InterceptorUpdate(
@@ -211,4 +213,40 @@ class BaseClient (SwitchboardBase, SignalClient):
                 invocation_result = result,
         ))
 
+
+    @override
+    def register_interceptor(self,
+                             switch_name: str,
+                             interceptor_name: str,
+                             registration: InterceptorRegistration,
+                             method: Callable[[InterceptorInvocation], None],
+                             ):
+
+        SwitchboardBase.register_interceptor(**locals())
+
+        update = InterceptorUpdate(
+            switch_name = switch_name,
+            interceptor_name = interceptor_name,
+            registration = registration,
+        )
+        self.enqueue_interceptor_update(update)
+
+
+    @override
+    def deregister_interceptor(self,
+                               switch_name: str,
+                               interceptor_name: str,
+                               ) -> bool:
+
+        update = InterceptorUpdate(
+            switch_name = switch_name,
+            interceptor_name = interceptor_name,
+            deregistration = InterceptorDeregistration(),
+        )
+        self.enqueue_interceptor_update(update)
+
+        return SwitchbordBase.deregister_interceptor(
+            self,
+            switch_name,
+            interceptor_name)
 

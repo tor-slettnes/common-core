@@ -92,6 +92,7 @@ class Client (BaseClient):
 
 
     def init_intercept(self):
+        BaseClient.init_intercept(self)
         self.interceptor_thread = None
         self.interceptor_lock = Lock()
         self.interceptor_update_queue = None
@@ -126,7 +127,6 @@ class Client (BaseClient):
         self.start_intercepting()
         self.interceptor_update_queue.put_nowait(msg)
 
-
     def _intercept_runner(self):
         for request in self.interceptor_stream:
             t = Thread(
@@ -135,21 +135,21 @@ class Client (BaseClient):
                 daemon = True)
             t.start()
 
-    def _on_interceptor_invocation(self, request: InterceptorInvocation):
+    def _on_interceptor_invocation(self, invocation: InterceptorInvocation):
         self.logger.debug("%s switch %r interceptor %r starting" % (
             self,
-            request.switch_name,
-            request.interceptor_name,
+            invocation.switch_name,
+            invocation.interceptor_name,
         ))
 
-        error = None
-        try:
-            sw = self.get_switch(request.switch_name, required=True)
-            sw.on_intercept(
-                interceptor_name = request.interceptor_name,
-                state = State(request.state),
-            )
-        except Exception as e:
-            error = e
+        mapping_key = invocation.switch_name, invocation.interceptor_name
 
-        self._return_interceptor_response(request, error)
+        if method := self.interceptor_methods.get(mapping_key):
+            try:
+                method(invocation)
+            except Exception as e:
+                error = e
+            else:
+                error = None
+
+        self._return_interceptor_response(invocation, error)

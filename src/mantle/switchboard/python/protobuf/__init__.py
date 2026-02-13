@@ -2,13 +2,34 @@
 __init__.py - Switchboard ProtoBuf type wrappers
 '''
 
+### Types generated from `switchboard_types.proto`
 from .switchboard_types_pb2 import *
+
+
 from .switchboard_types import (
-    LanguageCode, LanguageChoice, DEFAULT_LANGUAGE, DEFAULT_LANGUAGES,
+    ### Overridden type enumerations
+    CascadeStyle,
+    DependencyPolarity,
+    ExceptionHandling,
+    InterceptorPhase,
+    State,
+
+    ### Additional types
+    DEFAULT_LANGUAGE,
+    DEFAULT_LANGUAGES,
+    LanguageChoice,
+    LanguageCode,
+    LocalizationInput,
+    LocalizationsInput,
+    StateMask,
+    StateSet,
+    SwitchNamePattern,
+    SwitchSelectionInput,
     TargetTextsInput,
-    LocalizationInput, LocalizationsInput,
-    encodeLocalization, encodeLocalizationMap,
-    DependencyPolarity, InterceptorPhase, ExceptionHandling, CascadeStyle,
-    State, StateMask, StateSet, encodeStateSet,
-    SwitchNamePattern, SwitchSelectionInput, encodeSwitchSelection,
+
+    ### ProtoBuf encode/decode utility methods
+    encodeLocalization,
+    encodeLocalizationMap,
+    encodeStateSet,
+    encodeSwitchSelection,
 )

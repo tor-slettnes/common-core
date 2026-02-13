@@ -20,17 +20,17 @@ from cc.protobuf.variant import PyValueMap, encodeKeyValueMap
 
 ### Swithboard modules
 from ..protobuf import (
-    Specification, Status, State, StateSet,
+    Specification, Status, State, StateSet, encodeStateSet,
     Dependency, DependencyMap, DependencyPolarity,
     Localization, LocalizationMap, encodeLocalization, encodeLocalizationMap,
-    InterceptorSpec, InterceptorPhase,
-    ExceptionHandling, CascadeStyle,
+    InterceptorRegistration, InterceptorInvocation, InterceptorSpec,
+    InterceptorPhase, ExceptionHandling, CascadeStyle,
     LanguageCode, LanguageChoice, LocalizationsInput,
 )
 
 InterceptorName = str
-InterceptorMethod = Callable[['Switch', 'InterceptorName', 'State'], None]
-SubscriptionCallback = Callable[['Switch'], None]
+InterceptorMethod = Callable[[InterceptorInvocation], None]
+SwitchUpdateSubscriber = Callable[['Switch'], None]
 
 class Switch (DocBase):
     '''
@@ -49,7 +49,6 @@ class Switch (DocBase):
         self.specification = Specification()
         self.status = Status()
         self.subscriptions = {}
-        self.interceptor_methods = {}
 
     def __repr__ (self):
         return "Switch(%r, %s)"%(self.name, self.current_state.name)
@@ -66,12 +65,12 @@ class Switch (DocBase):
         for (handle, callback) in self.subscriptions.items():
             self.publish_update_to(callback)
 
-    def publish_update_to(self, callback: SubscriptionCallback):
+    def publish_update_to(self, callback: SwitchUpdateSubscriber):
         safe_invoke(callback, args = (self,))
 
     def subscribe_updates(self,
                           handle   : str,
-                          callback : SubscriptionCallback,
+                          callback : SwitchUpdateSubscriber,
                           immediate: bool = False):
         '''
         Register a callback to be invoked whenever this switch changes
@@ -622,8 +621,8 @@ class Switch (DocBase):
                         phase: InterceptorPhase = InterceptorPhase.NORMAL,
                         asynchronous: bool = False,
                         rerun: bool = False,
-                        on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
-                        on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
+                        on_cancel: ExceptionHandling = ExceptionHandling.ABORT,
+                        on_error: ExceptionHandling = ExceptionHandling.FAIL,
                         immediate: bool = False,
                         ) -> bool:
         '''
@@ -670,9 +669,25 @@ class Switch (DocBase):
             True if the interceptor was added.
         '''
 
-        is_new = interceptor_name not in self.interceptor_methods
-        self.interceptor_methods[interceptor_name] = callback
-        return is_new
+        if board := self.board():
+            return board.register_interceptor(
+                switch_name = self.name,
+                interceptor_name = interceptor_name,
+                registration = InterceptorRegistration(
+                    spec = InterceptorSpec(
+                        state_transitions = encodeStateSet(state_transitions),
+                        asynchronous = asynchronous,
+                        phase = phase,
+                        rerun = rerun,
+                        on_cancel = on_cancel,
+                        on_error = on_error,
+                    ),
+                    immediate = immediate,
+                ),
+                method = callback,
+            )
+        else:
+            return False
 
 
     @abstractmethod
@@ -689,14 +704,13 @@ class Switch (DocBase):
             True if the interceptor existed and was removed.
         '''
 
-        try:
-            del self.interceptor_methods[interceptor_name]
-
-        except KeyError:
-            return False
-
+        if board := self.board():
+            return board.deregister_interceptor(
+                switch_name = self.name,
+                interceptor_name = interceptor_name,
+            )
         else:
-            return True
+            return False
 
 
     @abstractmethod
