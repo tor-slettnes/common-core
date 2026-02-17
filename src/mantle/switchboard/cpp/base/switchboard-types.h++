@@ -151,18 +151,28 @@ namespace switchboard
     using DependencyMap = core::types::ValueMap<SwitchName, DependencyRef>;
 
     using InterceptorName = std::string;
+    using InterceptorOwner = std::string;
     using InterceptorRef = std::shared_ptr<Interceptor>;
     using InterceptorMap = core::types::ValueMap<InterceptorName, InterceptorRef>;
 
     //==========================================================================
     // SwitchSelection
 
-    struct SwitchSelection : public core::types::Listable
+    class SwitchSelection : public core::types::Listable
     {
+    public:
+        SwitchSelection();
+        SwitchSelection(const std::string &switch_name);
+        SwitchSelection(const std::vector<std::string> &patterns,
+                        bool is_regex = false);
+
+        bool matches(const SwitchName &switch_name) const;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+
+    public:
         std::vector<std::string> patterns;
         bool is_regex = false;
-
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        std::vector<std::regex> regex_patterns;
     };
 
     //==========================================================================

@@ -162,7 +162,8 @@ namespace cc::protobuf
                 cc::platform::switchboard::protobuf::InterceptorSpec *proto);
 
     void decode(const cc::platform::switchboard::protobuf::InterceptorSpec &proto,
-                const std::string &name,
+                const switchboard::InterceptorName &name,
+                const switchboard::InterceptorOwner &owner,
                 const switchboard::Invocation &invocation,
                 switchboard::InterceptorRef *native);
 

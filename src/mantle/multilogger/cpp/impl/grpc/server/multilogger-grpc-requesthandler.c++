@@ -27,12 +27,12 @@ namespace multilogger::grpc
         {
             this->provider->submit(cc::protobuf::decode_loggable(
                 *request,
-                core::str::url_decoded(context->peer())));
+                core::str::url_decoded(this->peer(context))));
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -48,7 +48,7 @@ namespace multilogger::grpc
             {
                 this->provider->submit(cc::protobuf::decode_loggable(
                     loggable,
-                    core::str::url_decoded(context->peer())));
+                    core::str::url_decoded(this->peer(context))));
             }
             return ::grpc::Status::OK;
         }
@@ -68,7 +68,7 @@ namespace multilogger::grpc
             auto spec = cc::protobuf::decoded<multilogger::ListenerSpec>(*request);
             if (spec.sink_id.empty())
             {
-                spec.sink_id = core::str::url_decoded(context->peer());
+                spec.sink_id = core::str::url_decoded(this->peer(context));
             }
 
             auto listener = this->provider->listen(spec);
@@ -87,7 +87,7 @@ namespace multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -101,7 +101,7 @@ namespace multilogger::grpc
             auto spec = cc::protobuf::decoded<multilogger::SinkSpec>(*request);
             if (spec.sink_id.empty())
             {
-                spec.sink_id = core::str::url_decoded(context->peer());
+                spec.sink_id = core::str::url_decoded(this->peer(context));
             }
 
             response->set_added(
@@ -111,7 +111,7 @@ namespace multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -129,7 +129,7 @@ namespace multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -148,7 +148,7 @@ namespace multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -166,7 +166,7 @@ namespace multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -185,7 +185,7 @@ namespace multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -204,7 +204,7 @@ namespace multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -223,7 +223,7 @@ namespace multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -242,7 +242,7 @@ namespace multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 

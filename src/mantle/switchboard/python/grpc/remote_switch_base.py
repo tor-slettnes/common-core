@@ -20,7 +20,6 @@ from ..protobuf import (
     Specification, SetSpecificationRequest,
     Localization, LocalizationMap, Dependency, DependencyMap,
     AddDependencyRequest, RemoveDependencyRequest, DependencyPolarity,
-    InterceptorUpdate, InterceptorRegistration, InterceptorDeregistration,
     InterceptorSpec, InterceptorInvocation, InterceptorResult,
     SetTargetRequest, SetTargetResponse,
     SetAttributesRequest, SetAttributesResponse, CulpritsQuery,
@@ -135,7 +134,7 @@ class RemoteSwitchBase (Switch):
                    clear_existing: bool = False,
                    invoke_interceptors: bool = True,
                    cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
-                   reevaluate: bool = False,
+                   reenter: bool = False,
                    on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
                    on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
                    ) -> SetTargetResponse:
@@ -148,6 +147,7 @@ class RemoteSwitchBase (Switch):
             clear_existing = clear_existing,
             invoke_interceptors = invoke_interceptors,
             cascade_descendants = cascade_descendants,
+            reenter = reenter,
             on_cancel = on_cancel,
             on_error = on_error)
 

@@ -37,9 +37,9 @@ def check_message_type(value: Message,
             type(value).__name__)) from None
 
 
-def messageToDict(message : Message,
-                  use_integers_for_enums : bool = True,
-                  always_print_fields_with_no_presence : bool = False):
+def message_to_dict(message : Message,
+                    use_integers_for_enums : bool = True,
+                    always_print_fields_with_no_presence : bool = False):
     '''
     Convert a ProtoBuf message to a Python Dictionary.
     '''
@@ -58,9 +58,9 @@ def messageToDict(message : Message,
     )
 
 
-def dictToMessage(value     : dict,
-                  prototype : MessageType,
-                  ignore_unknown_fields : bool = False) -> Message:
+def dict_to_message(value     : dict,
+                    prototype : MessageType,
+                    ignore_unknown_fields : bool = False) -> Message:
     '''
     Convert a specially constructed Python dictionary to a ProtoBuf message
     of a given type.  Refer to `ParseDict` for details.

@@ -304,6 +304,7 @@ module CC
 
             // Service that owns this interceptor.
             // Once that service is no longer available the interceptor is implicitly removed.
+            @key
             ParticipantName owner;
 
             // A bitmask represening states for which the inerceptor is invoked.
@@ -515,7 +516,7 @@ module CC
 
             // Make the state transition even if the switch is already in the
             // desired target state.
-            boolean reevaluate;
+            boolean reenter;
 
             // What to do if the state transition is cancelled, e.g. if
             // pre-empted by another target setting while executing interceptrs.
@@ -558,26 +559,30 @@ module CC
         // Input parameters for ADD_INTERCEPTOR and REMOVE_INTERCEPTOR requests.
         struct AddInterceptorRequest
         {
-            // Switch name
-            SwitchName switch_name;
-
             // Interceptor specification
             Interceptor spec;
+
+            // Switches to which this interceptor will be added
+            SwitchSelection switch_selection;
 
             // If True, and if the `states` mask include the current state of this
             // switch, invoke the interceptor immediately. In this case, unless
             // the interceptor's `asynchronous` flag is also True, the call blocks
             // until it has completed.
             boolean immediate;
+
+            // Add this interceptor also to matching switches created in the future
+            @default(TRUE)
+            boolean future;
         };
 
         struct RemoveInterceptorRequest
         {
             @key
-            SwitchName switch_name;
-
-            @key
             InterceptorName interceptor_name;
+
+            @optional
+            SwitchSelection switch_selection;
         };
 
         // Input parameters for INVOKE_INTERCEPTOR request issued by Switchboard servver

@@ -8,6 +8,7 @@ __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
 from abc import abstractmethod
+from logging import Logger
 from typing import Callable
 import re
 import sys
@@ -19,21 +20,25 @@ from cc.core.invocation import method_path, invoke_maybe_async
 from cc.protobuf.status import encodeError
 from cc.protobuf.variant import PyValueMap, encodeKeyValueMap
 from cc.protobuf.wellknown import BoolValue
+from cc.protobuf.utils import message_to_dict
 from cc.messaging.grpc import SignalClient
 
 ### Switchboard modules
 from ..protobuf import (
     AddSwitchRequest, RemoveSwitchRequest,
+    SwitchSelectionInput, encodeSwitchSelection, encodeOptionalSwitchSelection,
     ImportRequest, ImportResponse, ExportRequest, ExportResponse,
-    State, InterceptorResult, InterceptorUpdate,
-    InterceptorRegistration, InterceptorDeregistration, InterceptorInvocation,
-    SwitchSelectionInput, encodeSwitchSelection
+    State, StateMask, StateSet, encodeStateSet,
+    AddInterceptorRequest, RemoveInterceptorRequest,
+    InterceptorInvocation, InterceptorResult, InterceptorMethod,
+    InterceptorSpec, InterceptorPhase,
+    ExceptionHandling,
 )
 from ..base.baseboard import SwitchboardBase
 from .remote_switch import RemoteSwitch
 
 
-class BaseClient (SignalClient, SwitchboardBase):
+class BaseClient (SwitchboardBase, SignalClient):
     '''
     Switchboard abstract gRPC base client.
 
@@ -56,6 +61,7 @@ class BaseClient (SignalClient, SwitchboardBase):
                  watch_all: bool = True,
                  product_name: str|None = None,
                  project_name: str|None = None,
+                 logger: Logger|None = None,
                  ):
         '''
         @param host
@@ -75,14 +81,33 @@ class BaseClient (SignalClient, SwitchboardBase):
             host = host,
             wait_for_ready = wait_for_ready,
             watch_all = watch_all,
-            signal_store = SwitchboardBase.signal_store,
             product_name = product_name,
             project_name = project_name,
         )
-        SwitchboardBase.__init__(self)
+        SwitchboardBase.__init__(
+            self,
+            logger = logger)
 
     def __del__(self):
         self.stop_intercepting()
+
+
+    def initialize(self):
+        SwitchboardBase.initialize(self)
+        SignalClient.initialize(self)
+
+    def deinitialize(self):
+        SignalClient.deinitialize(self)
+        SwitchboardBase.deinitialize(self)
+
+
+    def _call_add_switch(self,
+                         switch_name: str,
+                         initially_active: bool):
+        request = AddSwitchRequest(
+            switch_name = switch_name,
+            active = initially_active)
+        return self.stub.AddSwitch(request)
 
     @override
     def get_or_add_switch(self,
@@ -96,7 +121,7 @@ class BaseClient (SignalClient, SwitchboardBase):
             except KeyError:
                 switch = self.switches[switch_name] = self._new_switch(switch_name)
                 switch.status.active = initially_active
-                invoke_maybe_async(self.add_switch,
+                invoke_maybe_async(self._call_add_switch,
                                    args = (switch_name, initially_active))
 
             return switch
@@ -104,11 +129,16 @@ class BaseClient (SignalClient, SwitchboardBase):
     @override
     def add_switch(self,
                    switch_name: str,
-                   active: bool = False) -> BoolValue:
-        req = AddSwitchRequest(
-            switch_name = switch_name,
-            active = active)
-        return self.stub.AddSwitch(req)
+                   initially_active: bool = False) -> BoolValue:
+
+        with self._switch_lock:
+            try:
+                switch = self.switches[switch_name]
+            except KeyError:
+                switch = self.switches[switch_name] = self._new_switch(switch_name)
+                switch.status.active = initially_active
+
+        return switch
 
     @override
     def remove_switch(self,
@@ -146,6 +176,58 @@ class BaseClient (SignalClient, SwitchboardBase):
         return self.stub.ExportSwitches(req)
 
 
+    @override
+    def add_interceptor(self,
+                        interceptor_name: str,
+                        switch_selection: SwitchSelectionInput,
+                        state_transitions: StateSet,
+                        callback: InterceptorMethod,
+                        phase: InterceptorPhase = InterceptorPhase.NORMAL,
+                        asynchronous: bool = False,
+                        rerun: bool = False,
+                        on_cancel: ExceptionHandling = ExceptionHandling.ABORT,
+                        on_error: ExceptionHandling = ExceptionHandling.FAIL,
+                        immediate: bool = False,
+                        future: bool = False) -> BoolValue:
+
+        spec = InterceptorSpec(
+            state_transitions = encodeStateSet(state_transitions),
+            phase = phase,
+            asynchronous = asynchronous,
+            rerun = rerun,
+            on_cancel = on_cancel,
+            on_error = on_error,
+        )
+
+        request = AddInterceptorRequest(
+            interceptor_name = interceptor_name,
+            spec = spec,
+            switch_selection = encodeSwitchSelection(switch_selection),
+            immediate = immediate,
+            future = future)
+
+        self.register_interceptor(interceptor_name, callback)
+        self.start_intercepting()
+        return self.stub.AddInterceptor(request)
+
+
+    @override
+    def remove_interceptor(self,
+                           interceptor_name: str,
+                           switch_selection: SwitchSelectionInput|None = None,
+                           abandon_pending: bool = True,
+                           ) -> BoolValue:
+
+        self.deregister_interceptor(interceptor_name, callback)
+
+        request = RemoveInterceptorRequest(
+            interceptor_name = interceptor_name,
+            switch_selection = encodeOptionalSwitchSelection(switch_selection),
+            abandon_pending = abandon_pending)
+
+        return self.stub.RemoveInterceptor(request)
+
+
     @abstractmethod
     def is_intercepting(self) -> bool:
         '''
@@ -169,84 +251,44 @@ class BaseClient (SignalClient, SwitchboardBase):
             Wait for the worker task to finish before returning.
         '''
 
-    @abstractmethod
-    def enqueue_interceptor_update(self, msg: InterceptorUpdate):
+
+    def _enqueue_interceptor_result(self,
+                                    queue,
+                                    request: InterceptorInvocation,
+                                    error: Exception|None = None):
         '''
-        Enqueue and send an interceptor update to the Switchboard service.
+        Respond back to the server after an interceptor completes.
         '''
 
-
-    def _return_interceptor_response(self,
-                                     request: InterceptorInvocation,
-                                     error: Exception|None = None):
-        '''
-        Enqueue a response back to the server after an interceptor
-        completes.
-        '''
-
-        result = InterceptorResult()
+        result = InterceptorResult(
+            switch_name = request.switch_name,
+            interceptor_name = request.interceptor_name,
+        )
 
         if error:
-            self.logger.error("%s switch %r interceptor %r failed: [%s] %s" % (
-                self,
-                request.switch_name,
-                request.interceptor_name,
-                type(e).__name__,
-                e
-            ))
             encodeError(
-                e,
+                error,
                 origin = sys.modules['__main__'].__spec__.name,
                 output = result.error,
             )
+            self.logger.error(
+                "%s switch %r interceptor %r state %s failed: [%s] %s"%(
+                    self,
+                    request.switch_name,
+                    request.interceptor_name,
+                    State(request.state).name,
+                    type(error).__name__,
+                    error,
+                )
+            )
         else:
-            self.logger.error("%s switch %r interceptor %r completed" % (
-                self,
-                request.switch_name,
-                request.interceptor_name,
-            ))
+            self.logger.debug(
+                "%s switch %r interceptor %r state %s; completed"%(
+                    self,
+                    request.switch_name,
+                    request.interceptor_name,
+                    State(request.state).name,
+                )
+            )
 
-        self.enqueue_interceptor_update(
-            InterceptorUpdate(
-                switch_name = request.switch_name,
-                interceptor_name = request.interceptor_name,
-                invocation_result = result,
-        ))
-
-
-    @override
-    def register_interceptor(self,
-                             switch_name: str,
-                             interceptor_name: str,
-                             registration: InterceptorRegistration,
-                             method: Callable[[InterceptorInvocation], None],
-                             ):
-
-        SwitchboardBase.register_interceptor(**locals())
-
-        update = InterceptorUpdate(
-            switch_name = switch_name,
-            interceptor_name = interceptor_name,
-            registration = registration,
-        )
-        self.enqueue_interceptor_update(update)
-
-
-    @override
-    def deregister_interceptor(self,
-                               switch_name: str,
-                               interceptor_name: str,
-                               ) -> bool:
-
-        update = InterceptorUpdate(
-            switch_name = switch_name,
-            interceptor_name = interceptor_name,
-            deregistration = InterceptorDeregistration(),
-        )
-        self.enqueue_interceptor_update(update)
-
-        return SwitchbordBase.deregister_interceptor(
-            self,
-            switch_name,
-            interceptor_name)
-
+        queue.put_nowait(result)

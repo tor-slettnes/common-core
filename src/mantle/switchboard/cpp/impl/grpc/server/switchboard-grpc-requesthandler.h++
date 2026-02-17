@@ -14,6 +14,7 @@
 #include "cc/platform/switchboard/grpc/switchboard_service.grpc.pb.h"
 
 #include <future>
+#include <tuple>
 
 namespace switchboard
 {
@@ -38,33 +39,26 @@ namespace switchboard::grpc
 
         using InterceptorStream = ::grpc::ServerReaderWriter<
             switchboard::protobuf::InterceptorInvocation,
-            switchboard::protobuf::InterceptorUpdate>;
+            switchboard::protobuf::InterceptorResult>;
 
-        using InterceptorSessionID = std::uint64_t;
-        using InterceptorInvocationID = std::string;
+        using InterceptorSessionID = std::string;
+        using PendingInterceptsMap = std::map<
+            std::pair<InterceptorName, SwitchName>,
+            std::promise<switchboard::protobuf::InterceptorResult>>;
+        using FutureResult = std::future<
+            switchboard::protobuf::InterceptorResult>;
 
         struct InterceptorSession
         {
             ::grpc::ServerContext *context;
             InterceptorStream *stream;
-            std::set<std::pair<SwitchRef, InterceptorName>> registrations;
+            std::set<InterceptorName> registrations;
+            PendingInterceptsMap pending;
         };
 
         using InterceptorSessionsMap = core::types::ValueMap<
             InterceptorSessionID,
             InterceptorSession>;
-
-        // struct PendingIntercept
-        // {
-        //     InterceptorSessionID session_id;
-        //     SwitchName switch_name;
-        //     IntercptorName interceptor_name;
-        //     std::promise<switchboard::protobuf::InterceptorResult> result_promise;
-        // };
-
-        using PendingInterceptsMap = std::map<
-            std::pair<SwitchName, InterceptorName>,
-            std::promise<switchboard::protobuf::InterceptorResult>>;
 
 
     protected:
@@ -137,6 +131,16 @@ namespace switchboard::grpc
             const switchboard::protobuf::SwitchIdentifier *request,
             switchboard::protobuf::SwitchIdentifiers *reply) override;
 
+        ::grpc::Status AddInterceptor(
+            ::grpc::ServerContext *context,
+            const cc::platform::switchboard::protobuf::AddInterceptorRequest *request,
+            ::google::protobuf::BoolValue *reply) override;
+
+        ::grpc::Status RemoveInterceptor(
+            ::grpc::ServerContext *context,
+            const cc::platform::switchboard::protobuf::RemoveInterceptorRequest *request,
+            ::google::protobuf::BoolValue *reply) override;
+
         ::grpc::Status GetInterceptors(
             ::grpc::ServerContext *context,
             const switchboard::protobuf::SwitchIdentifier *request,
@@ -190,46 +194,33 @@ namespace switchboard::grpc
             InterceptorStream *stream);
 
         void end_session(
-            InterceptorSessionID session_id);
-
-        void add_intercept_registration(
-            InterceptorSessionID session_id,
-            SwitchRef sw,
-            const InterceptorName &interceptor_name,
-            const switchboard::protobuf::InterceptorRegistration &reg);
-
-        void remove_intercept_registration(
-            InterceptorSessionID session_id,
-            SwitchRef sw,
-            const InterceptorName &interceptor_name,
-            const switchboard::protobuf::InterceptorDeregistration &dereg);
+            const InterceptorSessionID &session_id);
 
         void on_intercept(
-            InterceptorSessionID session_id,
             const InterceptorName &interceptor_name,
+            const std::string &peer,
             SwitchRef sw,
             State state);
 
-        std::future<switchboard::protobuf::InterceptorResult> invoke_client_interceptor(
-            InterceptorSessionID session_id,
+        FutureResult invoke_client_interceptor(
             const InterceptorName &interceptor_name,
+            const InterceptorSessionID &session_id,
             SwitchRef sw,
             State state);
 
         void on_intercept_response(
-            SwitchRef sw,
+            const SwitchName &switch_name,
             const InterceptorName &interceptor_name,
+            const InterceptorSessionID &session_id,
             const switchboard::protobuf::InterceptorResult &result);
 
-        std::string pending_key(
-            const std::string &switch_name,
-            const std::string &interceptor_name) const;
+        InterceptorName interceptor_key(
+            const InterceptorName &interceptor_name,
+            const InterceptorSessionID &session_id) const;
 
     private:
         std::shared_ptr<switchboard::Provider> provider;
-        InterceptorSessionID latest_interceptor_session;
         std::mutex interceptor_sessions_mutex;
         InterceptorSessionsMap interceptor_sessions;
-        PendingInterceptsMap pending_intercepts;
     };
 }  // namespace switchboard::grpc

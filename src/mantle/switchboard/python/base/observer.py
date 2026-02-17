@@ -6,12 +6,14 @@ __author__ = "Tor Slettnes"
 __docformat__ = "javadoc en"
 
 ### Standard Python modules
-from typing import Callable, Set
+from typing import Callable, Sequence, Set
 from dataclasses import dataclass
 import re
 import fnmatch
 
 ### Common Core modules
+from cc.core.docbase import DocBase
+from cc.core.logbase import LogBase
 from cc.core.invocation import safe_invoke_maybe_async
 from cc.protobuf.signal import MappingAction
 
@@ -33,12 +35,12 @@ class HandlerSpec:
 MAP_UPDATE = {MappingAction.ADDITION, MappingAction.UPDATE}
 
 
-class SwitchboardObserver:
+class SwitchboardObserver (DocBase, LogBase):
     '''
     Mix-in base class for capturing Switchboard updates via decorated methods.
 
     In order to actually receive updates, the object that contains the decorated
-    methods must invoke `self.connect_switchboard_signals()`.
+    methods must invoke `self.connect_decorated_handlers()`.
 
     **Example Usage:**
 
@@ -49,7 +51,7 @@ class SwitchboardObserver:
     class MyClass (SwitchboardObserver):
 
         def __init__(self):
-            self.connect_switchboard_signals()
+            self.connect_decorated_handlers()
 
         @SwitchboardObserver.specification_handler("MySwitch")
         def on_my_switch_spec_update(self, signal: Signal):
@@ -73,7 +75,7 @@ class SwitchboardObserver:
     _spec_handlers = []
     _status_handlers = []
 
-    signal_store = None
+    signal_store = switchboard_signals
 
 
     @classmethod
@@ -86,7 +88,7 @@ class SwitchboardObserver:
         AsyncIO coroutine (as with `async def`).
 
         In order to actually receive updates, the object that contains the
-        decorated methods must invoke `self.connect_switchboard_signals()`.
+        decorated methods must invoke `self.connect_decorated_handlers()`.
 
         **Inputs:**
 
@@ -137,7 +139,7 @@ class SwitchboardObserver:
         coroutine (as with `async def`).
 
         In order to actually receive updates, the object that contains the
-        decorated methods must invoke `self.connect_switchboard_signals()`.
+        decorated methods must invoke `self.connect_decorated_handlers()`.
 
         **Inputs:**
 
@@ -183,41 +185,34 @@ class SwitchboardObserver:
 
 
     def __del__(self):
-        self.disconnect_switchboard_signals()
+        self.disconnect_decorated_handlers()
 
-    def connect_switchboard_signals(self,
-                                    signal_store: CachingSignalStore = switchboard_signals):
+
+    def connect_switchboard_signals(self):
         '''
-        Connect to Switchboard signal store to start observing switchboard
-        update events.
+        Connect decorated handler methods from this object instance to the
+        Switchboard signal store in order to start observing update events.
         '''
-
-        signal_store.connect_signal(
-            self.SPEC_SIGNAL,
-            self._invoke_specification_handlers)
-
-        signal_store.connect_signal(
-            self.STATUS_SIGNAL,
-            self._invoke_status_handlers)
-
-        self.signal_store = signal_store
+        self.connect_decorated_handlers(self)
 
 
-    def disconnect_switchboard_signals(self):
+    @classmethod
+    def connect_decorated_handlers(cls, instance: object):
         '''
-        Disconnect from Switchboard signal store.
+        Connect decorated handler methods from the provided object instance
+        to the Switchboard signal store in order to start observing update
+        events.
         '''
 
-        if signal_store := self.signal_store:
-            signal_store.disconnect_signal(
-                self.STATUS_SIGNAL,
-                self._invoke_status_handlers)
+        cls.signal_store.connect_signal(
+            cls.SPEC_SIGNAL,
+            lambda msg: cls._invoke_handlers(instance, cls._spec_handlers, msg),
+        )
 
-            signal_store.disconnect_signal(
-                self.SPEC_SIGNAL,
-                self._invoke_specification_handlers)
-
-            self.signal_store = None
+        cls.signal_store.connect_signal(
+            cls.STATUS_SIGNAL,
+            lambda msg: cls._invoke_handlers(instance, cls._status_handlers, msg),
+        )
 
 
     @classmethod
@@ -237,25 +232,33 @@ class SwitchboardObserver:
                     pattern,
                 ))
 
-    def _handler_matches(self, handler: HandlerSpec, msg: Signal) -> bool:
+
+    @classmethod
+    def _invoke_handlers(cls,
+                         instance: object,
+                         handlers: Sequence[HandlerSpec],
+                         msg: Signal):
+
+        for handler in handlers:
+            if cls._handler_matches(instance, handler, msg):
+                safe_invoke_maybe_async(handler.method, args=(instance, msg))
+
+
+    @classmethod
+    def _handler_matches(cls,
+                         instance: object,
+                         handler: HandlerSpec,
+                         msg: Signal,
+                         ) -> bool:
         '''
         Determine whether a decorated function should receive a switch
         update.
         '''
         return all((
-            getattr(type(self), handler.method.__name__, None) == handler.method,
+            getattr(type(instance), handler.method.__name__, None) == handler.method,
             msg.mapping_action in handler.actions,
             (handler.states is None) or (msg.status.current_state in handler.states),
             handler.pattern.match(msg.mapping_key),
         ))
 
-    def _invoke_specification_handlers(self, msg: Signal):
-        for handler in self._spec_handlers:
-            if self._handler_matches(handler, msg):
-                safe_invoke_maybe_async(handler.method, args=(self, msg))
-
-    def _invoke_status_handlers(self, msg: Signal):
-        for handler in self._status_handlers:
-            if self._handler_matches(handler, msg):
-                safe_invoke_maybe_async(handler.method, args=(self, msg))
 

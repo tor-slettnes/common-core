@@ -2,6 +2,7 @@ from ..protobuf import (
     Signal, Specification, Status, State, StateMask, StateSet,
     ExceptionHandling, InterceptorPhase, DependencyPolarity,
     encodeStateSet, encodeLocalization, encodeLocalizationMap,
+    encodeSwitchSelection, encodeOptionalSwitchSelection,
 )
 
 from .signals import (
@@ -24,10 +25,3 @@ from .observer import (
     HandlerSpec,
     MAP_UPDATE,
 )
-
-from .subscriber import (
-    DecoratedInterceptorSpec,
-    SwitchboardSubscriber,
-)
-
-

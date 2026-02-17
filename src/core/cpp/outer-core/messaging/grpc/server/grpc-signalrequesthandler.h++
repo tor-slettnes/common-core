@@ -54,7 +54,7 @@ namespace core::grpc
                 while (std::optional<SignalT> msg = queue.get())
                 {
                     logf_trace("Sending signal to client %s: %s",
-                               cxt->peer(),
+                               this->peer(cxt),
                                msg.value());
                     writer->Write(msg.value());
 
@@ -68,7 +68,7 @@ namespace core::grpc
 
                 logf_debug("Closing %s stream to client %s",
                            SignalT().GetTypeName(),
-                           cxt->peer());
+                           this->peer(cxt));
                 return ::grpc::Status::OK;
             }
             catch (...)

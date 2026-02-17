@@ -102,6 +102,7 @@ namespace idl
                 CC::Switchboard::Interceptor *idl);
 
     void decode(const CC::Switchboard::Interceptor &idl,
+                const std::optional<switchboard::InterceptorOwner> &owner,
                 const switchboard::Invocation &invocation,
                 switchboard::InterceptorRef *native);
 
@@ -111,15 +112,6 @@ namespace idl
 
     void decode(const CC::Switchboard::InterceptorList &idl,
                 switchboard::InterceptorMap *native);
-
-    // // CC::Switchboard::InterceptorID
-    // void encode(const switchboard::SwitchName &switch_name,
-    //             const switchboard::InterceptorName &interceptor_name,
-    //             CC::Switchboard::InterceptorID *idl);
-
-    // void decode(const CC::Switchboard::InterceptorID &idl,
-    //             switchboard::SwitchName *switch_name,
-    //             switchboard::InterceptorName *interceptor_name);
 
     // CC::Switchboard::Specification
     void encode(const switchboard::SwitchName &name,

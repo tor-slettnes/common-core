@@ -62,27 +62,19 @@ namespace switchboard::grpc
         const InterceptorRef &interceptor,
         bool immediate)
     {
-        ::cc::platform::switchboard::protobuf::InterceptorUpdate update;
-        update.set_switch_name(this->name());
-        update.set_interceptor_name(interceptor->name());
-
-        auto *reg = update.mutable_registration();
-        cc::protobuf::encode(interceptor, reg->mutable_spec());
-        reg->set_immediate(immediate);
-
-        this->proxy()->send_interceptor_update(update);
-        return true;
+        return this->provider()->add_interceptor(
+            interceptor,   // interceptor
+            this->name(),  // switch_selection
+            immediate,     // immediate
+            false);        // future
     }
 
     bool RemoteSwitch::remove_interceptor(
-        const InterceptorName &interceptor_name)
+        const InterceptorName &name)
     {
-        ::cc::platform::switchboard::protobuf::InterceptorUpdate update;
-        update.set_switch_name(this->name());
-        update.set_interceptor_name(interceptor_name);
-        auto *dereg = update.mutable_deregistration();
-        this->proxy()->send_interceptor_update(update);
-        return true;
+        return this->provider()->remove_interceptor(
+            name,           // name
+            this->name());  // switch_selection
     }
 
     void RemoteSwitch::update_spec(
@@ -127,7 +119,7 @@ namespace switchboard::grpc
         bool clear_existing,
         bool invoke_interceptors,
         CascadeStyle cascade_descendants,
-        bool reevaluate,
+        bool reenter,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
     {
@@ -148,7 +140,7 @@ namespace switchboard::grpc
         req.set_invoke_interceptors(invoke_interceptors);
         req.set_cascade_descendants(
             cc::protobuf::encoded<::cc::platform::switchboard::protobuf::CascadeStyle>(cascade_descendants));
-        req.set_reevaluate(reevaluate);
+        req.set_reenter(reenter);
         req.set_on_cancel(
             cc::protobuf::encoded<::cc::platform::switchboard::protobuf::ExceptionHandling>(on_cancel));
         req.set_on_error(

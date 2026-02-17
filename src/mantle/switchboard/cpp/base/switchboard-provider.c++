@@ -183,20 +183,5 @@ namespace switchboard
         return found;
     }
 
-    /// @brief
-    ///     Remove an existing interceptor
-    bool Provider::remove_interceptor(const SwitchName &switch_name,
-                                      const InterceptorName &interceptor_name)
-    {
-        if (auto sw = this->get_switch(switch_name))
-        {
-            return sw->remove_interceptor(interceptor_name);
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     std::shared_ptr<Provider> provider;
 }  // namespace switchboard

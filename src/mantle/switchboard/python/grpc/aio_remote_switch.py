@@ -109,7 +109,7 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
                          clear_existing: bool = False,
                          invoke_interceptors: bool = True,
                          cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
-                         reevaluate: bool = False,
+                         reenter: bool = False,
                          on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
                          on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
                          ) -> bool:

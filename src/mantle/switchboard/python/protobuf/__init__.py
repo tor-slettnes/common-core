@@ -17,12 +17,14 @@ from .switchboard_types import (
     ### Additional types
     DEFAULT_LANGUAGE,
     DEFAULT_LANGUAGES,
+    InterceptorMethod,
     LanguageChoice,
     LanguageCode,
     LocalizationInput,
     LocalizationsInput,
     StateMask,
     StateSet,
+    StateSetInput,
     SwitchNamePattern,
     SwitchSelectionInput,
     TargetTextsInput,
@@ -32,4 +34,5 @@ from .switchboard_types import (
     encodeLocalizationMap,
     encodeStateSet,
     encodeSwitchSelection,
+    encodeOptionalSwitchSelection,
 )

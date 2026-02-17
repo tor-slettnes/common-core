@@ -1,6 +1,7 @@
 from .protobuf import (
     ### Types generated from `switchboard_types.proto`
     AddDependencyRequest,
+    AddInterceptorRequest,
     AddSwitchRequest,
     CulpritsQuery,
     Dependency,
@@ -10,16 +11,14 @@ from .protobuf import (
     ExportResponse,
     ImportRequest,
     ImportResponse,
-    InterceptorDeregistration,
     InterceptorInvocation,
     InterceptorMap,
-    InterceptorRegistration,
     InterceptorResult,
     InterceptorSpec,
-    InterceptorUpdate,
     Localization,
     LocalizationMap,
     RemoveDependencyRequest,
+    RemoveInterceptorRequest,
     RemoveSwitchRequest,
     SetAttributesRequest,
     SetAttributesResponse,
@@ -47,6 +46,7 @@ from .protobuf import (
     ### Additional types
     DEFAULT_LANGUAGE,
     DEFAULT_LANGUAGES,
+    InterceptorMethod,
     LanguageChoice,
     LanguageCode,
     LocalizationInput,
@@ -62,6 +62,7 @@ from .protobuf import (
     encodeLocalizationMap,
     encodeStateSet,
     encodeSwitchSelection,
+    encodeOptionalSwitchSelection,
 )
 
 from .base import (
@@ -71,7 +72,6 @@ from .base import (
     # Types from `switch.py`
     Switch,
     InterceptorName,
-    InterceptorMethod,
     SwitchUpdateSubscriber,
 
     # Types from `baseboard.py`
@@ -81,10 +81,6 @@ from .base import (
     SwitchboardObserver,
     HandlerSpec,
     MAP_UPDATE,
-
-    # Types from `subscriber.py`
-    DecoratedInterceptorSpec,
-    SwitchboardSubscriber,
 )
 
 from .grpc import (

@@ -7,6 +7,7 @@
 
 #include "grpc-serverinterceptors.h++"
 #include "grpc-status.h++"
+#include "grpc-base.h++"
 #include "protobuf-message.h++"
 #include "logging/logging.h++"
 #include "status/exceptions.h++"

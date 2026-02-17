@@ -98,16 +98,60 @@ namespace idl
     }
 
     //==========================================================================
-    // Encode/decode Built-in types
+    // Encode/decode witin optional containers
+
+    template <class DDSType, class NativeType>
+    void encode_optional(const std::optional<NativeType> &native,
+                         rti::core::optional<DDSType> *idl)
+    {
+        if (native.has_value())
+        {
+            *idl = DDSType();
+            encode(native.value(), &idl->value());
+        }
+    }
+
+    template <class NativeType, class DDSType>
+    void decode_optional(const rti::core::optional<DDSType> &idl,
+                    std::optional<NativeType> *native)
+    {
+        if (idl.has_value())
+        {
+            *native = NativeType();
+            decode(idl.value(), &native->value());
+        }
+    }
+
+    //==========================================================================
+    // Encode/decode witin optional containers
+
+    template <class DDSType, class NativeType>
+    rti::core::optional<DDSType> encoded_optional(const std::optional<NativeType> &native)
+    {
+        rti::core::optional<DDSType> idl;
+        encode_optional<DDSType, NativeType>(native, &idl);
+        return idl;
+    }
+
+    template <class NativeType, class DDSType>
+    std::optional<NativeType> decoded_optional(const rti::core::optional<DDSType> &idl)
+    {
+        std::optional<NativeType> native;
+        decode_optional<NativeType, DDSType>(idl, &native);
+        return native;
+    }
+
+    //==========================================================================
+    // Encode/decode optional built-in types
 
     template <class T>
-    rti::core::optional<T> encode_optional(const std::optional<T> &native)
+    rti::core::optional<T> assign_optional(const std::optional<T> &native)
     {
         return native.value_or({});
     }
 
     template <class T>
-    std::optional<T> decode_optional(const rti::core::optional<T> &rti)
+    std::optional<T> assign_optional(const rti::core::optional<T> &rti)
     {
         if (rti.has_value())
         {

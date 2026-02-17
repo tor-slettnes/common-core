@@ -38,7 +38,7 @@ namespace upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), context->peer());
+            return this->failure(std::current_exception(), this->peer(context));
         }
     }
 
@@ -54,7 +54,7 @@ namespace upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), context->peer());
+            return this->failure(std::current_exception(), this->peer(context));
         }
     }
 
@@ -72,7 +72,7 @@ namespace upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), context->peer());
+            return this->failure(std::current_exception(), this->peer(context));
         }
     }
 
@@ -90,7 +90,7 @@ namespace upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), context->peer());
+            return this->failure(std::current_exception(), this->peer(context));
         }
     }
 
@@ -109,7 +109,7 @@ namespace upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), context->peer());
+            return this->failure(std::current_exception(), this->peer(context));
         }
     }
 
@@ -125,7 +125,7 @@ namespace upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), context->peer());
+            return this->failure(std::current_exception(), this->peer(context));
         }
     }
 
@@ -143,7 +143,7 @@ namespace upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), context->peer());
+            return this->failure(std::current_exception(), this->peer(context));
         }
     }
 

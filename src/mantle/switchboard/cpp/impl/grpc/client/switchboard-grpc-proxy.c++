@@ -132,6 +132,33 @@ namespace switchboard::grpc
             this->call_check(&Stub::ExportSwitches, req).declarations());
     }
 
+    bool Proxy::add_interceptor(
+        const InterceptorRef &interceptor,
+        const SwitchSelection &switch_selection,
+        bool immediate,
+        bool future)
+    {
+        cc::platform::switchboard::protobuf::AddInterceptorRequest req;
+        cc::protobuf::encode(interceptor, req.mutable_spec());
+        cc::protobuf::encode(switch_selection, req.mutable_switch_selection());
+        req.set_immediate(immediate);
+        req.set_future(future);
+        return this->call_check(&Stub::AddInterceptor, req).value();
+    }
+
+    bool Proxy::remove_interceptor(
+        const InterceptorName &name,
+        const std::optional<SwitchSelection> &switch_selection)
+    {
+        cc::platform::switchboard::protobuf::RemoveInterceptorRequest req;
+        req.set_interceptor_name(name);
+        if (switch_selection.has_value())
+        {
+            cc::protobuf::encode(*switch_selection, req.mutable_switch_selection());
+        }
+        return this->call_check(&Stub::RemoveInterceptor, req).value();
+    }
+
     void Proxy::on_spec_update(
         core::signal::MappingAction action,
         const std::string &switch_name,
@@ -173,8 +200,4 @@ namespace switchboard::grpc
         }
     }
 
-    void Proxy::send_interceptor_update(
-        const ::cc::platform::switchboard::protobuf::InterceptorUpdate &update)
-    {
-    }
 };  // namespace switchboard::grpc

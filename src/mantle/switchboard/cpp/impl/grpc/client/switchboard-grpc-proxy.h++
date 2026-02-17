@@ -57,6 +57,16 @@ namespace switchboard::grpc
             bool include_specifications,
             bool include_statuses) const override;
 
+        bool add_interceptor(
+            const InterceptorRef &interceptor,
+            const SwitchSelection &switch_selection,
+            bool immediate = false,
+            bool future = true) override;
+
+        bool remove_interceptor(
+            const InterceptorName &name,
+            const std::optional<SwitchSelection> &switch_selection = {}) override;
+
     private:
         void synchronize_switches();
 
@@ -69,9 +79,6 @@ namespace switchboard::grpc
             core::signal::MappingAction action,
             const std::string &switch_name,
             const cc::platform::switchboard::protobuf::Signal &signal);
-
-        void send_interceptor_update(
-            const ::cc::platform::switchboard::protobuf::InterceptorUpdate &update);
 
     protected:
         core::dt::Duration ready_timeout;

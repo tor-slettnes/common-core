@@ -6,8 +6,7 @@ __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
 ### Standard Python modules
-from typing import Optional
-from typing import Mapping, Sequence, Set
+from typing import Callable, Mapping, Sequence, Set
 import fnmatch
 import re
 
@@ -16,7 +15,9 @@ from cc.protobuf.utils import native_enum_from_proto
 
 ### Generated from `.../protos/cc/platform/switchboard/protobuf/switchboard_types.proto`
 from .switchboard_types_pb2 import (
-    DependencyPolarity, InterceptorPhase, ExceptionHandling, CascadeStyle, State,
+    DependencyPolarity,
+    InterceptorPhase, InterceptorInvocation,
+    ExceptionHandling, CascadeStyle, State,
     Localization, LocalizationMap, SwitchSelection,
 )
 
@@ -27,7 +28,8 @@ ExceptionHandling  = native_enum_from_proto(ExceptionHandling)
 CascadeStyle       = native_enum_from_proto(CascadeStyle)
 State              = native_enum_from_proto(State)
 StateMask          = int
-StateSet           = Set[State] | Sequence[State] | State | StateMask
+StateSet           = Set[State] | Sequence[State]
+StateSetInput      = StateSet | State | StateMask
 
 LanguageCode = str
 LanguageChoice = LanguageCode | Sequence[LanguageCode]
@@ -42,6 +44,8 @@ DEFAULT_LANGUAGES = (DEFAULT_LANGUAGE,)
 
 SwitchNamePattern     = str | re.Pattern
 SwitchSelectionInput  = SwitchSelection | SwitchNamePattern | Sequence[SwitchNamePattern]
+
+InterceptorMethod = Callable[[InterceptorInvocation], None]
 
 
 def encodeStateSet(states: StateSet,
@@ -68,11 +72,11 @@ def encodeStateSet(states: StateSet,
     return output
 
 
-def encodeLocalization(localization : Optional[Localization],
-                       description: Optional[str] = None,
-                       activate_text: Optional[str] = None,
-                       deactivate_text: Optional[str] = None,
-                       state_texts: Optional[Mapping[State, str]] = None,
+def encodeLocalization(localization : Localization|None,
+                       description: str|None = None,
+                       activate_text: str|None = None,
+                       deactivate_text: str|None = None,
+                       state_texts: Mapping[State, str]|None = None,
                        ) -> Localization:
 
     ### Start with a new copy so as not to modify the `localization` input, if any.
@@ -104,15 +108,22 @@ def encodeLocalizationMap(localizations: LocalizationsInput) -> LocalizationMap:
                         (type(localizations).__name__))
 
 
-def encodeSwitchSelection(patterns: SwitchSelectionInput|None) -> SwitchSelection:
+def encodeOptionalSwitchSelection(patterns: SwitchSelectionInput|None,
+                                  ) -> SwitchSelection|None:
 
     if patterns is None:
         return None
+    else:
+        return encodeSwitchSelection(patterns)
+
+
+def encodeSwitchSelection(patterns: SwitchSelectionInput,
+                          ) -> SwitchSelection:
 
     if isinstance(patterns, SwitchSelection):
         return patterns
 
-    if isinstance(patterns, SwitchNamePattern):
+    if isinstance(patterns, SwitchNamePattern) or not isinstance(patterns, Sequence):
         patterns = [patterns]
 
     use_regex = False

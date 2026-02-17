@@ -6,12 +6,6 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 
-### Modules within package
-from .jsonreader import JsonReader
-from .ini_reader import INIFileReader
-from ..paths import FilePath, FilePathInput, SearchPath, \
-    normalized_search_path, settings_path, local_settings_path, preinstalled_settings_path
-
 ### Standard Python modules
 from typing import Sequence, Mapping, Optional, Union, Any
 import yaml
@@ -22,6 +16,17 @@ import sys
 import platform
 import re
 import pathlib
+
+
+### Modules within package
+from ..paths import (
+    FilePath, FilePathInput, SearchPath,
+    normalized_search_path, settings_path,
+    local_settings_path, preinstalled_settings_path,
+)
+from ..maputils import recursive_merge, recursive_delta
+from .jsonreader import JsonReader
+from .ini_reader import INIFileReader
 
 #Type hints
 FilePaths      = Sequence[FilePath]
@@ -215,7 +220,7 @@ class SettingsStore (dict):
     def merge_settings(self, settings: dict):
         '''Merge in the specified settings'''
 
-        type(self)._recursive_merge(self, settings)
+        recursive_merge(self, settings)
 
 
     def get_value(self,
@@ -541,7 +546,7 @@ class SettingsStore (dict):
 
         See also `defaults()`.
         '''
-        return type(self)._recursive_delta(self, self.defaults())
+        return recursive_delta(self, self.defaults())
 
 
     @classmethod
@@ -593,34 +598,3 @@ class SettingsStore (dict):
 
         return filepaths
 
-
-    @classmethod
-    def _recursive_merge(cls,
-                         base   : dict,
-                         update : dict):
-
-        for (key, value) in update.items():
-            basevalue = base.get(key)
-
-            if isinstance(value, dict) and isinstance(basevalue, dict):
-                cls._recursive_merge(basevalue, value)
-
-            elif basevalue is None:
-                base[key] = value
-
-
-
-    @classmethod
-    def _recursive_delta(cls,
-                         complete: dict,
-                         base    : dict):
-
-        delta = {}
-        for (key, value) in complete.items():
-            basevalue = base.get(key)
-            if isinstance(value, dict) and isinstance(basevalue, dict):
-                if deltavalue := cls._recursive_delta(value, basevalue):
-                    delta[key] = deltavalue
-            elif value != basevalue:
-                delta[key] = value
-        return delta

@@ -141,7 +141,7 @@ namespace core::grpc
             {
                 return this->failure(std::current_exception(),
                                      *request,
-                                     context->peer(),
+                                     this->peer(context),
                                      src_path,
                                      src_line,
                                      src_function);

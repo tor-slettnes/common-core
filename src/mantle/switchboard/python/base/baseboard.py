@@ -14,10 +14,9 @@ from logging import Logger
 import os
 
 ### Core modules
-from cc.core.docbase import DocBase
-from cc.core.logbase import LogBase
 from cc.core.paths import FilePathInput
-from cc.core.invocation import safe_invoke_maybe_async
+from cc.core.decorators import virtual
+from cc.core.invocation import method_path
 from cc.core.settingsstore import SettingsStore
 from cc.protobuf.dissecter import message_dissecter
 from cc.protobuf.signal import SignalStore, MappingAction
@@ -26,27 +25,31 @@ from cc.protobuf.variant import PyValueMap
 ### Modules within package
 from ..protobuf import (
     Signal,
-    InterceptorRegistration, InterceptorDeregistration,
+    InterceptorSpec, InterceptorMethod, InterceptorPhase,
     InterceptorInvocation, InterceptorResult,
+    ExceptionHandling,
     State, StateMask, StateSet, encodeStateSet,
     SwitchSelectionInput,
 )
-from .switch import Switch
-from .signals import switchboard_signals
 
-class SwitchboardBase (DocBase, LogBase):
+from .switch import Switch
+from .observer import SwitchboardObserver
+
+
+class SwitchboardBase (SwitchboardObserver):
     '''
     Switchboard abstract base
     '''
 
     SPEC_SIGNAL = 'specification'
     STATUS_SIGNAL = 'status'
-    signal_store = switchboard_signals
     initialized = False
 
+    ### Map of decorated interceptors and corresponding arguments
+    decorated_interceptor_map = {}
 
     def __init__(self, logger: Logger|None = None):
-        LogBase.__init__(self, logger = logger)
+        SwitchboardObserver.__init__(self, logger = logger)
 
         self.init_intercept()
         self.switches = {}
@@ -151,6 +154,16 @@ class SwitchboardBase (DocBase, LogBase):
         '''
         Get the named switch, or create it if missing.
 
+        This differs from `add_switch()` in that it return immediately even if
+        the switch has to be added, sending the service request to do in the
+        background.  This is useful if you want to avoid blockng in case the
+        Switchboard service is not yet available.
+
+        If you need to modify the switch after creation (e.g. to modify its
+        dependencies or state), use `add_switch()` instead.  This ensures that
+        the switch exists on the server side before you attempt those
+        modifications.
+
         @returns
             An existing or new `Switch`
         '''
@@ -159,22 +172,29 @@ class SwitchboardBase (DocBase, LogBase):
     @abstractmethod
     def add_switch(self,
                    switch_name: str,
-                   active: bool = False,
-                   ) -> bool:
+                   initially_active: bool = False,
+                   ) -> Switch:
         '''
-        Add a new switch.  Initially this state will have no specifications
-        (including dependencies) or status; use appropriate methods on the
-        returned `Switch` object (such as `set_specification()` and
-        `set_target()`) to populate those.
+        Add a new switch, or obtain the existing instance if any.
+
+        This differs from `get_or_add_switch()` in that it always sends a
+        service request to add the switch, even if it already exists locally.
+        and returns only after the server has responded to this request.
+        This makes it safe to then perform other operations on the switch,
+        such as modifying its dependencies or its state.
+
+        On the other hand, this call may block or fail if the server is
+        unavailable.
+
 
         @param switch_name
             Name for the new switch.
 
-        @param active
+        @param initially_active
             Initial active value
 
         @returns
-            True if this switch was added, False if it already existed.
+            Switch object
         '''
 
     @abstractmethod
@@ -278,7 +298,7 @@ class SwitchboardBase (DocBase, LogBase):
             default host-specific setting folder; see
             `cc.core.settingsstore.SettingsStore` for details.
 
-        @param switch_names
+        @param selection
             A list of switches to include in export. By default all switches are
             exported.
 
@@ -303,11 +323,124 @@ class SwitchboardBase (DocBase, LogBase):
 
 
     @abstractmethod
+    def add_interceptor(self,
+                        interceptor_name: str,
+                        switch_selection: SwitchSelectionInput,
+                        state_transitions: StateSet,
+                        callback: InterceptorMethod,
+                        phase: InterceptorPhase = InterceptorPhase.NORMAL,
+                        asynchronous: bool = False,
+                        immediate: bool = False,
+                        rerun: bool = False,
+                        future: bool = False,
+                        on_cancel: ExceptionHandling = ExceptionHandling.ABORT,
+                        on_error: ExceptionHandling = ExceptionHandling.FAIL,
+                        ) -> bool:
+        '''
+        Add a new interceptor to be executed once the switch enters the
+        specified state(s).
+
+        The interceptor may raise a `CancelIntercept` exception to indicate that
+        the state transition should be cancelled.  In this case, the value of
+        `on_cancel` determines what happens next:
+
+
+          - ExceptionHandling.IGNORE:
+            proceed with the state change regardless
+
+          - ExceptionHandling.ABORT:
+            return to the previous settled state without further actions
+
+          - ExceptionHandling.FAIL:
+            redirect the switch to the `FAILED` state
+
+          - ExceptionHandling.REVERT:
+            re-enter the previous settled state anew, invoking any applicable
+            interceptors on the way.
+
+
+        **Inputs:**
+
+        @param interceptor_name
+            Unique name/id for this interceptor.
+
+        @param switch_selection
+            Switch name patterns to which this interceptor is applied.  These
+            may be strings representing individual switches, shell-style
+            globbing expressions, or compiled regular expression objects.
+
+        @param state_transitions
+            A bitmask representing states for which the inerceptor is invoked.
+            Often just a single transitional state, i.e., `ACTIVATING`,
+            `DEACTIVATING` or `FAILING`.
+
+        @param asynchronous
+            Allow state to transition to the next state (normally `ACITVE`,
+            `INACTIVE` or `FAILED`) even as this interceptor continues to run in
+            the background.
+
+        @param phase
+            Run this interceptor prior to (EARLY), concurrent with (NORMAL), or
+            subsequent to (LATE) the main interceptors for the specified state
+            transitions.
+
+        @param immediate
+            If the interceptor's trigger states include this switch's current
+            state OR the transitional state preceding it (for instance, if the
+            switch is currently ACTIVE and the interceptor triggers on either
+            ACTIVATING and ACTIVE), invoke it immediately. In this case, unless
+            `asynchronous` flag is also True, the call blocks until the
+            interceptor has completed.
+
+        @param rerun
+            Whether to invoke interceptor when (explicitly) re-entering one of
+            the specified states, even if the switch is already in that state.
+
+        @param future
+            Add this interceptor also to matchihng switches created in the
+            future.
+
+        @param on_cancel
+            How to proceed if state change is cancelled. The default value
+            `DEFAULT` is equivalent to `ABORT`.
+
+        @param on_error
+            How to proceed if the interceptor encounters an error. The default
+            value `DEFAULT` is equivalent to `FAIL`.
+
+        @returns
+            True if the interceptor was added.
+        '''
+
+
+    @abstractmethod
+    def remove_interceptor(self,
+                           interceptor_name: str,
+                           switch_selection: SwitchSelectionInput|None = None,
+                           abandon_pending: bool = True,
+                           ) -> bool:
+        '''
+        Remove an existing interceptor
+
+        @param[in] name
+            Interceptor name.
+
+        @param[in] switch_selection
+            Specific switches from which this interceptor will be removed.
+            By default it is removed from all existing switches, and will
+            not be added to switches created in the future.
+
+        @param abandon_pending
+            Abandon any pending invocations of this interceptor.
+
+        @returns
+            `true` if a removal took place.
+        '''
+
+
     def register_interceptor(self,
-                             switch_name: str,
                              interceptor_name: str,
-                             registration: InterceptorRegistration,
-                             method: Callable[[InterceptorInvocation], None],
+                             method: InterceptorMethod,
                              ) -> bool:
         '''
         Register an interceptor method to be invoked whenever the specified
@@ -316,15 +449,13 @@ class SwitchboardBase (DocBase, LogBase):
         @return
             True if the interceptor was added
         '''
-        mapping_key = switch_name, interceptor_name
-        is_new = mapping_key not in self.interceptor_methods
-        self.interceptor_methods[mapping_key] = method
+
+        is_new = interceptor_name not in self.interceptor_methods
+        self.interceptor_methods[interceptor_name] = method
         return is_new
 
 
-    @abstractmethod
     def deregister_interceptor(self,
-                               switch_name: str,
                                interceptor_name: str,
                                ) -> bool:
         '''
@@ -335,8 +466,102 @@ class SwitchboardBase (DocBase, LogBase):
         '''
 
         try:
-            del self.interceptor_method[switch_name, interceptor_name]
+            del self.interceptor_method[interceptor_name]
         except KeyError:
             return False
         else:
             return True
+
+
+    @classmethod
+    def interceptor(cls,
+                    switch_selection: SwitchSelectionInput,
+                    state_transitions: StateMask|StateSet = State.PENDING,
+                    phase: InterceptorPhase = InterceptorPhase.NORMAL,
+                    asynchronous: bool = False,
+                    immediate: bool = True,
+                    rerun: bool = False,
+                    future: bool = True,
+                    on_cancel: ExceptionHandling = ExceptionHandling.ABORT,
+                    on_error: ExceptionHandling = ExceptionHandling.FAIL):
+        '''
+        Generate a decorator function to declare an interceptor for
+        Switchboard state transitions.
+
+        To actually register these interceptors with the server, the object
+        instance that contains the decorated methods must invoke
+        `register_decorated_handlers()`, passing in its own object as the sole
+        argument.
+
+        For more details, including a descripion of input arguments, see
+        `add_interceptor()`.
+
+        **Example:**
+
+        ```python
+        from cc.platform.switchboard import (
+            AsyncClient as Switchboard,
+            State,
+            InterceptorInvocation,
+        )
+
+        def __init__(self):
+            self.switchboard = Switchboard('localhost')
+            self.switchboard.register_decorated_interceptors(self)
+            self.switchboard.initialize()
+
+        @SwitchboardBase.interceptor('SomeSwitch', State.ACTIVATING)
+        async def activate_someswitch(self, invocation: InterceptorInvocation):
+            print("Entering switch %r interceptor %r for transition to %r"%(
+                invocation.switch_name,
+                invocation.interceptor_name,
+                invocation.state))
+        ```
+        '''
+
+        kwargs = locals()
+        del kwargs['cls']
+
+        def decorator(method: InterceptorMethod):
+            '''
+            Method decorator for Switchboard interceptor
+            '''
+
+            cls.decorated_interceptor_map[method] = kwargs
+            return method
+
+        return decorator
+
+
+    def register_decorated_handlers(self, instance: object):
+        '''
+        Register to invoke handler methods wrapped by any of the following
+        decorator methods:
+
+          ```python
+          @SwitchboardBase.interceptor(...)
+          @SwitchboardBsae.specification_handler(...)
+          @SwitchboardBase.status_handler(...)
+          ```
+
+        This must be invoked for those interceptors to become effective.
+
+        @param instance
+            The object instance that contains the decorated methods.
+        '''
+        self.register_decorated_interceptors(instance)
+        self.connect_decorated_handlers(instance)
+
+
+    @virtual
+    def register_decorated_interceptors(self, instance: object) -> int:
+        '''
+        Register interceptor decorated interceptor methods with server.
+        This must be invoked for those interceptors to become effective.
+
+        @param instance
+            Instance of the class that contains decorated interceptors
+
+        @returns
+            Number of interceptors that were registered.
+        '''

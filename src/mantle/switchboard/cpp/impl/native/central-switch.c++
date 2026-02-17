@@ -18,8 +18,8 @@ namespace switchboard
     }
 
     bool CentralSwitch::add_dependency(const DependencyRef &dependency,
-                                     bool allow_update,
-                                     bool reevaluate)
+                                       bool allow_update,
+                                       bool reevaluate)
     {
         if (allow_update || !this->get_dependency(dependency->predecessor_name()))
         {
@@ -42,7 +42,7 @@ namespace switchboard
     }
 
     bool CentralSwitch::remove_dependency(SwitchName predecessor_name,
-                                        bool reevaluate)
+                                          bool reevaluate)
     {
         bool erased = this->spec_ref->dependencies.erase(predecessor_name);
         if (erased)
@@ -57,7 +57,7 @@ namespace switchboard
     }
 
     bool CentralSwitch::add_interceptor(const InterceptorRef &interceptor,
-                                      bool immediate)
+                                        bool immediate)
     {
         auto [it, inserted] = this->spec_ref->interceptors.insert_or_assign(
             interceptor->name(),
@@ -68,7 +68,8 @@ namespace switchboard
         if (immediate)
         {
             State state = this->state();
-            if (interceptor->applicable(state))
+            if (interceptor->applicable(state) ||
+                interceptor->applicable(This::transition_state(state)))
             {
                 interceptor->invoke(this->shared_from_this(), state);
             }
@@ -78,9 +79,9 @@ namespace switchboard
     }
 
     bool CentralSwitch::remove_interceptor(
-        const InterceptorName &id)
+        const InterceptorName &name)
     {
-        if (this->spec_ref->interceptors.erase(id))
+        if (this->spec_ref->interceptors.erase(name))
         {
             this->notify_spec();
             return true;
@@ -166,7 +167,7 @@ namespace switchboard
         bool clear_existing,
         bool invoke_interceptors,
         CascadeStyle cascade_descendants,
-        bool reevaluate,
+        bool reenter,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
     {
@@ -175,7 +176,7 @@ namespace switchboard
             target_state = (error && *error) ? STATE_FAILED : this->auto_state();
         }
 
-        if (reevaluate || (this->state() != target_state))
+        if (reenter || (this->state() != target_state))
         {
             bool proceed = true;
             if (State transition_state = This::transition_state(target_state))
@@ -240,7 +241,7 @@ namespace switchboard
     }
 
     bool CentralSwitch::set_attributes(const core::types::KeyValueMap &attributes,
-                                     bool clear_existing)
+                                       bool clear_existing)
     {
         if (StatusRef status = this->status())
         {
@@ -307,7 +308,7 @@ namespace switchboard
             }
             else
             {
-                for (auto &[sw, thread]: threads)
+                for (auto &[sw, thread] : threads)
                 {
                     thread.join();
                 }
@@ -472,8 +473,8 @@ namespace switchboard
     }
 
     bool CentralSwitch::handle_diversion(const core::status::Error::ptr &error,
-                                       ExceptionHandling eh,
-                                       ExceptionHandling eh_default)
+                                         ExceptionHandling eh,
+                                         ExceptionHandling eh_default)
     {
         if (eh == EH_DEFAULT)
         {
@@ -496,9 +497,9 @@ namespace switchboard
 
         case EH_ABORT:
             this->set_current_state(
-                this->settled_state(), // state
-                false,                 // invoke_interceptors,
-                CascadeStyle::NONE);   // cascade_descendants,
+                this->settled_state(),  // state
+                false,                  // invoke_interceptors,
+                CascadeStyle::NONE);    // cascade_descendants,
             return true;
 
         case EH_REVERT:
@@ -549,7 +550,7 @@ namespace switchboard
                                     false,                       // clear_existing
                                     invoke_interceptors,         // invoke_interceptors
                                     cascade_descendants,         // cascade_descendants
-                                    false,                       // reevaluate
+                                    false,                       // reenter
                                     EH_DEFAULT,                  // on_cancel
                                     EH_DEFAULT));                // on_error
                 }

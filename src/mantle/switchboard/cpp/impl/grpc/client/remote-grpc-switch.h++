@@ -46,8 +46,9 @@ namespace switchboard::grpc
         bool add_interceptor(
             const InterceptorRef &interceptor,
             bool immediate = false) override;
+
         bool remove_interceptor(
-            const InterceptorName &id) override;
+            const InterceptorName &name) override;
 
         void update_spec(
             const std::optional<bool> &primary,
@@ -68,7 +69,7 @@ namespace switchboard::grpc
             bool clear_existing = false,
             bool invoke_interceptors = true,
             CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
-            bool reevaluate = false,
+            bool reenter = false,
             ExceptionHandling on_cancel = ExceptionHandling::EH_DEFAULT,
             ExceptionHandling on_error = ExceptionHandling::EH_DEFAULT) override;
 

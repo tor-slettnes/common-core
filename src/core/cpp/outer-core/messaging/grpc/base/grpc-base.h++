@@ -13,6 +13,7 @@
 #include "grpc-status.h++"
 #include "messaging-endpoint.h++"
 #include "settings/settingsstore.h++"
+#include "string/misc.h++"
 #include <grpc++/grpc++.h>
 
 namespace core::grpc
@@ -52,6 +53,13 @@ namespace core::grpc
         /// @return
         ///     DNS-SD service type
         std::string dnssd_type() const;
+
+
+        template <class Context>
+        std::string peer(Context *context) const
+        {
+            return core::str::url_decoded(context->peer());
+        }
 
     protected:
         /// Sanitize a target address of the form [HOST][:PORT] (where either or both

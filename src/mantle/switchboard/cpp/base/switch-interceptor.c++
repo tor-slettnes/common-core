@@ -91,12 +91,12 @@ namespace switchboard
     }
 
     // Accessor methods
-    std::string Interceptor::name() const
+    InterceptorName Interceptor::name() const
     {
         return this->name_;
     }
 
-    std::string Interceptor::owner() const
+    InterceptorOwner Interceptor::owner() const
     {
         return this->owner_;
     }
@@ -147,7 +147,7 @@ namespace switchboard
 
     bool Interceptor::applicable(State state)
     {
-        return this->state_transitions().count(state);
+        return (state != STATE_UNSET) && this->state_transitions().count(state);
     }
 
     bool Interceptor::applicable(State state, InterceptorPhase phase)

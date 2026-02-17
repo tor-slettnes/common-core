@@ -123,16 +123,35 @@ namespace switchboard::dds
         bool include_statuses) const
     {
         CC::Switchboard::ExportRequest req;
-        if (selection)
-        {
-            req.selection(
-                idl::encoded<CC::Switchboard::SwitchSelection>(
-                    *selection));
-        }
+        idl::encode_optional(selection, &req.selection());
         req.include_specifications(include_specifications);
         req.include_statuses(include_statuses);
         return idl::decoded<core::types::KeyValueMap>(
             this->client()->export_switches(req));
+    }
+
+    bool Proxy::add_interceptor(
+        const InterceptorRef &interceptor,
+        const SwitchSelection &switch_selection,
+        bool immediate,
+        bool future)
+    {
+        CC::Switchboard::AddInterceptorRequest req;
+        idl::encode(interceptor, &req.spec());
+        idl::encode(switch_selection, &req.switch_selection());
+        req.immediate(immediate);
+        req.future(future);
+        return this->client()->add_interceptor(req);
+    }
+
+    bool Proxy::remove_interceptor(
+        const InterceptorName &name,
+        const std::optional<SwitchSelection> &switch_selection)
+    {
+        CC::Switchboard::RemoveInterceptorRequest req;
+        req.interceptor_name(name);
+        idl::encode_optional(switch_selection, &req.switch_selection());
+        return this->client()->remove_interceptor(req);
     }
 
 

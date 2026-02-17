@@ -30,6 +30,18 @@ namespace switchboard
         using This = Central;
         using Super = Provider;
 
+        struct InterceptorFactoryData
+        {
+            InterceptorRef interceptor;
+            SwitchSelection switch_selection;
+            bool immediate = false;
+        };
+
+        using InterceptorFactoryMap = std::unordered_map<
+            InterceptorName,
+            InterceptorFactoryData>;
+
+
     protected:
         Central();
 
@@ -51,6 +63,17 @@ namespace switchboard
             const std::optional<SwitchSelection> &selection,
             bool include_specifications,
             bool include_statuses) const override;
+
+        bool add_interceptor(
+            const InterceptorRef &interceptor,
+            const SwitchSelection &switch_selection,
+            bool immediate = false,
+            bool future = true) override;
+
+        bool remove_interceptor(
+            const InterceptorName &name,
+            const std::optional<SwitchSelection> &switch_selection = {}) override;
+
 
     private:
         bool import_switch(
@@ -89,5 +112,8 @@ namespace switchboard
         static void export_status(
             const SwitchRef &sw,
             core::types::TaggedValueList *tvlist);
+
+    private:
+        InterceptorFactoryMap interceptor_factory_map;
     };
 };  // namespace switchboard

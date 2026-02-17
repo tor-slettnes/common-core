@@ -51,8 +51,8 @@ namespace switchboard
         friend bool operator!=(const InterceptorRef &lhs, const InterceptorRef &rhs);
 
     protected:
-        Interceptor(const std::string &name,
-                    const std::string &owner = {},
+        Interceptor(const InterceptorName &name,
+                    const InterceptorOwner &owner = {},
                     const Invocation &invocation = {},
                     const StateSet &state_transitions = ACTIVATION_STATES,
                     InterceptorPhase phase = PHASE_NORMAL,
@@ -64,8 +64,8 @@ namespace switchboard
 
     public:
         // Accessor methods
-        std::string name() const;
-        std::string owner() const;
+        InterceptorName name() const;
+        InterceptorOwner owner() const;
         Invocation invocation() const;
         StateSet state_transitions() const;
         InterceptorPhase phase() const;

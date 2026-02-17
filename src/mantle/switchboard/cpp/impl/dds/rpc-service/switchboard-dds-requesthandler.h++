@@ -29,23 +29,44 @@ namespace switchboard::dds
 
     public:
         CC::Switchboard::SwitchList get_switches() override;
-        CC::Switchboard::Switch get_switch(const SwitchName &switch_name) override;
-        bool add_switch(const CC::Switchboard::AddSwitchRequest &req) override;
-        bool remove_switch(const CC::Switchboard::RemoveSwitchRequest &req) override;
-        std::uint32_t import_switches(const CC::Switchboard::ImportRequest &req) override;
-        CC::Variant::TaggedValueList export_switches(const CC::Switchboard::ExportRequest &req) override;
-        bool set_specification(const CC::Switchboard::SetSpecificationRequest &req) override;
+        CC::Switchboard::Switch get_switch(
+            const SwitchName &switch_name) override;
+        bool add_switch(
+            const CC::Switchboard::AddSwitchRequest &req) override;
+        bool remove_switch(
+            const CC::Switchboard::RemoveSwitchRequest &req) override;
+        std::uint32_t import_switches(
+            const CC::Switchboard::ImportRequest &req) override;
 
-        bool add_dependency(const CC::Switchboard::AddDependencyRequest &req) override;
-        bool remove_dependency(const CC::Switchboard::RemoveDependencyRequest &req) override;
+        CC::Variant::TaggedValueList export_switches(
+            const CC::Switchboard::ExportRequest &req) override;
 
-        bool add_interceptor(const CC::Switchboard::AddInterceptorRequest &req) override;
-        bool remove_interceptor(const CC::Switchboard::RemoveInterceptorRequest &req) override;
-        CC::Switchboard::InterceptorResult invoke_interceptor(const CC::Switchboard::InterceptorInvocation &req) override;
+        bool set_specification(
+            const CC::Switchboard::SetSpecificationRequest &req) override;
 
-        bool set_target(const CC::Switchboard::SetTargetRequest &req) override;
-        bool set_attributes(const CC::Switchboard::SetAttributesRequest &req) override;
-        CC::Switchboard::StatusList get_culprits(const CC::Switchboard::CulpritsQuery &req) override;
+        bool add_dependency(
+            const CC::Switchboard::AddDependencyRequest &req) override;
+
+        bool remove_dependency(
+            const CC::Switchboard::RemoveDependencyRequest &req) override;
+
+        bool add_interceptor(
+            const CC::Switchboard::AddInterceptorRequest &req) override;
+
+        bool remove_interceptor(
+            const CC::Switchboard::RemoveInterceptorRequest &req) override;
+
+        CC::Switchboard::InterceptorResult invoke_interceptor(
+            const CC::Switchboard::InterceptorInvocation &req) override;
+
+        bool set_target(
+            const CC::Switchboard::SetTargetRequest &req) override;
+
+        bool set_attributes(
+            const CC::Switchboard::SetAttributesRequest &req) override;
+
+        CC::Switchboard::StatusList get_culprits(
+            const CC::Switchboard::CulpritsQuery &req) override;
 
     private:
         std::shared_ptr<Provider> provider;

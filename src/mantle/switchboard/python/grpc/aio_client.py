@@ -13,7 +13,7 @@ import sys
 
 ### Common Core modules
 from cc.core.decorators import override
-from cc.core.invocation import invoke_async
+from cc.core.invocation import method_path
 from cc.core.paths import FilePathInput
 from cc.core.settingsstore import SettingsStore
 from cc.protobuf.status import encodeError
@@ -21,9 +21,11 @@ from cc.protobuf.variant import PyValueMap, decodeKeyValueMap
 from cc.messaging.grpc import SignalClient, AsyncMixIn
 
 ### Switchboard modules
+
 from ..protobuf import (
-    State,
-    InterceptorInvocation, InterceptorResult, InterceptorUpdate,
+    State, StateSet,
+    InterceptorMethod, InterceptorInvocation, InterceptorResult,
+    InterceptorPhase, ExceptionHandling,
     SwitchSelectionInput,
 )
 
@@ -43,9 +45,11 @@ class AsyncClient (AsyncMixIn, BaseClient):
     @override
     async def add_switch(self,
                          switch_name: str,
-                         active: bool = False) -> bool:
-        response = await BaseClient.add_switch(**locals())
-        return response.value
+                         initially_active: bool = False) -> bool:
+
+        switch =  BaseClient.add_switch(**locals())
+        await self._call_add_switch(switch_name, initially_active)
+        return switch
 
     @override
     async def remove_switch(self, switch_name: str, propagate: bool = True) -> bool:
@@ -93,10 +97,40 @@ class AsyncClient (AsyncMixIn, BaseClient):
         return store.save(filename)
 
 
+    @override
+    async def add_interceptor(self,
+                              interceptor_name: str,
+                              switch_selection: SwitchSelectionInput,
+                              state_transitions: StateSet,
+                              callback: InterceptorMethod,
+                              phase: InterceptorPhase = InterceptorPhase.NORMAL,
+                              asynchronous: bool = False,
+                              rerun: bool = False,
+                              on_cancel: ExceptionHandling = ExceptionHandling.ABORT,
+                              on_error: ExceptionHandling = ExceptionHandling.FAIL,
+                              immediate: bool = False,
+                              future: bool = False) -> bool:
+
+        response = await BaseClient.add_interceptor(**locals())
+        return response.value
+
+
+    @override
+    async def remove_interceptor(self,
+                                 interceptor_name: str,
+                                 switch_selection: SwitchSelectionInput|None = None,
+                                 abandon_pending: bool = True,
+                                 ) -> bool:
+
+        response = await BaseClient.remove_interceptor(**locals())
+        return response.value
+
+
     def init_intercept(self):
         BaseClient.init_intercept(self)
         self.interceptor_task = None
-        self.interceptor_update_queue = None
+        self.interceptor_response_queue = None
+
 
     def is_intercepting(self):
         if t := self.interceptor_task:
@@ -104,32 +138,54 @@ class AsyncClient (AsyncMixIn, BaseClient):
         else:
             return False
 
+
     def start_intercepting(self):
         if not self.is_intercepting():
-            self.interceptor_update_queue = asyncio.Queue()
+            self.interceptor_response_queue = asyncio.Queue()
             self.interceptor_stream = self.stub.Intercept(
                 self._intercept_queue_iterator(),
                 None)
             self.interceptor_task = asyncio.create_task(
                 self._intercept_runner())
 
+
     def stop_intercepting(self):
         if self.is_intercepting():
-            self.interceptor_update_queue.put(None)
+            self.interceptor_response_queue.put(None)
             self.interceptor_task.cancel()
 
-    def enqueue_interceptor_update(self, msg: InterceptorUpdate):
-        self.start_intercepting()
-        self.interceptor_update_queue.put_nowait(msg)
+
+    @override
+    async def register_decorated_handlers(self, instance: object):
+        await self.register_decorated_interceptors(instance)
+        self.connect_decorated_handlers(instance)
+
+
+    @override
+    async def register_decorated_interceptors(self, instance: object):
+        count = 0
+        for (unbound_method, kwargs) in self.decorated_interceptor_map.items():
+            method_name = unbound_method.__name__
+            if getattr(type(instance), method_name, None) == unbound_method:
+                count += 1
+                bound_method = getattr(instance, method_name)
+                await self.add_interceptor(
+                    interceptor_name = method_path(bound_method),
+                    callback = bound_method,
+                    **kwargs)
+
+        return count
 
     async def _intercept_queue_iterator(self):
-        while msg := await self.interceptor_update_queue.get():
+        while msg := await self.interceptor_response_queue.get():
             yield msg
+
 
     async def _intercept_runner(self):
         async with asyncio.TaskGroup() as tg:
             async for request in self.interceptor_stream:
                 tg.create_task(self._on_interceptor_invocation(request))
+
 
     async def _on_interceptor_invocation(self, invocation: InterceptorInvocation):
         self.logger.debug("%s switch %r interceptor %r starting" % (
@@ -138,17 +194,18 @@ class AsyncClient (AsyncMixIn, BaseClient):
             invocation.interceptor_name,
         ))
 
-        mapping_key = invocation.switch_name, invocation.interceptor_name
-
-        if method := self.interceptor_methods.get(mapping_key):
+        error = None
+        if method := self.interceptor_methods.get(invocation.interceptor_name):
             try:
                 result = method(invocation)
                 if asyncio.iscoroutine(result):
                     await result
-
             except Exception as e:
                 error = e
-            else:
-                error = None
 
-        self._return_interceptor_response(invocation, error)
+        self._enqueue_interceptor_result(
+            self.interceptor_response_queue,
+            invocation,
+            error,
+        )
+

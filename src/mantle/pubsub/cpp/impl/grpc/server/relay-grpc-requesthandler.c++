@@ -38,7 +38,7 @@ namespace pubsub::grpc
         catch (...)
         {
             queue.deinitialize();
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -72,7 +72,7 @@ namespace pubsub::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *message, context->peer());
+            return this->failure(std::current_exception(), *message, this->peer(context));
         }
     }
 

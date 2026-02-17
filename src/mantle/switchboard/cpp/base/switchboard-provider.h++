@@ -140,40 +140,46 @@ namespace switchboard
             bool include_specifications = false,
             bool include_statuses = true) const = 0;
 
-        // Operations pertaining to indivdiual switches
 
         /// @brief
-        ///     Add an interceptor that takes the switch reference and
-        ///     newly acquired state as arguments
-        template <class... Args>
-        std::pair<InterceptorRef, bool> inline emplace_interceptor(
-            const SwitchName &switch_name,
-            const InterceptorName &interceptor_name,
-            const std::function<void(SwitchRef sw, State target_state)> &invocation,
-            bool immediate,
-            Args &&...args)
-        {
-            auto [sw, inserted] = this->add_switch(switch_name);
-            if (InterceptorRef ref = sw->get_interceptor(interceptor_name))
-            {
-                return {ref, false};
-            }
-            else
-            {
-                ref = Interceptor::create_shared(
-                    interceptor_name,
-                    "",
-                    invocation,
-                    std::forward<Args>(args)...);
-                sw->add_interceptor(ref, immediate);
-                return {ref, true};
-            }
-        }
+        ///      Add an interceptor with a callback handler to be invoked
+        ///      following an applicable state change.
+        /// @param[in] interceptor
+        ///      Interceptor to be invoked after each matching state change.
+        /// @param[in] switch_seleciton
+        ///      Switches to which this intereceptor will be added.
+        /// @param[in] immediate
+        ///      If the interceptor's trigger states include this switch's
+        ///      current state OR the transitional state preceding it (for
+        ///      instance, if the switch is currently ACTIVE and the interceptor
+        ///      triggers on either ACTIVATING and ACTIVE), invoke it
+        ///      immediately.  In this case, unless the interceptor's
+        ///      `asynchronous` flag is also True, the call blocks until the
+        ///      interceptor has completed.
+        /// @return
+        ///     `true` if the interceptor was added, `false` if the name already existed.
+
+        virtual bool add_interceptor(
+            const InterceptorRef &interceptor,
+            const SwitchSelection &switch_selection,
+            bool immediate = false,
+            bool future = true) = 0;
 
         /// @brief
         ///     Remove an existing interceptor
-        bool remove_interceptor(const SwitchName &switch_name,
-                                const InterceptorName &interceptor_name);
+        /// @param[in] name
+        ///     Interceptor name.
+        /// @param[in] switch_selection
+        ///     Specific switches from which this interceptor will be removed.
+        ///     By default it is removed from all existing switches, and will
+        ///     not be added to switches created in the future.
+        /// @returns
+        ///     `true` if a removal took place.
+
+        virtual bool remove_interceptor(
+            const InterceptorName &name,
+            const std::optional<SwitchSelection> &switch_selection = {}) = 0;
+
 
     protected:
         /// @brief

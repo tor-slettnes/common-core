@@ -21,8 +21,7 @@ namespace switchboard::grpc
     RequestHandler::RequestHandler(
         const std::shared_ptr<Provider> &api_provider)
         : Super(),
-          provider(api_provider),
-          latest_interceptor_session(0)
+          provider(api_provider)
     {
     }
 
@@ -38,7 +37,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -61,7 +60,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -80,7 +79,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -99,7 +98,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -119,7 +118,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -147,7 +146,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -179,7 +178,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -199,7 +198,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -226,7 +225,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -247,7 +246,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -264,7 +263,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -281,7 +280,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -298,7 +297,128 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
+        }
+    }
+
+    ::grpc::Status RequestHandler::AddInterceptor(
+        ::grpc::ServerContext *context,
+        const cc::platform::switchboard::protobuf::AddInterceptorRequest *request,
+        ::google::protobuf::BoolValue *reply)
+    {
+        try
+        {
+            InterceptorSessionID session_id = this->peer(context);
+            InterceptorName name = request->interceptor_name();
+            InterceptorName key = this->interceptor_key(name, session_id);
+
+            std::scoped_lock lck(this->interceptor_sessions_mutex);
+
+            if (InterceptorSession *session = this->interceptor_sessions.get_ptr(session_id))
+            {
+                using namespace std::placeholders;
+                Invocation invocation = std::bind(
+                    &This::on_intercept,
+                    this,
+                    name,
+                    session_id,
+                    _1,
+                    _2);
+
+                InterceptorRef interceptor = cc::protobuf::decoded<InterceptorRef>(
+                    request->spec(),  // proto
+                    key,              // name
+                    session_id,       // owner
+                    invocation);      // invocation
+
+                SwitchSelection selection = cc::protobuf::decoded<SwitchSelection>(
+                    request->switch_selection());
+
+                bool added = this->provider->add_interceptor(
+                    interceptor,           // interceptor
+                    selection,             // switch_selection
+                    request->immediate(),  // immediate
+                    request->future());    // future
+
+                reply->set_value(added);
+                session->registrations.insert(key);
+                return ::grpc::Status::OK;
+            }
+            else
+            {
+                throw core::exception::FailedPrecondition(
+                    "Client must open interceptor stream with `Intercept()` "
+                    "before invoking AddInterceptor()",
+                    {
+                        {"session_id", session_id},
+                    });
+            }
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, this->peer(context));
+        }
+    }
+
+    ::grpc::Status RequestHandler::RemoveInterceptor(
+        ::grpc::ServerContext *context,
+        const cc::platform::switchboard::protobuf::RemoveInterceptorRequest *request,
+        ::google::protobuf::BoolValue *reply)
+    {
+        try
+        {
+            InterceptorName name = request->interceptor_name();
+            InterceptorSessionID session_id = this->peer(context);
+            InterceptorName key = this->interceptor_key(name, session_id);
+
+            std::optional<SwitchSelection> selection;
+            if (request->has_switch_selection())
+            {
+                selection = cc::protobuf::decoded<SwitchSelection>(
+                    request->switch_selection());
+            }
+
+            // First we remove the intereceptor
+            bool removed = this->provider->remove_interceptor(key, selection);
+
+            // Next, we remove session-specific callback information
+            std::scoped_lock lck(this->interceptor_sessions_mutex);
+            if (InterceptorSession *session = this->interceptor_sessions.get_ptr(session_id))
+            {
+                if (!request->has_switch_selection())
+                {
+                    // Unless we removed the interceptor only from some
+                    // switches, we now also remove the interceptor name from
+                    // the list of interceptors to be cleaned up at the end of
+                    // this session.
+                    session->registrations.erase(key);
+                }
+
+                if (request->abandon_pending())
+                {
+                    // Remove any pending invocations of this interceptor
+                    auto it = session->pending.begin();
+                    while (it != session->pending.end())
+                    {
+                        const InterceptorName &candidate_name = it->first.first;
+                        if (candidate_name == name)
+                        {
+                            it = session->pending.erase(it);
+                        }
+                        else
+                        {
+                            it++;
+                        }
+                    }
+                }
+            }
+
+            reply->set_value(removed);
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -315,7 +435,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -327,13 +447,19 @@ namespace switchboard::grpc
         try
         {
             SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
-            InterceptorRef icept = sw->get_interceptor(request->interceptor_name(), true);
+
+            InterceptorName key = this->interceptor_key(
+                request->interceptor_name(),
+                this->peer(context));
+
+            InterceptorRef icept = sw->get_interceptor(key, true);
+            std::future<void> future = icept->invoke(
+                sw,
+                cc::protobuf::decoded<switchboard::State>(request->state()));
 
             try
             {
-                icept->invoke(
-                    sw,
-                    cc::protobuf::decoded<switchboard::State>(request->state()));
+                future.wait();
             }
             catch (...)
             {
@@ -346,7 +472,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -354,49 +480,21 @@ namespace switchboard::grpc
         ::grpc::ServerContext *context,
         InterceptorStream *stream)
     {
-        InterceptorSessionID session_id = this->create_session(context, stream);
+        InterceptorSessionID session_id = create_session(context, stream);
+        logf_debug("Startng interceptor session: %s", session_id);
 
-        logf_debug("Startng interceptor session %d on behalf of client %s",
-                   session_id,
-                   context->peer());
+        using switchboard::protobuf::InterceptorResult;
+        InterceptorResult result;
 
-        using switchboard::protobuf::InterceptorUpdate;
-        InterceptorUpdate update;
-        while (stream->Read(&update))
+        while (stream->Read(&result))
         {
-            SwitchRef sw = this->provider->get_switch(update.switch_name(), true);
-            InterceptorName name = update.interceptor_name();
-
-            switch (update.update_type_case())
-            {
-            case InterceptorUpdate::kRegistration:
-                this->add_intercept_registration(
-                    session_id,
-                    sw,
-                    name,
-                    update.registration());
-                break;
-
-            case InterceptorUpdate::kDeregistration:
-                this->remove_intercept_registration(
-                    session_id,
-                    sw,
-                    name,
-                    update.deregistration());
-                break;
-
-            case InterceptorUpdate::kInvocationResult:
-                this->on_intercept_response(
-                    sw,
-                    name,
-                    update.invocation_result());
-                break;
-            }
+            this->on_intercept_response(result.switch_name(),
+                                        result.interceptor_name(),
+                                        session_id,
+                                        result);
         }
-        logf_debug("Ending interceptor session %d on behalf of client %s",
-                   session_id,
-                   context->peer());
 
+        logf_debug("Ending interceptor session: %s", session_id);
         this->end_session(session_id);
         return ::grpc::Status::OK;
     }
@@ -427,7 +525,7 @@ namespace switchboard::grpc
                 request->clear_existing(),
                 invoke_interceptors,
                 cascade_descendants,
-                request->reevaluate(),
+                request->reenter(),
                 cc::protobuf::decoded<switchboard::ExceptionHandling>(request->on_cancel()),
                 cc::protobuf::decoded<switchboard::ExceptionHandling>(request->on_error()));
 
@@ -436,7 +534,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -456,7 +554,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -476,7 +574,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -501,7 +599,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -518,7 +616,7 @@ namespace switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, context->peer());
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 
@@ -559,11 +657,7 @@ namespace switchboard::grpc
         ::grpc::ServerContext *context,
         InterceptorStream *stream)
     {
-        InterceptorSessionID session_id = ++this->latest_interceptor_session;
-        logf_info("Starting interceptor session %d on behalf of client %s",
-                  session_id,
-                  context->peer());
-
+        InterceptorSessionID session_id = this->peer(context);
         std::scoped_lock lck(this->interceptor_sessions_mutex);
         this->interceptor_sessions.insert_or_assign(
             session_id,
@@ -576,83 +670,29 @@ namespace switchboard::grpc
     }
 
     void RequestHandler::end_session(
-        InterceptorSessionID session_id)
+        const InterceptorSessionID &session_id)
     {
         std::scoped_lock lck(interceptor_sessions_mutex);
         if (auto nh = this->interceptor_sessions.extract(session_id))
         {
-            logf_info("Ending interceptor session %d on behalf of client %s",
-                      session_id,
-                      nh.mapped().context->peer());
+            logf_info("Ending interceptor session: %s", session_id);
 
-
-            for (const auto &[sw, interceptor_name] : nh.mapped().registrations)
+            for (const InterceptorName &key : nh.mapped().registrations)
             {
-                sw->remove_interceptor(interceptor_name);
-                // std::string key = this->pending_key(sw->name(), interceptor_name);
-                this->pending_intercepts.erase({sw->name(), interceptor_name});
+                this->provider->remove_interceptor(key);
             }
         }
     }
 
-    void RequestHandler::add_intercept_registration(
-        InterceptorSessionID session_id,
-        SwitchRef sw,
-        const InterceptorName &interceptor_name,
-        const switchboard::protobuf::InterceptorRegistration &reg)
-    {
-        std::scoped_lock lck(this->interceptor_sessions_mutex);
-        if (InterceptorSession *session = this->interceptor_sessions.get_ptr(session_id))
-        {
-            session->registrations.insert({sw, interceptor_name});
-        }
-
-        const switchboard::protobuf::InterceptorSpec &spec = reg.spec();
-
-        using namespace std::placeholders;
-        auto icept = Interceptor::create_shared(
-            interceptor_name,                                            // name
-            "gRPC client session #" + std::to_string(session_id),        // owner
-            std::bind(&This::on_intercept,                               // |
-                      this,                                              // |
-                      session_id,                                        // | invocation
-                      interceptor_name,                                  // |
-                      _1,                                                // |
-                      _2),                                               // |
-            cc::protobuf::decoded<StateSet>(spec.state_transitions()),   // state_transitions
-            cc::protobuf::decoded<InterceptorPhase>(spec.phase()),       // phase
-            spec.asynchronous(),                                         // asynchronous
-            spec.rerun(),                                                // rerun
-            cc::protobuf::decoded<ExceptionHandling>(spec.on_cancel()),  // on_cancel
-            cc::protobuf::decoded<ExceptionHandling>(spec.on_error()));  // on_error
-
-        sw->add_interceptor(icept, reg.immediate());
-    }
-
-    void RequestHandler::remove_intercept_registration(
-        InterceptorSessionID session_id,
-        SwitchRef sw,
-        const InterceptorName &interceptor_name,
-        const switchboard::protobuf::InterceptorDeregistration &dereg)
-    {
-        sw->remove_interceptor(interceptor_name);
-
-        std::scoped_lock lck(this->interceptor_sessions_mutex);
-        if (InterceptorSession *session = this->interceptor_sessions.get_ptr(session_id))
-        {
-            session->registrations.erase({sw, interceptor_name});
-        }
-    }
-
     void RequestHandler::on_intercept(
-        InterceptorSessionID session_id,
         const InterceptorName &interceptor_name,
+        const InterceptorSessionID &session_id,
         SwitchRef sw,
         State state)
     {
         auto future_result = this->invoke_client_interceptor(
-            session_id,
             interceptor_name,
+            session_id,
             sw,
             state);
 
@@ -665,9 +705,9 @@ namespace switchboard::grpc
         }
     }
 
-    std::future<switchboard::protobuf::InterceptorResult> RequestHandler::invoke_client_interceptor(
-        InterceptorSessionID session_id,
+    RequestHandler::FutureResult RequestHandler::invoke_client_interceptor(
         const InterceptorName &interceptor_name,
+        const InterceptorSessionID &session_id,
         SwitchRef sw,
         State state)
     {
@@ -676,9 +716,8 @@ namespace switchboard::grpc
         {
             if (!session->context->IsCancelled())
             {
-                // std::string key = this->pending_key(sw->name(), interceptor_name);
-                auto &promise = this->pending_intercepts[{sw->name(), interceptor_name}];
-                auto future = promise.get_future();
+                auto &promise = session->pending[{interceptor_name, sw->name()}];
+                FutureResult future = promise.get_future();
 
                 // Create an Invocation message for the client.
                 switchboard::protobuf::InterceptorInvocation invocation;
@@ -696,22 +735,26 @@ namespace switchboard::grpc
     }
 
     void RequestHandler::on_intercept_response(
-        SwitchRef sw,
+        const SwitchName &switch_name,
         const InterceptorName &interceptor_name,
+        const InterceptorSessionID &session_id,
         const switchboard::protobuf::InterceptorResult &result)
     {
         // std::string key = this->pending_key(sw->name(), interceptor_name);
-        if (auto nh = this->pending_intercepts.extract({sw->name(), interceptor_name}))
+        if (InterceptorSession *session = this->interceptor_sessions.get_ptr(session_id))
         {
-            nh.mapped().set_value(result);
+            if (auto nh = session->pending.extract({interceptor_name, switch_name}))
+            {
+                nh.mapped().set_value(result);
+            }
         }
     }
 
-    std::string RequestHandler::pending_key(
-        const std::string &switch_name,
-        const std::string &interceptor_name) const
+    InterceptorName RequestHandler::interceptor_key(
+        const InterceptorName &interceptor_name,
+        const InterceptorSessionID &session_id) const
     {
-        return switch_name + "/" + interceptor_name;
+        return interceptor_name + "@" + session_id;
     }
 
 }  // namespace switchboard::grpc

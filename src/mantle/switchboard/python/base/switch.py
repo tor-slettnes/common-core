@@ -14,23 +14,26 @@ from weakref import ref
 ### Core modules
 from cc.core.decorators import virtual
 from cc.core.docbase import DocBase
+from cc.core.maputils import recursive_merge
 from cc.core.invocation import safe_invoke
 from cc.protobuf.status import Error, encodeError
-from cc.protobuf.variant import PyValueMap, encodeKeyValueMap
+from cc.protobuf.variant import (
+    PyValueMap, encodeKeyValueMap, decodeKeyValueMap,
+)
 
 ### Swithboard modules
 from ..protobuf import (
     Specification, Status, State, StateSet, encodeStateSet,
     Dependency, DependencyMap, DependencyPolarity,
     Localization, LocalizationMap, encodeLocalization, encodeLocalizationMap,
-    InterceptorRegistration, InterceptorInvocation, InterceptorSpec,
+    InterceptorSpec, InterceptorInvocation, InterceptorMethod,
     InterceptorPhase, ExceptionHandling, CascadeStyle,
     LanguageCode, LanguageChoice, LocalizationsInput,
 )
 
 InterceptorName = str
-InterceptorMethod = Callable[[InterceptorInvocation], None]
 SwitchUpdateSubscriber = Callable[['Switch'], None]
+
 
 class Switch (DocBase):
     '''
@@ -660,8 +663,10 @@ class Switch (DocBase):
             value `DEFAULT` is equivalent to `FAIL`.
 
         @param immediate
-            If True, and if the `states` mask include the current state of this
-            switch, invoke the interceptor immediately. In this case, unless
+            If the interceptor's trigger states include this switch's current
+            state OR the transitional state preceding it (for instance, if the
+            switch is currently ACTIVE and the interceptor triggers on either
+            ACTIVATING and ACTIVE), invoke it immediately. In this case, unless
             `asynchronous` flag is also True, the call blocks until the
             interceptor has completed.
 
@@ -829,7 +834,7 @@ class Switch (DocBase):
                    clear_existing: bool = False,
                    invoke_interceptors: bool = True,
                    cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
-                   reevaluate: bool = False,
+                   reenter: bool = False,
                    on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
                    on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
                    ) -> bool:
@@ -868,7 +873,7 @@ class Switch (DocBase):
             with dependencies that include the corresponding state transition(s)
             of this switch are reevaluated.
 
-        @param reevaluate
+        @param reenter
             Make the transition (via the applicable pending state) even if the
             switch is already in the desired target state, invoking any relevant
             interceptors on the way.
@@ -895,7 +900,7 @@ class Switch (DocBase):
                    clear_existing: bool = False,
                    invoke_interceptors: bool = True,
                    cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
-                   reevaluate: bool = False,
+                   reenter: bool = False,
                    on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
                    on_error: ExceptionHandling = ExceptionHandling.DEFAULT):
         '''
@@ -912,7 +917,7 @@ class Switch (DocBase):
             clear_existing = clear_existing,
             invoke_interceptors = invoke_interceptors,
             cascade_descendants = cascade_descendants,
-            reevaluate = reevaluate,
+            reenter = reenter,
             on_cancel = on_cancel,
             on_error = on_error)
 
@@ -924,7 +929,7 @@ class Switch (DocBase):
                   clear_existing: bool = False,
                   invoke_interceptors: bool = True,
                   cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
-                  reevaluate: bool = True,
+                  reenter: bool = True,
                   on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
                   on_error: ExceptionHandling = ExceptionHandling.DEFAULT):
         '''
@@ -939,7 +944,7 @@ class Switch (DocBase):
             clear_existing = clear_existing,
             invoke_interceptors = invoke_interceptors,
             cascade_descendants = cascade_descendants,
-            reevaluate = reevaluate,
+            reenter = reenter,
             on_cancel = on_cancel,
             on_error = on_error)
 
@@ -948,7 +953,7 @@ class Switch (DocBase):
                  clear_existing: bool = False,
                  invoke_interceptors: bool = True,
                  cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
-                 reevaluate: bool = False,
+                 reenter: bool = False,
                  on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
                  on_error: ExceptionHandling = ExceptionHandling.DEFAULT):
         '''
@@ -963,7 +968,7 @@ class Switch (DocBase):
             clear_existing = clear_existing,
             invoke_interceptors = invoke_interceptors,
             cascade_descendants = cascade_descendants,
-            reevaluate = reevaluate,
+            reenter = reenter,
             on_cancel = on_cancel,
             on_error = on_error)
 
@@ -985,6 +990,22 @@ class Switch (DocBase):
         '''
 
         return decodeKeyValueMap(self.status.attributes)
+
+
+    @property
+    def cascaded_attributes(self):
+        '''
+        Create and return a dictionary of attributes for this switch, with
+        those from its ancestors merged in recursively.  Preference is tiven to
+        keys from this switch, but the merging order of values from ancestors is
+        undetermined.
+        '''
+
+        attributes = self.attributes
+        for predecessor in self.predecessors.values():
+            recursive_merge(attributes, predecessor.cascaded_attributes)
+
+        return attributes
 
 
     @abstractmethod

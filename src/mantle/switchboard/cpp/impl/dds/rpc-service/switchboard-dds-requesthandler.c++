@@ -71,17 +71,17 @@ namespace switchboard::dds
     CC::Variant::TaggedValueList RequestHandler::export_switches(
         const CC::Switchboard::ExportRequest &req)
     {
-        std::optional<SwitchSelection> opt_patterns;
-        if (auto *idl_patterns = req.selection().get_ptr())
+        std::optional<SwitchSelection> opt_selection;
+        if (auto *idl_selection = req.selection().get_ptr())
         {
-            opt_patterns = SwitchSelection();
-            opt_patterns->patterns = idl_patterns->patterns();
-            opt_patterns->is_regex = idl_patterns->is_regex();
+            opt_selection = SwitchSelection(
+                idl_selection->patterns(),
+                idl_selection->is_regex());
         }
 
         return idl::encoded<CC::Variant::TaggedValueList>(
             this->provider->export_switches(
-                opt_patterns,
+                opt_selection,
                 req.include_specifications(),
                 req.include_statuses()));
     }
@@ -93,7 +93,7 @@ namespace switchboard::dds
         if (auto sw = this->provider->get_switch(spec.switch_name(), true))
         {
             sw->update_spec(
-                idl::decode_optional(spec.is_primary()),
+                idl::assign_optional(spec.is_primary()),
                 idl::decoded<switchboard::SwitchAliases>(spec.aliases()),
                 req.replace_aliases(),
                 idl::decoded<LocalizationMap>(spec.localizations()),
@@ -135,21 +135,29 @@ namespace switchboard::dds
     bool RequestHandler::add_interceptor(
         const CC::Switchboard::AddInterceptorRequest &req)
     {
-        SwitchRef sw = this->provider->get_switch(req.switch_name(), true);
-        InterceptorRef icept = idl::decoded<InterceptorRef>(
+        InterceptorRef interceptor = idl::decoded<InterceptorRef>(
             req.spec(),
+            req.spec().owner(),
             [](SwitchRef sw, State state) {
                 logf_info("Callback for switch=%r, state=%s", *sw, state);
             });
 
-        return sw->add_interceptor(icept, req.immediate());
+        SwitchSelection switch_selection = idl::decoded<SwitchSelection>(
+            req.switch_selection());
+
+        return this->provider->add_interceptor(
+            interceptor,        // interceptor
+            switch_selection,   // switch_selection
+            req.immediate(),    // immediate
+            req.future());      // future
     }
 
     bool RequestHandler::remove_interceptor(
         const CC::Switchboard::RemoveInterceptorRequest &req)
     {
-        SwitchRef sw = this->provider->get_switch(req.switch_name(), true);
-        return sw->remove_interceptor(req.interceptor_name());
+        return this->provider->remove_interceptor(
+            req.interceptor_name(),
+            idl::decoded_optional<SwitchSelection>(req.switch_selection()));
     }
 
     CC::Switchboard::InterceptorResult RequestHandler::invoke_interceptor(
@@ -196,7 +204,7 @@ namespace switchboard::dds
                 req.clear_existing(),
                 req.invoke_interceptors(),
                 idl::decoded<switchboard::CascadeStyle>(req.cascade_descendants()),
-                req.reevaluate(),
+                req.reenter(),
                 idl::decoded<switchboard::ExceptionHandling>(req.on_cancel()),
                 idl::decoded<switchboard::ExceptionHandling>(req.on_error()));
         }

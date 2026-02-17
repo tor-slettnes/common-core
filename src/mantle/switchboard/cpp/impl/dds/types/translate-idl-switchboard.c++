@@ -62,7 +62,6 @@ namespace idl
         *native = static_cast<switchboard::State>(idl);
     }
 
-
     // CC::Switchboard::AliasList
     void encode(switchboard::SwitchAliases native,
                 CC::Switchboard::NameList *idl)
@@ -75,7 +74,6 @@ namespace idl
     {
         native->insert(idl.begin(), idl.end());
     }
-
 
     // CC::Switchboard::SwitchSelection
     void encode(const switchboard::SwitchSelection &native,
@@ -91,7 +89,6 @@ namespace idl
         native->patterns = idl.patterns();
         native->is_regex = idl.is_regex();
     }
-
 
     // CC::Switchboard::Localization
     void encode(const switchboard::LanguageCode &language_code,
@@ -229,12 +226,13 @@ namespace idl
     }
 
     void decode(const CC::Switchboard::Interceptor &idl,
+                const std::optional<switchboard::InterceptorOwner> &owner,
                 const switchboard::Invocation &invocation,
                 switchboard::InterceptorRef *native)
     {
         *native = switchboard::Interceptor::create_shared(
             idl.name(),
-            idl.owner(),
+            owner.value_or(idl.owner()),
             invocation,
             idl.state_transitions(),
             decoded<switchboard::InterceptorPhase>(idl.phase()),
@@ -250,7 +248,7 @@ namespace idl
     {
         idl->list().resize(native.size());
         auto it = idl->list().begin();
-        for (const auto &[name, icept] : native)
+        for (const auto &[key, icept] : native)
         {
             encode(icept, &*it++);
         }
@@ -261,32 +259,13 @@ namespace idl
     {
         for (const CC::Switchboard::Interceptor &icept : idl.list())
         {
-            decode(icept, {}, &(*native)[icept.name()]);
+            decode(
+                icept,          // interceptor
+                {},             // owner
+                {},             // invocation
+                &(*native)[icept.name()]);
         }
     }
-
-    // // CC::Switchboard::InterceptorID
-    // void encode(const switchboard::SwitchName &switch_name,
-    //             const switchboard::InterceptorName &interceptor_name,
-    //             CC::Switchboard::InterceptorID *idl)
-    // {
-    //     idl->switch_name(switch_name);
-    //     idl->interceptor_name(interceptor_name);
-    // }
-
-    // void decode(const CC::Switchboard::InterceptorID &idl,
-    //             switchboard::SwitchName *switch_name,
-    //             switchboard::InterceptorName *interceptor_name)
-    // {
-    //     if (switch_name)
-    //     {
-    //         *switch_name = idl.switch_name();
-    //     }
-    //     if (interceptor_name)
-    //     {
-    //         *interceptor_name = idl.interceptor_name();
-    //     }
-    // }
 
     // CC::Switchboard::Specification
     void encode(const switchboard::SwitchName &name,

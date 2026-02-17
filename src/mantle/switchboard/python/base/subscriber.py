@@ -21,8 +21,7 @@ from cc.protobuf.signal import SignalStore, MappingAction
 ### Switchboard modules
 from ..protobuf import (
     Signal, State, StateMask, StateSet, encodeStateSet,
-    InterceptorSpec, InterceptorPhase,
-    InterceptorRegistration, InterceptorInvocation,
+    InterceptorInvocation,
     ExceptionHandling,
 )
 from .signals   import switchboard_signals
@@ -36,21 +35,17 @@ from .observer  import SwitchboardObserver
 
 @dataclass
 class DecoratedInterceptorSpec:
-    switch_pattern: re.Pattern
-    registration: InterceptorRegistration
     unbound_method: Callable[[InterceptorInvocation], None]
+    kwargs: Mapping[str, object]
 
 
 #-------------------------------------------------------------------------------
-# SwitchboardSubscriber
+# WithSwitchboardInterceptors
 
-class SwitchboardSubscriber (SwitchboardObserver):
+class WithSwitchboardInterceptors:
     '''
     Mix-in base class for capturing and intercepting Switchboard updates via
     decorated methods.
-
-    Any subclass that overrides `__init__()` must invoke the parent
-    `Subscriber.__init__(self, switchboard)`; see that method for details.
 
     In an AsyncIO event loop is availble, the decorated functions may optionally
     be an AsyncIO coroutines.
@@ -104,29 +99,11 @@ class SwitchboardSubscriber (SwitchboardObserver):
         '''
 
         self.switchboard = switchboard
-        self.connect_switchboard_signals()
-
-
-    @override
-    def connect_switchboard_signals(self):
-        SwitchboardObserver.connect_switchboard_signals(
-            self,
-            self.switchboard.signal_store)
-
-        self.signal_store.connect_signal(
-            self.SPEC_SIGNAL,
-            self.__on_switch_spec)
-
-    @override
-    def disconnect_switchboard_signals(self):
-        self.switchboard.signal_store.disconnect_signal(
-            self.SPEC_SIGNAL,
-            self.__on_switch_spec)
 
 
     @classmethod
     def interceptor(cls,
-                    pattern: str|re.Pattern,
+                    switch_selection: SwitchSelectionInput,
                     state_transitions: StateMask|StateSet = State.PENDING,
                     phase: InterceptorPhase = InterceptorPhase.NORMAL,
                     asynchronous: bool = False,
@@ -208,18 +185,8 @@ class SwitchboardSubscriber (SwitchboardObserver):
         ```
         '''
 
-        registration = InterceptorRegistration(
-            spec = InterceptorSpec(
-                state_transitions = encodeStateSet(state_transitions),
-                phase = phase,
-                asynchronous = asynchronous,
-                rerun = rerun,
-                on_cancel = on_cancel,
-                on_error = on_error,
-            ),
-            immmediate = immmediate,
-        )
-
+        kwargs = locals()
+        del kwargs['cls']
 
         def decorator(method: Callable[[InterceptorInvocation], None]):
             '''
@@ -228,9 +195,8 @@ class SwitchboardSubscriber (SwitchboardObserver):
 
             cls._interceptor_specs.append(
                 DecoratedInterceptorSpec(
-                    switch_pattern = cls._regex_pattern(pattern),
-                    registration = registration,
-                    unbound_method = method
+                    unbound_method = method,
+                    kwargs = kwargs,
                 )
             )
             return method
@@ -238,39 +204,23 @@ class SwitchboardSubscriber (SwitchboardObserver):
         return decorator
 
 
-    def __on_switch_spec(self, msg: Signal):
-        if msg.mapping_action == MappingAction.ADDITION:
-            if switch_name := msg.mapping_key:
-                self.__register_decorated_interceptors(switch_name)
+    def register_decorated_interceptors(self, instance: object):
+        '''
+        Register interceptor decorated interceptor methods with server.
+        This must be invoked for those interceptors to become effective.
 
+        @param instance
+            Instance of the class that contains decorated interceptors
+        '''
 
-    def __register_decorated_interceptors(self, switch_name: str):
         for spec in self._interceptor_specs:
-            if self.__is_matching_interceptor(switch_name, spec):
-                methodname = spec.unbound_method.__name__
-                if bound_method := getattr(self, methodname, None):
-                    self.switchboard.register_interceptor(
-                        switch_name = switch_name,
-                        interceptor_name = method_path(bound_method),
-                        registration = spec.registration,
-                        method = bound_method,
-                    )
-
-
-    def __is_matching_interceptor(self,
-                                  switch_name: str,
-                                  interceptor_spec: DecoratedInterceptorSpec,
-                                  ) -> bool:
-        '''
-        Determine if a given interceptor decorator is applicable for a switch.
-        '''
-
-        unbound_method = interceptor_spec.unbound_method
-        method_name = unbound_method.__name__
-        return all(
-            getattr(type(self), method_name, None) == unbound_method,
-            interceptor_spec.switch_pattern.match(switch_name),
-        )
-
+            method_name = spec.unbound_method.__name__
+            if getattr(type(instance), method_name, None) == spec.unbound_method:
+                bound_method = getattr(instance, method_name)
+                self.add_interceptor(
+                    interceptor_name = method_path(bound_method)
+                    callback = bound_method,
+                    future = True,
+                    **spec.kwargs)
 
 

@@ -47,7 +47,7 @@ namespace cc::protobuf
                 std::set<switchboard::State> *states)
     {
         states->clear();
-        for (int state: items)
+        for (int state : items)
         {
             for (uint mask = 0x01; mask <= state; mask <<= 1)
             {
@@ -120,7 +120,6 @@ namespace cc::protobuf
         assign_to_vector(msg.patterns(), &patterns->patterns);
         patterns->is_regex = msg.is_regex();
     }
-
 
     //==========================================================================
     // Specification
@@ -218,12 +217,11 @@ namespace cc::protobuf
     {
         msg->clear_map();
         auto *map = msg->mutable_map();
-        for (const auto &[sw, error]: errormap)
+        for (const auto &[sw, error] : errormap)
         {
             encode_shared(error, &(*map)[sw->name()]);
         }
     }
-
 
     //==========================================================================
     // Aliases
@@ -233,7 +231,7 @@ namespace cc::protobuf
     {
         items->Clear();
         items->Reserve(aliases.size());
-        for (const switchboard::SwitchName &alias: aliases)
+        for (const switchboard::SwitchName &alias : aliases)
         {
             items->Add()->assign(alias);
         }
@@ -381,18 +379,23 @@ namespace cc::protobuf
                 native->phase()));
         proto->set_asynchronous(native->asynchronous());
         proto->set_rerun(native->rerun());
-        proto->set_on_cancel(encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(native->on_cancel()));
-        proto->set_on_error(encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(native->on_error()));
+        proto->set_on_cancel(
+            encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(
+                native->on_cancel()));
+        proto->set_on_error(
+            encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(
+                native->on_error()));
     }
 
     void decode(const cc::platform::switchboard::protobuf::InterceptorSpec &proto,
-                const std::string &name,
+                const switchboard::InterceptorName &name,
+                const switchboard::InterceptorOwner &owner,
                 const switchboard::Invocation &invocation,
                 switchboard::InterceptorRef *native)
     {
         *native = switchboard::Interceptor::create_shared(
             name,
-            proto.owner(),
+            owner,
             invocation,
             decoded<switchboard::StateSet>(proto.state_transitions()),
             decoded<switchboard::InterceptorPhase>(proto.phase()),
@@ -409,18 +412,22 @@ namespace cc::protobuf
                 cc::platform::switchboard::protobuf::InterceptorMap *msg)
     {
         auto &encoded_map = *msg->mutable_map();
-        for (const auto &[name, ic] : map)
+        for (const auto &[key, ic] : map)
         {
-            encode(ic, &encoded_map[name]);
+            encode(ic, &encoded_map[key]);
         }
     }
 
     void decode(const cc::platform::switchboard::protobuf::InterceptorMap &proto,
                 switchboard::InterceptorMap *native)
     {
-        for (const auto &[name, spec] : proto.map())
+        for (const auto &[key, spec] : proto.map())
         {
-            decode(spec, name, {}, &(*native)[name]);
+            decode(spec,              // proto
+                   key,               // name
+                   spec.owner(),      // owner
+                   {},                // invocation
+                   &(*native)[key]);  // native
         }
     }
 

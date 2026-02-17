@@ -55,12 +55,22 @@ namespace switchboard
         DependencyRef get_dependency(const SwitchName &switch_name) const noexcept;
 
         /// Add a dependency. The switch may change its state as a result.
+        /// @param[in] dependency
+        ///    Dependency specification
+        /// @param[in] allow_update
+        ///    If the dependency already exists, apply these updated specifications.
+        /// @param[in] reevaluate
+        ///    Reevaluate the switch state after adding the dependency.
         virtual bool add_dependency(
             const DependencyRef &dependency,
             bool allow_update = true,
             bool reevaluate = true) = 0;
 
         /// Remove an existing dependency. The switch may change its state as a result.
+        /// @param[in] predecessor_name
+        ///    Name of the switch we are removing as a dependency
+        /// @param[in] reevaluate
+        ///    Reevaluate the switch state after adding the dependency.
         virtual bool remove_dependency(
             SwitchName predecessor_name,
             bool reevaluate = true) = 0;
@@ -97,8 +107,13 @@ namespace switchboard
         /// @param[in] interceptor
         ///      Interceptor to be invoked after each matching state change.
         /// @param[in] immediate
-        ///      If the interceptor's triggers include this switch's current
-        ///      state, invoke it immediately.
+        ///      If the interceptor's trigger states include this switch's
+        ///      current state OR the transitional state preceding it (for
+        ///      instance, if the switch is currently ACTIVE and the interceptor
+        ///      triggers on either ACTIVATING and ACTIVE), invoke it
+        ///      immediately.  In this case, unless the interceptor's
+        ///      `asynchronous` flag is also True, the call blocks until the
+        ///      interceptor has completed.
         /// @return
         ///     `true` if the interceptor was added, `false` if the name already existed.
         virtual bool add_interceptor(
@@ -305,7 +320,7 @@ namespace switchboard
         ///    based on this and its other dependencies after the state change,
         ///    if any.
         ///
-        /// @param[in] reevaluate
+        /// @param[in] reenter
         ///    Make the state transition even if the switch is already in the
         ///    desired target state.
         ///
@@ -320,7 +335,7 @@ namespace switchboard
         /// @return
         ///    `true` if the switch state was updated (either because the
         ///    target is different from the current state, or because the
-        ///    `reevaluate` argument was set), otherwise `false`.
+        ///    `reenter` argument was set), otherwise `false`.
         ///
         /// Setting the switch position involves the following steps:
         ///
@@ -370,7 +385,7 @@ namespace switchboard
             bool clear_existing = false,
             bool invoke_interceptors = true,
             CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
-            bool reevaluate = false,
+            bool reenter = false,
             ExceptionHandling on_cancel = EH_DEFAULT,
             ExceptionHandling on_error = EH_DEFAULT) = 0;
 
@@ -381,7 +396,7 @@ namespace switchboard
                         bool clear_existing = false,
                         bool invoke_interceptors = true,
                         CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
-                        bool reevaluate = false,
+                        bool reenter = false,
                         ExceptionHandling on_cancel = EH_DEFAULT,
                         ExceptionHandling on_error = EH_DEFAULT);
 
@@ -392,7 +407,7 @@ namespace switchboard
                        bool clear_existing = false,
                        bool invoke_interceptors = true,
                        CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
-                       bool reevaluate = false,
+                       bool reenter = false,
                        ExceptionHandling on_cancel = EH_DEFAULT,
                        ExceptionHandling on_error = EH_IGNORE);
 
@@ -403,7 +418,7 @@ namespace switchboard
                       bool clear_existing = false,
                       bool invoke_interceptors = true,
                       CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
-                      bool reevaluate = false,
+                      bool reenter = false,
                       ExceptionHandling on_cancel = EH_DEFAULT,
                       ExceptionHandling on_error = EH_DEFAULT);
 

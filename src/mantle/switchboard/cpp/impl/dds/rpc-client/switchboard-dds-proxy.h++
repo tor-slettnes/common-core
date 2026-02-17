@@ -64,6 +64,16 @@ namespace switchboard::dds
             bool include_specifications,
             bool include_statuses) const override;
 
+        bool add_interceptor(
+            const InterceptorRef &interceptor,
+            const SwitchSelection &switch_selection,
+            bool immediate = false,
+            bool future = true) override;
+
+        bool remove_interceptor(
+            const InterceptorName &name,
+            const std::optional<SwitchSelection> &switch_selection = {}) override;
+
     private:
         bool wait_for_service(const core::dt::Duration &timeout) const;
 

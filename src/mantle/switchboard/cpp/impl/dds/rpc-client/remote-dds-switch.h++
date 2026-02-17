@@ -49,7 +49,7 @@ namespace switchboard::dds
             bool immediate = false) override;
 
         bool remove_interceptor(
-            const InterceptorName &id) override;
+            const InterceptorName &name) override;
 
         void update_spec(
             const std::optional<bool> &primary,
@@ -70,7 +70,7 @@ namespace switchboard::dds
             bool clear_existing = false,
             bool invoke_interceptors = true,
             CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
-            bool reevaluate = false,
+            bool reenter = false,
             ExceptionHandling on_cancel = EH_DEFAULT,
             ExceptionHandling on_error = EH_DEFAULT) override;
 

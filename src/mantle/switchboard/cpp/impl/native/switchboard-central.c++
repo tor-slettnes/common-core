@@ -86,8 +86,15 @@ namespace switchboard
             sw->status()->active = active;
             logf_info("Created switch: %s", sw->name());
             sw->notify_status();
-        }
 
+            for (const auto &[key, data] : this->interceptor_factory_map)
+            {
+                if (data.switch_selection.matches(switch_name))
+                {
+                    sw->add_interceptor(data.interceptor);
+                }
+            }
+        }
 
         return {sw, inserted};
     }
@@ -104,34 +111,6 @@ namespace switchboard
                                          replace_specifications,
                                          replace_statuses);
         }
-
-        // std::vector<std::pair<SwitchRef, bool>> switches;
-        // switches.reserve(declarations.size());
-
-        // for (const auto &[name, declaration] : declarations)
-        // {
-        //     bool default_active = declaration.get(SETTING_SWITCH_ACTIVE).as_bool();
-        //     const auto &[sw, inserted] = this->add_switch(name, default_active);
-        //     switches.emplace_back(sw, inserted);
-        //     count += inserted;
-        // }
-
-        // for (const auto &[sw, inserted]: switches)
-        // {
-        //     if (inserted || replace_specifications)
-        //     {
-        //         this->import_spec(sw, declarations.get(sw->name()).get_kvmap());
-        //     }
-        // }
-
-        // for (const auto &[sw, inserted]: switches)
-        // {
-        //     if (inserted || replace_statuses)
-        //     {
-        //         this->import_status(sw, declarations.get(sw->name()).get_kvmap());
-        //     }
-        // }
-
         return count;
     }
 
@@ -203,7 +182,7 @@ namespace switchboard
                 This::import_localization(decl.get_kvmap()));
         }
 
-        for (const auto &[predecessor, decl]: spec_map.get(SETTING_SPEC_DEPENDENCIES).get_kvmap())
+        for (const auto &[predecessor, decl] : spec_map.get(SETTING_SPEC_DEPENDENCIES).get_kvmap())
         {
             spec.dependencies.emplace(
                 predecessor,
@@ -312,6 +291,52 @@ namespace switchboard
         {
             sw->set_attributes(attributes);
         }
+    }
+
+    bool Central::add_interceptor(
+        const InterceptorRef &interceptor,
+        const SwitchSelection &switch_selection,
+        bool immediate,
+        bool future)
+    {
+        bool inserted = false;
+        if (future)
+        {
+            auto [it, added] = this->interceptor_factory_map.insert_or_assign(
+                interceptor->name(),
+                InterceptorFactoryData({
+                    .interceptor = interceptor,
+                    .switch_selection = switch_selection,
+                    .immediate = immediate,
+                }));
+
+            inserted |= added;
+        }
+
+        for (const auto &[switch_name, sw] : this->get_switches())
+        {
+            if (switch_selection.matches(switch_name))
+            {
+                inserted |= sw->add_interceptor(interceptor, immediate);
+            }
+        }
+
+        return inserted;
+    }
+
+    bool Central::remove_interceptor(
+        const InterceptorName &interceptor_name,
+        const std::optional<SwitchSelection> &switch_selection)
+    {
+        bool removed = false;
+        for (const auto &[switch_name, sw] : this->get_switches())
+        {
+            if (!switch_selection || switch_selection->matches(switch_name))
+            {
+                removed |= sw->remove_interceptor(interceptor_name);
+            }
+        }
+        return removed;
     }
 
     SwitchMap Central::find_regex_matches(

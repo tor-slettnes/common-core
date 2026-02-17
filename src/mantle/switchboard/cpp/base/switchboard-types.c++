@@ -132,6 +132,57 @@ namespace switchboard
     //==========================================================================
     // SwitchSelection
 
+    SwitchSelection::SwitchSelection()
+        : is_regex(false)
+    {
+    }
+
+    SwitchSelection::SwitchSelection(const std::string &switch_name)
+        : patterns({switch_name}),
+          is_regex(false)
+    {
+    }
+
+    SwitchSelection::SwitchSelection(const std::vector<std::string> &patterns,
+                                     bool is_regex)
+        : patterns(patterns),
+          is_regex(is_regex)
+    {
+        if (is_regex)
+        {
+            this->regex_patterns.reserve(patterns.size());
+            for (const std::string &pattern: patterns)
+            {
+                this->regex_patterns.emplace_back(pattern);
+            }
+        }
+    }
+
+    bool SwitchSelection::matches(const SwitchName &switch_name) const
+    {
+        if (this->is_regex)
+        {
+            for (const std::regex &rx: this->regex_patterns)
+            {
+                if (std::regex_match(switch_name, rx))
+                {
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            for (const std::string &pattern: this->patterns)
+            {
+                if (core::platform::path->filename_match(pattern, switch_name, true))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     void SwitchSelection::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
         tvlist->append("patterns",
@@ -210,10 +261,10 @@ namespace switchboard
 
         if (!this->interceptors.empty())
         {
-            core::types::KeyValueMap interceptors;
-            for (const auto &[name, spec] : this->interceptors)
+            core::types::ValueList interceptors;
+            for (const auto &[key, interceptor] : this->interceptors)
             {
-                interceptors.insert_or_assign(name, spec->as_kvmap());
+                interceptors.push_back(interceptor->as_tvlist());
             }
             tvlist->append("interceptors", interceptors);
         }

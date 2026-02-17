@@ -57,20 +57,19 @@ namespace switchboard::dds
         const InterceptorRef &interceptor,
         bool immediate)
     {
-        CC::Switchboard::AddInterceptorRequest req;
-        req.switch_name(this->name());
-        idl::encode(interceptor, &req.spec());
-        req.immediate(immediate);
-        return this->client()->add_interceptor(req);
+        return this->provider()->add_interceptor(
+            interceptor,   // interceptor
+            this->name(),  // switch_selection
+            immediate,     // immediate
+            false);        // future
     }
 
     bool RemoteSwitch::remove_interceptor(
         const InterceptorName &name)
     {
-        CC::Switchboard::RemoveInterceptorRequest req;
-        req.switch_name(this->name());
-        req.interceptor_name(name);
-        return this->client()->remove_interceptor(req);
+        return this->provider()->remove_interceptor(
+            name,           // name
+            this->name());  // switch_selection
     }
 
     void RemoteSwitch::update_spec(
@@ -113,7 +112,7 @@ namespace switchboard::dds
         bool clear_existing,
         bool invoke_interceptors,
         CascadeStyle cascade_descendants,
-        bool reevaluate,
+        bool reenter,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
     {
@@ -135,7 +134,7 @@ namespace switchboard::dds
         req.invoke_interceptors(invoke_interceptors);
         req.cascade_descendants(
             idl::encoded<CC::Switchboard::CascadeStyle>(cascade_descendants));
-        req.reevaluate(reevaluate);
+        req.reenter(reenter);
         idl::encode(on_cancel, &req.on_cancel());
         idl::encode(on_error, &req.on_error());
         return this->client()->set_target(req);

@@ -6,7 +6,7 @@ from .enum import native_enum_from_proto
 
 from .message import (
     check_message_type,
-    messageToDict, dictToMessage,
+    message_to_dict, dict_to_message,
     print_message, print_dict
 )
 
