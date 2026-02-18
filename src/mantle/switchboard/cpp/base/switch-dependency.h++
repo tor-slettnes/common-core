@@ -21,6 +21,8 @@ namespace switchboard
     class Dependency : public core::types::Listable,
                        public core::types::enable_create_shared<Dependency>
     {
+        using This = Dependency;
+
     public:
         // static constexpr StateMask DEFAULT_TRIGGERS = STATE_SETTLED;
         static const StateSet DEFAULT_TRIGGERS;
@@ -53,7 +55,7 @@ namespace switchboard
 
     public:
         bool auto_trigger(State pred_state) const;
-        State derived_state(bool active) const;
+        State derived_state(State state) const;
         std::optional<State> expected_state() const;
         std::optional<bool> expected_predecessor_value(bool expected_successor_value) const;
         static State inverted(State state);

@@ -292,7 +292,7 @@ namespace core::str
 
     /// Escape and quote a string
     [[nodiscard]] std::string to_literal(
-        const std::string &input);
+        const std::string_view &input);
 
     void to_literal(
         std::ostream &stream,

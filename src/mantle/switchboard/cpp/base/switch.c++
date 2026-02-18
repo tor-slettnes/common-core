@@ -442,9 +442,11 @@ namespace switchboard
             "Switch [%r]: Determining auto state:\n",
             this->name());
 
+        State current_state = this->state();
+
         for (const auto &[name, dep] : this->dependencies())
         {
-            switch (dep->derived_state(this->active()))
+            switch (dep->derived_state(current_state))
             {
             case STATE_ACTIVATING:
                 satisfied |= PENDING;
@@ -473,15 +475,15 @@ namespace switchboard
             default:
                 undetermined |= (dep->sufficient() ? WEAK : STRONG);
                 break;
-            }
+                }
 
-            msg->format(
-                "     %r: satisfied=%02X, unsatisified=%02X, failed=%02X, undetermined=%02X\n",
-                *dep,
-                satisfied,
-                unsatisfied,
-                failed,
-                undetermined);
+                msg->format(
+                    "     %r: satisfied=%#02X, unsatisified=%#02X, failed=%#02X, undetermined=%#02X\n",
+                    *dep,
+                    satisfied,
+                    unsatisfied,
+                    failed,
+                    undetermined);
         }
 
         State state = failed & STRONG       ? STATE_FAILED

@@ -469,7 +469,7 @@ namespace core::str
 
     /// Escape and quote a string
     std::string to_literal(
-        const std::string &input)
+        const std::string_view &input)
     {
         std::stringstream out;
         to_literal(out, input);

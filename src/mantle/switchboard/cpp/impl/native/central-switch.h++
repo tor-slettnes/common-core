@@ -114,6 +114,7 @@ namespace switchboard
             ExceptionHandling eh_default);
 
         ThreadMap update_descendants(
+            State state,
             bool invoke_interceptors,
             CascadeStyle cascade_descendants);
 

@@ -372,7 +372,7 @@ namespace core::str
         }
         else if (modifiers.quoted)
         {
-            str::to_literal(this->stream, value);
+            this->stream << str::to_literal(value);
         }
         else
         {
@@ -390,7 +390,7 @@ namespace core::str
         }
         else if (modifiers.quoted)
         {
-            str::to_literal(this->stream, value);
+            this->stream << str::to_literal(value);
         }
         else
         {

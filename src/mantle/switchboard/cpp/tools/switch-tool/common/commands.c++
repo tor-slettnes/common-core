@@ -724,14 +724,14 @@ namespace switchboard
                                  const switchboard::SwitchName &name,
                                  const switchboard::Specification &spec)
     {
-        core::str::format(std::cout, "spec(%s, %r, %s)\n", action, name, spec);
+        core::str::format(std::cout, "spec:   %-12s %-32r %s\n", action, name, spec);
     }
 
     void Options::on_signal_status(core::signal::MappingAction action,
                                    const switchboard::SwitchName &name,
                                    const switchboard::Status &status)
     {
-        core::str::format(std::cout, "status(%s, %r, %s)\n", action, name, status);
+        core::str::format(std::cout, "status: %-12s %-32r %s\n", action, name, status);
     }
 
     switchboard::SwitchRef Options::get_switch(bool required)

@@ -290,6 +290,7 @@ namespace switchboard
         if (cascade_descendants != CascadeStyle::NONE)
         {
             ThreadMap threads = this->update_descendants(
+                state,
                 invoke_interceptors,
                 cascade_descendants);
 
@@ -512,6 +513,7 @@ namespace switchboard
     }
 
     ThreadMap CentralSwitch::update_descendants(
+        State state,
         bool invoke_interceptors,
         CascadeStyle cascade_descendants)
     {
@@ -528,10 +530,11 @@ namespace switchboard
         {
             if (DependencyRef dep = sw->get_dependency(this->name()))
             {
-                if (dep->auto_trigger(this->state()))
+                if (dep->auto_trigger(state))
                 {
-                    logf_trace("Switch %r updating descendant %r, interceptors=%b",
+                    logf_trace("Switch %r state %s updating descendant %r, interceptors=%b",
                                this->name(),
+                               state,
                                sw->name(),
                                invoke_interceptors);
                     this->notify_status();
