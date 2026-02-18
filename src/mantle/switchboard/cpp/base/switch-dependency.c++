@@ -121,12 +121,12 @@ namespace switchboard
         {
             if (this->auto_trigger(this->predecessor_state()))
             {
-                return This::inverted(state);
+                state = This::inverted(state);
             }
         }
         else if (this->auto_trigger(this->predecessor_state()))
         {
-            return this->expected_state().value();
+            state = this->expected_state().value();
         }
         return state;
     }
@@ -201,6 +201,5 @@ namespace switchboard
     }
 
     const StateSet Dependency::DEFAULT_TRIGGERS = {};
-
 
 }  // namespace switchboard

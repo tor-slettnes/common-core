@@ -418,7 +418,9 @@ class SignalStore:
         field indicated by `signal_name` set to `value`.
         '''
 
-        msg = self.create_signal_message(**locals())
+        msg = self.create_signal_message(
+            signal_name = signal_name,
+            value = value)
         self.emit(signal)
 
 
