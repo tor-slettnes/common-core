@@ -31,8 +31,6 @@ namespace switchboard
         using Switch::Switch;
 
     public:
-        ~CentralSwitch();
-
         void set_spec(
             const Specification &spec) override;
 

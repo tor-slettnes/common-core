@@ -59,6 +59,13 @@ namespace switchboard::dds
             req.propagate());
     }
 
+    bool RequestHandler::clear_switches(
+            const CC::Switchboard::ClearSwitchesRequest &req)
+    {
+        return this->provider->clear_switches(
+            req.reload());
+    }
+
     std::uint32_t RequestHandler::import_switches(
         const CC::Switchboard::ImportRequest &req)
     {

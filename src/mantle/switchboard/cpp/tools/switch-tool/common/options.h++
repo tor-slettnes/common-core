@@ -45,6 +45,7 @@ namespace switchboard
         void save_file();
         void add_switch();
         void remove_switch();
+        void clear_switches();
         void add_alias();
         void remove_alias();
         void set_localization();

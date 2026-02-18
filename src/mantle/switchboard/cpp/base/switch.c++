@@ -12,6 +12,18 @@
 
 namespace switchboard
 {
+    bool operator==(const Switch &lhs, const Switch &rhs)
+    {
+        return ((lhs.name() == rhs.name()) &&
+                (lhs.spec() == rhs.spec()) &&
+                (lhs.status() == rhs.status()));
+    }
+
+    bool operator!=(const Switch &lhs, const Switch &rhs)
+    {
+        return !(lhs == rhs);
+    }
+
     //==========================================================================
     /// @class Switch
 

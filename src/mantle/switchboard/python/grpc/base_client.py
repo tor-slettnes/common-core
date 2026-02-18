@@ -25,7 +25,7 @@ from cc.messaging.grpc import SignalClient
 
 ### Switchboard modules
 from ..protobuf import (
-    AddSwitchRequest, RemoveSwitchRequest,
+    AddSwitchRequest, RemoveSwitchRequest, ClearSwitchesRequest,
     SwitchSelectionInput, encodeSwitchSelection, encodeOptionalSwitchSelection,
     ImportRequest, ImportResponse, ExportRequest, ExportResponse,
     State, StateMask, StateSet, encodeStateSet,
@@ -148,6 +148,13 @@ class BaseClient (SwitchboardBase, SignalClient):
         req = RemoveSwitchRequest(switch_name = switch_name,
                                   propagate = propagate)
         return self.stub.RemoveSwitch(req)
+
+    @override
+    def clear_switches(self,
+                       reload: bool = False,
+                      ) -> BoolValue:
+        req = ClearSwitchesRequest(reload = reload)
+        return self.stub.ClearSwitches(req)
 
     @override
     def import_switches(self,

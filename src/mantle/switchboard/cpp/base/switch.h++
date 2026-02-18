@@ -22,6 +22,9 @@ namespace switchboard
     {
         friend class Switchboard;
 
+        friend bool operator==(const Switch &lhs, const Switch &rhs);
+        friend bool operator!=(const Switch &lhs, const Switch &rhs);
+
     protected:
         Switch(const SwitchName &name,
                const std::shared_ptr<switchboard::Provider> &provider);

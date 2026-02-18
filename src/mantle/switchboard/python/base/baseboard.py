@@ -217,6 +217,20 @@ class SwitchboardBase (SwitchboardObserver):
         '''
 
     @abstractmethod
+    def clear_switches(self,
+                       reload: bool = False,
+                       ) -> bool:
+        '''
+        Clear all switches, optionally reloading defaults.
+
+        @param reload
+            Reload default switches
+
+        @returns
+            True if changes were made, False otherwise.
+        '''
+
+    @abstractmethod
     def import_switches(self,
                         declarations: PyValueMap,
                         replace_specifications: bool = False,

@@ -416,6 +416,12 @@ module CC
             boolean propagate;
         };
 
+        struct ClearSwitchesRequest
+        {
+            // Reload default switches after clearing
+            boolean reload;
+        };
+
 
         struct ImportRequest
         {

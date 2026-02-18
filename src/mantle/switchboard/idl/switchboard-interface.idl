@@ -42,6 +42,9 @@ module CC
             // Remove an existing switch
             boolean remove_switch(RemoveSwitchRequest req);
 
+            // Remove an existing switch
+            boolean clear_switches(ClearSwitchesRequest req);
+
             // Import switches from a list of key/value maps
             uint32 import_switches(ImportRequest req);
 

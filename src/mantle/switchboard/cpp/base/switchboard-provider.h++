@@ -105,7 +105,16 @@ namespace switchboard
         ///    Boolean indicating whether switch existed or not
         virtual bool remove_switch(
             const SwitchName &name,
-            bool propagate = true);
+            bool propagate = true) = 0;
+
+
+        /// @brief Remove all switches, optionally reloading defaults
+        /// @param[in] reload
+        ///    Reload default switches after clearing.
+        /// @returns
+        ///    Boolean indicating whether any changes were made
+        virtual bool clear_switches(
+            bool reload = false) = 0;
 
 
         /// @brief Import switches from a key/value map
@@ -243,6 +252,7 @@ namespace switchboard
 
     protected:
         SwitchMap switches;
+        std::recursive_mutex switches_mutex;
     };
 
     extern std::shared_ptr<Provider> provider;

@@ -142,7 +142,6 @@ namespace switchboard
             "folder(s).",
             std::bind(&Options::load_file, this));
 
-
         this->add_command(
             "save",
             {"FILENAME[.json]"},
@@ -163,6 +162,12 @@ namespace switchboard
             {"SWITCH"},
             "Remove an existing switch",
             std::bind(&Options::remove_switch, this));
+
+        this->add_command(
+            "clear",
+            {"[reload]"},
+            "Clear all switches, optionally reloading defaults",
+            std::bind(&Options::clear_switches, this));
 
         this->add_command(
             "add_alias",
@@ -485,6 +490,16 @@ namespace switchboard
         std::string name = this->get_arg("SWITCH");
         bool removed = this->provider->remove_switch(name);
         std::cout << (removed ? "removed" : "no change") << std::endl;
+    }
+
+    void Options::clear_switches()
+    {
+        FlagMap flags;
+        bool &reload = flags["reload"];
+        this->get_flags(&flags, false);
+
+        bool cleared = this->provider->clear_switches(reload);
+        std::cout << (cleared ? "cleared" : "no change") << std::endl;
     }
 
     void Options::add_alias()

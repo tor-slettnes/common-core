@@ -87,6 +87,7 @@ namespace switchboard
     SwitchMap::const_iterator Provider::find(
         const SwitchName &name) const
     {
+        std::scoped_lock lck(const_cast<This *>(this)->switches_mutex);
         if (auto it = this->switches.find(name);
             it != this->end())
         {
@@ -107,6 +108,7 @@ namespace switchboard
     SwitchMap::iterator Provider::find(
         const SwitchName &name)
     {
+        std::scoped_lock lck(this->switches_mutex);
         if (auto it = this->switches.find(name);
             it != this->switches.end())
         {
@@ -133,6 +135,7 @@ namespace switchboard
         const SwitchName &name,
         bool active)
     {
+        std::scoped_lock lck(this->switches_mutex);
         if (SwitchRef sw = this->get_switch(name, false))
         {
             return sw;
@@ -147,6 +150,7 @@ namespace switchboard
         const SwitchName &name,
         bool required) const
     {
+        std::scoped_lock lck(const_cast<This *>(this)->switches_mutex);
         if (auto it = this->find(name); it != this->end())
         {
             return it->second;
@@ -161,26 +165,6 @@ namespace switchboard
         {
             return {};
         }
-    }
-
-    bool Provider::remove_switch(
-        const SwitchName &name,
-        bool propagate)
-    {
-        auto it = this->find(name);
-        bool found = it != this->end();
-
-        if (found)
-        {
-            this->switches.erase(it);
-            logf_info("Removed switch: %r", name);
-            for (const auto &[candidate, sw] : this->switches)
-            {
-                sw->remove_dependency(name, propagate);
-            }
-        }
-
-        return found;
     }
 
     std::shared_ptr<Provider> provider;

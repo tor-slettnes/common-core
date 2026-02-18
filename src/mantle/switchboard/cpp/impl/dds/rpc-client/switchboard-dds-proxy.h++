@@ -54,6 +54,9 @@ namespace switchboard::dds
             const SwitchName &switch_name,
             bool propagate = true) override;
 
+        bool clear_switches(
+            bool reload = false) override;
+
         uint import_switches(
             const core::types::KeyValueMap &declarations,
             bool replace_specifications,

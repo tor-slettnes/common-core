@@ -60,6 +60,13 @@ class Client (BaseClient):
         return response.value
 
     @override
+    def clear_switches(self,
+                       reload: bool = False,
+                       ) -> bool:
+        response = BaseClient.clear_switches(**locals())
+        return response.value
+
+    @override
     def import_switches(self,
                         declarations: PyValueMap,
                         replace_specifications: bool = False,

@@ -54,6 +54,13 @@ namespace switchboard
             const SwitchName &switch_name,
             bool active = false) override;
 
+        bool remove_switch(
+            const SwitchName &switch_name,
+            bool propagate = true) override;
+
+        bool clear_switches(
+            bool reload = false) override;
+
         uint import_switches(
             const core::types::KeyValueMap &switches,
             bool replace_specifications,
@@ -76,6 +83,10 @@ namespace switchboard
 
 
     private:
+        void load_default_switches(
+            bool replace_specifications = false,
+            bool replace_statuses = false);
+
         bool import_switch(
             const std::string &name,
             const core::types::KeyValueMap &declaration,

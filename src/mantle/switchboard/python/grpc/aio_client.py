@@ -57,6 +57,13 @@ class AsyncClient (AsyncMixIn, BaseClient):
         return response.value
 
     @override
+    async def clear_switches(self,
+                             reload: bool = False,
+                             ) -> bool:
+        response = await BaseClient.clear_switches(**locals())
+        return response.value
+
+    @override
     async def import_switches(self,
                               declarations: PyValueMap,
                               replace_specifications: bool = False,

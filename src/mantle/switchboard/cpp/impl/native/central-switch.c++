@@ -11,12 +11,6 @@
 namespace switchboard
 {
 
-    CentralSwitch::~CentralSwitch()
-    {
-        signal_status.clear(this->name());
-        signal_spec.clear(this->name());
-    }
-
     bool CentralSwitch::add_dependency(const DependencyRef &dependency,
                                        bool allow_update,
                                        bool reevaluate)

@@ -48,18 +48,7 @@ namespace switchboard
     void Central::initialize()
     {
         Super::initialize();
-        for (const auto &filename : core::settings->get(SETTING_SWITCH_CONFIG_FILES).get_valuelist())
-        {
-            try
-            {
-                logf_debug("Loading switches from: %s", filename);
-                this->load(filename.as_string());
-            }
-            catch (const std::exception &e)
-            {
-                logf_warning("Failed to load switches from %r: %s", filename, e);
-            }
-        }
+        this->load_default_switches();
     }
 
     bool Central::available() const
@@ -97,6 +86,81 @@ namespace switchboard
         }
 
         return {sw, inserted};
+    }
+
+    bool Central::remove_switch(
+        const SwitchName &name,
+        bool propagate)
+    {
+        std::scoped_lock lck(this->switches_mutex);
+        auto it = this->find(name);
+        bool found = it != this->end();
+
+        if (found)
+        {
+            this->switches.erase(it);
+            logf_info("Removed switch: %r", name);
+            for (const auto &[candidate, sw] : this->switches)
+            {
+                sw->remove_dependency(name, propagate);
+            }
+        }
+
+        signal_status.clear(name);
+        signal_spec.clear(name);
+        return found;
+    }
+
+    bool Central::clear_switches(
+        bool reload)
+    {
+        std::scoped_lock lck(this->switches_mutex);
+        SwitchMap old_switches(std::move(this->switches));
+
+        if (reload)
+        {
+            this->load_default_switches(
+                true,           // replace_specifications
+                true);          // replace_statuses
+        }
+
+        bool changes = false;
+        for (const auto &[name, old_sw]: old_switches)
+        {
+            auto it = this->switches.find(name);
+            if (it == this->switches.end())
+            {
+                signal_status.clear(name);
+                signal_spec.clear(name);
+                changes = true;
+            }
+            else if (!changes)
+            {
+                changes = (*it->second != *old_sw);
+            }
+        }
+
+        return changes;
+    }
+
+    void Central::load_default_switches(
+        bool replace_specifications,
+        bool replace_statuses)
+    {
+        for (const auto &filename : core::settings->get(SETTING_SWITCH_CONFIG_FILES).get_valuelist())
+        {
+            try
+            {
+                logf_debug("Loading switches from: %s", filename);
+                this->load(filename.as_string(),
+                           replace_specifications,
+                           replace_statuses);
+            }
+            catch (const std::exception &e)
+            {
+                logf_warning("Failed to load switches from %r: %s", filename, e);
+            }
+        }
     }
 
     uint Central::import_switches(const core::types::KeyValueMap &declarations,

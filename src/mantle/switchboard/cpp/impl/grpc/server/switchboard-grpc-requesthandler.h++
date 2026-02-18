@@ -86,6 +86,11 @@ namespace switchboard::grpc
             const switchboard::protobuf::RemoveSwitchRequest *request,
             ::google::protobuf::BoolValue *reply) override;
 
+        ::grpc::Status ClearSwitches(
+            ::grpc::ServerContext *context,
+            const switchboard::protobuf::ClearSwitchesRequest *request,
+            ::google::protobuf::BoolValue *reply) override;
+
         ::grpc::Status ImportSwitches(
             ::grpc::ServerContext *context,
             const switchboard::protobuf::ImportRequest *request,

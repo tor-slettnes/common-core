@@ -102,6 +102,25 @@ namespace switchboard::grpc
         }
     }
 
+    ::grpc::Status RequestHandler::ClearSwitches(
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::ClearSwitchesRequest *request,
+        ::google::protobuf::BoolValue *reply)
+    {
+        try
+        {
+            bool cleared = this->provider->clear_switches(
+                request->reload());
+            reply->set_value(cleared);
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, this->peer(context));
+        }
+    }
+
+
     ::grpc::Status RequestHandler::ImportSwitches(
         ::grpc::ServerContext *context,
         const switchboard::protobuf::ImportRequest *request,

@@ -104,6 +104,14 @@ namespace switchboard::dds
         return this->client()->remove_switch({name, propagate});
     }
 
+    bool Proxy::clear_switches(
+        bool reload)
+    {
+        CC::Switchboard::ClearSwitchesRequest req;
+        req.reload(reload);
+        return this->client()->clear_switches(req);
+    }
+
     uint Proxy::import_switches(
         const core::types::KeyValueMap &declarations,
         bool replace_specifications,

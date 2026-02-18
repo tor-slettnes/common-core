@@ -104,6 +104,14 @@ namespace switchboard::grpc
         return this->call_check(&Stub::RemoveSwitch, req).value();
     }
 
+    bool Proxy::clear_switches(
+        bool reload)
+    {
+        cc::platform::switchboard::protobuf::ClearSwitchesRequest req;
+        req.set_reload(reload);
+        return this->call_check(&Stub::ClearSwitches, req).value();
+    }
+
     uint Proxy::import_switches(
         const core::types::KeyValueMap &declarations,
         bool replace_specifications,
