@@ -694,8 +694,6 @@ namespace switchboard::grpc
         std::scoped_lock lck(interceptor_sessions_mutex);
         if (auto nh = this->interceptor_sessions.extract(session_id))
         {
-            logf_info("Ending interceptor session: %s", session_id);
-
             for (const InterceptorName &key : nh.mapped().registrations)
             {
                 this->provider->remove_interceptor(key);
