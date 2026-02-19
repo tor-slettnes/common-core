@@ -42,11 +42,12 @@ namespace switchboard::grpc
             switchboard::protobuf::InterceptorResult>;
 
         using InterceptorSessionID = std::string;
+        using PromisedResult = std::promise<switchboard::protobuf::InterceptorResult>;
+        using FutureResult = std::future<switchboard::protobuf::InterceptorResult>;
+
         using PendingInterceptsMap = std::map<
             std::pair<InterceptorName, SwitchName>,
-            std::promise<switchboard::protobuf::InterceptorResult>>;
-        using FutureResult = std::future<
-            switchboard::protobuf::InterceptorResult>;
+            PromisedResult>;
 
         struct InterceptorSession
         {

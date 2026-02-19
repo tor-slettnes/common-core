@@ -500,7 +500,7 @@ namespace switchboard::grpc
         InterceptorStream *stream)
     {
         InterceptorSessionID session_id = create_session(context, stream);
-        logf_debug("Startng interceptor session: %s", session_id);
+        logf_info("Startng interceptor session: %s", session_id);
 
         using switchboard::protobuf::InterceptorResult;
         InterceptorResult result;
@@ -513,7 +513,7 @@ namespace switchboard::grpc
                                         result);
         }
 
-        logf_debug("Ending interceptor session: %s", session_id);
+        logf_info("Ending interceptor session: %s", session_id);
         this->end_session(session_id);
         return ::grpc::Status::OK;
     }
@@ -735,8 +735,11 @@ namespace switchboard::grpc
         {
             if (!session->context->IsCancelled())
             {
-                auto &promise = session->pending[{interceptor_name, sw->name()}];
-                FutureResult future = promise.get_future();
+                auto [it, inserted] = session->pending.insert_or_assign(
+                    {interceptor_name, sw->name()},
+                    PromisedResult());
+
+                FutureResult future = it->second.get_future();
 
                 // Create an Invocation message for the client.
                 switchboard::protobuf::InterceptorInvocation invocation;
