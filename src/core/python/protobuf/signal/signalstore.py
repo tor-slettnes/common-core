@@ -421,7 +421,7 @@ class SignalStore:
         msg = self.create_signal_message(
             signal_name = signal_name,
             value = value)
-        self.emit(signal)
+        self.emit(msg)
 
 
     def emit_mapping(self,
