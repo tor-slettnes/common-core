@@ -128,6 +128,12 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
 
 
     @override
+    async def get_status(self) -> Status:
+        response = await RemoteSwitchBase.get_status(**locals())
+        return decode_message(response.map.get(self.name))
+
+
+    @override
     async def get_culprits(self,
                            expected_position: bool = True) -> Mapping[str, Status]:
 

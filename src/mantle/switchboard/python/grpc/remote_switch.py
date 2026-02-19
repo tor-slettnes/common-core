@@ -102,6 +102,10 @@ class RemoteSwitch (RemoteSwitchBase):
         response = RemoteSwitchBase.set_attributes(**locals())
         return response.updated
 
+    @override
+    def get_status(self) -> Status:
+        response = RemoteSwitchBase.get_status(**locals())
+        return decode_message(response.map.get(self.name))
 
     @override
     def get_culprits(self,

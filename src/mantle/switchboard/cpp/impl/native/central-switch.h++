@@ -118,6 +118,10 @@ namespace switchboard
             bool invoke_interceptors,
             CascadeStyle cascade_descendants);
 
+        bool set_attributes_only(
+            const core::types::KeyValueMap &attributes,
+            bool clear_existing);
+
         void notify_spec();
         void notify_status();
 

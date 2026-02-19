@@ -173,12 +173,20 @@ namespace switchboard
         if (reenter || (this->state() != target_state))
         {
             bool proceed = true;
+            bool updated_status = false;
             if (State transition_state = This::transition_state(target_state))
             {
                 logf_debug(
                     "Switch %r entering transition state %r",
                     this->name(),
                     transition_state);
+
+                if (StatusRef status = this->status())
+                {
+                    status->error = error;
+                    this->set_attributes_only(attributes, clear_existing);
+                    updated_status = true;
+                }
 
                 if (this->state() == transition_state)
                 {
@@ -206,15 +214,10 @@ namespace switchboard
                 if (StatusRef status = this->status())
                 {
                     status->active = this->target_position(target_state, this->active());
-                    status->error = error;
-
-                    if (clear_existing)
+                    if (!updated_status)
                     {
-                        status->attributes = attributes;
-                    }
-                    else
-                    {
-                        status->attributes.update(attributes);
+                        status->error = error;
+                        this->set_attributes_only(attributes, clear_existing);
                     }
                 }
 
@@ -237,16 +240,8 @@ namespace switchboard
     bool CentralSwitch::set_attributes(const core::types::KeyValueMap &attributes,
                                        bool clear_existing)
     {
-        if (StatusRef status = this->status())
+        if (this->set_attributes_only(attributes, clear_existing))
         {
-            if (clear_existing)
-            {
-                status->attributes = attributes;
-            }
-            else
-            {
-                status->attributes.update(attributes);
-            }
             this->notify_status();
             return true;
         }
@@ -554,6 +549,28 @@ namespace switchboard
             }
         }
         return threads;
+    }
+
+    bool CentralSwitch::set_attributes_only(
+        const core::types::KeyValueMap &attributes,
+        bool clear_existing)
+    {
+        if (StatusRef status = this->status())
+        {
+            if (clear_existing)
+            {
+                status->attributes = attributes;
+            }
+            else
+            {
+                status->attributes.update(attributes);
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     void CentralSwitch::notify_spec()
