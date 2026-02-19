@@ -54,12 +54,13 @@ namespace switchboard
 
         this->add_command(
             "culprits",
-            {"SWITCH", "[states]"},
+            {"SWITCH", "[verbose]"},
             "Print a list of switches that prevent SWITCH from being ACTIVE. "
             "This list may be empty (if SWITCH is already active) or may be just "
             "SWITCH itself (if it is inactive but would be active based on its "
             "dependencies, which normally indicates a manual dependency or override). "
-            "If \"states\" is present, also print the current state of each culprit.",
+            "If \"verbose\" is present, also print the current state and any error "
+            "message for each culprit.",
             std::bind(&Options::get_culprits, this));
 
         this->add_command(
@@ -357,18 +358,31 @@ namespace switchboard
     {
         switchboard::SwitchRef sw = this->get_switch(true);
         FlagMap flags;
-        bool &with_states = flags["states"];
+        bool &verbose = flags["verbose"];
         this->get_flags(&flags, false);
 
         for (const auto &[sw, state] : sw->culprits())
         {
-            if (with_states)
+            if (!verbose)
             {
-                core::str::format(std::cout, "%20s : %s\n", sw->name(), state);
+                std::cout << sw->name() << std::endl;
+            }
+            else if (auto error = sw->error())
+            {
+                core::str::format(std::cout,
+                                  "%20s: %s: [%s] (%s) %s\n",
+                                  sw->name(),
+                                  state,
+                                  error->symbol(),
+                                  error->origin(),
+                                  error->text());
             }
             else
             {
-                std::cout << sw->name() << std::endl;
+                core::str::format(std::cout,
+                                  "%20s: %s\n",
+                                  sw->name(),
+                                  state);
             }
         }
     }
