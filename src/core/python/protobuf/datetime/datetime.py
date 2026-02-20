@@ -44,7 +44,7 @@ def encodeInterval(input: TimeDeltaType,
 
     elif isinstance(input, TimeUnit):
         output.count = 1
-        output.unit = interval
+        output.unit = input
 
     elif (isinstance(input, tuple) and
           len(input) == 2 and
@@ -89,7 +89,7 @@ def encodeInterval(input: TimeDeltaType,
 
     else:
         raise TypeError(
-            "`interval` type must be one of: `Interval`, `TimeUnit`, or `tuple[int, TimeUnit]`")
+            "encodeInteral() input type must be one of: `Interval`, `TimeUnit`, or `tuple[int, TimeUnit]`")
 
     return output
 
