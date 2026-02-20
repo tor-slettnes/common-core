@@ -493,7 +493,7 @@ class SwitchboardBase (SwitchboardObserver):
                     state_transitions: StateMask|StateSet = State.PENDING,
                     phase: InterceptorPhase = InterceptorPhase.NORMAL,
                     asynchronous: bool = False,
-                    immediate: bool = True,
+                    immediate: bool = False,
                     rerun: bool = False,
                     future: bool = True,
                     on_cancel: ExceptionHandling = ExceptionHandling.ABORT,

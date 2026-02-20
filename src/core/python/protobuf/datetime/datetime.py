@@ -50,7 +50,7 @@ def encodeInterval(input: TimeDeltaType,
           len(input) == 2 and
           isinstance(input[1], TimeUnit)):
 
-        output.count, output.unit = interval
+        output.count, output.unit = input
 
     elif isinstance(input, datetime.timedelta):
         if input == datetime.timedelta.max:
