@@ -6,7 +6,12 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Package modules
-from ..buildinfo import SETTINGS_DIR, LOCAL_SETTINGS_DIR, SHARED_DATA_DIR, INSTALL_ROOT, ORGANIZATION
+from ..buildinfo import (
+    SETTINGS_DIR, LOCAL_SETTINGS_DIR,
+    SHARED_DATA_DIR, LOCAL_DATA_DIR,
+    INSTALL_ROOT, LOGS_DIR,
+    ORGANIZATION,
+)
 
 ### Standard python modules
 import enum
@@ -18,16 +23,24 @@ import zipfile
 import sys
 import importlib.resources
 from typing import Sequence, Optional
+from collections import namedtuple
 
 FilePath        = pathlib.PurePath | zipfile.Path
+FilePaths       = Sequence[FilePath]
 SearchPath      = Sequence[FilePath]
 
 FilePathInput   = FilePath | str
+FilePathInputs  = Sequence[FilePathInput]
 SearchPathInput = Sequence[FilePathInput]
 
 ModuleName      = str
 
 _settingspaths: dict[str, SearchPath] = {}
+
+SettingsSuffixes = namedtuple(
+    'SettingsSuffixes',
+    ('JSON_SUFFIX', 'YAML_SUFFIX', 'INI_SUFFIX'))
+settings_suffixes = SettingsSuffixes('.json', '.yaml', '.ini')
 
 
 def program_name() -> str:
@@ -79,7 +92,24 @@ def package_dir(package: str) -> FilePath:
 
 
 def shared_data_dir() -> FilePath:
-    return install_root() / SHARED_DATA_DIR;
+    '''
+    Obtain preinstalled data folder.
+    '''
+    return install_root() / SHARED_DATA_DIR
+
+
+def local_data_dir() -> pathlib.Path:
+    '''
+    Return machine-specific data folder
+    '''
+    return pathlib.Path(LOCAL_DATA_DIR)
+
+
+def logs_dir() -> pathlib.Path:
+    '''
+    Return the default folder for log files
+    '''
+    return pathlib.Path(LOGS_DIR)
 
 
 def add_to_settings_path(
@@ -228,10 +258,9 @@ def user_settings_dir() -> FilePath:
     '''
 
     if not is_super_user():
-        if homedir := os.getenv("HOME"):
-            configdir = pathlib.Path(homedir) / ".config"
-            if configdir.is_dir():
-                return configdir / ORGANIZATION
+        configdir = pathlib.Path.home() / ".config"
+        if configdir.is_dir():
+            return configdir / ORGANIZATION
 
     return None
 
@@ -243,6 +272,98 @@ def host_settings_dir() -> FilePath:
     '''
 
     return install_root() / LOCAL_SETTINGS_DIR
+
+
+def find_settings_files(basename: FilePathInput,
+                        suffixes: Sequence[str] = settings_suffixes,
+                        search_path: SearchPath|None = None,
+                        package: str|None = None,
+                        ) -> FilePaths:
+    '''
+    Find settings files with the specified base name within the provided or
+    preconfigured search path.
+
+    @param basename
+        Stem (with or without a suffix) of the folder or file name we are
+        looking for.
+
+    @param suffixes
+        Candidate suffixes used when looking for matching files.  If the input
+        path is a directory, the result is any filename with matching suffixes
+        found inside.  Otherwise, if the input path could not be found, these
+        suffixes are tried in order, and the result is any matching file paths.
+
+    @param search_path
+        Custom search path in which to look for files. If not found, the
+        preconfigured settings path is used.  This overrides `package`.
+
+    @param package
+        May be used as an alternative to `search_path`. If provided, this
+        expands to the folder in which the corresponding Python package is
+        installed, and is then appended to the default search path.
+
+    @return
+        A list of absolute pathnames, possibly empty.
+    '''
+
+    if isinstance(basename, str):
+        basename = pathlib.Path(basename)
+
+    if basename.is_absolute():
+        return expand_absolute_path(basename, suffixes)
+
+    else:
+        filepaths = []
+        for folder in (search_path or settings_path(package)):
+            if isinstance(folder, str):
+                folder = pathlib.Path(folder)
+
+            path = folder.joinpath(basename)
+            filepaths.extend(expand_absolute_path(path, suffixes))
+
+        return filepaths
+
+
+def expand_absolute_path(path: FilePathInput,
+                         suffixes: Sequence[str] = settings_suffixes,
+                         ) -> FilePaths:
+    '''
+    Expand the absolute but possibly incomplete path name into matching
+    settings files.
+
+    @param path
+        The absolute path of a directory or a file with or without a settings
+        file suffix.
+
+    @param suffixes
+        Candidate suffixes used when looking for matching files.  If the input
+        path is a directory, then the result is any filename with matching
+        suffixes found inside this directory.  Otherwise, if the input path
+        could not be found, these suffixes are tried in order, and the result is
+        any matching file paths.
+
+    @return
+        A list of absolute pathnames, possibly empty.
+    '''
+
+    if isinstance(path, str):
+        path = pathlib.Path(path)
+
+    if path.is_dir():
+        return [
+            candidate for candidate in path.iterdir()
+            if candidate.suffix in suffixes
+        ]
+
+    elif path.is_file():
+        return [path]
+
+    else:
+        return [
+            path.with_suffix(suffix)
+            for suffix in suffixes
+            if path.with_suffix(suffix).is_file()
+        ]
 
 
 def normalized_search_path(searchpath: SearchPath,

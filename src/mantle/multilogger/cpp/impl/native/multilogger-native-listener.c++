@@ -78,7 +78,7 @@ namespace multilogger::native
 
     bool QueueListener::applicable_application(const std::string &application) const
     {
-        return (application != core::platform::path->exec_name()) &&
+        return (application != core::platform::path->application_name()) &&
                (this->applications.empty() || this->applications.count(application));
     }
 

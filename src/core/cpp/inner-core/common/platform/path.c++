@@ -7,6 +7,7 @@
 
 #include "path.h++"
 #include "buildinfo.h++"
+#include "string/misc.h++"
 #include <fstream>
 
 #define CONFIGPATH_VAR "CONFIGPATH"
@@ -145,6 +146,20 @@ namespace core::platform
             return fallback;
         }
     }
+
+    std::string PathProvider::application_name() const noexcept
+    {
+        std::string exec_name = this->exec_name();
+        if (str::startswith(exec_name, EXEC_NAME_PREFIX))
+        {
+            return exec_name.substr(EXEC_NAME_PREFIX.size());
+        }
+        else
+        {
+            return exec_name;
+        }
+    }
+
 
     fs::path PathProvider::locate_dominating_folder(const fs::path &start,
                                                     const fs::path &name,

@@ -36,3 +36,4 @@ const std::string LOCAL_SETTINGS_DIR         = "@LOCAL_SETTINGS_DIR@";
 const std::string LOCAL_DATA_DIR             = "@LOCAL_DATA_DIR@";
 const std::string LOGS_DIR                   = "@LOGS_DIR@";
 const std::string ORGANIZATION               = "@ORGANIZATION@";
+const std::string EXEC_NAME_PREFIX           = "@EXEC_NAME_PREFIX@";

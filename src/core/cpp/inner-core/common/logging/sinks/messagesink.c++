@@ -54,7 +54,7 @@ namespace core::logging
     bool MessageSink::include_context() const
     {
         return this->include_source_location() ||
-            This::all_include_context_.value_or(this->include_context_);
+               This::all_include_context_.value_or(this->include_context_);
     }
 
     void MessageSink::set_all_include_context(bool include_context)
@@ -116,39 +116,27 @@ namespace core::logging
 
         if (this->include_context())
         {
-            if (!message->origin().empty())
-            {
-                stream << std::setw(12)
-                       << message->origin()
-                       << "|";
-            }
+            this->send_field(stream, message->origin(), 15);
+            this->send_field(stream, message->scopename_or("(no scope)"), 23);
 
-            stream << std::setw(12)
-                   << message->scopename_or("(no scope)")
-                   << "|";
-
-            if (!message->task_name().empty())
+            std::vector<std::string> thread_info;
+            if (!message->thread_name().empty())
             {
-                stream << std::setw(8)
-                       << message->task_name()
-                       << "|";
-            }
-            else if (!message->thread_name().empty())
-            {
-                stream << std::setw(8)
-                       << message->thread_name()
-                       << "|";
+                thread_info.push_back(message->thread_name());
             }
             else if (message->thread_id())
             {
-                stream << std::setw(8)
-                       << std::right
-                       << message->thread_id()
-                       << std::left
-                       << "|";
+                thread_info.push_back(std::to_string(message->thread_id()));
             }
-        }
+            else
+            {
+                thread_info.push_back("(no thread)");
+            }
 
+            thread_info.push_back(message->task_name());
+
+            this->send_field(stream, str::join(thread_info, ":"), 23);
+        }
 
         if (this->include_source_location())
         {
@@ -161,6 +149,25 @@ namespace core::logging
                        << message->function()
                        << "(): ";
             }
+        }
+    }
+
+    void MessageSink::send_field(std::ostream &stream,
+                                 const std::string_view &text,
+                                 std::size_t width,
+                                 const std::string &delimiter) const
+    {
+        if (text.size() > width)
+        {
+            stream << std::setw(width)
+                   << text.substr(0, width)
+                   << ">";
+        }
+        else
+        {
+            stream << std::setw(width)
+                   << text
+                   << delimiter;
         }
     }
 

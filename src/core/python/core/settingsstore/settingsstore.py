@@ -20,21 +20,21 @@ import pathlib
 
 ### Modules within package
 from ..paths import (
-    FilePath, FilePathInput, SearchPath,
+    FilePath, FilePaths, SearchPath,
+    FilePathInput, FilePathInputs, SearchPathInput,
     normalized_search_path, settings_path,
     local_settings_path, preinstalled_settings_path,
+    find_settings_files, settings_suffixes
 )
 from ..maputils import recursive_merge, recursive_delta
 from .jsonreader import JsonReader
 from .ini_reader import INIFileReader
 
 #Type hints
-FilePaths      = Sequence[FilePath]
-FilePathInputs = Sequence[FilePathInput]
 
-VariantList    = list['Variant']
-VariantMap     = dict[str, 'Variant']
-Variant        = None | bool | int | float | str | VariantList | VariantMap
+VariantList = list['Variant']
+VariantMap  = dict[str, 'Variant']
+Variant     = None | bool | int | float | str | VariantList | VariantMap
 
 
 class SettingsStore (dict):
@@ -70,19 +70,15 @@ class SettingsStore (dict):
       comments following `;` or `#`.
     '''
 
-    parser_suffixes \
-        =  (JSON_SUFFIX, YAML_SUFFIX, INI_SUFFIX) \
-        =  ('.json', '.yaml', '.ini')
-
     parser_map = {
-        JSON_SUFFIX: JsonReader.parse_text,
-        YAML_SUFFIX: yaml.safe_load,
-        INI_SUFFIX: INIFileReader.parse_text
+        settings_suffixes.JSON_SUFFIX: JsonReader.parse_text,
+        settings_suffixes.YAML_SUFFIX: yaml.safe_load,
+        settings_suffixes.INI_SUFFIX: INIFileReader.parse_text
     }
 
     def __init__(self,
                  filenames  : FilePathInput|FilePathInputs|None = [],
-                 searchpath : FilePathInputs|None = None,
+                 searchpath : SearchPathInput|None = None,
                  package    : str|None = None):
 
         '''
@@ -204,7 +200,9 @@ class SettingsStore (dict):
             filepath = pathlib.Path(filepath)
 
         try:
-            parser = type(self).parser_map.get(filepath.suffix, self.JSON_SUFFIX)
+            parser = type(self).parser_map.get(
+                filepath.suffix,
+                settings_suffixes.JSON_SUFFIX)
 
             with filepath.open() as fp:
                 text = fp.read()
@@ -515,9 +513,7 @@ class SettingsStore (dict):
         return self._filepaths
 
 
-    def find_paths(self,
-                   basename: FilePathInput,
-                   searchpath: FilePathInputs | None = None) -> FilePaths:
+    def find_paths(self, basename: FilePathInput) -> FilePaths:
         '''
         Find settings files with the specified base name within the
         specified search path, or the default search path for this SettingsStore
@@ -528,15 +524,13 @@ class SettingsStore (dict):
             If no suffix is provided, each of the supported settings suffixes
             is tried in turn: `.json`, `.yaml`, `.ini`'
 
-        @param searchpath
-            A list of directories in which to search. If unspecified, use the
-            default search path for this instance.
-
         @return
             A list of absolute pathnames to matching settings files.
         '''
 
-        return type(self).find_file_paths(basename, searchpath or self.searchpath)
+        return find_settings_files(
+            basename = basename,
+            search_path = self.searchpath)
 
 
     def recursive_delta(self) -> dict:
@@ -548,53 +542,4 @@ class SettingsStore (dict):
         '''
         return recursive_delta(self, self.defaults())
 
-
-    @classmethod
-    def find_file_paths(cls,
-                        basename : FilePathInput,
-                        searchpath: FilePathInputs) -> FilePaths:
-        '''
-        Find settings files with the specified base name within the provided
-        search path.
-
-        @param basename
-            Stem (with or without a suffix) of the folder or file name we are
-            looking for. If no suffix is provided, each of the supported
-            filename suffixes is also tried in turn: `.json`, `.yaml`, '.ini`.
-
-        @param searchpath
-            An iterable over folders in which to look for the specified file.
-
-        @return
-            A list of absolute pathnames to matching settings files.
-        '''
-
-        if isinstance(basename, str):
-            basename = pathlib.Path(basename)
-
-        filepaths = []
-
-        if basename.is_absolute():
-            filepaths.append(basename)
-        else:
-            for folder in searchpath:
-                if isinstance(folder, str):
-                    folder = pathlib.Path(folder)
-
-                path = folder.joinpath(basename)
-                if path.is_dir():
-                    filepaths.extend([
-                        candidate for candidate in path.iterdir()
-                        if candidate.suffix in cls.parser_suffixes])
-
-                elif path.is_file():
-                    filepaths.append(path)
-
-                else:
-                    filepaths.extend([
-                        path.with_suffix(suffix)
-                        for suffix in cls.parser_suffixes
-                        if path.with_suffix(suffix).is_file()])
-
-        return filepaths
 

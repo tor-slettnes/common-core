@@ -54,7 +54,15 @@ namespace core::logging
         void send_preamble(std::ostream &stream,
                            const Message::ptr &message) const;
 
+        void send_field(std::ostream &stream,
+                        const std::string_view &text,
+                        std::size_t width,
+                        const std::string &delimiter="|") const;
+
         std::string formatted(const Message::ptr &message) const;
+
+
+
     private:
         status::Level threshold_;
         bool include_context_;

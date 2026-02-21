@@ -36,3 +36,4 @@ extern const std::string LOCAL_SETTINGS_DIR;
 extern const std::string LOCAL_DATA_DIR;
 extern const std::string LOGS_DIR;
 extern const std::string ORGANIZATION;
+extern const std::string EXEC_NAME_PREFIX;

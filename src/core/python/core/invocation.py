@@ -5,7 +5,7 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-from typing import Callable, Coroutine, Sequence, Mapping, Optional, Any
+from typing import Callable, Coroutine, Sequence, Mapping, Optional
 
 import sys
 import traceback
@@ -13,6 +13,26 @@ import inspect
 import logging
 import asyncio
 import multiprocessing
+
+
+class AsyncTasks (set):
+    '''
+    Collection of asynchronous tasks. A reference is kept to tasks in order
+    to prevent them from disappearing mid-execution; see
+    <https://docs.python.org/3/library/asyncio-task.html#creating-tasks>.
+    '''
+
+    def add_coroutine(self, coroutine: Coroutine):
+        return self.add(asyncio.create_task(coroutine))
+
+    def add(self, task: asyncio.Task):
+        task.add_done_callback(self.discard)
+        set.add(self, task)
+        return task
+
+
+async_tasks = AsyncTasks()
+
 
 def check_type(argument: object,
                expected_type: type):
@@ -98,23 +118,6 @@ def method_path(method: Callable) -> str:
 
     return '.'.join((method.__module__, method.__qualname__))
 
-
-class AsyncTasks (set):
-    '''
-    Collection of asynchronous tasks. A reference is kept to tasks in order
-    to prevent them from disappearing mid-execution; see
-    <https://docs.python.org/3/library/asyncio-task.html#creating-tasks>.
-    '''
-
-    def add_coroutine(self, coroutine: Coroutine):
-        self.add(asyncio.create_task(coroutine))
-
-    def add(self, task: asyncio.Task):
-        task.add_done_callback(self.discard)
-        set.add(self, task)
-
-
-async_tasks = AsyncTasks()
 
 
 def invoke_async(

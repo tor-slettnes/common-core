@@ -123,6 +123,11 @@ namespace core::platform
                                       const std::string &fallback = "COMMAND") const noexcept;
 
         /// @brief
+        ///    Return the base name of the running executable without
+        ///    organization prefix
+        virtual std::string application_name() const noexcept;
+
+        /// @brief
         ///     Walk up the diretory hierarchy from the specified folder to locate a
         ///     given name.
         /// @param[in] start
