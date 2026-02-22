@@ -120,7 +120,6 @@ namespace switchboard::grpc
         }
     }
 
-
     ::grpc::Status RequestHandler::ImportSwitches(
         ::grpc::ServerContext *context,
         const switchboard::protobuf::ImportRequest *request,

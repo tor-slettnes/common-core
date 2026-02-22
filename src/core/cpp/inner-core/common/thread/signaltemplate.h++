@@ -8,6 +8,7 @@
 #pragma once
 #include "binaryevent.h++"
 #include "string/format.h++"
+#include "types/valuemap.h++"
 #include "types/create-shared.h++"
 
 #include <string>
@@ -737,7 +738,7 @@ namespace core::signal
         ///    Get the current cached value, if any.
         /// @return
         ///    std::optional<DataType> object
-        std::unordered_map<KeyType, DataType> get_cached()
+        types::ValueMap<KeyType, DataType> get_cached()
         {
             std::scoped_lock lck(this->signal_mtx_);
             return this->cached_;
@@ -881,7 +882,7 @@ namespace core::signal
         }
 
     private:
-        std::unordered_map<KeyType, DataType> cached_;
+        types::ValueMap<KeyType, DataType> cached_;
         std::unordered_map<std::string, Slot> slots_;
     };
 

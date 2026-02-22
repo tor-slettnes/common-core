@@ -9,6 +9,7 @@
 #include "netconfig.h++"
 #include "dbus-proxies.h++"
 #include "types/value.h++"
+#include "types/valuemap.h++"
 #include "status/exceptions.h++"
 
 // Third party
@@ -94,9 +95,9 @@ namespace netconfig::dbus
     ///    Reference to data objects for the specified type
 
     template <class WrapperType, class DataType>
-    inline std::unordered_map<Key, std::shared_ptr<DataType>> datamap()
+    inline core::types::ValueMap<Key, std::shared_ptr<DataType>> datamap()
     {
-        std::unordered_map<Key, std::shared_ptr<DataType>> map;
+        core::types::ValueMap<Key, std::shared_ptr<DataType>> map;
         for (const auto &[path, ref] : dbus::container.instances<WrapperType>())
         {
             map.emplace(ref->key(), ref);

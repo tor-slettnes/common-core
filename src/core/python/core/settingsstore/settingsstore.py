@@ -71,9 +71,9 @@ class SettingsStore (dict):
     '''
 
     parser_map = {
-        settings_suffixes.JSON_SUFFIX: JsonReader.parse_text,
-        settings_suffixes.YAML_SUFFIX: yaml.safe_load,
-        settings_suffixes.INI_SUFFIX: INIFileReader.parse_text
+        '.json': JsonReader.parse_text,
+        '.yaml': yaml.safe_load,
+        '.ini': INIFileReader.parse_text,
     }
 
     def __init__(self,
@@ -199,11 +199,9 @@ class SettingsStore (dict):
         if isinstance(filepath, str):
             filepath = pathlib.Path(filepath)
 
-        try:
-            parser = type(self).parser_map.get(
-                filepath.suffix,
-                settings_suffixes.JSON_SUFFIX)
+        parser = type(self).parser_map.get(filepath.suffix, '.json')
 
+        try:
             with filepath.open() as fp:
                 text = fp.read()
 
@@ -214,6 +212,7 @@ class SettingsStore (dict):
             settings = parser(text) or {}
             self.merge_settings(settings)
             self._filepaths.append(filepath)
+
 
     def merge_settings(self, settings: dict):
         '''Merge in the specified settings'''

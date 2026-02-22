@@ -16,6 +16,29 @@ namespace switchboard
 {
     using ThreadMap = std::unordered_map<SwitchRef, std::thread>;
 
+    constexpr auto SETTING_SWITCH_NAME = "name";
+    constexpr auto SETTING_SWITCH_ACTIVE = "active";
+    constexpr auto SETTING_SWITCH_SETTLED_STATE = "settled_state";
+    constexpr auto SETTING_SWITCH_STATE = "state";
+    constexpr auto SETTING_SWITCH_ATTRIBUTES = "attributes";
+    constexpr auto SETTING_SWITCH_ERROR = "error";
+    constexpr auto SETTING_SPEC_PRIMARY = "primary";
+    constexpr auto SETTING_SPEC_ALIASES = "aliases";
+    constexpr auto SETTING_SPEC_DEPENDENCIES = "dependencies";
+    constexpr auto SETTING_SPEC_INTERCEPTORS = "interceptors";
+    constexpr auto SETTING_SPEC_LOCALIZATIONS = "localizations";
+    constexpr auto SETTING_LOC_DESCRIPTION = "description";
+    constexpr auto SETTING_LOC_STATE_TEXTS = "state texts";
+    constexpr auto SETTING_LOC_ACTIVATE_TEXT = "activate text";
+    constexpr auto SETTING_LOC_DEACTIVATE_TEXT = "deactivate text";
+    constexpr auto SETTING_DEP_PREDECESSOR = "predecessor";
+    constexpr auto SETTING_DEP_TRIGGERS = "trigger_states";
+    constexpr auto SETTING_DEP_AUTOMATIC = "automatic";
+    constexpr auto SETTING_DEP_DIRECTION = "polarity";
+    constexpr auto SETTING_DEP_INVERTED = "inverted";
+    constexpr auto SETTING_DEP_HARD = "hard";
+    constexpr auto SETTING_DEP_SUFFICIENT = "sufficient";
+
     //==========================================================================
     /// @class CentralSwitch
     /// @brief Local Switch implementation, e.g. in Switchboard service or client.
@@ -125,6 +148,35 @@ namespace switchboard
         void notify_spec();
         void notify_status();
 
+    public:
+        void import_spec(
+            const core::types::KeyValueMap &declaration,
+            bool replace_aliases,
+            bool replace_localizations,
+            bool replace_dependencies,
+            bool replace_interceptors);
+
+    private:
+        Localization import_localization(
+            const core::types::KeyValueMap &kvmap) const;
+
+        DependencyRef import_dependency(
+            const std::string &predecessor_name,
+            const core::types::KeyValueMap &dep_map) const;
+
+    public:
+        void import_status(
+            const core::types::KeyValueMap &status,
+            bool replace_attributes);
+
+    private:
+        void export_spec(
+            core::types::TaggedValueList *tvlist) const;
+
+        void export_status(
+            core::types::TaggedValueList *tvlist) const;
+
+    private:
         static State transition_state(State target_state) noexcept;
         static bool target_position(State state, bool current) noexcept;
 

@@ -263,7 +263,7 @@ namespace netconfig
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
-    using ConnectionMap = std::unordered_map<Key, ConnectionData::ptr>;
+    using ConnectionMap = core::types::ValueMap<Key, ConnectionData::ptr>;
 
     //==========================================================================
     // ActiveConnection Data
@@ -291,12 +291,12 @@ namespace netconfig
         bool has_gateway() const;
     };
 
-    using ActiveConnectionMap = std::unordered_map<Key, ActiveConnectionData::ptr>;
+    using ActiveConnectionMap = core::types::ValueMap<Key, ActiveConnectionData::ptr>;
 
     //==========================================================================
     // Access Point Data
 
-    using FrequencyRangeMap = std::unordered_map<WirelessBandSelection, std::pair<uint, uint>>;
+    using FrequencyRangeMap = core::types::ValueMap<WirelessBandSelection, std::pair<uint, uint>>;
 
     struct AccessPointData : public core::types::Listable, public MappedData
     {
@@ -323,8 +323,8 @@ namespace netconfig
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
-    using AccessPointMap = std::unordered_map<Key, AccessPointData::ptr>;
-    using SSIDMap = std::unordered_map<SSID, AccessPointData::ptr>;
+    using AccessPointMap = core::types::ValueMap<Key, AccessPointData::ptr>;
+    using SSIDMap = core::types::ValueMap<SSID, AccessPointData::ptr>;
 
     //==========================================================================
     // Device Data
@@ -375,7 +375,7 @@ namespace netconfig
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
-    using DeviceMap = std::unordered_map<Key, DeviceData::ptr>;
+    using DeviceMap = core::types::ValueMap<Key, DeviceData::ptr>;
 
     using WifiTuple = std::tuple<DeviceData::ptr,
                                  AccessPointData::ptr,

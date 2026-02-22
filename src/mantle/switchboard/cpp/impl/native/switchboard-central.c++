@@ -17,29 +17,6 @@ namespace switchboard
 {
     constexpr auto SETTING_SWITCH_CONFIG_FILES = "switch config files";
 
-    constexpr auto SETTING_SWITCH_NAME = "name";
-    constexpr auto SETTING_SWITCH_ACTIVE = "active";
-    constexpr auto SETTING_SWITCH_SETTLED_STATE = "settled_state";
-    constexpr auto SETTING_SWITCH_STATE = "state";
-    constexpr auto SETTING_SWITCH_ATTRIBUTES = "attributes";
-    constexpr auto SETTING_SWITCH_ERROR = "error";
-    constexpr auto SETTING_SPEC_PRIMARY = "primary";
-    constexpr auto SETTING_SPEC_ALIASES = "aliases";
-    constexpr auto SETTING_SPEC_DEPENDENCIES = "dependencies";
-    constexpr auto SETTING_SPEC_INTERCEPTORS = "interceptors";
-    constexpr auto SETTING_SPEC_LOCALIZATIONS = "localizations";
-    constexpr auto SETTING_LOC_DESCRIPTION = "description";
-    constexpr auto SETTING_LOC_STATE_TEXTS = "state texts";
-    constexpr auto SETTING_LOC_ACTIVATE_TEXT = "activate text";
-    constexpr auto SETTING_LOC_DEACTIVATE_TEXT = "deactivate text";
-    constexpr auto SETTING_DEP_PREDECESSOR = "predecessor";
-    constexpr auto SETTING_DEP_TRIGGERS = "trigger_states";
-    constexpr auto SETTING_DEP_AUTOMATIC = "automatic";
-    constexpr auto SETTING_DEP_DIRECTION = "polarity";
-    constexpr auto SETTING_DEP_INVERTED = "inverted";
-    constexpr auto SETTING_DEP_HARD = "hard";
-    constexpr auto SETTING_DEP_SUFFICIENT = "sufficient";
-
     Central::Central()
         : Super(TYPE_NAME_FULL(This))
     {
@@ -120,12 +97,12 @@ namespace switchboard
         if (reload)
         {
             this->load_default_switches(
-                true,           // replace_specifications
-                true);          // replace_statuses
+                true,   // replace_specifications
+                true);  // replace_statuses
         }
 
         bool changes = false;
-        for (const auto &[name, old_sw]: old_switches)
+        for (const auto &[name, old_sw] : old_switches)
         {
             auto it = this->switches.find(name);
             if (it == this->switches.end())
@@ -203,160 +180,6 @@ namespace switchboard
         return declarations;
     }
 
-    bool Central::import_switch(
-        const std::string &name,
-        const core::types::KeyValueMap &declaration,
-        bool replace_specification,
-        bool replace_status)
-    {
-        bool default_active = declaration.get(SETTING_SWITCH_ACTIVE).as_bool();
-        auto [sw, inserted] = this->add_switch(name, default_active);
-
-        if (inserted || replace_specification)
-        {
-            this->import_spec(sw, declaration);
-        }
-
-        if (inserted || replace_status)
-        {
-            this->import_status(sw, declaration);
-        }
-
-        return inserted;
-    }
-
-    void Central::import_spec(
-        const SwitchRef &sw,
-        const core::types::KeyValueMap &spec_map)
-    {
-        Specification spec;
-        spec.primary = spec_map.get(SETTING_SPEC_PRIMARY).as_bool();
-
-        std::vector<SwitchName> aliases = spec_map
-                                              .get(SETTING_SPEC_ALIASES)
-                                              .get_valuelist()
-                                              .filter_by_type<std::string>();
-
-        spec.aliases.insert(aliases.begin(), aliases.end());
-
-        for (const auto &[language, decl] : spec_map.get(SETTING_SPEC_LOCALIZATIONS).get_kvmap())
-        {
-            spec.localizations.emplace(
-                language,
-                This::import_localization(decl.get_kvmap()));
-        }
-
-        for (const auto &[predecessor, decl] : spec_map.get(SETTING_SPEC_DEPENDENCIES).get_kvmap())
-        {
-            spec.dependencies.emplace(
-                predecessor,
-                This::import_dependency(sw, predecessor, decl.get_kvmap()));
-        }
-
-        sw->set_spec(spec);
-    }
-
-    Localization Central::import_localization(const core::types::KeyValueMap &localization_map)
-    {
-        Localization localization;
-        localization.description =
-            localization_map
-                .get(SETTING_LOC_DESCRIPTION)
-                .as_string();
-
-        localization.activate_text =
-            localization_map
-                .get(SETTING_LOC_ACTIVATE_TEXT)
-                .as_string();
-
-        localization.deactivate_text =
-            localization_map
-                .get(SETTING_LOC_DEACTIVATE_TEXT)
-                .as_string();
-
-        for (const auto &[key, value] :
-             localization_map.get(SETTING_LOC_STATE_TEXTS).get_kvmap())
-        {
-            localization.state_texts.emplace(
-                core::str::convert_to<State>(key, STATE_UNSET),
-                value.to_string());
-        }
-        return localization;
-    }
-
-    DependencyRef Central::import_dependency(
-        const SwitchRef &sw,
-        const std::string &predecessor_name,
-        const core::types::KeyValueMap &dep_map)
-    {
-        StateSet trigger_states;
-        if (const auto &trigger_state_names = dep_map.get(SETTING_DEP_TRIGGERS).get_valuelist_ptr())
-        {
-            logf_trace("--- Switch %r trigger states: %s", sw->name(), *trigger_state_names);
-            for (const core::types::Value &value : *trigger_state_names)
-            {
-                if (auto state = core::str::try_convert_to<State>(value.as_string()))
-                {
-                    trigger_states.insert(state.value());
-                }
-            }
-            logf_trace("--- Switch %r trigger states: %s", sw->name(), trigger_states);
-        }
-        else if (const auto &automatic = dep_map.get(SETTING_DEP_AUTOMATIC))
-        {
-            trigger_states = automatic.as_bool() ? SETTLED_STATES : StateSet();
-        }
-        else
-        {
-            trigger_states = SETTLED_STATES;
-        }
-
-        DependencyPolarity dir = DependencyPolarity::POSITIVE;
-        if (const core::types::Value &polarity = dep_map.get(SETTING_DEP_DIRECTION))
-        {
-            dir = core::str::convert_to<DependencyPolarity>(polarity.as_string(), dir);
-        }
-        else if (const core::types::Value &inverted = dep_map.get(SETTING_DEP_INVERTED))
-        {
-            if (inverted.as_bool())
-            {
-                dir = DependencyPolarity::NEGATIVE;
-            }
-        }
-
-        bool hard = dep_map.get(SETTING_DEP_HARD).as_bool();
-        bool sufficient = dep_map.get(SETTING_DEP_SUFFICIENT).as_bool();
-
-        return Dependency::create_shared(sw->provider(),
-                                         predecessor_name,
-                                         trigger_states,
-                                         dir,
-                                         hard,
-                                         sufficient);
-    }
-
-    void Central::import_status(
-        const SwitchRef &sw,
-        const core::types::KeyValueMap &status)
-    {
-        const auto &attributes = status.get(SETTING_SWITCH_ATTRIBUTES).get_kvmap();
-
-        if (const core::types::Value &error_spec = status.get(SETTING_SWITCH_ERROR))
-        {
-            sw->set_error(
-                std::make_shared<core::status::Error>(error_spec.get_kvmap()),
-                attributes);
-        }
-        else if (State state = status.get(SETTING_SWITCH_STATE).convert_to<State>())
-        {
-            sw->set_target(state, {}, attributes);
-        }
-        else
-        {
-            sw->set_attributes(attributes);
-        }
-    }
-
     bool Central::add_interceptor(
         const InterceptorRef &interceptor,
         const SwitchSelection &switch_selection,
@@ -364,6 +187,7 @@ namespace switchboard
         bool future)
     {
         bool inserted = false;
+
         if (future)
         {
             auto [it, added] = this->interceptor_factory_map.insert_or_assign(
@@ -447,45 +271,51 @@ namespace switchboard
         return matches;
     }
 
+    bool Central::import_switch(
+        const std::string &name,
+        const core::types::KeyValueMap &declaration,
+        bool replace_specification,
+        bool replace_status)
+    {
+        bool default_active = declaration.get(SETTING_SWITCH_ACTIVE).as_bool();
+        auto [sw, inserted] = this->add_switch(name, default_active);
+
+        if (auto central_switch = std::dynamic_pointer_cast<CentralSwitch>(sw))
+        {
+            central_switch->import_spec(
+                declaration,            // declaration
+                replace_specification,  // replace_aliases
+                replace_specification,  // replace_localizations
+                replace_specification,  // replace_dependencies
+                false);                 // replace_interceptors
+
+            central_switch->import_status(
+                declaration,      // declaration
+                replace_status);  // replace_attributes
+        }
+
+        return inserted;
+    }
+
     core::types::KeyValueMap Central::export_switch(
         const SwitchRef &sw,
         bool include_specification,
-        bool include_status)
+        bool include_status) const
     {
         core::types::TaggedValueList tvlist;
-        if (include_specification)
+        if (auto central_switch = std::dynamic_pointer_cast<CentralSwitch>(sw))
         {
-            sw->spec()->to_tvlist(&tvlist);
+            if (include_specification)
+            {
+                central_switch->export_spec(&tvlist);
+            }
+            if (include_status)
+            {
+                central_switch->export_status(&tvlist);
+            }
         }
-        if (include_status)
-        {
-            This::export_status(sw, &tvlist);
-        }
+
         return tvlist.as_kvmap();
-    }
-
-    void Central::export_status(
-        const SwitchRef &sw,
-        core::types::TaggedValueList *tvlist)
-    {
-        tvlist->append(
-            SETTING_SWITCH_ACTIVE,
-            sw->active());
-
-        tvlist->append(
-            SETTING_SWITCH_STATE,
-            core::str::convert_from(sw->settled_state()));
-
-        tvlist->append(
-            SETTING_SWITCH_ATTRIBUTES,
-            sw->attributes());
-
-        if (sw->error() && *sw->error())
-        {
-            tvlist->append(
-                SETTING_SWITCH_ERROR,
-                sw->error()->as_kvmap());
-        }
     }
 
 }  // namespace switchboard

@@ -70,7 +70,7 @@ class Client (BaseClient):
     def import_switches(self,
                         declarations: PyValueMap,
                         replace_specifications: bool = False,
-                        replace_statuses: bool = False) -> int:
+                        replace_statuses: bool = True) -> int:
         response = BaseClient.import_switches(**locals())
         return response.import_count
 

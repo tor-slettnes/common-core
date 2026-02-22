@@ -93,36 +93,16 @@ namespace switchboard
             bool replace_specification,
             bool replace_status);
 
-        static void import_spec(
+        core::types::KeyValueMap export_switch(
             const SwitchRef &sw,
-            const core::types::KeyValueMap &kvmap);
-
-        static Localization import_localization(
-            const core::types::KeyValueMap &kvmap);
-
-        static DependencyRef import_dependency(
-            const SwitchRef &sw,
-            const std::string &predecessor_name,
-            const core::types::KeyValueMap &dep_map);
-
-        static void import_status(
-            const SwitchRef &sw,
-            const core::types::KeyValueMap &status);
+            bool include_specification,
+            bool include_status) const;
 
         SwitchMap find_regex_matches(
             const std::vector<std::string> &patterns) const;
 
         SwitchMap find_glob_matches(
             const std::vector<std::string> &patterns) const;
-
-        static core::types::KeyValueMap export_switch(
-            const SwitchRef &sw,
-            bool include_specification,
-            bool include_status);
-
-        static void export_status(
-            const SwitchRef &sw,
-            core::types::TaggedValueList *tvlist);
 
     private:
         InterceptorFactoryMap interceptor_factory_map;

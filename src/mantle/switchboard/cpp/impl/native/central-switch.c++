@@ -6,6 +6,8 @@
 //==============================================================================
 
 #include "central-switch.h++"
+#include "switch-dependency.h++"
+#include "switch-interceptor.h++"
 #include "status/exceptions.h++"
 
 namespace switchboard
@@ -57,6 +59,11 @@ namespace switchboard
             interceptor->name(),
             interceptor);
 
+        logf_debug("Switch %r adding Interceptor %s, immediate=%b",
+                   this->name(),
+                   *interceptor,
+                   immediate);
+
         this->notify_spec();
 
         if (immediate)
@@ -77,6 +84,10 @@ namespace switchboard
     {
         if (this->spec_ref->interceptors.erase(name))
         {
+            logf_debug("Switch %r removing Interceptor %s",
+                       this->name(),
+                       name);
+
             this->notify_spec();
             return true;
         }
@@ -570,6 +581,195 @@ namespace switchboard
         else
         {
             return false;
+        }
+    }
+
+    void CentralSwitch::import_spec(
+        const core::types::KeyValueMap &declaration,
+        bool replace_aliases,
+        bool replace_localizations,
+        bool replace_dependencies,
+        bool replace_interceptors)
+    {
+        std::optional<bool> primary;
+        if (const auto &value = declaration.get(SETTING_SPEC_PRIMARY))
+        {
+            primary = value.as_bool();
+        }
+
+        std::vector<SwitchName> aliases =
+            declaration
+                .get(SETTING_SPEC_ALIASES)
+                .get_valuelist()
+                .filter_by_type<std::string>();
+
+        SwitchAliases alias_set{aliases.begin(), aliases.end()};
+
+        LocalizationMap localizations;
+        for (const auto &[language, decl] :
+             declaration.get(SETTING_SPEC_LOCALIZATIONS).get_kvmap())
+        {
+            localizations.insert_or_assign(
+                language,
+                this->import_localization(decl.get_kvmap()));
+        }
+
+        DependencyMap dependencies;
+        for (const auto &[predecessor, decl] :
+             declaration.get(SETTING_SPEC_DEPENDENCIES).get_kvmap())
+        {
+            dependencies.insert_or_assign(
+                predecessor,
+                this->import_dependency(predecessor, decl.get_kvmap()));
+        }
+
+        this->update_spec(
+            primary,                // primary
+            alias_set,              // aliases
+            replace_aliases,        // replace_aliases
+            localizations,          // localizations
+            replace_localizations,  // replace_localizations
+            dependencies,           // dependencies
+            replace_dependencies,   // replace_dependencies
+            {},                     // interceptors
+            replace_interceptors,   // replace_interceptors
+            false);                 // update_state
+    }
+
+    Localization CentralSwitch::import_localization(
+        const core::types::KeyValueMap &localization_map) const
+    {
+        Localization localization;
+        localization.description =
+            localization_map
+                .get(SETTING_LOC_DESCRIPTION)
+                .as_string();
+
+        localization.activate_text =
+            localization_map
+                .get(SETTING_LOC_ACTIVATE_TEXT)
+                .as_string();
+
+        localization.deactivate_text =
+            localization_map
+                .get(SETTING_LOC_DEACTIVATE_TEXT)
+                .as_string();
+
+        for (const auto &[key, value] :
+             localization_map.get(SETTING_LOC_STATE_TEXTS).get_kvmap())
+        {
+            localization.state_texts.emplace(
+                core::str::convert_to<State>(key, STATE_UNSET),
+                value.to_string());
+        }
+        return localization;
+    }
+
+    DependencyRef CentralSwitch::import_dependency(
+        const std::string &predecessor_name,
+        const core::types::KeyValueMap &dep_map) const
+    {
+        StateSet trigger_states;
+        if (const auto &state_names = dep_map.get(SETTING_DEP_TRIGGERS).get_valuelist_ptr())
+        {
+            for (const core::types::Value &value : *state_names)
+            {
+                if (auto state = core::str::try_convert_to<State>(value.as_string()))
+                {
+                    trigger_states.insert(state.value());
+                }
+            }
+        }
+        else if (const auto &automatic = dep_map.get(SETTING_DEP_AUTOMATIC))
+        {
+            trigger_states = automatic.as_bool() ? SETTLED_STATES : StateSet();
+        }
+        else
+        {
+            trigger_states = SETTLED_STATES;
+        }
+
+        DependencyPolarity dir = DependencyPolarity::POSITIVE;
+        if (const core::types::Value &polarity = dep_map.get(SETTING_DEP_DIRECTION))
+        {
+            dir = core::str::convert_to<DependencyPolarity>(polarity.as_string(), dir);
+        }
+        else if (const core::types::Value &inverted = dep_map.get(SETTING_DEP_INVERTED))
+        {
+            if (inverted.as_bool())
+            {
+                dir = DependencyPolarity::NEGATIVE;
+            }
+        }
+
+        bool hard = dep_map.get(SETTING_DEP_HARD).as_bool();
+        bool sufficient = dep_map.get(SETTING_DEP_SUFFICIENT).as_bool();
+
+        return Dependency::create_shared(this->provider(),
+                                         predecessor_name,
+                                         trigger_states,
+                                         dir,
+                                         hard,
+                                         sufficient);
+    }
+
+    void CentralSwitch::import_status(
+        const core::types::KeyValueMap &status,
+        bool replace_attributes)
+    {
+        const auto &attributes = status.get(SETTING_SWITCH_ATTRIBUTES).get_kvmap();
+
+        if (const core::types::Value &error_spec = status.get(SETTING_SWITCH_ERROR))
+        {
+            auto error = std::make_shared<core::status::Error>(error_spec.get_kvmap());
+
+            this->set_error(
+                error,                // error
+                attributes,           // attributes
+                replace_attributes);  // clear_existing
+        }
+        else if (State state = status.get(SETTING_SWITCH_STATE).convert_to<State>())
+        {
+            this->set_target(
+                state,                // target_state
+                {},                   // error
+                attributes,           // attributes
+                replace_attributes);  // clear_existing
+        }
+        else
+        {
+            this->set_attributes(
+                attributes,           // attributes
+                replace_attributes);  // clar_existing
+        }
+    }
+
+    void CentralSwitch::export_spec(
+        core::types::TaggedValueList *tvlist) const
+    {
+        this->spec()->to_tvlist(tvlist);
+    }
+
+    void CentralSwitch::export_status(
+        core::types::TaggedValueList *tvlist) const
+    {
+        tvlist->append(
+            SETTING_SWITCH_ACTIVE,
+            this->active());
+
+        tvlist->append(
+            SETTING_SWITCH_STATE,
+            core::str::convert_from(this->settled_state()));
+
+        tvlist->append(
+            SETTING_SWITCH_ATTRIBUTES,
+            this->attributes());
+
+        if (this->error() && *this->error())
+        {
+            tvlist->append(
+                SETTING_SWITCH_ERROR,
+                this->error()->as_kvmap());
         }
     }
 

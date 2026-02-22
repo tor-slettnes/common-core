@@ -7,7 +7,7 @@
 
 #pragma once
 #include "vfs-types.h++"
-#include "types/shared_ptr_map.h++"
+#include "types/valuemap.h++"
 
 #include <unordered_map>
 
@@ -49,12 +49,8 @@ namespace vfs
         std::string title;
     };
 
-    // using ContextMap = core::types::shared_ptr_map<
-    //     ContextName,
-    //     Context,
-    //     std::unordered_map<ContextName, std::shared_ptr<Context>>>;
 
-    using ContextMap = std::unordered_map<ContextName, std::shared_ptr<Context>>;
+    using ContextMap = core::types::ValueMap<ContextName, std::shared_ptr<Context>>;
 
     using ContextList = std::vector<Context::ptr>;
 
