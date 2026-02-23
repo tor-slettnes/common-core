@@ -60,7 +60,7 @@ namespace switchboard::dds
     }
 
     bool RequestHandler::clear_switches(
-            const CC::Switchboard::ClearSwitchesRequest &req)
+        const CC::Switchboard::ClearSwitchesRequest &req)
     {
         return this->provider->clear_switches(
             req.reload());
@@ -153,10 +153,10 @@ namespace switchboard::dds
             req.switch_selection());
 
         return this->provider->add_interceptor(
-            interceptor,        // interceptor
-            switch_selection,   // switch_selection
-            req.immediate(),    // immediate
-            req.future());      // future
+            interceptor,       // interceptor
+            switch_selection,  // switch_selection
+            req.immediate(),   // immediate
+            req.future());     // future
     }
 
     bool RequestHandler::remove_interceptor(
@@ -218,6 +218,20 @@ namespace switchboard::dds
         else
         {
             return false;
+        }
+    }
+
+    CC::Variant::TaggedValueList RequestHandler::get_attributes(
+        const CC::Switchboard::GetAttributesRequest &req)
+    {
+        if (SwitchRef sw = this->provider->get_switch(req.switch_name(), true))
+        {
+            return idl::encoded<CC::Variant::TaggedValueList>(
+                sw->get_attributes(req.inherit()));
+        }
+        else
+        {
+            return {};
         }
     }
 

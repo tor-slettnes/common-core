@@ -549,6 +549,16 @@ module CC
         };
 
 
+        struct GetAttributesRequest
+        {
+            // Switch for which we are getting attributes
+            @key
+            SwitchName switch_name;
+
+            // Also recursively merge in attributes from its ancestors
+            boolean inherit;
+        };
+
         struct SetAttributesRequest
         {
             // Switch whose attributes we are changing
@@ -594,9 +604,21 @@ module CC
         // Input parameters for INVOKE_INTERCEPTOR request issued by Switchboard servver
         struct InterceptorInvocation
         {
+            // Switch which this interceptor is invoked ("owner")
             SwitchName switch_name;
+
+            // Interceptor name.  This will normally be used by the client to
+            // look up a registered interceptor method.
             InterceptorName interceptor_name;
+
+            // Switch state that triggered the interceptor.  This will normally be one
+            // of the transitional states ACTIVATING, DEACTIVATING, or FAILING.
             State state;
+
+            // Variant attributes assigned to the owning Switch folowing this
+            // update, with those of its ancestor Switches recursively merged
+            // in.
+            Variant::TaggedValueList cascaded_attributes;
         };
 
         // Returned to Switchboard server by interceptor owner after completing an

@@ -24,7 +24,7 @@ from ..paths import (
     FilePathInput, FilePathInputs, SearchPathInput,
     normalized_search_path, settings_path,
     local_settings_path, preinstalled_settings_path,
-    find_settings_files, settings_suffixes
+    find_settings_files,
 )
 from ..maputils import recursive_merge, recursive_delta
 from .jsonreader import JsonReader

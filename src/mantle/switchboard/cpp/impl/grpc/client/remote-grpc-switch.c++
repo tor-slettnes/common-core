@@ -148,6 +148,17 @@ namespace switchboard::grpc
         return this->proxy()->call_check(&Proxy::Stub::SetTarget, req).updated();
     }
 
+    core::types::KeyValueMap RemoteSwitch::get_attributes(
+        bool inherit) const
+    {
+        ::cc::platform::switchboard::protobuf::GetAttributesRequest req;
+        req.set_switch_name(this->name());
+        req.set_inherit(inherit);
+
+        return cc::protobuf::decoded<core::types::KeyValueMap>(
+            this->proxy()->call_check(&Proxy::Stub::GetAttributes, req).attributes());
+    }
+
     bool RemoteSwitch::set_attributes(
         const core::types::KeyValueMap &attributes,
         bool clear_existing)

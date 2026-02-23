@@ -13,7 +13,7 @@ from typing import Mapping, Optional
 from cc.core.decorators import override
 from cc.protobuf.status import Error
 from cc.protobuf.dissecter import decode_message
-from cc.protobuf.variant import PyValueMap
+from cc.protobuf.variant import PyValueMap, decodeKeyValueMap
 
 ### Switchboard modules
 from ..protobuf import (
@@ -93,6 +93,11 @@ class RemoteSwitch (RemoteSwitchBase):
         response = RemoteSwitchBase.set_target(**locals())
         return response.updated
 
+    @override
+    def get_attributes(self,
+                       inherit: bool = False) -> PyValueMap:
+        response = RemoteSwitchBase.get_attributes(**locals())
+        return decodeKeyValueMap(response.attributes)
 
     @override
     def set_attributes(self,

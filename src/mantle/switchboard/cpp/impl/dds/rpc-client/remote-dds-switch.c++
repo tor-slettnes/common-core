@@ -140,6 +140,16 @@ namespace switchboard::dds
         return this->client()->set_target(req);
     }
 
+    core::types::KeyValueMap RemoteSwitch::get_attributes(
+            bool inherit) const
+    {
+        CC::Switchboard::GetAttributesRequest req;
+        req.switch_name(this->name());
+        req.inherit(inherit);
+        return idl::decoded<core::types::KeyValueMap>(
+            this->client()->get_attributes(req));
+    }
+
     bool RemoteSwitch::set_attributes(
         const core::types::KeyValueMap &attributes,
         bool clear_existing)

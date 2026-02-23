@@ -594,7 +594,7 @@ namespace switchboard
         return errors;
     }
 
-    /// Return this switch's status
+    /// Return this switch's attributes from the local cache.
     const core::types::KeyValueMap &Switch::attributes() const noexcept
     {
         return this->status()->attributes;
@@ -602,7 +602,7 @@ namespace switchboard
 
     core::types::Value Switch::attribute(const std::string &key) const
     {
-        return this->status()->attributes.get(key);
+        return this->attributes().get(key);
     }
 
     void Switch::set_attribute(

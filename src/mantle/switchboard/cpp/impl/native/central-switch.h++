@@ -98,9 +98,13 @@ namespace switchboard
             ExceptionHandling on_cancel = EH_DEFAULT,
             ExceptionHandling on_error = EH_DEFAULT) override;
 
+        core::types::KeyValueMap get_attributes(
+            bool inherit) const override;
+
         bool set_attributes(
             const core::types::KeyValueMap &attributes,
             bool clear_existing) override;
+
 
     private:
         bool set_current_state(

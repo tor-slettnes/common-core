@@ -22,7 +22,9 @@ from ..protobuf import (
     AddDependencyRequest, RemoveDependencyRequest, DependencyPolarity,
     InterceptorSpec, InterceptorInvocation, InterceptorResult,
     SetTargetRequest, SetTargetResponse,
-    SetAttributesRequest, SetAttributesResponse, CulpritsQuery,
+    SetAttributesRequest, SetAttributesResponse,
+    GetAttributesRequest, GetAttributesResponse,
+    CulpritsQuery,
 )
 
 from ..base.switch import Switch, InterceptorMethod
@@ -153,6 +155,15 @@ class RemoteSwitchBase (Switch):
 
         return self.stub.SetTarget(req)
 
+
+    @override
+    def get_attributes(self,
+                       inherit: bool = False) -> GetAttributesResponse:
+        req = GetAttributesRequest(
+            switch_name = self.name,
+            inherit = inherit)
+
+        return self.stub.GetAttributes(req)
 
     @override
     def set_attributes(self,

@@ -248,6 +248,22 @@ namespace switchboard
         return false;
     }
 
+    core::types::KeyValueMap CentralSwitch::get_attributes(
+        bool inherit) const
+    {
+        core::types::KeyValueMap attributes = this->attributes();
+
+        if (inherit)
+        {
+            for (const auto &sw : this->get_predecessors())
+            {
+                attributes.recursive_merge(sw->get_attributes(inherit));
+            }
+        }
+
+        return attributes;
+    }
+
     bool CentralSwitch::set_attributes(const core::types::KeyValueMap &attributes,
                                        bool clear_existing)
     {

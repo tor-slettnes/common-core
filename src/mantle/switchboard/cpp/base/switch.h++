@@ -437,11 +437,19 @@ namespace switchboard
         /// @sa culprits()
         ErrorMap errors() const noexcept;
 
+
         /// Get all key/value attributes associated with this switch
         const core::types::KeyValueMap &attributes() const noexcept;
 
         /// Get specific attribute
         core::types::Value attribute(const std::string &key) const;
+
+        /// @brief
+        ///    Get all key/value attributes associated with this switch.
+        /// @param[in] inherit
+        ///    Also recursively merge in attributes from ancestors.
+        virtual core::types::KeyValueMap get_attributes(
+            bool inherit = false) const = 0;
 
         /// Set arbitrary attributes on this switch.
         virtual bool set_attributes(

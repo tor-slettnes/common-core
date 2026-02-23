@@ -6,17 +6,20 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 
+### Standard Python modules
 from typing import Optional
 from typing import Sequence, Mapping
 from weakref import ref
 import asyncio
 
+### Common Core modules
 from cc.core.decorators import override
 from cc.core.invocation import safe_invoke_maybe_async
 from cc.protobuf.status import Error, encodeError
 from cc.protobuf.dissecter import decode_message
-from cc.protobuf.variant import PyValueMap, encodeKeyValueMap
+from cc.protobuf.variant import PyValueMap, decodeKeyValueMap
 
+### Switchboard modules
 from ..protobuf import (
     Specification, Status, State, StateSet,
     ExceptionHandling, CascadeStyle,
@@ -116,6 +119,13 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
 
         response = await RemoteSwitchBase.set_target(**locals())
         return response.updated
+
+
+    @override
+    async def get_attributes(self,
+                       inherit: bool = False) -> PyValueMap:
+        response = await RemoteSwitchBase.get_attributes(**locals())
+        return decodeKeyValueMap(response.attributes)
 
 
     @override

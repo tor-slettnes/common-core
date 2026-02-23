@@ -972,16 +972,6 @@ class Switch (DocBase):
             on_cancel = on_cancel,
             on_error = on_error)
 
-
-    @abstractmethod
-    def set_attributes(self,
-                       attributes: Optional[PyValueMap] = None,
-                       clear_existing: bool = False):
-        '''
-        Assign arbitrary key/value pairs to this switch.
-        See `set_target()` for details on the input arguments.
-        '''
-
     @property
     def attributes(self) -> PyValueMap:
         '''
@@ -991,6 +981,26 @@ class Switch (DocBase):
 
         return decodeKeyValueMap(self.status.attributes)
 
+
+    @abstractmethod
+    def get_attributes(self,
+                       inherit: bool = False) -> PyValueMap:
+        '''
+        Obtain a key/value map of attributes assigned to this switch
+
+        @param inherit
+            Also recursively merge in attributes from its ancestors
+        '''
+
+
+    @abstractmethod
+    def set_attributes(self,
+                       attributes: Optional[PyValueMap] = None,
+                       clear_existing: bool = False):
+        '''
+        Assign arbitrary key/value pairs to this switch.
+        See `set_target()` for details on the input arguments.
+        '''
 
     @property
     def cascaded_attributes(self):

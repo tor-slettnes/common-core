@@ -556,6 +556,27 @@ namespace switchboard::grpc
         }
     }
 
+    ::grpc::Status RequestHandler::GetAttributes(
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::GetAttributesRequest *request,
+        switchboard::protobuf::GetAttributesResponse *reply)
+    {
+        try
+        {
+            SwitchRef sw = provider->get_switch(request->switch_name(), true);
+
+            cc::protobuf::encode(
+                sw->get_attributes(request->inherit()),
+                reply->mutable_attributes());
+
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, this->peer(context));
+        }
+    }
+
     ::grpc::Status RequestHandler::SetAttributes(
         ::grpc::ServerContext *context,
         const switchboard::protobuf::SetAttributesRequest *request,
@@ -745,6 +766,8 @@ namespace switchboard::grpc
                 invocation.set_state(
                     cc::protobuf::encoded<switchboard::protobuf::State>(
                         state));
+                cc::protobuf::encode(sw->get_attributes(true),
+                                     invocation.mutable_cascaded_attributes());
 
                 session->stream->Write(invocation);
                 return future;

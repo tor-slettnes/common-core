@@ -68,6 +68,9 @@ namespace switchboard::dds
         bool set_target(
             const CC::Switchboard::SetTargetRequest &req) override;
 
+        CC::Variant::TaggedValueList get_attributes(
+            const CC::Switchboard::GetAttributesRequest &req) override;
+
         bool set_attributes(
             const CC::Switchboard::SetAttributesRequest &req) override;
 

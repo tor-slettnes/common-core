@@ -73,6 +73,9 @@ module CC
             // Set target state of a switch
             boolean set_target(SetTargetRequest req);
 
+            // Export switches to a list of key/value maps.
+            Variant::TaggedValueList get_attributes(GetAttributesRequest req);
+
             // Set/update/clear optional attributes on a switch
             boolean set_attributes(SetAttributesRequest req);
 

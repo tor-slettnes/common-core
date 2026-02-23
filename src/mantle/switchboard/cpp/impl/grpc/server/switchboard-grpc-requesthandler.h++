@@ -166,6 +166,11 @@ namespace switchboard::grpc
             const switchboard::protobuf::SetTargetRequest *request,
             switchboard::protobuf::SetTargetResponse *reply) override;
 
+        ::grpc::Status GetAttributes(
+            ::grpc::ServerContext *context,
+            const switchboard::protobuf::GetAttributesRequest *request,
+            switchboard::protobuf::GetAttributesResponse *reply) override;
+
         ::grpc::Status SetAttributes(
             ::grpc::ServerContext *context,
             const switchboard::protobuf::SetAttributesRequest *request,

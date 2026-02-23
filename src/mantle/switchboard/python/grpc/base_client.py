@@ -279,22 +279,20 @@ class BaseClient (SwitchboardBase, SignalClient):
                 output = result.error,
             )
             self.logger.error(
-                "%s switch %r interceptor %r state %s failed: [%s] %s"%(
-                    self,
+                "Switch %r state %s interceptor %r failed: [%s] %s"%(
                     request.switch_name,
-                    request.interceptor_name,
                     State(request.state).name,
+                    request.interceptor_name,
                     type(error).__name__,
                     error,
                 )
             )
         else:
             self.logger.debug(
-                "%s switch %r interceptor %r state %s; completed"%(
-                    self,
+                "Switch %r state %s interceptor %r completed"%(
                     request.switch_name,
-                    request.interceptor_name,
                     State(request.state).name,
+                    request.interceptor_name,
                 )
             )
 
