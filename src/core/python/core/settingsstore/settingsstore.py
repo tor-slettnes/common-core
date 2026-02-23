@@ -403,6 +403,7 @@ class SettingsStore (dict):
 
     def save_delta(self,
                    filename: FilePathInput|None = None,
+                   sort_keys: bool = True,
                    skipkeys: bool = False,
                    ensure_ascii: bool = True,
                    check_circular: bool = True,
@@ -420,7 +421,8 @@ class SettingsStore (dict):
             whichever is writable by the current user).
 
         See `help(json.dump)` for information on the additional arguments
-        `skipkeys`, `ensure_ascii`, `check_circular`, `allow_nan` and `indent`.
+        `sort_keys`, `skipkeys`, `ensure_ascii`, `check_circular`, `allow_nan`
+        and `indent`.
         '''
 
         args = locals()
@@ -431,6 +433,7 @@ class SettingsStore (dict):
     def save(self,
              filename: FilePathInput|None = None,
              only_delta: bool = False,
+             sort_keys: bool = True,
              skipkeys: bool = False,
              ensure_ascii: bool = True,
              check_circular: bool = True,
@@ -480,6 +483,7 @@ class SettingsStore (dict):
                 with fp:
                     json.dump(settings,
                               fp,
+                              sort_keys = sort_keys,
                               skipkeys = skipkeys,
                               ensure_ascii = ensure_ascii,
                               check_circular = check_circular,
