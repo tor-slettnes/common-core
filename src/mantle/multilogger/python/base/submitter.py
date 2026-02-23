@@ -62,10 +62,15 @@ class Submitter (logging.Handler):
         Capture message from Python logger
         '''
 
+        application = (record.processName
+                       if not record.processName in ('', 'MainProcess')
+                       else self.identity)
+
         message = self.create_message(
             text = record.getMessage(),
             level = record.levelno,
             timestamp = record.created,
+            application = application,
             source_path = record.pathname,
             source_line = record.lineno,
             function_name = record.funcName,
