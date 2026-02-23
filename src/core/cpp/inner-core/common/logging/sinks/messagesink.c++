@@ -104,20 +104,24 @@ namespace core::logging
     void MessageSink::send_preamble(std::ostream &stream,
                                     const Message::ptr &message) const
     {
-        dt::tp_to_stream(stream, message->timepoint(), true, 3, "%F|%T");
+        dt::tp_to_stream(stream, message->timepoint(), true, 3, "%T");
 
-        stream << "|"
-               << std::right
-               << std::setfill(' ')
-               << std::setw(8)
-               << message->level()
+        // stream << "|"
+        //        << std::right
+        //        << std::setfill(' ')
+        //        << std::setw(8)
+        //        << message->level()
+        //        << std::left
+        //        << "|";
+
+        stream << std::setfill(' ')
                << std::left
                << "|";
 
         if (this->include_context())
         {
-            this->send_field(stream, message->origin(), 15);
-            this->send_field(stream, message->scopename_or("(no scope)"), 23);
+            this->send_field(stream, message->origin(), 16);
+            this->send_field(stream, message->scopename_or("(no scope)"), 24);
 
             std::vector<std::string> thread_info;
             if (!message->thread_name().empty())
@@ -135,7 +139,7 @@ namespace core::logging
 
             thread_info.push_back(message->task_name());
 
-            this->send_field(stream, str::join(thread_info, ":"), 23);
+            this->send_field(stream, str::join(thread_info, ":"), 24);
         }
 
         if (this->include_source_location())
