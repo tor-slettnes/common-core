@@ -102,7 +102,8 @@ class AsyncReader (AbstractReader):
     def start(self, stream, callback):
         if not self.active():
             self.task = asyncio.create_task(
-                self.worker(stream, callback))
+                self.worker(stream, callback),
+                name='Message Reader')
 
     @override
     def stop(self, wait = False):

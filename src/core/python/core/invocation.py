@@ -23,7 +23,10 @@ class AsyncTasks (set):
     '''
 
     def add_coroutine(self, coroutine: Coroutine):
-        return self.add(asyncio.create_task(coroutine))
+        return self.add(
+            asyncio.create_task(
+                coroutine,
+                name=coroutine.__name__))
 
     def add(self, task: asyncio.Task):
         task.add_done_callback(self.discard)

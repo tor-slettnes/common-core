@@ -153,7 +153,8 @@ class AsyncClient (AsyncMixIn, BaseClient):
                 self._intercept_queue_iterator(),
                 None)
             self.interceptor_task = asyncio.create_task(
-                self._intercept_runner())
+                self._intercept_runner(),
+                name = "Intercept Runner")
 
 
     def stop_intercepting(self):
