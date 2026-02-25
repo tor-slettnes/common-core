@@ -26,9 +26,10 @@ Available targets:
   build              Build the project
   cmake-gui          Launch CMake GUI
   cmake              Generate build files
-  python_aio         Launch Python AsynIO REPL with initialized sys.path
-  python_shell       Launch Python REPL with initialized sys.path
-  python_shell/<m>   Launch Python REPL with specific module preloaded
+  python-aio         Launch Python AsynIO REPL with initialized sys.path
+  python-repl        Launch Python REPL with initialized sys.path
+  python-repl/<m>    Launch Python REPL with specific module preloaded
+  platform-shell     Launch Python REPL with Platform service clients preloaded
   list               List all available targets
   get_config         Show current CMake configuration
   get_version        Show project version
@@ -100,6 +101,7 @@ export BUILD_DIR   ?= $(OUT_DIR)/build/$(CONFIG_PRESET)
 export INSTALL_DIR ?= $(OUT_DIR)/$(CONFIG_PRESET)
 export PACKAGE_DIR ?= $(OUT_DIR)/packages
 PYTHON_INSTALL_DIR  = $(strip $(shell $(call get_cached,PYTHON_INSTALL_DIR)))
+EXEC_NAME_PREFIX    = $(strip $(shell $(call get_cached,EXEC_NAME_PREFIX)))
 
 
 ifneq ($(wildcard $(TOOLCHAIN_FILE)),)
@@ -253,17 +255,21 @@ submodule/protos: protos/Makefile
 protos/Makefile:
 	@git submodule update --init protos
 
-.PHONY: python_shell repl
-python_shell repl:
+.PHONY: repl
+python-shell repl:
 	@env PYTHONPATH=$(INSTALL_DIR)/$(PYTHON_INSTALL_DIR) $(PYTHON)
 
-.PHONY: python_aio aio_repl async_repl
-python_aio aio_repl async_repl:
+.PHONY: python-aio_aio-repl async-repl
+python-aio aio-repl async-repl:
 	@env PYTHONPATH=$(INSTALL_DIR)/$(PYTHON_INSTALL_DIR) $(PYTHON) -m asyncio
 
-repl/% python_shell/%:
+python-shell/% repl/%:
 	@echo "Launching interactive Python prompt with module: $*"
 	@env PYTHONPATH=$(INSTALL_DIR)/$(PYTHON_INSTALL_DIR) $(PYTHON) -i -m $*
+
+.PHONY: platform-shell platform-repl
+platform-shell platform-repl:
+	@$(INSTALL_DIR)/bin/$(EXEC_NAME_PREFIX)platform-shell
 
 .PHONY: list_make_vars
 list_make_vars:

@@ -14,8 +14,9 @@ import logging
 import asyncio
 import multiprocessing
 
+from .docbase import DocBase
 
-class AsyncTasks (set):
+class AsyncTasks (DocBase):
     '''
     Collection of asynchronous tasks. A reference is kept to tasks in order
     to prevent them from disappearing mid-execution; see
