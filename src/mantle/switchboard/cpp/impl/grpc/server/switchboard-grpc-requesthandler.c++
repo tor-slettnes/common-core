@@ -332,45 +332,33 @@ namespace switchboard::grpc
 
             std::scoped_lock lck(this->interceptor_sessions_mutex);
 
-            if (InterceptorSession *session = this->interceptor_sessions.get_ptr(session_id))
-            {
-                using namespace std::placeholders;
-                Invocation invocation = std::bind(
-                    &This::on_intercept,
-                    this,
-                    name,
-                    session_id,
-                    _1,
-                    _2);
+            using namespace std::placeholders;
+            Invocation invocation = std::bind(
+                &This::on_intercept,
+                this,
+                name,
+                session_id,
+                _1,
+                _2);
 
-                InterceptorRef interceptor = cc::protobuf::decoded<InterceptorRef>(
-                    request->spec(),  // proto
-                    key,              // name
-                    session_id,       // owner
-                    invocation);      // invocation
+            InterceptorRef interceptor = cc::protobuf::decoded<InterceptorRef>(
+                request->spec(),  // proto
+                key,              // name
+                session_id,       // owner
+                invocation);      // invocation
 
-                SwitchSelection selection = cc::protobuf::decoded<SwitchSelection>(
-                    request->switch_selection());
+            SwitchSelection selection = cc::protobuf::decoded<SwitchSelection>(
+                request->switch_selection());
 
-                bool added = this->provider->add_interceptor(
-                    interceptor,           // interceptor
-                    selection,             // switch_selection
-                    request->immediate(),  // immediate
-                    request->future());    // future
+            bool added = this->provider->add_interceptor(
+                interceptor,           // interceptor
+                selection,             // switch_selection
+                request->immediate(),  // immediate
+                request->future());    // future
 
-                reply->set_value(added);
-                session->registrations.insert(key);
-                return ::grpc::Status::OK;
-            }
-            else
-            {
-                throw core::exception::FailedPrecondition(
-                    "Client must open interceptor stream with `Intercept()` "
-                    "before invoking AddInterceptor()",
-                    {
-                        {"session_id", session_id},
-                    });
-            }
+            reply->set_value(added);
+            this->interceptor_sessions[session_id].registrations.insert(key);
+            return ::grpc::Status::OK;
         }
         catch (...)
         {
