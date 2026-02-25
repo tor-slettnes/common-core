@@ -67,6 +67,14 @@ class AsyncTasks (set):
         self.add(task)
 
 
+    def cancel_all(self):
+        '''
+        Cancel all managed AsycncIO tasks.
+        '''
+        for task in self:
+            task.cancel()
+
+
 
 async_tasks = AsyncTasks()
 
