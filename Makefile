@@ -26,8 +26,9 @@ Available targets:
   build              Build the project
   cmake-gui          Launch CMake GUI
   cmake              Generate build files
-  python_shell       Launch Python shell with project modules
-  python_shell/<m>   Launch Python shell with specific module
+  python_aio         Launch Python AsynIO REPL with initialized sys.path
+  python_shell       Launch Python REPL with initialized sys.path
+  python_shell/<m>   Launch Python REPL with specific module preloaded
   list               List all available targets
   get_config         Show current CMake configuration
   get_version        Show project version
@@ -252,12 +253,12 @@ submodule/protos: protos/Makefile
 protos/Makefile:
 	@git submodule update --init protos
 
-.PHONY: repl python_shell
-repl python_shell:
+.PHONY: python_shell repl
+python_shell repl:
 	@env PYTHONPATH=$(INSTALL_DIR)/$(PYTHON_INSTALL_DIR) $(PYTHON)
 
-.PHONY: async_repl
-async_repl:
+.PHONY: python_aio aio_repl async_repl
+python_aio aio_repl async_repl:
 	@env PYTHONPATH=$(INSTALL_DIR)/$(PYTHON_INSTALL_DIR) $(PYTHON) -m asyncio
 
 repl/% python_shell/%:
