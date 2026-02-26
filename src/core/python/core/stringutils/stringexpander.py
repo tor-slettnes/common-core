@@ -1,9 +1,6 @@
-#!/usr/bin/python3
-#===============================================================================
-## @file stringexpander.py
-## @brief String substitutions
-## @author Tor Slettnes
-#===============================================================================
+'''
+stringexpander.py Expand placeholders of the form `${name}`, `$(name)` and/or `$[name]` in a string using vaules from a dictionary.
+'''
 
 ### Standard Python modules
 import re

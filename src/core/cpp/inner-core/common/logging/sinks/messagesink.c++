@@ -121,25 +121,17 @@ namespace core::logging
         if (this->include_context())
         {
             this->send_field(stream, message->origin(), 16);
+            std::string context =
+                !message->task_name().empty()
+                    ? message->task_name()
+                : !message->thread_name().empty()
+                    ? message->thread_name()
+                : message->thread_id()
+                    ? str::format("%24d", message->thread_id())
+                    : "(no thread)"s;
+
+            this->send_field(stream, context, 24);
             this->send_field(stream, message->scopename_or("(no scope)"), 24);
-
-            std::vector<std::string> thread_info;
-            if (!message->thread_name().empty())
-            {
-                thread_info.push_back(message->thread_name());
-            }
-            else if (message->thread_id())
-            {
-                thread_info.push_back(std::to_string(message->thread_id()));
-            }
-            else
-            {
-                thread_info.push_back("(no thread)");
-            }
-
-            thread_info.push_back(message->task_name());
-
-            this->send_field(stream, str::join(thread_info, ":"), 24);
         }
 
         if (this->include_source_location())
