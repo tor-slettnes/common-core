@@ -52,6 +52,14 @@ namespace switchboard
                 << ")";
     }
 
+    SwitchAliases Switch::names() const noexcept
+    {
+        SwitchAliases aliases = {this->name()};
+        aliases.insert(this->spec()->aliases.begin(),
+                       this->spec()->aliases.end());
+        return aliases;
+    }
+
     const SwitchName &Switch::name() const noexcept
     {
         return this->name_;
@@ -654,6 +662,22 @@ namespace switchboard
         }
 
         return culprits;
+    }
+
+    bool Switch::is_in_selection(const SwitchSelection &selection) const noexcept
+    {
+        if (selection.matches(this->name()))
+        {
+            return true;
+        }
+        for (const SwitchName &alias : this->aliases())
+        {
+            if (selection.matches(alias))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 }  // namespace switchboard

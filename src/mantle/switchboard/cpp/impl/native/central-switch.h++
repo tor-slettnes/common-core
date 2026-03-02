@@ -105,7 +105,6 @@ namespace switchboard
             const core::types::KeyValueMap &attributes,
             bool clear_existing) override;
 
-
     private:
         bool set_current_state(
             State state,

@@ -78,18 +78,22 @@
 ## Generally, a switch's specification (like its status) may be updated at runtime; for 
 ## instance it may add or remove dependencies based on various conditions.
 
+"Switchboard":
+  localizations:
+    "en":
+      description: "Switchboard service status"
+      activate text: "bring up Switchboard"
+      deactivate text: "bring down Switchboard"
+      state texts:
+        ACTIVE      : "Switchboard is ready"
+        INACTIVE    : "Switchboard it not ready"
+  state: ACTIVE
+
+
+# Old name for 'Switchboard' switch; will be removed soon.
 "Switchboard:Ready":
-    localizations:
-      "en":
-        description: "Switchboard service status"
-        activate text: "bring up Switchboard"
-        deactivate text: "bring down Switchboard"
-        state texts:
-          ACTIVE      : "Switchboard is ready"
-          INACTIVE    : "Switchboard it not ready"
-    state: ACTIVE
-
-
+  dependencies:
+    "Switchboard":
 
   # "Ethernet:Link":
   #   localizations:

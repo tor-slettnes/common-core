@@ -36,6 +36,9 @@ namespace switchboard
         // return a reference to the Switchboard provider to which this switch belongs
         std::shared_ptr<Provider> provider() const;
 
+        /// return the primary name as well as all aliases of a switch
+        SwitchAliases names() const noexcept;
+
         /// return the name of this switch
         const SwitchName &name() const noexcept;
 
@@ -437,7 +440,6 @@ namespace switchboard
         /// @sa culprits()
         ErrorMap errors() const noexcept;
 
-
         /// Get all key/value attributes associated with this switch
         const core::types::KeyValueMap &attributes() const noexcept;
 
@@ -465,6 +467,8 @@ namespace switchboard
         /// becoming active, either because they are in a FAILED state
         /// or due to a (direct or indirect) conflict.
         CulpritsMap culprits(bool expected = true) const noexcept;
+
+        bool is_in_selection(const SwitchSelection &selection) const noexcept;
 
     protected:
         SwitchName name_;

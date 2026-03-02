@@ -55,7 +55,7 @@ namespace switchboard
 
             for (const auto &[key, data] : this->interceptor_factory_map)
             {
-                if (data.switch_selection.matches(switch_name))
+                if (sw->is_in_selection(data.switch_selection))
                 {
                     sw->add_interceptor(data.interceptor);
                 }
@@ -203,7 +203,7 @@ namespace switchboard
 
         for (const auto &[switch_name, sw] : this->get_switches())
         {
-            if (switch_selection.matches(switch_name))
+            if (sw->is_in_selection(switch_selection))
             {
                 inserted |= sw->add_interceptor(interceptor, immediate);
             }
