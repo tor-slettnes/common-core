@@ -145,7 +145,8 @@ class MessageDissecter (LogBase):
             return True
 
 
-    def is_field_repeated(self,
+    @classmethod
+    def is_field_repeated(cls,
                           fd: FieldDescriptor) -> bool:
         try:
             return fd.is_repeated

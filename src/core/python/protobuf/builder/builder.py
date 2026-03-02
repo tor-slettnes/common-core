@@ -425,7 +425,7 @@ class MessageBuilder (LogBase):
         else:
             encoder = self.value_encoder(fd)
 
-            if fd.label == fd.LABEL_REPEATED:
+            if self.is_field_repeated(fd):
                 items = (value if isinstance(value, (list, tuple)) else [value])
                 field.extend([encoder(item) for item in items])
 
@@ -569,6 +569,16 @@ class MessageBuilder (LogBase):
                         cutoffs.append(index)
 
         return "".join([(word + "_") for word in common_base[:min(cutoffs)]])
+
+
+    @classmethod
+    def is_field_repeated(cls,
+                          fd: FieldDescriptor) -> bool:
+        try:
+            return fd.is_repeated
+        except AttributeError:
+            return fd.label == fd.LABEL_REPEATED
+
 
 
     message_encoders = {
