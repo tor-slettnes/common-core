@@ -731,7 +731,8 @@ namespace switchboard
 
     void CentralSwitch::import_status(
         const core::types::KeyValueMap &status,
-        bool replace_attributes)
+        bool replace_attributes,
+        bool update_state)
     {
         const auto &attributes = status.get(SETTING_SWITCH_ATTRIBUTES).get_kvmap();
 
@@ -752,11 +753,17 @@ namespace switchboard
                 attributes,           // attributes
                 replace_attributes);  // clear_existing
         }
+        else if (update_state)
+        {
+            this->set_auto(
+                attributes,           // attributes
+                replace_attributes);  // clear_existing
+        }
         else
         {
             this->set_attributes(
                 attributes,           // attributes
-                replace_attributes);  // clar_existing
+                replace_attributes);  // clear_existing
         }
     }
 

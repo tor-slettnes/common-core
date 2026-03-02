@@ -54,10 +54,13 @@ namespace switchboard
         // Remove one or more aliases for this switch
         void remove_aliases(const SwitchAliases &aliases);
 
-        /// Return a map of direct dependencies for this switch
+        // Indicate whether switch has no dependencies
+        bool independent() const noexcept;
+
+        // Return a map of direct dependencies for this switch
         const DependencyMap &dependencies() const noexcept;
 
-        /// Return a specific dependency, nor an empty pointer if not found.
+        // Return a specific dependency, nor an empty pointer if not found.
         DependencyRef get_dependency(const SwitchName &switch_name) const noexcept;
 
         /// Add a dependency. The switch may change its state as a result.

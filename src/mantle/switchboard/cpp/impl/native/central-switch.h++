@@ -170,7 +170,8 @@ namespace switchboard
     public:
         void import_status(
             const core::types::KeyValueMap &status,
-            bool replace_attributes);
+            bool replace_attributes,
+            bool update_state);
 
     private:
         void export_spec(

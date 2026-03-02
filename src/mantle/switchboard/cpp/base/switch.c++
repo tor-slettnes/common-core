@@ -137,6 +137,11 @@ namespace switchboard
         }
     }
 
+    bool Switch::independent() const noexcept
+    {
+        return this->dependencies().empty();
+    }
+
     const DependencyMap &Switch::dependencies() const noexcept
     {
         return this->spec()->dependencies;

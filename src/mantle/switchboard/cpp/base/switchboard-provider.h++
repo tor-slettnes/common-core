@@ -39,7 +39,6 @@ namespace switchboard
                   bool include_specifications = false,
                   bool include_statuses = true);
 
-
         /// @returns
         ///    Iterator to beginning of Switch map.
         virtual SwitchMap::const_iterator begin() const;
@@ -107,7 +106,6 @@ namespace switchboard
             const SwitchName &name,
             bool propagate = true) = 0;
 
-
         /// @brief Remove all switches, optionally reloading defaults
         /// @param[in] reload
         ///    Reload default switches after clearing.
@@ -115,7 +113,6 @@ namespace switchboard
         ///    Boolean indicating whether any changes were made
         virtual bool clear_switches(
             bool reload = false) = 0;
-
 
         /// @brief Import switches from a key/value map
         /// @param[in] declarations
@@ -130,7 +127,6 @@ namespace switchboard
             const core::types::KeyValueMap &declarations,
             bool replace_specifications = false,
             bool replace_statuses = true) = 0;
-
 
         /// @brief Export switches to a key/value map
         /// @param[in] selection
@@ -148,7 +144,6 @@ namespace switchboard
             const std::optional<SwitchSelection> &selection,
             bool include_specifications = false,
             bool include_statuses = true) const = 0;
-
 
         /// @brief
         ///      Add an interceptor with a callback handler to be invoked
@@ -188,7 +183,6 @@ namespace switchboard
         virtual bool remove_interceptor(
             const InterceptorName &name,
             const std::optional<SwitchSelection> &switch_selection = {}) = 0;
-
 
     protected:
         /// @brief
@@ -245,7 +239,6 @@ namespace switchboard
                 return {sw, true};
             }
         }
-
 
     private:
         std::string implementation_;

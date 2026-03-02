@@ -290,8 +290,9 @@ namespace switchboard
                 false);                 // replace_interceptors
 
             central_switch->import_status(
-                declaration,      // declaration
-                replace_status);  // replace_attributes
+                declaration,                  // declaration
+                replace_status,               // replace_attributes
+                replace_status || inserted);  // update_state
         }
 
         return inserted;
