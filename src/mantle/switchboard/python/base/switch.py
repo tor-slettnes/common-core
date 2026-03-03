@@ -2,7 +2,6 @@
 Abstract representation of a Switchboard node ("Switch")
 '''
 
-__all__ = ['Switch']
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 

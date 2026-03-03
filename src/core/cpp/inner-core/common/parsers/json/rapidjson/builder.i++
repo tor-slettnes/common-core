@@ -42,10 +42,10 @@ namespace core::json
             return this->writer.String(value.get<std::string>());
 
         case types::ValueType::UINT:
-            return this->writer.Uint64(value.as_uint());
+            return this->writer.Uint64(value.as_uint64());
 
         case types::ValueType::SINT:
-            return this->writer.Int64(value.as_sint());
+            return this->writer.Int64(value.as_sint64());
 
         case types::ValueType::REAL:
             return this->writer.Double(value.as_double());
