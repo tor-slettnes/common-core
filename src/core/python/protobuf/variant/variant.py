@@ -289,7 +289,7 @@ def encodeKeyValueMap(input: PyValueMap,
 
     elif isinstance(input, Mapping):
         for (key, value) in input.items():
-            encodeValue(value, output.map[key])
+            encodeValue(value, output.map[str(key)])
 
     elif input is not None:
         raise TypeError(
