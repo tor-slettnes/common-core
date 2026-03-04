@@ -17,6 +17,9 @@ package suffix: "@UPGRADE_PACKAGE_SUFFIX@"
 # URL to a JSON package index describing available upgrade packages
 scan url: "@UPGRADE_SCAN_URL@"
 
+# Whether or not to scan removable devices on insertion
+scan media on insertion: @UPGRADE_SCAN_MEDIA_ON_INSERTION@
+
 # VFS context for local upgrade packages
 vfs context: "@UPGRADE_VFS_CONTEXT@"
 

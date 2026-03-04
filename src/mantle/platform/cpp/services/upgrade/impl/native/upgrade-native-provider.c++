@@ -21,10 +21,25 @@ namespace upgrade::native
     NativeProvider::NativeProvider()
         : Super(TYPE_NAME_BASE(This)),
           settings(core::SettingsStore::create_shared(SETTINGS_FILE)),
-          default_vfs_path(settings->get(SETTING_VFS_CONTEXT, DEFAULT_VFS_CONTEXT).as_string(), {}),
-          default_url(settings->get(SETTING_SCAN_URL).as_string()),
-          scan_interval(settings->get(SETTING_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL).as_duration()),
-          scan_retries(settings->get(SETTING_SCAN_RETRIES, DEFAULT_SCAN_RETRIES).as_uint())
+          default_vfs_path(
+              settings->get(SETTING_VFS_CONTEXT,
+                            DEFAULT_VFS_CONTEXT)
+                  .as_string(),
+              {}),
+          scan_media_on_insertion(
+              settings->get(SETTING_SCAN_MEDIA_ON_INSERTION,
+                            DEFAULT_SCAN_MEDIA_ON_INSERTION)
+                  .as_bool()),
+          default_url(
+              settings->get(SETTING_SCAN_URL).as_string()),
+          scan_interval(
+              settings->get(SETTING_SCAN_INTERVAL,
+                            DEFAULT_SCAN_INTERVAL)
+                  .as_duration()),
+          scan_retries(
+              settings->get(SETTING_SCAN_RETRIES,
+                            DEFAULT_SCAN_RETRIES)
+                  .as_uint())
     {
     }
 
@@ -301,7 +316,9 @@ namespace upgrade::native
         const vfs::ContextName &name,
         const vfs::Context::ptr &context)
     {
-        if ((action == core::signal::MAP_ADDITION) && context->removable)
+        if ((action == core::signal::MAP_ADDITION) &&
+            context->removable &&
+            this->scan_media_on_insertion)
         {
             this->scan_source({context->virtualPath()});
         }

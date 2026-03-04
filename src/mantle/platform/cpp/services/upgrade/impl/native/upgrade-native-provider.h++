@@ -67,6 +67,7 @@ namespace upgrade::native
     private:
         std::shared_ptr<core::SettingsStore> settings;
         vfs::Path default_vfs_path;
+        bool scan_media_on_insertion;
         std::string default_url;
         std::chrono::system_clock::duration scan_interval;
         uint scan_retries;

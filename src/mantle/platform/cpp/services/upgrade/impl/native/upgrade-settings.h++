@@ -23,6 +23,9 @@ namespace upgrade::native
     constexpr auto SETTING_VFS_CONTEXT = "vfs context";
     constexpr auto DEFAULT_VFS_CONTEXT = "releases";
 
+    constexpr auto SETTING_SCAN_MEDIA_ON_INSERTION = "scan media on insertion";
+    constexpr auto DEFAULT_SCAN_MEDIA_ON_INSERTION = false;
+
     constexpr auto SETTING_SCAN_URL = "scan url";
 
     constexpr auto SETTING_SCAN_INTERVAL = "scan interval";

@@ -80,6 +80,9 @@ set(UPGRADE_PACKAGE_SUFFIX ".ccpkg"
 set(UPGRADE_SCAN_URL "https://slett.net/common-core/package-index.json"
   CACHE STRING "Location of package index; used to periodically scan for upgrades")
 
+set(UPGRADE_SCAN_MEDIA_ON_INSERTION true
+  CACHE BOOL "Scan removable media for upgrade packages on insertion")
+
 set(UPGRADE_VFS_CONTEXT "releases"
   CACHE STRING "VirtualFileSystem context in which to periodically scan for upgrade packages")
 
