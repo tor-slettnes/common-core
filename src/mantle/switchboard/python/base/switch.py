@@ -821,8 +821,10 @@ class Switch (DocBase):
         '''
         Return any error currently associated with switch
         '''
-        ### TODO: Check boolean value of this if no error is returned.
-        return self.status.error
+        if self.status.error.level:
+            return self.status.error
+        else:
+            return None
 
 
     @abstractmethod

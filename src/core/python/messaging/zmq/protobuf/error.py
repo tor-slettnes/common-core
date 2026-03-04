@@ -8,7 +8,7 @@
 ### Modules within package
 from cc.protobuf.request_reply import Reply, StatusCode
 from cc.protobuf.status import Error as CommonError
-from cc.protobuf.dissecter import message_dissecter
+from cc.protobuf.dissecter import dissecter
 
 class Error (RuntimeError):
     '''
@@ -27,7 +27,7 @@ class Error (RuntimeError):
         return "%s(code=%d, details=%s)"%(
             type(self).__name__,
             self.code,
-            message_dissecter.decode(self.details))
+            dissecter.decode(self.details))
 
     def add_to_reply (self, reply: Reply):
         reply.status.code = self.code

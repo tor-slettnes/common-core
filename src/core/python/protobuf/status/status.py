@@ -29,6 +29,24 @@ level_map = {
 }
 
 
+def is_empty(error: Error) -> bool:
+    '''
+    Indicate whether the supplied error message is empty.
+    '''
+    return all((
+        error.code == 0,
+        not error.symbol,
+        not error.text,
+        error.level == Level.NONE,
+    ))
+
+def is_error(error: Error) -> bool:
+    '''
+    Indicate whether the supplied error message contains an actual error
+    '''
+    return error.level >= Level.ERROR
+
+
 def encodePossibleError(error: Error|Exception|str,
                         domain: Domain = Domain.APPLICATION,
                         origin: str|None = None,

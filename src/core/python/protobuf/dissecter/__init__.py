@@ -3,6 +3,6 @@ Package cc.protobuf.dissecter - Build ProtoBuf messages from native Python value
 '''
 
 from .dissecter import (
-    MessageDissecter, message_dissecter,
+    MessageDissecter, dissecter,
     decode_message, decode_response,
 )

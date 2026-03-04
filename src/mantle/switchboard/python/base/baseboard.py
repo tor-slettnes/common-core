@@ -18,7 +18,7 @@ from cc.core.paths import FilePathInput
 from cc.core.decorators import virtual
 from cc.core.invocation import method_path
 from cc.core.settingsstore import SettingsStore
-from cc.protobuf.dissecter import message_dissecter
+from cc.protobuf.dissecter import dissecter
 from cc.protobuf.signal import SignalStore, MappingAction
 from cc.protobuf.variant import PyValueMap
 

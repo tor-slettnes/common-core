@@ -6,10 +6,7 @@
 #===============================================================================
 
 from collections import UserDict
-
-logging.warning(
-    f"Module {__package__}.enumeration is deprecated."
-    "Consider using `enum.IntEnum` instead.")
+import logging
 
 
 class EnumValue(int):

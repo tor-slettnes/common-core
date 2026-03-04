@@ -10,6 +10,7 @@ The `Error` type is
 from .status import (
     Error, Level, Domain,
     level_map,
+    is_error, is_empty,
     encodeError, encodePossibleError,
     decodeLogLevel, encodeLogLevel,
 )

@@ -8,7 +8,7 @@ __docformat__ = 'javadoc en'
 
 ### Standard Python modules
 from typing import Callable, Sequence
-from dataclasses import make_dataclass
+from dataclasses import make_dataclass, asdict
 from enum import IntEnum
 from typing import Container, Callable
 
@@ -17,8 +17,10 @@ from google.protobuf.descriptor import Descriptor, FieldDescriptor, EnumDescript
 
 ### Common Core modules
 from cc.core.logbase import LogBase
+from cc.core.enumutils import symbolize_map
 from cc.core.stringutils import common_prefix
 from cc.protobuf.wellknown import Message, MessageType
+
 import cc.protobuf.wellknown as wellknown # Well-known types from Google
 import cc.protobuf.variant   as variant   # Common Core variant type
 import cc.protobuf.datetime  as datetime  # Calendar date/time types
@@ -58,6 +60,23 @@ class MessageDissecter (LogBase):
         '''
 
         self.decoders[message_type.DESCRIPTOR.full_name] = decoder
+
+
+    def to_dict(self,
+                message: Message,
+                symbolic_enums: bool = True,
+                ) -> dict:
+        '''
+        Decode a ProtoBuf message into a Python dictionary.
+
+        @param symbolic_enums
+            If True, decode ProtoBuf enumerations to strings instead of IntEnum.
+        '''
+
+        result = asdict(self.decode(message))
+        if symbolic_enums:
+            result = symbolize_map(result)
+        return result
 
 
     def decode(self, message: Message) -> object:
@@ -242,24 +261,24 @@ class MessageDissecter (LogBase):
     }
 
     enum_decoders = {
-        'cc.protobuf.status.Level': status.decodeLogLevel,
+        # 'cc.protobuf.status.Level': status.decodeLogLevel,
     }
 
 
 
 ### Generic instance
-message_dissecter = MessageDissecter()
+dissecter = MessageDissecter()
 
 def dissecter_instance(function: Callable) -> MessageDissecter:
     try:
         instance = function.__self__
     except AttributeError:
-        return message_dissecter
+        return dissecter
     else:
         if isinstance(instance, MessageDissecter):
             return instance
         else:
-            return message_dissecter
+            return dissecter
 
 
 def decode_response(function: Callable) -> Callable:
@@ -279,4 +298,4 @@ def decode_message(message: Message) -> object:
     '''
     Dissect a message using the generic 
     '''
-    return message_dissecter.decode(message)
+    return dissecter.decode(message)
