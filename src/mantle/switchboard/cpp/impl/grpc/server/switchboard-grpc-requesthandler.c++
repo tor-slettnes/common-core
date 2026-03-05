@@ -333,13 +333,9 @@ namespace switchboard::grpc
             std::scoped_lock lck(this->interceptor_sessions_mutex);
 
             using namespace std::placeholders;
-            Invocation invocation = std::bind(
-                &This::on_intercept,
-                this,
-                name,
-                session_id,
-                _1,
-                _2);
+            Invocation invocation = [=](SwitchRef sw, State state) {
+                this->on_intercept(name, session_id, sw, state);
+            };
 
             InterceptorRef interceptor = cc::protobuf::decoded<InterceptorRef>(
                 request->spec(),  // proto
