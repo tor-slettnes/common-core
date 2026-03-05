@@ -693,6 +693,8 @@ class TimePoint (float):
         Identical to `to_iso8601_string()`.
         '''
 
+        return self.to_iso8601_string(decimals = decimals)
+
 
     def to_iso8601_string(self, *,
                           decimals = 3) -> str:
