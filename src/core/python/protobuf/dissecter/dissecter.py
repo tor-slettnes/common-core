@@ -7,17 +7,18 @@ __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
 ### Standard Python modules
-from typing import Callable, Sequence
-from dataclasses import make_dataclass, asdict
+from typing import Callable, Sequence, Mapping
 from enum import IntEnum
 from typing import Container, Callable
+import dataclasses
+import json
 
 ### Third-party modules
 from google.protobuf.descriptor import Descriptor, FieldDescriptor, EnumDescriptor
 
 ### Common Core modules
 from cc.core.logbase import LogBase
-from cc.core.enumutils import symbolize_map
+from cc.core.enumutils import symbolize_value
 from cc.core.stringutils import common_prefix
 from cc.protobuf.wellknown import Message, MessageType
 
@@ -62,6 +63,20 @@ class MessageDissecter (LogBase):
         self.decoders[message_type.DESCRIPTOR.full_name] = decoder
 
 
+    def to_json(self,
+                message: Message,
+                symbolic_enums: bool = True,
+                ) -> dict:
+        '''
+        Decode a ProtoBuf message into a JSON string.
+
+        @param symbolic_enums
+            If True, decode ProtoBuf enumerations to strings instead of IntEnum.
+        '''
+
+        return json.dumps(self.to_dict(message, symbolic_enums))
+
+
     def to_dict(self,
                 message: Message,
                 symbolic_enums: bool = True,
@@ -73,29 +88,48 @@ class MessageDissecter (LogBase):
             If True, decode ProtoBuf enumerations to strings instead of IntEnum.
         '''
 
-        result = asdict(self.decode(message))
+        result = self.decode(message)
+
+        if dataclasses.is_dataclass(result):
+            result = dataclasses.asdict(result)
+
+        elif isinstance(result, Mapping):
+            result = {k:self.to_dict(v)
+                      for (k,v) in result.items()}
+
+        elif isinstance(result, Sequence):
+            result = [self.to_dict(v) for v in result]
+
         if symbolic_enums:
-            result = symbolize_map(result)
+            result = symbolize_value(result)
+
         return result
 
 
-    def decode(self, message: Message) -> object:
+    def decode(self, value: Message|Mapping|Sequence|object) -> object:
         '''
-        Decode a ProtoBuf message into a native Python value.
+        Decode a ProtoBuf value into a native Python value.
         '''
 
         try:
-            decoder = self.decoders[message.DESCRIPTOR.full_name]
+            decoder = self.decoders[value.DESCRIPTOR.full_name]
 
         except AttributeError:
-            raise TypeError('%s.dissect() input must be a ProtoBuf message, got %s'
-                            %(type(self).__name__, type(message).__name__)) from None
+            if isinstance(value, Mapping):
+                return {k: self.decode(v)
+                        for k, v in value.items()}
+
+            elif isinstance(value, Sequence) and not isinstance(value, str):
+                return [self.decode(value) for value in value]
+
+            else:
+                return value
 
         except KeyError:
-            return self.dissect_message(message)
+            return self.dissect_message(value)
 
         else:
-            return decoder(message)
+            return decoder(value)
 
 
     def dissect_message(self, message: Message) -> object:
@@ -117,7 +151,7 @@ class MessageDissecter (LogBase):
             else:
                 values.append(None)
 
-        dataclass = make_dataclass(
+        dataclass = dataclasses.make_dataclass(
             cls_name = message.DESCRIPTOR.name,
             fields = datafields,
         )
@@ -126,9 +160,9 @@ class MessageDissecter (LogBase):
 
 
     def dissect_field(self,
-                     message: Message,
-                     fd: FieldDescriptor,
-                     ) -> object:
+                      message: Message,
+                      fd: FieldDescriptor,
+                      ) -> object:
 
         field = getattr(message, fd.name)
 
@@ -294,8 +328,16 @@ def decode_response(function: Callable) -> Callable:
 
     return wrapper
 
+
 def decode_message(message: Message) -> object:
     '''
-    Dissect a message using the generic 
+    Dissect a message using the generic MessageDissecter() instance.
     '''
     return dissecter.decode(message)
+
+
+def decode_to_dict(message: Message) -> dict:
+    '''
+    Dissect a message to a Python dictionary the generic MessageDissecter() instance.
+    '''
+    return dissecter.to_dict(message)

@@ -26,13 +26,17 @@ def symbolize_map(input: Mapping) -> dict:
     return {key:symbolize_value(value) for (key, value) in input.items()}
 
 def symbolize_set(input: Set) -> set:
-    return {symbolize(value) for value in input}
+    return {symbolize_value(value) for value in input}
 
 def symbolize_sequence(input: Sequence) -> list:
-    return [symbolize(value) for value in input]
+    return [symbolize_value(value) for value in input]
 
-def symbolize_dataclass(input, object) -> object:
-    return make_dataclass(
+def symbolize_dataclass(input: object) -> object:
+    map = symbolize_map(asdict(input))
+
+    cls = make_dataclass(
         cls_name = type(input).__name__,
-        fields = symbolize_map(asdict(input)).items(),
-    )
+        fields = {k:type(v) for (k,v) in map.items()})
+
+    return cls(*map.values())
+

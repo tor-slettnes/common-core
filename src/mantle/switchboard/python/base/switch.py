@@ -17,7 +17,7 @@ from cc.core.maputils import recursive_merge
 from cc.core.invocation import safe_invoke
 from cc.protobuf.status import Error, encodeError
 from cc.protobuf.variant import (
-    PyValueMap, encodeKeyValueMap, decodeKeyValueMap,
+    PyValueMap, KeyValueMap, encodeKeyValueMap,
 )
 
 ### Swithboard modules
@@ -974,18 +974,18 @@ class Switch (DocBase):
             on_error = on_error)
 
     @property
-    def attributes(self) -> PyValueMap:
+    def attributes(self) -> KeyValueMap:
         '''
         Return a dictinoary of arbitrary key/value pairs currently associated
         with this switch.
         '''
 
-        return decodeKeyValueMap(self.status.attributes)
+        return self.status.attributes
 
 
     @abstractmethod
     def get_attributes(self,
-                       inherit: bool = False) -> PyValueMap:
+                       inherit: bool = False) -> KeyValueMap:
         '''
         Obtain a key/value map of attributes assigned to this switch
 
@@ -1026,7 +1026,7 @@ class Switch (DocBase):
         '''
 
     @abstractmethod
-    def get_culprits(self, expected_position: bool = True) -> Mapping[str, 'Switch']:
+    def get_culprits(self, expected_position: bool = True) -> Mapping[str, Status]:
         '''
         Obtain root causes for a switch not being in the expected positiion.
 

@@ -28,6 +28,7 @@ from ..protobuf import (
     AddSwitchRequest, RemoveSwitchRequest, ClearSwitchesRequest,
     SwitchSelectionInput, encodeSwitchSelection, encodeOptionalSwitchSelection,
     ImportRequest, ImportResponse, ExportRequest, ExportResponse,
+    SwitchIdentifiers, Status, StatusMap,
     State, StateMask, StateSet, encodeStateSet,
     AddInterceptorRequest, RemoveInterceptorRequest,
     InterceptorInvocation, InterceptorResult, InterceptorMethod,
@@ -108,6 +109,11 @@ class BaseClient (SwitchboardBase, SignalClient):
             switch_name = switch_name,
             active = initially_active)
         return self.stub.AddSwitch(request)
+
+    @override
+    def get_status(self) -> StatusMap:
+        request = SwitchIdentifiers()
+        return self.stub.GetStatuses(request)
 
     @override
     def get_or_add_switch(self,

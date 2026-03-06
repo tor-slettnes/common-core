@@ -23,7 +23,7 @@ from cc.messaging.grpc import SignalClient, AsyncMixIn
 ### Switchboard modules
 
 from ..protobuf import (
-    State, StateSet,
+    Specification, Status, State, StateSet,
     InterceptorMethod, InterceptorInvocation, InterceptorResult,
     InterceptorPhase, ExceptionHandling,
     SwitchSelectionInput,
@@ -41,6 +41,11 @@ class AsyncClient (AsyncMixIn, BaseClient):
     def _new_switch(self, switch_name: str) -> AsyncRemoteSwitch:
         '''Obtain a new Switch instance in response to update signals from server'''
         return AsyncRemoteSwitch(switch_name, self)
+
+    @override
+    async def get_status(self) -> Mapping[str, Status]:
+        response = await BaseClient.get_status(self)
+        return response.map
 
     @override
     async def add_switch(self,

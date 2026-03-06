@@ -155,9 +155,9 @@ namespace core::logging
     {
         if (text.size() > width)
         {
-            stream << std::setw(width)
-                   << text.substr(0, width)
-                   << ">";
+            stream << text.substr(0, width-1)
+                   << "…"
+                   << delimiter;
         }
         else
         {

@@ -16,8 +16,7 @@ import asyncio
 from cc.core.decorators import override
 from cc.core.invocation import safe_invoke_maybe_async
 from cc.protobuf.status import Error, encodeError
-from cc.protobuf.dissecter import decode_message
-from cc.protobuf.variant import PyValueMap, decodeKeyValueMap
+from cc.protobuf.variant import PyValueMap, KeyValueMap
 
 ### Switchboard modules
 from ..protobuf import (
@@ -123,9 +122,9 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
 
     @override
     async def get_attributes(self,
-                       inherit: bool = False) -> PyValueMap:
+                       inherit: bool = False) -> KeyValueMap:
         response = await RemoteSwitchBase.get_attributes(**locals())
-        return decodeKeyValueMap(response.attributes)
+        return response.attributes
 
 
     @override
@@ -140,7 +139,7 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
     @override
     async def get_status(self) -> Status:
         response = await RemoteSwitchBase.get_status(**locals())
-        return decode_message(response.map.get(self.name))
+        return response.map.get(self.name)
 
 
     @override
@@ -148,10 +147,10 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
                            expected_position: bool = True) -> Mapping[str, Status]:
 
         response = await RemoteSwitchBase.get_culprits(**locals())
-        return decode_message(response).map
+        return response.map
 
 
     @override
     async def get_errors(self) -> Mapping[str, Error]:
         response = await RemoteSwitchBase.get_errors(**locals())
-        return decode_message(response).map
+        return response.map

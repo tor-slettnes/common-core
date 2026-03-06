@@ -24,7 +24,7 @@ from cc.protobuf.variant import PyValueMap
 
 ### Modules within package
 from ..protobuf import (
-    Signal,
+    Signal, Specification, Status,
     InterceptorSpec, InterceptorMethod, InterceptorPhase,
     InterceptorInvocation, InterceptorResult,
     ExceptionHandling,
@@ -75,17 +75,11 @@ class SwitchboardBase (SwitchboardObserver):
             self._on_signal_status)
 
     def _on_signal_spec(self, msg: Signal):
-        if msg.mapping_action == MappingAction.REMOVAL:
-            self.switches.pop(msg.mapping_key, None)
-
-        elif switch := self._get_or_map_switch(msg):
+        if switch := self._get_or_map_switch(msg):
             switch.update_specification(msg.specification)
 
     def _on_signal_status(self, msg: Signal):
-        if msg.mapping_action == MappingAction.REMOVAL:
-            self.switches.pop(msg.mapping_key, None)
-
-        elif switch := self._get_or_map_switch(msg):
+        if switch := self._get_or_map_switch(msg):
             switch.update_status(msg.status)
 
     def _get_or_map_switch(self, msg: Signal) -> Switch|None:
@@ -121,6 +115,13 @@ class SwitchboardBase (SwitchboardObserver):
         Create a local Switch object without adding it to the board.
         Intended for local updates in response to server signals.
         '''
+
+    @abstractmethod
+    def get_status(self) -> Mapping[str, Status]:
+        '''
+        Get a mapping of switch names and corresponding statuses.
+        '''
+
 
     def get_switch(self,
                    switch_name: str,

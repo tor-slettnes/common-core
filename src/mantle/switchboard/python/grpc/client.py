@@ -22,7 +22,7 @@ from cc.protobuf.variant import PyValueMap, decodeKeyValueMap
 
 ### Switchboard modules
 from ..protobuf import (
-    State, StateSet,
+    Status, State, StateSet,
     InterceptorMethod, InterceptorInvocation, InterceptorResult,
     InterceptorPhase, ExceptionHandling,
     SwitchSelectionInput,
@@ -41,6 +41,11 @@ class Client (BaseClient):
     def _new_switch(self, switch_name: str) -> RemoteSwitch:
         '''Obtain a new Switch instance in response to signals from server'''
         return RemoteSwitch(switch_name, self)
+
+    @override
+    def get_status(self) -> Mapping[str, Status]:
+        response = BaseClient.get_status(self)
+        return response.map
 
     @override
     def add_switch(self,
