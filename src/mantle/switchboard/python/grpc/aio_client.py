@@ -189,6 +189,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
 
         return count
 
+
     async def _intercept_queue_iterator(self):
         while msg := await self.interceptor_response_queue.get():
             yield msg
@@ -197,8 +198,10 @@ class AsyncClient (AsyncMixIn, BaseClient):
     async def _intercept_runner(self):
         async with asyncio.TaskGroup() as tg:
             async for request in self.interceptor_stream:
-                tg.create_task(self._on_interceptor_invocation(request))
-
+                tg.create_task(
+                    self._on_interceptor_invocation(request),
+                    name = request.interceptor_name,
+                )
 
     async def _on_interceptor_invocation(self, invocation: InterceptorInvocation):
         if method := self.interceptor_methods.get(invocation.interceptor_name):
@@ -219,3 +222,4 @@ class AsyncClient (AsyncMixIn, BaseClient):
             invocation,
             error,
         )
+

@@ -50,23 +50,32 @@ def fq_abbrev(identifier: str,
     if len(identifier) <= maxlen:
         return identifier
 
-    ## Round 2: Abbreviate each but the last component of the qualified name,
-    ## stripping trailing suffixes
+    # ## Round 2: Abbreviate each but the last component of the qualified name,
+    # ## stripping trailing suffixes
 
-    for index, part in enumerate(parts[:-1]):
-        parts[index] = ident_abbrev(part, strip_trailing_lowercase=True)
+    # for index, part in enumerate(parts[:-1]):
+    #     parts[index] = ident_abbrev(part, strip_trailing_lowercase=True)
 
-    identifier = '.'.join(parts)
+    # identifier = '.'.join(parts)
+
+    # if len(identifier) <= maxlen:
+    #     return identifier
+
+    ## Round 3: Ellipsize and strip out leading components of the qualified
+    ## name.
+    parts.insert(0, ELLIPSIS)
+
+    while (len(parts) > 2) and (len(identifier) > maxlen):
+        del parts[1]
+        identifier = '.'.join(parts)
 
     if len(identifier) <= maxlen:
         return identifier
 
-
-    ## Round 3: Abbreviate the last component of the qualified name,
+    ## Round 4: Abbreviate the last component of the qualified name,
     ## retaining tailing suffix
 
     parts[-1] = ident_abbrev(parts[-1])
-
     identifier = '.'.join(parts)
 
     if len(identifier) <= maxlen:
