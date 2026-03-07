@@ -205,8 +205,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
             result, error = await safe_await(
                 method,
                 args = (invocation,),
-                description = '%s switch %r interceptor %r' % (
-                    self,
+                description = 'switch %r interceptor %r' % (
                     invocation.switch_name,
                     invocation.interceptor_name,
                 ),
