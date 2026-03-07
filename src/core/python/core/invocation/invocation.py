@@ -96,22 +96,22 @@ def safe_invoke_maybe_async(
         log_failure = log_failure)
 
 
-def invoke_async(
-        function: Callable,
-        args: Sequence = (),
-        kwargs: Mapping = {}):
+def invoke_async(function: Callable,
+                 args: Sequence = (),
+                 kwargs: Mapping = {},
+                 ) -> asyncio.Task:
     '''
     Invoke an AsyncIO coroutine as a new task.  A reference is kept to this
     task in order to prevent it from disappearing mid-execution; see
     <https://docs.python.org/3/library/asyncio-task.html#creating-tasks>.
     '''
-    async_tasks.add_coroutine(function(*args, **kwargs))
+    return async_tasks.add_coroutine(function(*args, **kwargs))
 
 
-def invoke_maybe_async(
-        function: Callable,
-        args: Sequence = (),
-        kwargs: Mapping = {}):
+def invoke_maybe_async(function: Callable,
+                       args: Sequence = (),
+                       kwargs: Mapping = {},
+                       ) -> asyncio.Task|None:
     '''
     Invoke a function that may or may not be an AsyncIO coroutine.
 
@@ -123,9 +123,9 @@ def invoke_maybe_async(
 
     result = function(*args, **kwargs)
     if asyncio.iscoroutine(result):
-        async_tasks.add_coroutine(result)
+        return async_tasks.add_coroutine(result)
     else:
-        return result
+        return None
 
 
 

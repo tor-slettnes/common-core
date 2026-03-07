@@ -15,7 +15,7 @@ class AsyncTasks (DocBase, set):
     <https://docs.python.org/3/library/asyncio-task.html#creating-tasks>.
     '''
 
-    def add_coroutine(self, coroutine: Coroutine):
+    def add_coroutine(self, coroutine: Coroutine) -> asyncio.Task:
         '''
         Add a task to run specified coroutine in the background.
 
