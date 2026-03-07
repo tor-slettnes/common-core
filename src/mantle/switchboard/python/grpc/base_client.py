@@ -17,7 +17,7 @@ import sys
 ### Common Core modules
 from cc.core.decorators import override, virtual
 from cc.core.invocation import method_path, main_module_path, invoke_maybe_async
-from cc.protobuf.status import encodeError
+from cc.protobuf.status import encodePossibleError
 from cc.protobuf.variant import PyValueMap, encodeKeyValueMap
 from cc.protobuf.wellknown import BoolValue
 from cc.protobuf.utils import message_to_dict
@@ -279,9 +279,9 @@ class BaseClient (SwitchboardBase, SignalClient):
         )
 
         if error:
-            encodeError(
+            encodePossibleError(
                 error,
-                origin = main_module_path,
+                origin = main_module_path(),
                 output = result.error,
             )
             self.logger.error(

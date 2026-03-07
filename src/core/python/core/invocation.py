@@ -111,10 +111,7 @@ def safe_invoke(function    : Callable,
         return function(*args, **kwargs), None
 
     except Exception as e:
-        e_type, e_name, e_tb = sys.exc_info()
-        log_invocation_failure(description, log_failure, e, e_tb)
-        ## Prevent circular reference, per https://docs.python.org/2/library/sys.html.
-        del e_tb
+        log_invocation_failure(description, log_failure, e)
         return None, e
 
 
@@ -143,38 +140,23 @@ async def safe_await(function    : Callable,
         return result, None
 
     except Exception as e:
-        e_type, e_name, e_tb = sys.exc_info()
-        log_invocation_failure(description, log_failure, e, e_tb)
-        ## Prevent circular reference, per https://docs.python.org/2/library/sys.html.
-        del e_tb
+        log_invocation_failure(description, log_failure, e)
         return None, e
 
 
-def log_invocation_failur(description : Optional[str],
-                          log_func    : Optional[LogFunc],
-                          exception   : Exception,
-                          traceback   : 'traceback'):
+def log_invocation_failure(description : Optional[str],
+                           log_func    : Optional[LogFunc],
+                           exception   : Exception):
 
     if log_func:
         log_func(
-            "Exception occured in %s: [%s] %s%s"%(
+            "Exception occured in %s: [%s] %s"%(
                 description,
                 type(exception).__name__,
                 exception,
-                stack_trace(tb=traceback),
-            )
+            ),
+            exc_info = exception,
         )
-
-
-def stack_trace(tb=None):
-    if tb:
-        msg = [
-            "\n  In %s, method %s(), line %d: %s"%(filepath, method, lineno, text)
-            for filepath, lineno, method, text in traceback.extract_tb(tb)
-        ]
-        return "".join(msg)
-    else:
-        return ""
 
 
 def invocation(
