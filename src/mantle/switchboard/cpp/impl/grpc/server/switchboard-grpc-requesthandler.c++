@@ -613,9 +613,9 @@ namespace switchboard::grpc
                                        : true;
 
             auto &statusmap = *reply->mutable_map();
-            for (const auto &[sw, state] : sw->culprits(expected_position))
+            for (const auto &[switch_name, status] : sw->culprits(expected_position))
             {
-                cc::protobuf::encode(*sw->status(), &statusmap[sw->name()]);
+                cc::protobuf::encode(*status, &statusmap[switch_name]);
             }
             return ::grpc::Status::OK;
         }

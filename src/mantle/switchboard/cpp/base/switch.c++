@@ -595,7 +595,7 @@ namespace switchboard
             if (this->error())
             {
                 errors.insert_or_assign(
-                    std::const_pointer_cast<Switch>(this->shared_from_this()),
+                    this->name(),
                     this->error());
             }
 
@@ -647,6 +647,12 @@ namespace switchboard
                                 {
                                     culprits.merge(pred->culprits(pred_expected_value.value()));
                                 }
+                                else
+                                {
+                                    culprits.insert_or_assign(
+                                        name,
+                                        std::make_shared<Status>());
+                                }
                             }
                         }
                     }
@@ -660,9 +666,7 @@ namespace switchboard
 
             if (culprits.empty())
             {
-                culprits.insert_or_assign(
-                    std::const_pointer_cast<Switch>(this->shared_from_this()),
-                    current_state);
+                culprits.insert_or_assign(this->name(), this->status());
             }
         }
 

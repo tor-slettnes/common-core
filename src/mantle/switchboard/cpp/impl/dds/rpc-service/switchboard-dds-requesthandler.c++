@@ -256,9 +256,9 @@ namespace switchboard::dds
         std::vector<CC::Switchboard::Status> list;
         if (SwitchRef sw = this->provider->get_switch(req.switch_name(), true))
         {
-            for (const auto &[sw, state] : sw->culprits(req.expected_active()))
+            for (const auto &[switch_name, status] : sw->culprits(req.expected_active()))
             {
-                idl::encode(sw->name(), *sw->status(), &list.emplace_back());
+                idl::encode(switch_name, *status, &list.emplace_back());
             }
         }
 

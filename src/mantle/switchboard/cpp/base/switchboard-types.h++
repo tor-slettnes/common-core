@@ -136,8 +136,6 @@ namespace switchboard
     using SwitchAliases = std::set<SwitchName>;
     using SwitchSet = std::set<SwitchRef>;
     using SwitchMap = core::types::ValueMap<SwitchName, SwitchRef>;
-    using CulpritsMap = std::unordered_map<SwitchRef, State>;
-    using ErrorMap = std::unordered_map<SwitchRef, core::status::Error::ptr>;
     using LanguageCode = std::string;
     using LocalizationMap = core::types::ValueMap<LanguageCode, Localization>;
 
@@ -146,6 +144,8 @@ namespace switchboard
 
     using StatusRef = std::shared_ptr<Status>;
     using StatusMap = core::types::ValueMap<SwitchName, StatusRef>;
+    using CulpritsMap = StatusMap;
+    using ErrorMap = std::unordered_map<SwitchName, core::status::Error::ptr>;
 
     using DependencyRef = std::shared_ptr<Dependency>;
     using DependencyMap = core::types::ValueMap<SwitchName, DependencyRef>;

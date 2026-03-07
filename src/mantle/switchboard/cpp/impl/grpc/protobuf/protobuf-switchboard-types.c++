@@ -217,9 +217,9 @@ namespace cc::protobuf
     {
         msg->clear_map();
         auto *map = msg->mutable_map();
-        for (const auto &[sw, error] : errormap)
+        for (const auto &[switch_name, error] : errormap)
         {
-            encode_shared(error, &(*map)[sw->name()]);
+            encode_shared(error, &(*map)[switch_name]);
         }
     }
 

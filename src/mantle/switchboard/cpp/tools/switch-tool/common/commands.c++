@@ -361,28 +361,37 @@ namespace switchboard
         bool &verbose = flags["verbose"];
         this->get_flags(&flags, false);
 
-        for (const auto &[sw, state] : sw->culprits())
+        for (const auto &[switch_name, state] : sw->culprits())
         {
             if (!verbose)
             {
-                std::cout << sw->name() << std::endl;
-            }
-            else if (auto error = sw->error())
-            {
-                core::str::format(std::cout,
-                                  "%20s: %s: [%s] (%s) %s\n",
-                                  sw->name(),
-                                  state,
-                                  error->symbol(),
-                                  error->origin(),
-                                  error->text());
+                std::cout << switch_name << std::endl;
             }
             else
             {
-                core::str::format(std::cout,
-                                  "%20s: %s\n",
-                                  sw->name(),
-                                  state);
+                core::status::Error::ptr error;
+                if (auto sw = this->provider->get_switch(switch_name))
+                {
+                    error = sw->error();
+                }
+
+                if (error)
+                {
+                    core::str::format(std::cout,
+                                      "%20s: %s: [%s] (%s) %s\n",
+                                      sw->name(),
+                                      state,
+                                      error->symbol(),
+                                      error->origin(),
+                                      error->text());
+                }
+                else
+                {
+                    core::str::format(std::cout,
+                                      "%20s: %s\n",
+                                      sw->name(),
+                                      state);
+                }
             }
         }
     }
@@ -397,9 +406,9 @@ namespace switchboard
 
     void Options::get_errors()
     {
-        for (const auto &[sw, error] : this->get_switch(true)->errors())
+        for (const auto &[switch_name, error] : this->get_switch(true)->errors())
         {
-            core::str::format(std::cout, "%20s : %s\n", sw->name(), *error);
+            core::str::format(std::cout, "%20s : %s\n", switch_name, *error);
         }
     }
 
@@ -490,7 +499,6 @@ namespace switchboard
         std::string filename = this->get_arg("FILENAME");
         this->provider->save(filename);
     }
-
 
     void Options::add_switch()
     {
