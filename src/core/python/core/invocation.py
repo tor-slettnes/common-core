@@ -16,6 +16,8 @@ import multiprocessing
 
 from .docbase import DocBase
 
+LogFunc = Callable[[str], None]
+
 class AsyncTasks (DocBase, set):
     '''
     Collection of asynchronous tasks. A reference is kept to tasks in order
@@ -92,38 +94,87 @@ def safe_invoke(function    : Callable,
                 args        : Sequence = (),
                 kwargs      : Mapping = {},
                 description : Optional[str] = None,
-                log_call    : Optional[Callable[[str], None]] = logging.debug,
-                log_failure : Optional[Callable[[str], None]] = logging.error) -> None:
+                log_call    : Optional[LogFunc] = logging.debug,
+                log_failure : Optional[LogFunc] = logging.error,
+                ) -> None:
     '''
     Invoke a callable (function) and catch exception
     '''
+
+    if not description:
+        description = invocation(function, args, kwargs)
+
     try:
         if log_call:
-            log_call('Invoking %s'%(
-                description or invocation(function, args, kwargs),
-            ))
+            log_call('Invoking %s'%(description,))
 
-        return function(*args, **kwargs)
+        return function(*args, **kwargs), None
 
     except Exception as e:
         e_type, e_name, e_tb = sys.exc_info()
-        if log_failure:
-            log_failure("Exception occured in %s:\n%s\n[%s] %s"%(
-                description or invocation(function, args, kwargs),
-                stack_trace(tb=e_tb),
-                type(e).__name__,
-                e))
-
+        log_invocation_failure(description, log_failure, e, e_tb)
         ## Prevent circular reference, per https://docs.python.org/2/library/sys.html.
         del e_tb
-        return e
+        return None, e
+
+
+async def safe_await(function    : Callable,
+                     args        : Sequence = (),
+                     kwargs      : Mapping = {},
+                     description : Optional[str] = None,
+                     log_call    : Optional[LogFunc] = logging.debug,
+                     log_failure : Optional[LogFunc] = logging.error,
+                     ) -> None:
+    '''
+    Invoke a callable (function) and catch exception
+    '''
+
+    if not description:
+        description = invocation(function, args, kwargs)
+
+    try:
+        if log_call:
+            log_call('Invoking %s'%(description,))
+
+        result = function(*args, **kwargs)
+        if asyncio.iscoroutine(result):
+            result = await result
+
+        return result, None
+
+    except Exception as e:
+        e_type, e_name, e_tb = sys.exc_info()
+        log_invocation_failure(description, log_failure, e, e_tb)
+        ## Prevent circular reference, per https://docs.python.org/2/library/sys.html.
+        del e_tb
+        return None, e
+
+
+def log_invocation_failur(description : Optional[str],
+                          log_func    : Optional[LogFunc],
+                          exception   : Exception,
+                          traceback   : 'traceback'):
+
+    if log_func:
+        log_func(
+            "Exception occured in %s: [%s] %s%s"%(
+                description,
+                type(exception).__name__,
+                exception,
+                stack_trace(tb=traceback),
+            )
+        )
+
 
 def stack_trace(tb=None):
-    msg = []
     if tb:
-        msg.extend(["  In %s, method %s(), line %d: %s\n"%(filepath, method, lineno, text)
-                    for filepath, lineno, method, text in traceback.extract_tb(tb)])
-    return "".join(msg)
+        msg = [
+            "\n  In %s, method %s(), line %d: %s"%(filepath, method, lineno, text)
+            for filepath, lineno, method, text in traceback.extract_tb(tb)
+        ]
+        return "".join(msg)
+    else:
+        return ""
 
 
 def invocation(
@@ -217,7 +268,7 @@ def safe_invoke_maybe_async(
     <https://docs.python.org/3/library/asyncio-task.html#creating-tasks>.
     '''
 
-    safe_invoke(
+    return safe_invoke(
         function = invoke_maybe_async,
         kwargs = dict(function=function, args=args, kwargs=kwargs),
         description = description,

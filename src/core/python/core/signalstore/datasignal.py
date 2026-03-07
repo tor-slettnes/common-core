@@ -97,7 +97,7 @@ class DataSignal:
             self._emit_to(handle, callback, data)
 
     def _emit_to(self, handle, slot, signal):
-        return safe_invoke(
+        safe_invoke(
             slot,
             (signal,),
             {},

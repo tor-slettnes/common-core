@@ -13,7 +13,7 @@ import sys
 
 ### Common Core modules
 from cc.core.decorators import override
-from cc.core.invocation import method_path
+from cc.core.invocation import method_path, safe_await
 from cc.core.paths import FilePathInput
 from cc.core.settingsstore import SettingsStore
 from cc.protobuf.status import encodeError
@@ -201,20 +201,19 @@ class AsyncClient (AsyncMixIn, BaseClient):
 
 
     async def _on_interceptor_invocation(self, invocation: InterceptorInvocation):
-        self.logger.debug("%s switch %r interceptor %r starting" % (
-            self,
-            invocation.switch_name,
-            invocation.interceptor_name,
-        ))
-
-        error = None
         if method := self.interceptor_methods.get(invocation.interceptor_name):
-            try:
-                result = method(invocation)
-                if asyncio.iscoroutine(result):
-                    await result
-            except Exception as e:
-                error = e
+            result, error = await safe_await(
+                method,
+                args = (invocation,),
+                description = '%s switch %r interceptor %r' % (
+                    self,
+                    invocation.switch_name,
+                    invocation.interceptor_name,
+                ),
+                log_call = self.logger.debug,
+                log_failure = self.logger.error)
+        else:
+            error = None
 
         self._enqueue_interceptor_result(
             self.interceptor_response_queue,

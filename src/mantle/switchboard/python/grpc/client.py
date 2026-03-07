@@ -195,18 +195,19 @@ class Client (BaseClient):
 
 
     def _on_interceptor_invocation(self, invocation: InterceptorInvocation):
-        self.logger.debug("%s switch %r interceptor %r starting" % (
-            self,
-            invocation.switch_name,
-            invocation.interceptor_name,
-        ))
-
-        error = None
         if method := self.interceptor_methods.get(invocation.interceptor_name):
-            try:
-                method(invocation)
-            except Exception as e:
-                error = e
+            result, error = safe_invoke(
+                method,
+                args = (invocation,),
+                description = '%s switch %r interceptor %r' % (
+                    self,
+                    invocation.switch_name,
+                    invocation.interceptor_name,
+                ),
+                log_call = self.logger.debug,
+                log_failure = self.logger.error)
+        else:
+            error = None
 
         self._enqueue_interceptor_result(
             self.interceptor_response_queue,
