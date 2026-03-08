@@ -24,11 +24,11 @@ namespace switchboard
 
         this->add_command(
             "list",
-            {"[states|verbose]"},
+            {"[states|status|specs|verbose]"},
             "Return a list of available switches. "
-            "If \"state\" is present show the current state of each switch "
-            "next to its name. Otherwise, if \"verbose\" is present show "
-            "additional details of each switch. ",
+            "In order of increased verbosity, Any one of the flags "
+            "\"states\", \"status\", \"specs\" and \"verbose\" may be "
+            "provided to include additional details for each switch.",
             std::bind(&Options::list_switches, this));
 
         this->add_command(
@@ -319,23 +319,56 @@ namespace switchboard
     {
         FlagMap flags;
         bool &show_states = flags["states"];
+        bool &show_status = flags["status"];
+        bool &show_specs = flags["specs"];
         bool &show_verbose = flags["verbose"];
         this->get_flags(&flags, false);
+        bool add_blank_line = false;
 
         for (const auto &[name, sw] : this->provider->get_switches())
         {
-            if (show_states)
+            std::cout << name;
+            if (show_status || show_specs || show_verbose)
             {
-                core::str::format(std::cout, "%20s : %s\n", name, sw->state());
+                std::cout << ":"
+                          << std::endl;
             }
-            else if (show_verbose)
+            else if (show_states)
             {
-                std::cout << *sw << std::endl;
+                std::cout << ": "
+                          << sw->state();
             }
-            else
+
+            if (show_specs || show_verbose)
             {
-                std::cout << name << std::endl;
+                for (const auto &[tag, value]: sw->spec()->as_tvlist())
+                {
+                    std::cout << std::right
+                              << std::setw(20)
+                              << tag.value_or("")
+                              << std::left
+                              << ": "
+                              << value
+                              << std::endl;
+                }
             }
+
+            if (show_status || show_verbose)
+            {
+                for (const auto &[tag, value]: sw->status()->as_tvlist())
+                {
+                    std::cout << std::right
+                              << std::setw(20)
+                              << tag.value_or("")
+                              << std::left
+                              << ": "
+                              << value
+                              << std::endl;
+                }
+            }
+
+            std::cout << std::endl;
+
         }
     }
 

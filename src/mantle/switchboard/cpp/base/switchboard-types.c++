@@ -151,7 +151,7 @@ namespace switchboard
         if (is_regex)
         {
             this->regex_patterns.reserve(patterns.size());
-            for (const std::string &pattern: patterns)
+            for (const std::string &pattern : patterns)
             {
                 this->regex_patterns.emplace_back(pattern);
             }
@@ -162,7 +162,7 @@ namespace switchboard
     {
         if (this->is_regex)
         {
-            for (const std::regex &rx: this->regex_patterns)
+            for (const std::regex &rx : this->regex_patterns)
             {
                 if (std::regex_match(switch_name, rx))
                 {
@@ -172,7 +172,7 @@ namespace switchboard
         }
         else
         {
-            for (const std::string &pattern: this->patterns)
+            for (const std::string &pattern : this->patterns)
             {
                 if (core::platform::path->filename_match(pattern, switch_name, true))
                 {
@@ -247,7 +247,10 @@ namespace switchboard
             tvlist->append("aliases", core::types::ValueList::create_from(this->aliases));
         }
 
-        tvlist->append("primary", this->primary);
+        if (this->primary)
+        {
+            tvlist->append("primary", this->primary);
+        }
 
         if (!this->localizations.empty())
         {
