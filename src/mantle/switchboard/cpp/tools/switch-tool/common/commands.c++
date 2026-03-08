@@ -24,11 +24,13 @@ namespace switchboard
 
         this->add_command(
             "list",
-            {"[states|status|specs|verbose]"},
+            {"[status|specs|verbose]", "[field ...]"},
             "Return a list of available switches. "
             "In order of increased verbosity, Any one of the flags "
-            "\"states\", \"status\", \"specs\" and \"verbose\" may be "
-            "provided to include additional details for each switch.",
+            "\"status\", \"specs\" and \"verbose\" may be "
+            "provided to include additional details for each switch. "
+            "Alternatively, individiual specifcation and/or status "
+            "may be provided, e.g.: current_state attributes",
             std::bind(&Options::list_switches, this));
 
         this->add_command(
@@ -322,13 +324,17 @@ namespace switchboard
         bool &show_status = flags["status"];
         bool &show_specs = flags["specs"];
         bool &show_verbose = flags["verbose"];
-        this->get_flags(&flags, false);
+        this->get_flags(&flags, true);
         bool add_blank_line = false;
+
+        std::unordered_set<std::string> field_names{
+            this->current_arg,
+            this->args.end()};
 
         for (const auto &[name, sw] : this->provider->get_switches())
         {
             std::cout << name;
-            if (show_status || show_specs || show_verbose)
+            if (show_status || show_specs || show_verbose || !field_names.empty())
             {
                 std::cout << ":"
                           << std::endl;
@@ -339,13 +345,14 @@ namespace switchboard
                           << sw->state();
             }
 
-            if (show_specs || show_verbose)
+            for (const auto &[tag, value] : sw->spec()->as_tvlist())
             {
-                for (const auto &[tag, value]: sw->spec()->as_tvlist())
+                std::string key = tag.value_or("");
+                if (show_specs || show_verbose || field_names.count(key))
                 {
                     std::cout << std::right
                               << std::setw(20)
-                              << tag.value_or("")
+                              << key
                               << std::left
                               << ": "
                               << value
@@ -353,13 +360,14 @@ namespace switchboard
                 }
             }
 
-            if (show_status || show_verbose)
+            for (const auto &[tag, value] : sw->status()->as_tvlist())
             {
-                for (const auto &[tag, value]: sw->status()->as_tvlist())
+                std::string key = tag.value_or("");
+                if (show_status || show_verbose || field_names.count(key))
                 {
                     std::cout << std::right
                               << std::setw(20)
-                              << tag.value_or("")
+                              << key
                               << std::left
                               << ": "
                               << value
@@ -368,7 +376,6 @@ namespace switchboard
             }
 
             std::cout << std::endl;
-
         }
     }
 
