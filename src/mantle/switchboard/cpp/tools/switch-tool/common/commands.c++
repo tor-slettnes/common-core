@@ -370,16 +370,16 @@ namespace switchboard
             else
             {
                 core::status::Error::ptr error;
-                if (auto sw = this->provider->get_switch(switch_name))
+                if (auto culprit = this->provider->get_switch(switch_name))
                 {
-                    error = sw->error();
+                    error = culprit->error();
                 }
 
                 if (error)
                 {
                     core::str::format(std::cout,
                                       "%20s: %s: [%s] (%s) %s\n",
-                                      sw->name(),
+                                      switch_name,
                                       state,
                                       error->symbol(),
                                       error->origin(),
@@ -389,7 +389,7 @@ namespace switchboard
                 {
                     core::str::format(std::cout,
                                       "%20s: %s\n",
-                                      sw->name(),
+                                      switch_name,
                                       state);
                 }
             }
