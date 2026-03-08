@@ -27,11 +27,11 @@ namespace cc::protobuf
             break;
 
         case core::types::ValueType::UINT:
-            msg->set_value_uint(value.as_largest_uint());
+            msg->set_value_uint(value.as_uint64());
             break;
 
         case core::types::ValueType::SINT:
-            msg->set_value_sint(value.as_largest_sint());
+            msg->set_value_sint(value.as_sint64());
             break;
 
         case core::types::ValueType::REAL:
@@ -40,31 +40,31 @@ namespace cc::protobuf
 
         case core::types::ValueType::CHAR:
         case core::types::ValueType::STRING:
-            msg->set_value_string(value.as_string());
+            msg->set_value_string(value.get_string());
             break;
 
         case core::types::ValueType::BYTEVECTOR:
-            msg->set_value_bytes(value.as_bytevector().to_string());
+            msg->set_value_bytes(value.get_bytevector().to_string());
             break;
 
         case core::types::ValueType::TIMEPOINT:
-            encode(value.as_timepoint(), msg->mutable_value_timestamp());
+            encode(value.get<core::dt::TimePoint>(), msg->mutable_value_timestamp());
             break;
 
         case core::types::ValueType::DURATION:
-            encode(value.as_duration(), msg->mutable_value_duration());
+            encode(value.get<core::dt::Duration>(), msg->mutable_value_duration());
             break;
 
         case core::types::ValueType::VALUELIST:
-            encode(value.as_valuelist(), msg->mutable_value_list());
+            encode(value.get_valuelist(), msg->mutable_value_list());
             break;
 
         case core::types::ValueType::TVLIST:
-            encode(value.as_tvlist(), msg->mutable_value_tvlist());
+            encode(value.get_tvlist(), msg->mutable_value_tvlist());
             break;
 
         case core::types::ValueType::KVMAP:
-            encode(value.as_kvmap(), msg->mutable_value_kvmap());
+            encode(value.get_kvmap(), msg->mutable_value_kvmap());
             break;
         }
     }

@@ -207,20 +207,21 @@ namespace core::types
 
     KeyValueMap &KeyValueMap::recursive_merge(KeyValueMap &other) noexcept
     {
-        for (auto &[key, other_value] : other)
+        while (!other.empty())
         {
-            if (auto this_it = this->find(key); this_it != this->end())
+            auto nh = other.extract(other.begin());
+            if (auto this_it = this->find(nh.key()); this_it != this->end())
             {
-                KeyValueMapPtr *this_map = std::get_if<KeyValueMapPtr>(&this_it->second);
-                KeyValueMapPtr *other_map = std::get_if<KeyValueMapPtr>(&other_value);
-                if (this_map && other_map)
+                KeyValueMapPtr *this_mapped = std::get_if<KeyValueMapPtr>(&this_it->second);
+                KeyValueMapPtr *other_mapped = std::get_if<KeyValueMapPtr>(&nh.mapped());
+                if (this_mapped && other_mapped)
                 {
-                    (*this_map)->recursive_merge(**other_map);
+                    (*this_mapped)->recursive_merge(**other_mapped);
                 }
             }
             else
             {
-                this->insert_or_assign(key, std::move(other_value));
+                this->insert(std::move(nh));
             }
         }
         return *this;
