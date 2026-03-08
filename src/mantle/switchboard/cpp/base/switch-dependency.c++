@@ -124,7 +124,8 @@ namespace switchboard
                 state = This::inverted(state);
             }
         }
-        else if (this->auto_trigger(this->predecessor_state()))
+        // else if (this->auto_trigger(this->predecessor_state()))
+        else
         {
             state = this->expected_state().value();
         }

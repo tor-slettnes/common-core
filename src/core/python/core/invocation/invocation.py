@@ -150,6 +150,6 @@ def invocation(
         kwargs: Mapping = {}) -> str:
     arglist  = [ "%r"%(arg,) for arg in args ]
     arglist += [ "%s=%r"%item for item in kwargs.items() ]
-    return "%s(%s)"%(method.__name__, ", ".join(arglist))
+    return "%s(%s)"%(method.__qualname__, ", ".join(arglist))
 
 
