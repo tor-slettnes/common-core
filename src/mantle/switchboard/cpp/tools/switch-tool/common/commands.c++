@@ -19,18 +19,23 @@ namespace switchboard
             "provider",
             {},
             "Return a boolean indicating whether a switchboard provider is "
-            "available/connected (i.e., the switchboard service is running). ",
+            "available/connected (i.e., the switchboard service is running).",
             std::bind(&Options::get_provider, this));
 
         this->add_command(
+            "list-states",
+            {},
+            "List available switch states and exit.",
+            std::bind(&Options::print_states, this));
+
+        this->add_command(
             "list",
-            {"[status|specs|verbose]", "[field ...]"},
+            {"[state]", "[field ...]"},
             "Return a list of available switches. "
-            "In order of increased verbosity, Any one of the flags "
-            "\"status\", \"specs\" and \"verbose\" may be "
-            "provided to include additional details for each switch. "
-            "Alternatively, individiual specifcation and/or status "
-            "may be provided, e.g.: current_state attributes",
+            "Optionally include the current state of each switch next to "
+            "its name, and/or additional specification and/or status fields "
+            "on separate lines.  Use the \"--verbose\" option to include all "
+            "specification and status fields",
             std::bind(&Options::list_switches, this));
 
         this->add_command(
@@ -56,13 +61,15 @@ namespace switchboard
 
         this->add_command(
             "culprits",
-            {"SWITCH", "[verbose]"},
-            "Print a list of switches that prevent SWITCH from being ACTIVE. "
-            "This list may be empty (if SWITCH is already active) or may be just "
-            "SWITCH itself (if it is inactive but would be active based on its "
-            "dependencies, which normally indicates a manual dependency or override). "
-            "If \"verbose\" is present, also print the current state and any error "
-            "message for each culprit.",
+            {"SWITCH", "[active|inactive]"},
+            "Print a list of switches that prevent SWITCH from being either "
+            "active (default) or inactive. This list may be empty (if SWITCH "
+            "is already in the specified state) or may be just SWITCH itself "
+            "(if SWITCH is not in the speciifed state but would be based on "
+            "the current value of its predecessors, which normally indicates "
+            "a manual dependency or override). "
+            "Use the \"--verbose\"  to also print the current state and any "
+            "error message for each culprit.",
             std::bind(&Options::get_culprits, this));
 
         this->add_command(
@@ -82,14 +89,15 @@ namespace switchboard
 
         this->add_command(
             "status",
-            {"SWITCH"},
-            "Print all of SWITCH's current status in one go.",
+            {"[SWITCH ...]"},
+            "Print the full status of each specified SWITCH "
+            "or otherwise all switches in one go.",
             std::bind(&Options::get_status, this));
 
         this->add_command(
             "localization",
             {"SWITCH"},
-            "Print SWITCH's localization.",
+            "Print SWITCH's localization",
             std::bind(&Options::get_localization, this));
 
         this->add_command(
@@ -112,27 +120,30 @@ namespace switchboard
 
         this->add_command(
             "dependencies",
-            {"SWITCH", "[verbose]"},
-            "Print SWITCH's dependencies, one per line. By default only the name "
-            "of each predecessor is printed; use \"verbose\" to show more details.",
+            {"[SWITCH ...]"},
+            "Print SWITCH's dependencies, one per line. "
+            "By default only the name of each predecessor is printed; "
+            "use \"--verbose\" to show more details.",
             std::bind(&Options::get_dependencies, this));
 
         this->add_command(
             "interceptors",
-            {"SWITCH", "[verbose]"},
-            "Print SWITCH's interceptors, one per line.  By default only the name "
-            "of each interceptor is printed; use \"verbose\" to show more details.",
+            {"SWITCH"},
+            "Print SWITCH's interceptors, one per line. "
+            "By default only the name of each interceptor is printed; "
+            "use \"--verbose\" to show more details.",
             std::bind(&Options::get_interceptors, this));
 
         this->add_command(
             "specification",
-            {"SWITCH"},
-            "Print all of SWITCH's specification in one go.",
+            {"[SWITCH ...]"},
+            "Print the full specification of each specified SWITCH "
+            "or otherwise all switches in one go.",
             std::bind(&Options::get_specs, this));
 
         this->add_command(
             "spec",
-            {"SWITCH"},
+            {"[SWITCH ...]"},
             "Alias for \"specification\".",
             std::bind(&Options::get_specs, this));
 
@@ -320,62 +331,51 @@ namespace switchboard
     void Options::list_switches()
     {
         FlagMap flags;
-        bool &show_states = flags["states"];
-        bool &show_status = flags["status"];
-        bool &show_specs = flags["specs"];
-        bool &show_verbose = flags["verbose"];
+        bool &with_state = flags["states"];
         this->get_flags(&flags, true);
-        bool add_blank_line = false;
 
-        std::unordered_set<std::string> field_names{
+        std::unordered_set<std::string> fields(
             this->current_arg,
-            this->args.end()};
+            this->args.end());
 
+        bool with_details = this->verbose | !fields.empty();
+        const std::string state_field = "current_state";
+
+        if (!fields.empty() && with_state)
+        {
+            fields.insert(state_field);
+        }
+
+        bool print_delimiter = false;
         for (const auto &[name, sw] : this->provider->get_switches())
         {
-            std::cout << name;
-            if (show_status || show_specs || show_verbose || !field_names.empty())
+            if (with_details)
             {
-                std::cout << ":"
+                std::cout << "["
+                          << name
+                          << "]"
+                          << std::endl;
+
+                core::types::TaggedValueList details;
+                sw->spec()->to_tvlist(&details);
+                sw->status()->to_tvlist(&details);
+                this->print_tvlist(details, fields);
+                std::cout << std::endl;
+            }
+            else if (with_state)
+            {
+                std::cout << std::left
+                          << std::setw(32)
+                          << name
+                          << ": "
+                          << sw->state()
                           << std::endl;
             }
-            else if (show_states)
+            else
             {
-                std::cout << ": "
-                          << sw->state();
+                std::cout << name
+                          << std::endl;
             }
-
-            for (const auto &[tag, value] : sw->spec()->as_tvlist())
-            {
-                std::string key = tag.value_or("");
-                if (show_specs || show_verbose || field_names.count(key))
-                {
-                    std::cout << std::right
-                              << std::setw(20)
-                              << key
-                              << std::left
-                              << ": "
-                              << value
-                              << std::endl;
-                }
-            }
-
-            for (const auto &[tag, value] : sw->status()->as_tvlist())
-            {
-                std::string key = tag.value_or("");
-                if (show_status || show_verbose || field_names.count(key))
-                {
-                    std::cout << std::right
-                              << std::setw(20)
-                              << key
-                              << std::left
-                              << ": "
-                              << value
-                              << std::endl;
-                }
-            }
-
-            std::cout << std::endl;
         }
     }
 
@@ -398,12 +398,15 @@ namespace switchboard
     {
         switchboard::SwitchRef sw = this->get_switch(true);
         FlagMap flags;
-        bool &verbose = flags["verbose"];
+        bool &active_flag = flags["active"];
+        bool &inactive_flag = flags["inactive"];
         this->get_flags(&flags, false);
 
-        for (const auto &[switch_name, state] : sw->culprits())
+        bool active = active_flag || !inactive_flag;
+
+        for (const auto &[switch_name, state] : sw->culprits(active))
         {
-            if (!verbose)
+            if (!this->verbose)
             {
                 std::cout << switch_name << std::endl;
             }
@@ -454,7 +457,17 @@ namespace switchboard
 
     void Options::get_status()
     {
-        std::cout << *this->get_switch(true)->status() << std::endl;
+        for (const auto &sw : this->get_switches_or_all())
+        {
+            std::cout << "["
+                      << sw->name()
+                      << "]"
+                      << std::endl;
+
+            this->print_tvlist(sw->status()->as_tvlist());
+
+            std::cout << std::endl;
+        }
     }
 
     void Options::get_localization()
@@ -483,49 +496,67 @@ namespace switchboard
 
     void Options::get_dependencies()
     {
-        switchboard::SwitchRef sw = this->get_switch(true);
-
-        FlagMap flags;
-        bool &verbose = flags["verbose"];
-        this->get_flags(&flags, false);
-
-        for (const auto &[pred, dep] : sw->dependencies())
+        for (const auto &sw : this->get_switches_or_all())
         {
-            if (verbose)
+            std::cout << "["
+                      << sw->name()
+                      << "]"
+                      << std::endl;
+
+            for (const auto &[pred, dep] : sw->dependencies())
             {
-                std::cout << *dep << std::endl;
+                if (this->verbose)
+                {
+                    std::cout << " - "  << *dep << std::endl;
+                }
+                else
+                {
+                    std::cout << " - " << pred << std::endl;
+                }
             }
-            else
-            {
-                std::cout << pred << std::endl;
-            }
+
+            std::cout << std::endl;
         }
     }
 
     void Options::get_interceptors()
     {
-        switchboard::SwitchRef sw = this->get_switch(true);
-
-        FlagMap flags;
-        bool &verbose = flags["verbose"];
-        this->get_flags(&flags, false);
-
-        for (const auto &[name, icept] : sw->interceptors())
+        for (const auto &sw : this->get_switches_or_all())
         {
-            if (verbose)
+            std::cout << "["
+                      << sw->name()
+                      << "]"
+                      << std::endl;
+
+            for (const auto &[name, icept] : sw->interceptors())
             {
-                std::cout << *icept << std::endl;
+                if (this->verbose)
+                {
+                    std::cout << " - " << icept << std::endl;
+                }
+                else
+                {
+                    std::cout << " - " << name << std::endl;
+                }
             }
-            else
-            {
-                std::cout << name << std::endl;
-            }
+
+            std::cout << std::endl;
         }
     }
 
     void Options::get_specs()
     {
-        std::cout << *this->get_switch(true)->spec() << std::endl;
+        for (const auto &sw : this->get_switches_or_all())
+        {
+            std::cout << "["
+                      << sw->name()
+                      << "]"
+                      << std::endl;
+
+            this->print_tvlist(sw->spec()->as_tvlist());
+
+            std::cout << std::endl;
+        }
     }
 
     void Options::load_file()
@@ -796,10 +827,43 @@ namespace switchboard
         core::str::format(std::cout, "status: %-12s %-32r %s\n", action, name, status);
     }
 
+    std::vector<switchboard::SwitchRef> Options::get_switches_or_all()
+    {
+        if (auto sw = this->get_switch(false))
+        {
+            std::vector<switchboard::SwitchRef> switches{sw};
+            while (auto sw = this->get_switch(false))
+            {
+                switches.push_back(sw);
+            }
+            return switches;
+        }
+        else
+        {
+            return this->provider->get_switches().values();
+        }
+    }
+
     switchboard::SwitchRef Options::get_switch(bool required)
     {
-        std::string switch_name = this->get_arg("SWITCH");
-        return this->provider->get_switch(switch_name, required);
+        std::optional<std::string> switch_name;
+        if (required)
+        {
+            switch_name = this->get_arg("SWITCH");
+        }
+        else
+        {
+            switch_name = this->next_arg();
+        }
+
+        if (switch_name)
+        {
+            return this->provider->get_switch(switch_name.value(), true);
+        }
+        else
+        {
+            return {};
+        }
     }
 
     switchboard::StateSet Options::get_states()
@@ -813,11 +877,32 @@ namespace switchboard
         return states;
     }
 
-    void Options::print_states()
+    void Options::print_states() const
     {
         for (const auto &[state, name] : switchboard::state_names)
         {
             std::cout << name << std::endl;
+        }
+    }
+
+    void Options::print_tvlist(
+        const core::types::TaggedValueList &tvlist,
+        const std::unordered_set<std::string> &selection,
+        std::size_t alignment_column) const
+    {
+        for (const auto &[tag, value] : tvlist)
+        {
+            std::string key = tag.value_or("");
+            if (selection.empty() || selection.count(key))
+            {
+                std::cout << std::right
+                          << std::setw(alignment_column)
+                          << key
+                          << std::left
+                          << ": "
+                          << value
+                          << std::endl;
+            }
         }
     }
 }  // namespace switchboard

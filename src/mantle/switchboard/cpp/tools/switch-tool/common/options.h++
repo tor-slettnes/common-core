@@ -72,9 +72,14 @@ namespace switchboard
                                      const switchboard::SwitchName &name,
                                      const switchboard::Status &status);
 
+        std::vector<switchboard::SwitchRef> get_switches_or_all();
         switchboard::SwitchRef get_switch(bool required);
         switchboard::StateSet get_states();
-        void print_states();
+        void print_states() const;
+        void print_tvlist(
+            const core::types::TaggedValueList &tvlist,
+            const std::unordered_set<std::string> &selection = {},
+            std::size_t alignment_column = 16) const;
 
     public:
         std::shared_ptr<switchboard::Provider> provider;
@@ -82,6 +87,7 @@ namespace switchboard
     private:
         const std::string implementation;
         std::string signal_handle;
+        bool verbose;
     };
 
     extern std::unique_ptr<Options> options;

@@ -13,7 +13,8 @@ namespace switchboard
     Options::Options(const std::string &implementation)
         : core::argparse::CommandOptions(),
           implementation(implementation),
-          signal_handle(core::platform::path->exec_name())
+          signal_handle(core::platform::path->exec_name()),
+          verbose(false)
     {
         this->describe("Command line tool to access Switchboard service via " +
                        implementation);
@@ -23,13 +24,12 @@ namespace switchboard
     {
         Super::add_options();
 
-        this->add_void(
-            {"--list-states"},
-            "List available switch states and exit.",
-            [&] {
-                this->print_states();
-                std::exit(0);
-            });
+        this->add_flag(
+            {"--verbose"},
+            "Print extra detail where applicable",
+            &this->verbose,
+            false);
+
 
         this->add_commands();
     }
