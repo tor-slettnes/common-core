@@ -516,19 +516,26 @@ namespace switchboard::grpc
 
             CascadeStyle cascade_descendants =
                 request->has_cascade_descendants()
-                    ? cc::protobuf::decoded<switchboard::CascadeStyle>(request->cascade_descendants())
+                    ? cc::protobuf::decoded<switchboard::CascadeStyle>(
+                        request->cascade_descendants())
                     : CascadeStyle::ASYNC;
 
             bool updated = sw->set_target(
-                cc::protobuf::decoded<switchboard::State>(request->target_state()),
-                cc::protobuf::decoded_shared<core::status::Error>(request->error()),
-                cc::protobuf::decoded<core::types::KeyValueMap>(request->attributes()),
+                cc::protobuf::decoded<switchboard::State>(
+                    request->target_state()),
+                cc::protobuf::decoded_optional_shared<core::status::Error>(
+                    request->has_error(),
+                    request->error()),
+                cc::protobuf::decoded<core::types::KeyValueMap>(
+                    request->attributes()),
                 request->clear_existing(),
                 invoke_interceptors,
                 cascade_descendants,
                 request->reenter(),
-                cc::protobuf::decoded<switchboard::ExceptionHandling>(request->on_cancel()),
-                cc::protobuf::decoded<switchboard::ExceptionHandling>(request->on_error()));
+                cc::protobuf::decoded<switchboard::ExceptionHandling>(
+                    request->on_cancel()),
+                cc::protobuf::decoded<switchboard::ExceptionHandling>(
+                    request->on_error()));
 
             reply->set_updated(updated);
             return ::grpc::Status::OK;

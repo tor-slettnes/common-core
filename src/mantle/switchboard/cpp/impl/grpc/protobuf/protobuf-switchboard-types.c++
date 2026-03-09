@@ -182,6 +182,10 @@ namespace cc::protobuf
         {
             decode_shared(msg.error(), &status->error);
         }
+        else
+        {
+            status->error.reset();
+        }
         decode(msg.attributes(), &status->attributes);
     }
 

@@ -178,7 +178,7 @@ namespace switchboard
     {
         if (target_state == STATE_UNSET)
         {
-            target_state = (error && *error) ? STATE_FAILED : this->auto_state();
+            target_state = (error && error->is_error()) ? STATE_FAILED : this->auto_state();
         }
 
         if (reenter || (this->state() != target_state))

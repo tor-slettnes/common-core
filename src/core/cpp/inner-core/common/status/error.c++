@@ -120,6 +120,11 @@ namespace core::status
         return !this->empty();
     }
 
+    bool Error::is_error() const noexcept
+    {
+        return this->level() >= Level::ERROR;
+    }
+
     std::string Error::class_name() const noexcept
     {
         return "Error";

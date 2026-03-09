@@ -184,4 +184,20 @@ namespace cc::protobuf
         return ref;
     }
 
+
+    template <class NativeType, class... Args>
+    std::shared_ptr<NativeType> decoded_optional_shared(
+        bool has_value,
+        Args &&...args)
+    {
+        if (has_value)
+        {
+            return decoded_shared<NativeType>(std::forward<Args...>(args...));
+        }
+        else
+        {
+            return {};
+        }
+    }
+
 }  // namespace cc::protobuf

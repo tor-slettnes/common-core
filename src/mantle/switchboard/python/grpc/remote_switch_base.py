@@ -9,7 +9,7 @@ from typing import Mapping
 from typing import Optional
 
 from cc.core.decorators import override
-from cc.protobuf.status import Error, encodeError
+from cc.protobuf.status import Error, encodePossibleError
 from cc.protobuf.variant import PyValueMap, encodeKeyValueMap
 from cc.protobuf.wellknown import BoolValue
 
@@ -144,8 +144,8 @@ class RemoteSwitchBase (Switch):
         req = SetTargetRequest(
             switch_name = self.name,
             target_state = target_state,
-            error = None if error is None else encodeError(error),
             attributes = encodeKeyValueMap(attributes),
+            error = encodePossibleError(error),
             clear_existing = clear_existing,
             invoke_interceptors = invoke_interceptors,
             cascade_descendants = cascade_descendants,

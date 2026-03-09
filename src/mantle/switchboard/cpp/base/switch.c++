@@ -508,7 +508,7 @@ namespace switchboard
                     : unsatisfied & PENDING ? STATE_DEACTIVATING
                     : satisfied & WEAK      ? STATE_ACTIVE
                     : unsatisfied & WEAK    ? STATE_INACTIVE
-                    : this->settled()       ? this->state()
+                    : this->settled()       ? this->target_state(this->active())
                     : undetermined & WEAK   ? STATE_UNSET
                     : this->active()        ? STATE_ACTIVE
                                             : STATE_INACTIVE;
