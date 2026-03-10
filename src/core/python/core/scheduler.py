@@ -210,7 +210,10 @@ class Scheduler (LogBase):
             self._tasks[handle] = thisHandle = handle, lock, current_thread()
 
             if otherLock:
-                otherLock.release()
+                try:
+                    otherLock.release()
+                except ThreadError:
+                    pass
 
             nextslot = self._nextcount + delaycount
             nexttime = self._starttime + (self._tick * nextslot)
@@ -285,7 +288,7 @@ class Scheduler (LogBase):
         self.logger.debug("Unscheduling task %r"%(handle,))
 
         if pending:
-            pending.release()
+            pending.set()
 
         with self._mutex:
             if self._tasks.get(handle) is thisHandle:
