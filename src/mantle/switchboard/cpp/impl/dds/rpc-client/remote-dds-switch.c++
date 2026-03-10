@@ -110,7 +110,7 @@ namespace switchboard::dds
         const core::status::Error::ptr &error,
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
-        bool invoke_interceptors,
+        InvocationStyle invoke_interceptors,
         CascadeStyle cascade_descendants,
         bool reenter,
         ExceptionHandling on_cancel,
@@ -131,7 +131,8 @@ namespace switchboard::dds
         }
         idl::encode(attributes, &req.attributes());
         req.clear_existing(clear_existing);
-        req.invoke_interceptors(invoke_interceptors);
+        req.invoke_interceptors(
+            idl::encoded<CC::Switchboard::InvocationStyle>(invoke_interceptors));
         req.cascade_descendants(
             idl::encoded<CC::Switchboard::CascadeStyle>(cascade_descendants));
         req.reenter(reenter);

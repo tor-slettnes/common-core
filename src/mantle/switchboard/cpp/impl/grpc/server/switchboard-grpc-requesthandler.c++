@@ -509,15 +509,16 @@ namespace switchboard::grpc
         {
             SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
 
-            bool invoke_interceptors =
+            InvocationStyle invoke_interceptors =
                 request->has_invoke_interceptors()
-                    ? request->invoke_interceptors()
-                    : true;
+                    ? cc::protobuf::decoded<switchboard::InvocationStyle>(
+                          request->invoke_interceptors())
+                    : InvocationStyle::DEFAULT;
 
             CascadeStyle cascade_descendants =
                 request->has_cascade_descendants()
                     ? cc::protobuf::decoded<switchboard::CascadeStyle>(
-                        request->cascade_descendants())
+                          request->cascade_descendants())
                     : CascadeStyle::ASYNC;
 
             bool updated = sw->set_target(

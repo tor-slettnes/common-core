@@ -466,6 +466,21 @@ namespace cc::protobuf
     }
 
     //==========================================================================
+    // InvocationStyle
+
+    void encode(switchboard::InvocationStyle native,
+                cc::platform::switchboard::protobuf::InvocationStyle *proto)
+    {
+        *proto = static_cast<cc::platform::switchboard::protobuf::InvocationStyle>(native);
+    }
+
+    void decode(cc::platform::switchboard::protobuf::InvocationStyle proto,
+                switchboard::InvocationStyle *native)
+    {
+        *native = static_cast<switchboard::InvocationStyle>(proto);
+    }
+
+    //==========================================================================
     // CascadeStyle
 
     void encode(switchboard::CascadeStyle native,

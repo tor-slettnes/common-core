@@ -58,6 +58,15 @@ module CC
             PHASE_LATE     // Invoke after completing main interceptors
         };
 
+        enum InvocationStyle
+        {
+            // Control interceptor invocation in response to state changes
+
+            INVOKE_NONE,       // Do not cascade state change
+            INVOKE_ALL,        // Invoke all intercptor on switch and its descendants
+            INVOKE_INDIRECT    // Invoke interceptor only on descendant switches
+        };
+
         enum CascadeStyle
         {
             // How to propagate state change to descendants.
@@ -513,8 +522,8 @@ module CC
             boolean clear_existing;
 
             // Invoke interceptors for the relevant state transitions.
-            @default(TRUE)
-            boolean invoke_interceptors;
+            @default(INVOKE_ALL)
+            InvocationStyle invoke_interceptors;
 
             // How to update descendant switches if state changes.
             @default(CASCADE_ASYNC)

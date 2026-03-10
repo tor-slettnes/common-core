@@ -209,7 +209,7 @@ namespace switchboard::dds
                 error,
                 idl::decoded<core::types::KeyValueMap>(req.attributes()),
                 req.clear_existing(),
-                req.invoke_interceptors(),
+                idl::decoded<switchboard::InvocationStyle>(req.invoke_interceptors()),
                 idl::decoded<switchboard::CascadeStyle>(req.cascade_descendants()),
                 req.reenter(),
                 idl::decoded<switchboard::ExceptionHandling>(req.on_cancel()),

@@ -18,7 +18,7 @@ namespace switchboard
         struct SwitchControlFlags
         {
             bool clear_existing = true;
-            bool invoke_interceptors = true;
+            InvocationStyle invoke_interceptors = InvocationStyle::DEFAULT;
             switchboard::CascadeStyle cascade_style = switchboard::CascadeStyle::DEFAULT;
             bool reenter = false;
         };

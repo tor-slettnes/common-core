@@ -114,6 +114,22 @@ namespace switchboard
     std::istream &operator>>(std::istream &stream, DependencyPolarity &eh);
 
     //==========================================================================
+    // InvocationStyle: Control interceptor invocation in response to state changes
+
+    enum class InvocationStyle
+    {
+        NONE,      // Do not cascade state change
+        ALL,       // Invoke all intercptor on switch and its descendants
+        INDIRECT,  // Invoke interceptor only on descendant switches
+
+        DEFAULT = ALL,
+    };
+
+    extern const core::types::SymbolMap<InvocationStyle> invocationstyle_names;
+    std::ostream &operator<<(std::ostream &stream, InvocationStyle style);
+    std::istream &operator>>(std::istream &stream, InvocationStyle &style);
+
+    //==========================================================================
     // Cascading: How to propagate state change to descendants.
 
     enum class CascadeStyle

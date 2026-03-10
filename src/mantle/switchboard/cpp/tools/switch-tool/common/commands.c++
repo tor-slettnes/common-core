@@ -905,7 +905,9 @@ namespace switchboard
 
         return {
             .clear_existing = clear,
-            .invoke_interceptors = !no_intercept,
+            .invoke_interceptors = no_intercept
+                                     ? switchboard::InvocationStyle::INDIRECT
+                                     : switchboard::InvocationStyle::ALL,
             .cascade_style = no_cascade
                                ? switchboard::CascadeStyle::NONE
                                : switchboard::CascadeStyle::DEFAULT,

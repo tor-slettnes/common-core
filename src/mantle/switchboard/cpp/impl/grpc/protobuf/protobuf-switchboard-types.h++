@@ -195,6 +195,15 @@ namespace cc::protobuf
                 switchboard::ExceptionHandling *native);
 
     //==========================================================================
+    // InvocationStyle
+
+    void encode(switchboard::InvocationStyle native,
+                cc::platform::switchboard::protobuf::InvocationStyle *proto);
+
+    void decode(cc::platform::switchboard::protobuf::InvocationStyle proto,
+                switchboard::InvocationStyle *native);
+
+    //==========================================================================
     // CascadeStyle
 
     void encode(switchboard::CascadeStyle native,

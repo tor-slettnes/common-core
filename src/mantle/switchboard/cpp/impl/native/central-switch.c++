@@ -170,7 +170,7 @@ namespace switchboard
         const core::status::Error::ptr &error,
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
-        bool invoke_interceptors,
+        InvocationStyle invoke_interceptors,
         CascadeStyle cascade_descendants,
         bool reenter,
         ExceptionHandling on_cancel,
@@ -280,7 +280,7 @@ namespace switchboard
 
     bool CentralSwitch::set_current_state(
         State state,
-        bool invoke_interceptors,
+        InvocationStyle invoke_interceptors,
         CascadeStyle cascade_descendants,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -300,7 +300,7 @@ namespace switchboard
             status.settled_state = state;
         }
 
-        if (invoke_interceptors)
+        if (invoke_interceptors == InvocationStyle::ALL)
         {
             status.pending = true;
             success = this->invoke_interceptors(state, on_cancel, on_error);
@@ -313,7 +313,9 @@ namespace switchboard
         {
             ThreadMap threads = this->update_descendants(
                 state,
-                invoke_interceptors,
+                invoke_interceptors == InvocationStyle::INDIRECT
+                    ? InvocationStyle::ALL
+                    : invoke_interceptors,
                 cascade_descendants);
 
             if (cascade_descendants == CascadeStyle::ASYNC)
@@ -515,7 +517,7 @@ namespace switchboard
         case EH_ABORT:
             this->set_current_state(
                 this->settled_state(),  // state
-                false,                  // invoke_interceptors,
+                InvocationStyle::NONE,  // invoke_interceptors,
                 CascadeStyle::NONE);    // cascade_descendants,
             return true;
 
@@ -525,7 +527,7 @@ namespace switchboard
                 this->error(),          // error
                 {},                     // attributes
                 false,                  // clear_existing
-                true,                   // invoke_interceptors
+                InvocationStyle::DEFAULT, // invoke_interceptors
                 CascadeStyle::NONE);    // cascade_descendants
             return true;
 
@@ -536,7 +538,7 @@ namespace switchboard
 
     ThreadMap CentralSwitch::update_descendants(
         State state,
-        bool invoke_interceptors,
+        InvocationStyle invoke_interceptors,
         CascadeStyle cascade_descendants)
     {
         ThreadMap threads;

@@ -117,7 +117,7 @@ namespace switchboard::grpc
         const core::status::Error::ptr &error,
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
-        bool invoke_interceptors,
+        InvocationStyle invoke_interceptors,
         CascadeStyle cascade_descendants,
         bool reenter,
         ExceptionHandling on_cancel,
@@ -137,14 +137,24 @@ namespace switchboard::grpc
         cc::protobuf::encode_shared(error, req.mutable_error());
         cc::protobuf::encode(attributes, req.mutable_attributes());
         req.set_clear_existing(clear_existing);
-        req.set_invoke_interceptors(invoke_interceptors);
+
+        req.set_invoke_interceptors(
+            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::InvocationStyle>(
+                invoke_interceptors));
+
         req.set_cascade_descendants(
-            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::CascadeStyle>(cascade_descendants));
+            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::CascadeStyle>(
+                cascade_descendants));
+
         req.set_reenter(reenter);
+
         req.set_on_cancel(
-            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::ExceptionHandling>(on_cancel));
+            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::ExceptionHandling>(
+                on_cancel));
+
         req.set_on_error(
-            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::ExceptionHandling>(on_error));
+            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::ExceptionHandling>(
+                on_error));
         return this->proxy()->call_check(&Proxy::Stub::SetTarget, req).updated();
     }
 

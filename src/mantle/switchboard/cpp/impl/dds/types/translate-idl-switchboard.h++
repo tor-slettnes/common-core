@@ -27,6 +27,13 @@ namespace idl
     void decode(CC::Switchboard::InterceptorPhase idl,
                 switchboard::InterceptorPhase *native);
 
+    // CC::Switchboard::InvocationStyle
+    void encode(switchboard::InvocationStyle native,
+                CC::Switchboard::InvocationStyle *idl);
+
+    void decode(CC::Switchboard::InvocationStyle idl,
+                switchboard::InvocationStyle *native);
+
     // CC::Switchboard::CascadeStyle
     void encode(switchboard::CascadeStyle native,
                 CC::Switchboard::CascadeStyle *idl);

@@ -98,6 +98,28 @@ namespace switchboard
     }
 
     //==========================================================================
+    // InvocationStyle: How to propagate state change to descendants.
+
+    const core::types::SymbolMap<InvocationStyle> invocationstyle_names = {
+        {InvocationStyle::NONE, "NONE"},
+        {InvocationStyle::ALL, "ALL"},
+        {InvocationStyle::INDIRECT, "INDIRECT"},
+    };
+
+    std::ostream &operator<<(std::ostream &stream, InvocationStyle style)
+    {
+        return invocationstyle_names.to_stream(stream, style);
+    }
+
+    std::istream &operator>>(std::istream &stream, InvocationStyle &style)
+    {
+        return invocationstyle_names.from_stream(
+            stream,
+            &style,
+            InvocationStyle::DEFAULT);
+    }
+
+    //==========================================================================
     // CascadeStyle: How to propagate state change to descendants.
 
     const core::types::SymbolMap<CascadeStyle> cascadestyle_names = {

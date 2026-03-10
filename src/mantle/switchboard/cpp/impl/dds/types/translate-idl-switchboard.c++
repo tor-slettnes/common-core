@@ -36,6 +36,19 @@ namespace idl
         *native = static_cast<switchboard::InterceptorPhase>(idl);
     }
 
+    // CC::Switchboard::InvocationStyle
+    void encode(switchboard::InvocationStyle native,
+                CC::Switchboard::InvocationStyle *idl)
+    {
+        *idl = static_cast<CC::Switchboard::InvocationStyle>(native);
+    }
+
+    void decode(CC::Switchboard::InvocationStyle idl,
+                switchboard::InvocationStyle *native)
+    {
+        *native = static_cast<switchboard::InvocationStyle>(idl);
+    }
+
     // CC::Switchboard::CascadeStyle
     void encode(switchboard::CascadeStyle native,
                 CC::Switchboard::CascadeStyle *idl)
