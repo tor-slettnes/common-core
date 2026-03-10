@@ -66,6 +66,16 @@ namespace switchboard
         }
     }
 
+    bool is_settled(State state)
+    {
+        return SETTLED_STATES.count(state);
+    }
+
+    bool is_pending(State state)
+    {
+        return PENDING_STATES.count(state);
+    }
+
     //==========================================================================
     // Exception Handling
 

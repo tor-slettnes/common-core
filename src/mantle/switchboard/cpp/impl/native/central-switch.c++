@@ -295,7 +295,7 @@ namespace switchboard
                    cascade_descendants);
 
         status.current_state = state;
-        if (Switch::is_settled(state))
+        if (is_settled(state))
         {
             status.settled_state = state;
         }

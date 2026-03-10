@@ -115,21 +115,22 @@ namespace switchboard
         return this->trigger_states().count(pred_state);
     }
 
-    State Dependency::derived_state(State state) const
+    std::optional<State> Dependency::derived_state(State state) const
     {
         if (this->polarity() == DependencyPolarity::TOGGLE)
         {
             if (this->auto_trigger(this->predecessor_state()))
             {
-                state = This::inverted(state);
+                return This::inverted(state);
             }
         }
-        // else if (this->auto_trigger(this->predecessor_state()))
-        else
+        else if (is_settled(this->predecessor_state()) ||
+                 this->auto_trigger(this->predecessor_state()))
         {
-            state = this->expected_state().value();
+            return this->expected_state();
         }
-        return state;
+
+        return {};
     }
 
     std::optional<State> Dependency::expected_state() const

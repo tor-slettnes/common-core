@@ -256,9 +256,6 @@ namespace switchboard
         ///    `true` if the state is activating or active
         static bool is_active_target(State state) noexcept;
 
-        /// Indicate whether the specified state is a settled state
-        static bool is_settled(State state);
-
         // Indicate whether the switch is in a settled state
         bool settled() const noexcept;
 

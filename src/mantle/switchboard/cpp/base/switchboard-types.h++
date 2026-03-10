@@ -73,11 +73,15 @@ namespace switchboard
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
-    const StateSet SETTLED_STATES = {STATE_ACTIVE, STATE_INACTIVE, STATE_FAILED};
+    const StateSet SETTLED_STATES = {STATE_UNSET, STATE_ACTIVE, STATE_INACTIVE, STATE_FAILED};
     const StateSet PENDING_STATES = {STATE_ACTIVATING, STATE_DEACTIVATING, STATE_FAILING};
     const StateSet ACTIVATION_STATES = {STATE_ACTIVATING, STATE_DEACTIVATING};
 
-    core::types::ValueList operator<<(core::types::ValueList &list, const StateSet StateSet);
+    /// Indicate whether the specified state is a settled state
+    bool is_settled(State state);
+
+    /// Indicate whether the specified state is a pending state
+    bool is_pending(State state);
 
     //==========================================================================
     // Exception Handling

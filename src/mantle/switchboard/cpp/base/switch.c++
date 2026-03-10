@@ -373,23 +373,9 @@ namespace switchboard
         return Switch::target_state(state) == STATE_ACTIVE;
     }
 
-    bool Switch::is_settled(State state)
-    {
-        switch (state)
-        {
-        case STATE_INACTIVE:
-        case STATE_ACTIVE:
-        case STATE_FAILED:
-            return true;
-
-        default:
-            return false;
-        }
-    }
-
     bool Switch::settled() const noexcept
     {
-        return Switch::is_settled(this->state());
+        return is_settled(this->state());
     }
 
     bool Switch::pending() const noexcept
@@ -459,44 +445,47 @@ namespace switchboard
 
         for (const auto &[name, dep] : this->dependencies())
         {
-            switch (dep->derived_state(current_state))
+            if (auto derived_state = dep->derived_state(current_state))
             {
-            case STATE_ACTIVATING:
-                satisfied |= PENDING;
-                break;
+                switch (derived_state.value())
+                {
+                case STATE_ACTIVATING:
+                    satisfied |= PENDING;
+                    break;
 
-            case STATE_ACTIVE:
-                satisfied |= (dep->sufficient() ? STRONG : WEAK);
-                break;
+                case STATE_ACTIVE:
+                    satisfied |= (dep->sufficient() ? STRONG : WEAK);
+                    break;
 
-            case STATE_DEACTIVATING:
-                unsatisfied |= PENDING;
-                break;
+                case STATE_DEACTIVATING:
+                    unsatisfied |= PENDING;
+                    break;
 
-            case STATE_INACTIVE:
-                unsatisfied |= (dep->sufficient() ? WEAK : STRONG);
-                break;
+                case STATE_INACTIVE:
+                    unsatisfied |= (dep->sufficient() ? WEAK : STRONG);
+                    break;
 
-            case STATE_FAILING:
-                failed = PENDING;
-                break;
+                case STATE_FAILING:
+                    failed = PENDING;
+                    break;
 
-            case STATE_FAILED:
-                failed = STRONG;
-                break;
+                case STATE_FAILED:
+                    failed = STRONG;
+                    break;
 
-            default:
-                undetermined |= (dep->sufficient() ? WEAK : STRONG);
-                break;
+                default:
+                    undetermined |= (dep->sufficient() ? WEAK : STRONG);
+                    break;
+                }
+
+                msg->format(
+                    "     %r: satisfied=%#02X, unsatisified=%#02X, failed=%#02X, undetermined=%#02X\n",
+                    *dep,
+                    satisfied,
+                    unsatisfied,
+                    failed,
+                    undetermined);
             }
-
-            msg->format(
-                "     %r: satisfied=%#02X, unsatisified=%#02X, failed=%#02X, undetermined=%#02X\n",
-                *dep,
-                satisfied,
-                unsatisfied,
-                failed,
-                undetermined);
         }
 
         State state = failed & STRONG       ? STATE_FAILED

@@ -55,7 +55,7 @@ namespace switchboard
 
     public:
         bool auto_trigger(State pred_state) const;
-        State derived_state(State state) const;
+        std::optional<State> derived_state(State state) const;
         std::optional<State> expected_state() const;
         std::optional<bool> expected_predecessor_value(bool expected_successor_value) const;
         static State inverted(State state);
