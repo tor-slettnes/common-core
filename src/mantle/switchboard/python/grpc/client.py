@@ -14,7 +14,7 @@ import sys
 
 ### Common Core modules
 from cc.core.decorators import override
-from cc.core.invocation import method_path
+from cc.core.invocation import method_path, safe_invoke
 from cc.core.paths import FilePathInput
 from cc.core.settingsstore import SettingsStore
 from cc.protobuf.status import encodeError
