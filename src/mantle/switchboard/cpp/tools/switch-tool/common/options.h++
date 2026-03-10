@@ -15,6 +15,14 @@ namespace switchboard
     {
         using Super = core::argparse::CommandOptions;
 
+        struct SwitchControlFlags
+        {
+            bool clear_existing = true;
+            bool invoke_interceptors = true;
+            switchboard::CascadeStyle cascade_style = switchboard::CascadeStyle::DEFAULT;
+            bool reenter = false;
+        };
+
     public:
         Options(const std::string &implementation);
 
@@ -53,8 +61,8 @@ namespace switchboard
         void remove_dependency();
         void add_interceptor();
         void remove_interceptor();
-        // void clear_attributes();
-        // void set_attributes();
+        void clear_attributes();
+        void set_attributes();
         void set_target();
         void set_active();
         void set_inactive();
@@ -74,6 +82,7 @@ namespace switchboard
 
         std::vector<switchboard::SwitchRef> get_switches_or_all();
         switchboard::SwitchRef get_switch(bool required);
+        SwitchControlFlags get_switch_control_flags();
         switchboard::StateSet get_states();
         void print_states() const;
         void print_tvlist(

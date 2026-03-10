@@ -259,58 +259,57 @@ namespace switchboard
             "Remove interceptor with the specified NAME from SWITCH",
             std::bind(&Options::remove_interceptor, this));
 
-        // this->add_command(
-        //     "clear_attributes",
-        //     {"SWITCH"},
-        //     "Clear all existing attributes on SWITCH.",
-        //     std::bind(&Options::clear_attributes, this));
+        this->add_command(
+            "clear_attributes",
+            {"SWITCH"},
+            "Clear all existing attributes on SWITCH.",
+            std::bind(&Options::clear_attributes, this));
 
-        // this->add_command(
-        //     "set_attributes",
-        //     {"SWITCH", "[KEY VALUE] ..."},
-        //     "Set attributes on SWITCH corresponding to the supplied KEY/VALUE pairs. "
-        //     "Variant data types are inferred; to force VALUE to be interpreted as a "
-        //     "string, use \"double quotation\" marks. (These may need to be further "
-        //     "escaped in the user's shell).",
-        //     std::bind(&Options::set_attributes, this));
+        this->add_command(
+            "set_attributes",
+            {"SWITCH", "[KEY VALUE] ..."},
+            "Set attributes on SWITCH corresponding to the supplied KEY/VALUE pairs. "
+            "Variant data types are inferred; to force VALUE to be interpreted as a "
+            "string, use \"double quotation\" marks. (These may need to be further "
+            "escaped in the user's shell).",
+            std::bind(&Options::set_attributes, this));
 
         this->add_command(
             "set_target",
-            {"SWITCH", "POSITION"},
-            "Set SWITCH's target to the specified boolean POSITION. ",
+            {"SWITCH", "POSITION", "[no_intercept]", "[no_cascade]", "[clear]", "[KEY VALUE] ..."},
+            "Set SWITCH's target to the specified boolean POSITION. "
+            "Use `no_intercept` to skip invocation of associated interceptors, "
+            "and `no_cascade` to skip cascading the updated state to descendants. "
+            "Use `clear` to clear current attributes, and provide additional "
+            "key/value pairs to assign new ones; see `set_attributes` for details.",
             //        "Also update its attributes from the provided KEY/VALUE pairs, if any.",
             std::bind(&Options::set_target, this));
 
         this->add_command(
-            "flip",
-            {"SWITCH", "POSITION"},
-            "Alias for \"set_target\".",
-            std::bind(&Options::set_target, this));
-
-        this->add_command(
             "activate",
-            {"SWITCH"},
+            {"SWITCH", "[no_intercept]", "[no_cascade]", "[clear]", "[KEY VALUE] ..."},
             "Same as: set_target SWITCH ON ...",
             std::bind(&Options::set_active, this));
 
         this->add_command(
             "deactivate",
-            {"SWITCH"},
+            {"SWITCH", "[no_intercept]", "[no_cascade]", "[clear]", "[KEY VALUE] ..."},
             "Same as: set_target SWITCH OFF ...",
             std::bind(&Options::set_inactive, this));
 
         this->add_command(
             "set_auto",
-            {"SWITCH", "[KEY VALUE] ..."},
-            "Set SWITCH's target position based on its dependencies. ",
+            {"SWITCH", "[no_intercept]", "[no_cascade]", "[clear]", "[KEY VALUE] ..."},
+            "Set SWITCH's target position based on its dependencies. "
+            "See `set_target` for a description of additional arguments.",
             //        "Also update its attributes from the provided KEY/VALUE pairs, if any.",
             std::bind(&Options::set_auto, this));
 
         this->add_command(
             "set_error",
-            {"SWITCH", "MESSAGE"},
-            "Assign an error with text MESSAGE to SWITCH. ",
-            //        "Also update its attributes from the provided KEY/VALUE pairs, if any.",
+            {"SWITCH", "MESSAGE", "[no_intercept]", "[no_cascade]", "[clear]", "[KEY VALUE] ..."},
+            "Assign an error with text MESSAGE to SWITCH. "
+            "See `set_target` for a description of additional arguments.",
             std::bind(&Options::set_error, this));
 
         this->add_command(
@@ -507,7 +506,7 @@ namespace switchboard
             {
                 if (this->verbose)
                 {
-                    std::cout << " - "  << *dep << std::endl;
+                    std::cout << " - " << *dep << std::endl;
                 }
                 else
                 {
@@ -733,50 +732,79 @@ namespace switchboard
         this->report_status_and_exit(status);
     }
 
-    // void Options::clear_attributes()
-    // {
-    //     switchboard::SwitchRef sw = this->get_switch(true);
-    //     sw->set_attributes({}, true);
-    // }
+    void Options::clear_attributes()
+    {
+        switchboard::SwitchRef sw = this->get_switch(true);
+        sw->set_attributes({}, true);
+    }
 
-    // void Options::set_attributes()
-    // {
-    //     switchboard::SwitchRef sw = this->get_switch(true);
-    //     types::KeyValueMap attributes = this->get_attributes(true);
-    //     sw->set_attributes(attributes, false);
-    // }
+    void Options::set_attributes()
+    {
+        switchboard::SwitchRef sw = this->get_switch(true);
+        core::types::KeyValueMap attributes = this->get_attributes(true);
+        sw->set_attributes(attributes, false);
+    }
 
     void Options::set_target()
     {
         switchboard::SwitchRef sw = this->get_switch(true);
         bool target = core::str::convert_to<bool>(this->get_arg("boolean target position"));
-        sw->set_active(target, this->get_attributes(false));
+        SwitchControlFlags flags = this->get_switch_control_flags();
+        sw->set_active(target,
+                       this->get_attributes(false),
+                       flags.clear_existing,
+                       flags.invoke_interceptors,
+                       flags.cascade_style,
+                       flags.reenter);
     }
 
     void Options::set_active()
     {
         switchboard::SwitchRef sw = this->get_switch(true);
-        sw->set_active(true, this->get_attributes(false));
+        SwitchControlFlags flags = this->get_switch_control_flags();
+        sw->set_active(true,
+                       this->get_attributes(false),
+                       flags.clear_existing,
+                       flags.invoke_interceptors,
+                       flags.cascade_style,
+                       flags.reenter);
     }
 
     void Options::set_inactive()
     {
         switchboard::SwitchRef sw = this->get_switch(true);
-        sw->set_active(false, this->get_attributes(false));
+        SwitchControlFlags flags = this->get_switch_control_flags();
+        sw->set_active(false,
+                       this->get_attributes(false),
+                       flags.clear_existing,
+                       flags.invoke_interceptors,
+                       flags.cascade_style,
+                       flags.reenter);
     }
 
     void Options::set_auto()
     {
         switchboard::SwitchRef sw = this->get_switch(true);
-        sw->set_auto(this->get_attributes(false));
+        SwitchControlFlags flags = this->get_switch_control_flags();
+        sw->set_auto(this->get_attributes(false),
+                     flags.clear_existing,
+                     flags.invoke_interceptors,
+                     flags.cascade_style,
+                     flags.reenter);
     }
 
     void Options::set_error()
     {
         switchboard::SwitchRef sw = this->get_switch(true);
         core::exception::RuntimeError error(this->get_arg("error message"));
+
+        SwitchControlFlags flags = this->get_switch_control_flags();
         sw->set_error(core::exception::map_to_error(error),
-                      this->get_attributes(false));
+                      this->get_attributes(false),
+                      flags.clear_existing,
+                      flags.invoke_interceptors,
+                      flags.cascade_style,
+                      flags.reenter);
     }
 
     void Options::on_monitor_start()
@@ -864,6 +892,25 @@ namespace switchboard
         {
             return {};
         }
+    }
+
+    Options::SwitchControlFlags Options::get_switch_control_flags()
+    {
+        FlagMap flags;
+        bool &no_intercept = flags["no_intercept"];
+        bool &no_cascade = flags["no_cascaade"];
+        bool &clear = flags["clear"];
+        bool &reenter = flags["reenter"];
+        this->get_flags(&flags, true);
+
+        return {
+            .clear_existing = clear,
+            .invoke_interceptors = !no_intercept,
+            .cascade_style = no_cascade
+                               ? switchboard::CascadeStyle::NONE
+                               : switchboard::CascadeStyle::DEFAULT,
+            .reenter = reenter,
+        };
     }
 
     switchboard::StateSet Options::get_states()
