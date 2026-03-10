@@ -15,7 +15,7 @@ from cc.protobuf.wellknown import BoolValue
 
 from ..protobuf import (
     Status, StatusMap, State, StateSet, encodeStateSet,
-    InterceptorPhase, ExceptionHandling, CascadeStyle,
+    InterceptorPhase, ExceptionHandling, InvocationStyle, CascadeStyle,
     SwitchIdentifier, SwitchIdentifiers,
     Specification, SetSpecificationRequest,
     Localization, LocalizationMap, Dependency, DependencyMap,
@@ -134,7 +134,7 @@ class RemoteSwitchBase (Switch):
                    error: Error|Exception|str|None = None,
                    attributes: Optional[PyValueMap] = None,
                    clear_existing: bool = False,
-                   invoke_interceptors: bool = True,
+                   invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
                    cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
                    reenter: bool = False,
                    on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,

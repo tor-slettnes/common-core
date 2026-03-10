@@ -17,7 +17,7 @@ from cc.protobuf.variant import PyValueMap, KeyValueMap
 ### Switchboard modules
 from ..protobuf import (
     Specification, Status, State, StateSet,
-    ExceptionHandling, CascadeStyle,
+    ExceptionHandling, InvocationStyle, CascadeStyle,
     Dependency, DependencyPolarity,
 )
 
@@ -82,7 +82,7 @@ class RemoteSwitch (RemoteSwitchBase):
                    error: Error|Exception|str|None = None,
                    attributes: Optional[PyValueMap] = None,
                    clear_existing: bool = False,
-                   invoke_interceptors: bool = True,
+                   invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
                    cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
                    reenter: bool = False,
                    on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,

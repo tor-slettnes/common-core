@@ -8,6 +8,7 @@ from .switchboard_types_pb2 import *
 
 from .switchboard_types import (
     ### Overridden type enumerations
+    InvocationStyle,
     CascadeStyle,
     DependencyPolarity,
     ExceptionHandling,

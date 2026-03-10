@@ -8,6 +8,7 @@ from .protobuf import (
     SwitchSelection,
 
     ### Overridden type enumerations
+    InvocationStyle,
     CascadeStyle,
     DependencyPolarity,
     ExceptionHandling,

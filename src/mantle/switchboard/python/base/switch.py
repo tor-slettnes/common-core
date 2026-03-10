@@ -26,7 +26,7 @@ from ..protobuf import (
     Dependency, DependencyMap, DependencyPolarity,
     Localization, LocalizationMap, encodeLocalization, encodeLocalizationMap,
     InterceptorSpec, InterceptorInvocation, InterceptorMethod,
-    InterceptorPhase, ExceptionHandling, CascadeStyle,
+    InterceptorPhase, ExceptionHandling, InvocationStyle, CascadeStyle,
     LanguageCode, LanguageChoice, LocalizationsInput,
 )
 
@@ -833,7 +833,7 @@ class Switch (DocBase):
                    error: Error|Exception|str|None = None,
                    attributes: Optional[PyValueMap] = None,
                    clear_existing: bool = False,
-                   invoke_interceptors: bool = True,
+                   invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
                    cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
                    reenter: bool = False,
                    on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
@@ -866,7 +866,9 @@ class Switch (DocBase):
         @param invoke_interceptors
             Run interceptors associated with each state transition (e.g.  if
             `target_state` is ACTIVE, first run interceptors for ACTIVATING, and
-            if successful, those for ACTIVE).
+            if successful, those for ACTIVE).  Options are: NONE (do not run
+            interceptors), ALL (run interceptors on switch and all its
+            descendants), or INDIRECT (run interceptors only on descendants).
 
         @param cascade_descendants
             Whether and how to cascade the state change, if any, the switch's
@@ -899,7 +901,7 @@ class Switch (DocBase):
                    active: bool,
                    attributes: Optional[PyValueMap] = None,
                    clear_existing: bool = False,
-                   invoke_interceptors: bool = True,
+                   invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
                    cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
                    reenter: bool = False,
                    on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
@@ -928,7 +930,7 @@ class Switch (DocBase):
                   error: Error|Exception|str,
                   attributes: Optional[PyValueMap] = None,
                   clear_existing: bool = False,
-                  invoke_interceptors: bool = True,
+                  invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
                   cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
                   reenter: bool = True,
                   on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
@@ -952,7 +954,7 @@ class Switch (DocBase):
     def set_auto(self,
                  attributes: Optional[PyValueMap] = None,
                  clear_existing: bool = False,
-                 invoke_interceptors: bool = True,
+                 invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
                  cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
                  reenter: bool = False,
                  on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
