@@ -236,7 +236,7 @@ class SwitchboardBase (SwitchboardObserver):
                         declarations: PyValueMap,
                         replace_specifications: bool = False,
                         replace_statuses: bool = True,
-                        invoke_interceptors: InvocationStyle = InvocationStyle.INDIRECT) -> int:
+                        invoke_interceptors: InvocationStyle = InvocationStyle.ALL) -> int:
         '''
         Import switches from a list of key/value declarations, like those
         found in settings files.
@@ -290,7 +290,8 @@ class SwitchboardBase (SwitchboardObserver):
     def load_switches(self,
                       filename: FilePathInput,
                       replace_specifications: bool = False,
-                      replace_statuses: bool = True):
+                      replace_statuses: bool = True,
+                      invoke_interceptors: InvocationStyle = InvocationStyle.ALL):
         '''
         Load switches from a settings file.  Valid file formats are those
         supported by `cc.core.settingsstore.SettingsStore`, including JSON,
@@ -306,7 +307,8 @@ class SwitchboardBase (SwitchboardObserver):
         return self.import_switches(
             declarations = declarations,
             replace_specifications = replace_specifications,
-            replace_statuses = replace_statuses)
+            replace_statuses = replace_statuses,
+            invoke_interceptors = invoke_interceptors)
 
 
     @abstractmethod

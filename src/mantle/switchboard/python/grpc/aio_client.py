@@ -90,7 +90,8 @@ class AsyncClient (AsyncMixIn, BaseClient):
     async def load_switches(self,
                             filename: FilePathInput,
                             replace_specifications: bool = False,
-                            replace_statuses: bool = True):
+                            replace_statuses: bool = True,
+                            invoke_interceptors: InvocationStyle = InvocationStyle.INDIRECT):
         await BaseClient.load_switches(**locals())
 
     @override
