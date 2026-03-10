@@ -25,7 +25,7 @@ from cc.messaging.grpc import SignalClient, AsyncMixIn
 from ..protobuf import (
     Specification, Status, State, StateSet,
     InterceptorMethod, InterceptorInvocation, InterceptorResult,
-    InterceptorPhase, ExceptionHandling,
+    InterceptorPhase, ExceptionHandling, InvocationStyle,
     SwitchSelectionInput,
 )
 
@@ -72,7 +72,9 @@ class AsyncClient (AsyncMixIn, BaseClient):
     async def import_switches(self,
                               declarations: PyValueMap,
                               replace_specifications: bool = False,
-                              replace_statuses: bool = True) -> int:
+                              replace_statuses: bool = True,
+                              invoke_interceptors: InvocationStyle = InvocationStyle.INDIRECT,
+                              ) -> int:
         response = await BaseClient.import_switches(**locals())
         return response.import_count
 

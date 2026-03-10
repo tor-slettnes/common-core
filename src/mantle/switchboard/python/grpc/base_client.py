@@ -33,7 +33,7 @@ from ..protobuf import (
     AddInterceptorRequest, RemoveInterceptorRequest,
     InterceptorInvocation, InterceptorResult, InterceptorMethod,
     InterceptorSpec, InterceptorPhase,
-    ExceptionHandling,
+    ExceptionHandling, InvocationStyle,
 )
 from ..base.baseboard import SwitchboardBase
 from .remote_switch import RemoteSwitch
@@ -166,12 +166,15 @@ class BaseClient (SwitchboardBase, SignalClient):
     def import_switches(self,
                         declarations: PyValueMap,
                         replace_specifications: bool = False,
-                        replace_statuses: bool = True) -> ImportResponse:
+                        replace_statuses: bool = True,
+                        invoke_interceptors: InvocationStyle = InvocationStyle.INDIRECT,
+                        ) -> ImportResponse:
 
         req = ImportRequest(
             declarations = encodeKeyValueMap(declarations),
             replace_specifications = replace_specifications,
-            replace_statuses = replace_statuses)
+            replace_statuses = replace_statuses,
+            invoke_interceptors = invoke_interceptors)
 
         return self.stub.ImportSwitches(req)
 

@@ -444,6 +444,10 @@ module CC
             // Replace existing statuses when importing
             @default(TRUE)
             boolean replace_statuses;
+
+            // Invoke interceptors following the initial state change, if any
+            @default(INVOKE_INDIRECT)
+            InvocationStyle invoke_interceptors;
         };
 
 

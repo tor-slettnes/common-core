@@ -72,7 +72,8 @@ namespace switchboard::dds
         return this->provider->import_switches(
             idl::decoded<core::types::KeyValueMap>(req.declarations()),
             req.replace_specifications(),
-            req.replace_statuses());
+            req.replace_statuses(),
+            idl::decoded<switchboard::InvocationStyle>(req.invoke_interceptors()));
     }
 
     CC::Variant::TaggedValueList RequestHandler::export_switches(

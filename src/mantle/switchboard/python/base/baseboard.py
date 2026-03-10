@@ -27,7 +27,7 @@ from ..protobuf import (
     Signal, Specification, Status,
     InterceptorSpec, InterceptorMethod, InterceptorPhase,
     InterceptorInvocation, InterceptorResult,
-    ExceptionHandling,
+    ExceptionHandling, InvocationStyle,
     State, StateMask, StateSet, encodeStateSet,
     SwitchSelectionInput,
 )
@@ -235,13 +235,24 @@ class SwitchboardBase (SwitchboardObserver):
     def import_switches(self,
                         declarations: PyValueMap,
                         replace_specifications: bool = False,
-                        replace_statuses: bool = True) -> int:
+                        replace_statuses: bool = True,
+                        invoke_interceptors: InvocationStyle = InvocationStyle.INDIRECT) -> int:
         '''
         Import switches from a list of key/value declarations, like those
         found in settings files.
 
         @param declarations
             A list of key/value objects, like those read from a settings file.
+
+        @param replace_specifications
+            Replace existing specifications: aliases, localizations, dependencies
+            (but not interceptors)
+
+        @param replace_statuses
+            Replace existing switch statuses
+
+        @param invoke_interceptors
+            If statuses were added or changed, also invoke interceptors
 
         @return
             Number of switches that were added

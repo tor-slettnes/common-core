@@ -60,7 +60,8 @@ namespace switchboard::dds
         uint import_switches(
             const core::types::KeyValueMap &declarations,
             bool replace_specifications,
-            bool replace_statuses) override;
+            bool replace_statuses,
+            InvocationStyle invoke_interceptors) override;
 
         core::types::KeyValueMap export_switches(
             const std::optional<SwitchSelection> &selection,

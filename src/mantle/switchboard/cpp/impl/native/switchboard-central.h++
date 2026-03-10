@@ -41,7 +41,6 @@ namespace switchboard
             InterceptorName,
             InterceptorFactoryData>;
 
-
     protected:
         Central();
 
@@ -64,7 +63,8 @@ namespace switchboard
         uint import_switches(
             const core::types::KeyValueMap &switches,
             bool replace_specifications,
-            bool replace_statuses) override;
+            bool replace_statuses,
+            InvocationStyle invoke_interceptors) override;
 
         core::types::KeyValueMap export_switches(
             const std::optional<SwitchSelection> &selection,
@@ -81,17 +81,18 @@ namespace switchboard
             const InterceptorName &name,
             const std::optional<SwitchSelection> &switch_selection = {}) override;
 
-
     private:
         void load_default_switches(
             bool replace_specifications = false,
-            bool replace_statuses = false);
+            bool replace_statuses = false,
+            InvocationStyle invoke_interceptors = InvocationStyle::INDIRECT);
 
         bool import_switch(
             const std::string &name,
             const core::types::KeyValueMap &declaration,
             bool replace_specification,
-            bool replace_status);
+            bool replace_status,
+            InvocationStyle invoke_interceptors);
 
         core::types::KeyValueMap export_switch(
             const SwitchRef &sw,

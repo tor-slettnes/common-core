@@ -115,12 +115,16 @@ namespace switchboard::grpc
     uint Proxy::import_switches(
         const core::types::KeyValueMap &declarations,
         bool replace_specifications,
-        bool replace_statuses)
+        bool replace_statuses,
+        InvocationStyle invoke_interceptors)
     {
         cc::platform::switchboard::protobuf::ImportRequest req;
         cc::protobuf::encode(declarations, req.mutable_declarations());
         req.set_replace_specifications(replace_specifications);
         req.set_replace_statuses(replace_statuses);
+        req.set_invoke_interceptors(
+            cc::protobuf::encoded<cc::platform::switchboard::protobuf::InvocationStyle>(
+                invoke_interceptors));
         return this->call_check(&Stub::ImportSwitches, req).import_count();
     }
 

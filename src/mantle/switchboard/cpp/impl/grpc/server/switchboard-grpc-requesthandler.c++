@@ -130,7 +130,10 @@ namespace switchboard::grpc
             uint count = this->provider->import_switches(
                 cc::protobuf::decoded<core::types::KeyValueMap>(request->declarations()),
                 request->has_replace_specifications() ? request->replace_specifications() : false,
-                request->has_replace_statuses() ? request->replace_statuses() : true);
+                request->has_replace_statuses() ? request->replace_statuses() : true,
+                request->has_invoke_interceptors()
+                    ? cc::protobuf::decoded<switchboard::InvocationStyle>(request->invoke_interceptors())
+                    : switchboard::InvocationStyle::INDIRECT);
             reply->set_import_count(count);
             return ::grpc::Status::OK;
         }

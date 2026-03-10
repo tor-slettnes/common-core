@@ -171,7 +171,8 @@ namespace switchboard
         void import_status(
             const core::types::KeyValueMap &status,
             bool replace_attributes,
-            bool update_state);
+            bool set_state,
+            InvocationStyle invoke_interceptors);
 
     private:
         void export_spec(

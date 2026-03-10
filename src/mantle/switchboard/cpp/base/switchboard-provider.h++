@@ -33,7 +33,8 @@ namespace switchboard
 
         bool load(const fs::path &filename,
                   bool replace_specifications = false,
-                  bool replace_statuses = true);
+                  bool replace_statuses = true,
+                  InvocationStyle invoke_interceptors = InvocationStyle::ALL);
 
         bool save(const fs::path &filename,
                   bool include_specifications = false,
@@ -118,15 +119,18 @@ namespace switchboard
         /// @param[in] declarations
         ///     Switch names mapped to corresponding declarations, structured
         ///     like those those in a declarations file.
-        /// @param[in] include_specifications
+        /// @param[in] replae_specifications
         ///     Parse and update switch specifications from the provided maps.
-        /// @param[in] include_specs
+        /// @param[in] replace_statuses
         ///     Parse and update switch statuses from the provided maps.
+        /// @param[in] invoke_interceptors
+        ///     Invoke interceptors if setting the initial state
 
         virtual uint import_switches(
             const core::types::KeyValueMap &declarations,
             bool replace_specifications = false,
-            bool replace_statuses = true) = 0;
+            bool replace_statuses = true,
+            InvocationStyle invoke_interceptors = InvocationStyle::ALL) = 0;
 
         /// @brief Export switches to a key/value map
         /// @param[in] selection

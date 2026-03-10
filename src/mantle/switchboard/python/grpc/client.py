@@ -24,7 +24,7 @@ from cc.protobuf.variant import PyValueMap, decodeKeyValueMap
 from ..protobuf import (
     Status, State, StateSet,
     InterceptorMethod, InterceptorInvocation, InterceptorResult,
-    InterceptorPhase, ExceptionHandling,
+    InterceptorPhase, ExceptionHandling, InvocationStyle,
     SwitchSelectionInput,
 )
 
@@ -75,7 +75,9 @@ class Client (BaseClient):
     def import_switches(self,
                         declarations: PyValueMap,
                         replace_specifications: bool = False,
-                        replace_statuses: bool = True) -> int:
+                        replace_statuses: bool = True,
+                        invoke_interceptors: InvocationStyle = InvocationStyle.INDIRECT,
+                        ) -> int:
         response = BaseClient.import_switches(**locals())
         return response.import_count
 

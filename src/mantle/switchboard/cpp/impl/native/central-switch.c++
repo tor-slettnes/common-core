@@ -523,12 +523,12 @@ namespace switchboard
 
         case EH_REVERT:
             this->set_target(
-                this->settled_state(),  // target_state
-                this->error(),          // error
-                {},                     // attributes
-                false,                  // clear_existing
-                InvocationStyle::DEFAULT, // invoke_interceptors
-                CascadeStyle::NONE);    // cascade_descendants
+                this->settled_state(),     // target_state
+                this->error(),             // error
+                {},                        // attributes
+                false,                     // clear_existing
+                InvocationStyle::DEFAULT,  // invoke_interceptors
+                CascadeStyle::NONE);       // cascade_descendants
             return true;
 
         default:
@@ -651,7 +651,7 @@ namespace switchboard
             replace_dependencies,   // replace_dependencies
             {},                     // interceptors
             replace_interceptors,   // replace_interceptors
-            false);                 // update_state
+            false);                 // set_state
     }
 
     Localization CentralSwitch::import_localization(
@@ -734,7 +734,8 @@ namespace switchboard
     void CentralSwitch::import_status(
         const core::types::KeyValueMap &status,
         bool replace_attributes,
-        bool update_state)
+        bool set_state,
+        InvocationStyle invoke_interceptors)
     {
         const auto &attributes = status.get(SETTING_SWITCH_ATTRIBUTES).get_kvmap();
 
@@ -743,23 +744,26 @@ namespace switchboard
             auto error = std::make_shared<core::status::Error>(error_spec.get_kvmap());
 
             this->set_error(
-                error,                // error
-                attributes,           // attributes
-                replace_attributes);  // clear_existing
+                error,                 // error
+                attributes,            // attributes
+                replace_attributes,    // clear_existing
+                invoke_interceptors);  // invoke_interceptors
         }
         else if (State state = status.get(SETTING_SWITCH_STATE).convert_to<State>())
         {
             this->set_target(
-                state,                // target_state
-                {},                   // error
-                attributes,           // attributes
-                replace_attributes);  // clear_existing
+                state,                 // target_state
+                {},                    // error
+                attributes,            // attributes
+                replace_attributes,    // clear_existing
+                invoke_interceptors);  // invoke_interceptors
         }
-        else if (update_state)
+        else if (set_state)
         {
             this->set_auto(
-                attributes,           // attributes
-                replace_attributes);  // clear_existing
+                attributes,            // attributes
+                replace_attributes,    // clear_existing
+                invoke_interceptors);  // invoke_interceptors
         }
         else
         {

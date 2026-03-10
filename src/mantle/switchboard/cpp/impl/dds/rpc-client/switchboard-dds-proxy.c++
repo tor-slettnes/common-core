@@ -115,15 +115,17 @@ namespace switchboard::dds
     uint Proxy::import_switches(
         const core::types::KeyValueMap &declarations,
         bool replace_specifications,
-        bool replace_statuses)
+        bool replace_statuses,
+        InvocationStyle invoke_interceptors)
     {
         CC::Switchboard::ImportRequest req;
         idl::encode(declarations, &req.declarations());
         req.replace_specifications(replace_specifications);
         req.replace_statuses(replace_statuses);
+        req.invoke_interceptors(
+            idl::encoded<CC::Switchboard::InvocationStyle>(invoke_interceptors));
         return this->client()->import_switches(req);
     }
-
 
     core::types::KeyValueMap Proxy::export_switches(
         const std::optional<SwitchSelection> &selection,
@@ -161,7 +163,6 @@ namespace switchboard::dds
         idl::encode_optional(switch_selection, &req.switch_selection());
         return this->client()->remove_interceptor(req);
     }
-
 
     bool Proxy::wait_for_service(
         const core::dt::Duration &timeout) const

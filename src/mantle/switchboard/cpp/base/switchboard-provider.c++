@@ -28,13 +28,15 @@ namespace switchboard
 
     bool Provider::load(const fs::path &filename,
                         bool replace_specifications,
-                        bool replace_statuses)
+                        bool replace_statuses,
+                        InvocationStyle invoke_interceptors)
     {
         core::SettingsStore store(filename);
         uint count = this->import_switches(
             store,
             replace_specifications,
-            replace_statuses);
+            replace_statuses,
+            invoke_interceptors);
         logf_info("Added %r switches from %r", count, filename);
         return (count > 0);
     }

@@ -97,8 +97,9 @@ namespace switchboard
         if (reload)
         {
             this->load_default_switches(
-                true,   // replace_specifications
-                true);  // replace_statuses
+                true,                        // replace_specifications
+                true,                        // replace_statuses
+                InvocationStyle::INDIRECT);  // invoke_interceptors
         }
 
         bool changes = false;
@@ -122,7 +123,8 @@ namespace switchboard
 
     void Central::load_default_switches(
         bool replace_specifications,
-        bool replace_statuses)
+        bool replace_statuses,
+        InvocationStyle invoke_interceptors)
     {
         for (const auto &filename : core::settings->get(SETTING_SWITCH_CONFIG_FILES).get_valuelist())
         {
@@ -131,7 +133,8 @@ namespace switchboard
                 logf_debug("Loading switches from: %s", filename);
                 this->load(filename.as_string(),
                            replace_specifications,
-                           replace_statuses);
+                           replace_statuses,
+                           invoke_interceptors);
             }
             catch (const std::exception &e)
             {
@@ -142,7 +145,8 @@ namespace switchboard
 
     uint Central::import_switches(const core::types::KeyValueMap &declarations,
                                   bool replace_specifications,
-                                  bool replace_statuses)
+                                  bool replace_statuses,
+                                  InvocationStyle invoke_interceptors)
     {
         uint count = 0;
         for (const auto &[name, declaration] : declarations)
@@ -150,7 +154,8 @@ namespace switchboard
             count += this->import_switch(name,
                                          declaration.get_kvmap(),
                                          replace_specifications,
-                                         replace_statuses);
+                                         replace_statuses,
+                                         invoke_interceptors);
         }
         return count;
     }
@@ -275,7 +280,8 @@ namespace switchboard
         const std::string &name,
         const core::types::KeyValueMap &declaration,
         bool replace_specification,
-        bool replace_status)
+        bool replace_status,
+        InvocationStyle invoke_interceptors)
     {
         bool default_active = declaration.get(SETTING_SWITCH_ACTIVE).as_bool();
         auto [sw, inserted] = this->add_switch(name, default_active);
@@ -290,9 +296,10 @@ namespace switchboard
                 false);                 // replace_interceptors
 
             central_switch->import_status(
-                declaration,                  // declaration
-                replace_status,               // replace_attributes
-                replace_status || inserted);  // update_state
+                declaration,                 // declaration
+                replace_status,              // replace_attributes
+                replace_status || inserted,  // set_state
+                invoke_interceptors);        // invoke_interceptors
         }
 
         return inserted;
