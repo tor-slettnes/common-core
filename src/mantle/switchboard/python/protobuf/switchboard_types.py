@@ -119,6 +119,7 @@ def encodeOptionalSwitchSelection(patterns: SwitchSelectionInput|None,
 
 
 def encodeSwitchSelection(patterns: SwitchSelectionInput,
+                          with_ancestors: bool|None = None,
                           ) -> SwitchSelection:
 
     if isinstance(patterns, SwitchSelection):
@@ -152,4 +153,5 @@ def encodeSwitchSelection(patterns: SwitchSelectionInput,
     return SwitchSelection(
         patterns = patterns,
         is_regex = use_regex,
+        with_ancestors = with_ancestors,
     )

@@ -117,9 +117,47 @@ class SwitchboardBase (SwitchboardObserver):
         '''
 
     @abstractmethod
-    def get_status(self) -> Mapping[str, Status]:
+    def get_switches(self,
+                     selection: SwitchSelectionInput|None = None,
+                     with_ancestors: bool = False) -> Mapping[str, Switch]:
+        '''
+        Get avaialble switches directly from the server
+
+        @param selection
+            Switch name patterns to include in response.  These may be strings
+            representing individual switches, shell-style globbing expressions
+            containing placeholders such as '*', '?', and/or '[a-z]', or
+            compiled regular expression objects.
+
+        @param with_ancestors
+            Recursively include ancestors, i.e., switches that are direct or
+            indirect dependencies of those included in 'selection'.
+
+        @return
+            A map of ProtoBuf `Switch` structures.
+        '''
+
+
+    @abstractmethod
+    def get_status(self,
+                   selection: SwitchSelectionInput|None = None,
+                   with_ancestors: bool = False,
+                   ) -> Mapping[str, Status]:
         '''
         Get a mapping of switch names and corresponding statuses.
+
+        @param selection
+            Switch name patterns to include in response.  These may be strings
+            representing individual switches, shell-style globbing expressions
+            containing placeholders such as '*', '?', and/or '[a-z]', or
+            compiled regular expression objects.
+
+        @param with_ancestors
+            Recursively include ancestors, i.e., switches that are direct or
+            indirect dependencies of those included in 'selection'.
+
+        @return
+            A map of switch names and corresponding Status objects.
         '''
 
 
@@ -269,12 +307,9 @@ class SwitchboardBase (SwitchboardObserver):
 
         @param selection
             Switch name patterns to include in export.  These may be strings
-            representing individual switches, shell-style globbing expressions,
-            or compiled regular expression objects.
-
-        Shell-style globbing
-            syntax using '*', '?', or '[a-z]' ranges is supported. By default
-            all switches are exported.
+            representing individual switches, shell-style globbing expressions
+            containing placeholders such as '*', '?', and/or '[a-z]', or
+            compiled regular expression objects.
 
         @param include_specifications
             Include switch specifications in export
@@ -327,8 +362,10 @@ class SwitchboardBase (SwitchboardObserver):
             `cc.core.settingsstore.SettingsStore` for details.
 
         @param selection
-            A list of switches to include in export. By default all switches are
-            exported.
+            Switch name patterns to include in export.  These may be strings
+            representing individual switches, shell-style globbing expressions
+            containing placeholders such as '*', '?', and/or '[a-z]', or
+            compiled regular expression objects.
 
         @param include_specifications
             Include switch specifications in export

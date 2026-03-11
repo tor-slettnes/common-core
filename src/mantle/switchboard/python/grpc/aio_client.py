@@ -43,8 +43,11 @@ class AsyncClient (AsyncMixIn, BaseClient):
         return AsyncRemoteSwitch(switch_name, self)
 
     @override
-    async def get_status(self) -> Mapping[str, Status]:
-        response = await BaseClient.get_status(self)
+    async def get_status(self,
+                         selection: SwitchSelectionInput|None = None,
+                         with_ancestors: bool = False,
+                         ) -> Mapping[str, Status]:
+        response = await BaseClient.get_status(**locals())
         return response.map
 
     @override

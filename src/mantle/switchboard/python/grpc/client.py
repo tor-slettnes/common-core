@@ -43,8 +43,11 @@ class Client (BaseClient):
         return RemoteSwitch(switch_name, self)
 
     @override
-    def get_status(self) -> Mapping[str, Status]:
-        response = BaseClient.get_status(self)
+    def get_status(self,
+                   selection: SwitchSelectionInput|None = None,
+                   with_ancestors: bool = False,
+                   ) -> Mapping[str, Status]:
+        response = BaseClient.get_status(**locals())
         return response.map
 
     @override

@@ -7,6 +7,7 @@
 
 #include "switchboard-grpc-requesthandler.h++"
 #include "switchboard-grpc-signalqueue.h++"
+#include "switchboard-types.h++"
 #include "logging/logging.h++"
 #include "protobuf-switchboard-types.h++"
 #include "protobuf-event-types.h++"
@@ -27,12 +28,15 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::GetSwitches(
         ::grpc::ServerContext *context,
-        const ::google::protobuf::Empty *request,
+        const switchboard::protobuf::SwitchSelection *request,
         switchboard::protobuf::SwitchMap *reply)
     {
         try
         {
-            cc::protobuf::encode(this->provider->get_switches(), reply);
+            cc::protobuf::encode(
+                this->provider->get_selected_switches(
+                    cc::protobuf::decoded<switchboard::SwitchSelection>(*request)),
+                reply);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -205,13 +209,14 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::GetSpecifications(
         ::grpc::ServerContext *context,
-        const switchboard::protobuf::SwitchIdentifiers *request,
+        const switchboard::protobuf::SwitchSelection *request,
         switchboard::protobuf::SpecificationMap *reply)
     {
         try
         {
             auto &specmap = *reply->mutable_map();
-            for (const auto &[name, sw] : this->get_switches(request->switch_names()))
+            for (const auto &[name, sw] : provider->get_selected_switches(
+                     cc::protobuf::decoded<switchboard::SwitchSelection>(*request)))
             {
                 cc::protobuf::encode(*sw->spec(), &specmap[name]);
             }
@@ -593,13 +598,15 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::GetStatuses(
         ::grpc::ServerContext *context,
-        const switchboard::protobuf::SwitchIdentifiers *request,
+        const switchboard::protobuf::SwitchSelection *request,
         switchboard::protobuf::StatusMap *reply)
     {
         try
         {
             auto &statusmap = *reply->mutable_map();
-            for (const auto &[name, sw] : this->get_switches(request->switch_names()))
+            for (const auto &[name, sw] :
+                 provider->get_selected_switches(
+                     cc::protobuf::decoded<switchboard::SwitchSelection>(*request)))
             {
                 cc::protobuf::encode(*sw->status(), &statusmap[name]);
             }
@@ -662,28 +669,6 @@ namespace switchboard::grpc
             context,
             request,
             writer);
-    }
-
-    SwitchMap RequestHandler::get_switches(
-        const google::protobuf::RepeatedPtrField<std::string> &switch_names) const
-    {
-        SwitchMap switches;
-        if (switch_names.empty())
-        {
-            switches = this->provider->get_switches();
-        }
-        else
-        {
-            for (const std::string &name : switch_names)
-            {
-                if (const auto &sw = this->provider->get_switch(name))
-                {
-                    switches.insert_or_assign(name, sw);
-                }
-            }
-        }
-
-        return switches;
     }
 
     RequestHandler::InterceptorSessionID RequestHandler::create_session(

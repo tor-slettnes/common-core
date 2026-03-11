@@ -697,7 +697,7 @@ namespace switchboard
     void Options::remove_dependency()
     {
         switchboard::SwitchRef sw = this->get_switch(true);
-        std::string pred_name = this->get_arg("predecessor state");
+        std::string pred_name = this->get_arg("predecessor");
         bool status = sw->remove_dependency(pred_name);
         this->report_status_and_exit(status);
     }

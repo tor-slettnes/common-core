@@ -169,16 +169,20 @@ namespace switchboard
     {
     }
 
-    SwitchSelection::SwitchSelection(const std::string &switch_name)
+    SwitchSelection::SwitchSelection(const std::string &switch_name,
+                                     bool with_ancestors)
         : patterns({switch_name}),
-          is_regex(false)
+          is_regex(false),
+          with_ancestors(with_ancestors)
     {
     }
 
     SwitchSelection::SwitchSelection(const std::vector<std::string> &patterns,
-                                     bool is_regex)
+                                     bool is_regex,
+                                     bool with_ancestors)
         : patterns(patterns),
-          is_regex(is_regex)
+          is_regex(is_regex),
+          with_ancestors(with_ancestors)
     {
         if (is_regex)
         {

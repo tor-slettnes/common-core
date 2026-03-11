@@ -56,6 +56,15 @@ namespace switchboard
         virtual SwitchMap get_switches() const;
 
         /// @brief
+        ///    Get a map of selected switches
+        /// @param[in] selection
+        ///     Switch name patterns to include in response.
+        /// @return
+        ///    A map of switches
+        virtual SwitchMap get_selected_switches(
+            const SwitchSelection &selection) const;
+
+        /// @brief
         ///    Find an existing switch, or create a new one if missing
         /// @param[in] name
         ///    Switch name
@@ -187,6 +196,13 @@ namespace switchboard
         virtual bool remove_interceptor(
             const InterceptorName &name,
             const std::optional<SwitchSelection> &switch_selection = {}) = 0;
+
+    protected:
+        SwitchMap find_regex_matches(
+            const std::vector<std::string> &patterns) const;
+
+        SwitchMap find_glob_matches(
+            const std::vector<std::string> &patterns) const;
 
     protected:
         /// @brief

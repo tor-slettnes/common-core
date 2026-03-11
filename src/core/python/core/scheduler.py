@@ -144,19 +144,24 @@ class Scheduler (LogBase):
         if not handle:
             handle = uuid.uuid1()
 
-        args = (handle, interval, method, args, kwargs, count, retries, align, delay)
+        task_args = (handle, interval, method, args, kwargs, count, retries, align, delay)
 
         ### Acquire task scheduling mutex; this will be released within
         ### the "_runTask" method.
         self._mutex.acquire()
 
         if (synchronous):
-            self._runTask(*args)
+            self._runTask(*task_args)
         else:
             if waitstart:
                 pending = self._pendingStart[handle] = Event()
 
-            thread = Thread(None, self._runTask, handle, args, daemon=True)
+            thread = Thread(
+                target = self._runTask,
+                name = handle,
+                args = task_args,
+                daemon = True)
+
             thread.start()
 
             if waitstart:

@@ -99,12 +99,6 @@ namespace switchboard
             bool include_specification,
             bool include_status) const;
 
-        SwitchMap find_regex_matches(
-            const std::vector<std::string> &patterns) const;
-
-        SwitchMap find_glob_matches(
-            const std::vector<std::string> &patterns) const;
-
     private:
         InterceptorFactoryMap interceptor_factory_map;
     };

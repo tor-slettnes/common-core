@@ -112,6 +112,7 @@ namespace cc::protobuf
     {
         assign_repeated(patterns.patterns, msg->mutable_patterns());
         msg->set_is_regex(patterns.is_regex);
+        msg->set_with_ancestors(patterns.with_ancestors);
     }
 
     void decode(const cc::platform::switchboard::protobuf::SwitchSelection &msg,
@@ -119,6 +120,7 @@ namespace cc::protobuf
     {
         assign_to_vector(msg.patterns(), &patterns->patterns);
         patterns->is_regex = msg.is_regex();
+        patterns->with_ancestors = msg.with_ancestors();
     }
 
     //==========================================================================

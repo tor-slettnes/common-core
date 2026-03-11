@@ -92,7 +92,6 @@ class BaseClient (SwitchboardBase, SignalClient):
     def __del__(self):
         self.stop_intercepting()
 
-
     def initialize(self):
         SwitchboardBase.initialize(self)
         SignalClient.initialize(self)
@@ -110,9 +109,13 @@ class BaseClient (SwitchboardBase, SignalClient):
             active = initially_active)
         return self.stub.AddSwitch(request)
 
+
     @override
-    def get_status(self) -> StatusMap:
-        request = SwitchIdentifiers()
+    def get_status(self,
+                   selection: SwitchSelectionInput|None = None,
+                   with_ancestors: bool = False,
+                   ) -> StatusMap:
+        request = encodeSwitchSelection(selection, with_ancestors = with_ancestors)
         return self.stub.GetStatuses(request)
 
     @override

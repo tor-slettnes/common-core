@@ -28,7 +28,9 @@ namespace switchboard::dds
         RequestHandler(const std::shared_ptr<Provider> &provider);
 
     public:
-        CC::Switchboard::SwitchList get_switches() override;
+        CC::Switchboard::SwitchList get_switches(
+            const CC::Switchboard::SwitchSelection &req) override;
+
         CC::Switchboard::Switch get_switch(
             const SwitchName &switch_name) override;
 

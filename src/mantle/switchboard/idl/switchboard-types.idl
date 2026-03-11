@@ -459,6 +459,9 @@ module CC
 
             // The pattern is a regular expression.
             boolean is_regex;
+
+            // Recursively include ancestor switches
+            boolean with_ancestors;
         };
 
 

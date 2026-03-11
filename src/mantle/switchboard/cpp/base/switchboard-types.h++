@@ -182,9 +182,11 @@ namespace switchboard
     {
     public:
         SwitchSelection();
-        SwitchSelection(const std::string &switch_name);
+        SwitchSelection(const std::string &switch_name,
+                        bool with_ancestors = false);
         SwitchSelection(const std::vector<std::string> &patterns,
-                        bool is_regex = false);
+                        bool is_regex = false,
+                        bool with_ancestors = false);
 
         bool matches(const SwitchName &switch_name) const;
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
@@ -192,6 +194,7 @@ namespace switchboard
     public:
         std::vector<std::string> patterns;
         bool is_regex = false;
+        bool with_ancestors = false;
         std::vector<std::regex> regex_patterns;
     };
 

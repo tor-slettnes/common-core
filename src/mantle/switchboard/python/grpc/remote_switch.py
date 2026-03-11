@@ -112,6 +112,11 @@ class RemoteSwitch (RemoteSwitchBase):
         return response.map.get(self.name)
 
     @override
+    def get_ancestor_statuses(self) -> Mapping[str, Status]:
+        response = RemoteSwitchBase.get_ancestor_statuses(**locals())
+        return response.map
+
+    @override
     def get_culprits(self,
                      expected_position: bool = True) -> Mapping[str, Status]:
 

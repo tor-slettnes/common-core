@@ -180,9 +180,17 @@ class RemoteSwitchBase (Switch):
 
     @override
     def get_status(self) -> StatusMap:
-        req = SwitchIdentifiers(
-            switch_names = [self.name])
+        req = SwitchSelection(
+            patterns = [self.name])
 
+        return self.stub.GetStatuses(req)
+
+
+    @override
+    def get_ancestor_statuses(self) -> StatusMap:
+        req = SwitchSelection(
+            patterns = [self.name],
+            with_ancestors = True)
         return self.stub.GetStatuses(req)
 
 

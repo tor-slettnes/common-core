@@ -94,6 +94,7 @@ namespace idl
     {
         idl->patterns(native.patterns);
         idl->is_regex(native.is_regex);
+        idl->with_ancestors(native.with_ancestors);
     }
 
     void decode(const CC::Switchboard::SwitchSelection &idl,
@@ -101,6 +102,7 @@ namespace idl
     {
         native->patterns = idl.patterns();
         native->is_regex = idl.is_regex();
+        native->with_ancestors = idl.with_ancestors();
     }
 
     // CC::Switchboard::Localization

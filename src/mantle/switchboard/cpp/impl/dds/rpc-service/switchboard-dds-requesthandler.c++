@@ -22,9 +22,12 @@ namespace switchboard::dds
         logf_debug("Switchboard DDS request handler");
     }
 
-    CC::Switchboard::SwitchList RequestHandler::get_switches()
+    CC::Switchboard::SwitchList RequestHandler::get_switches(
+        const CC::Switchboard::SwitchSelection &req)
     {
-        return idl::encoded<CC::Switchboard::SwitchList>(this->provider->get_switches());
+        return idl::encoded<CC::Switchboard::SwitchList>(
+            this->provider->get_selected_switches(
+                idl::decoded<switchboard::SwitchSelection>(req)));
     }
 
     CC::Switchboard::Switch RequestHandler::get_switch(const SwitchName &switch_name)

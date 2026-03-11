@@ -183,7 +183,8 @@ namespace switchboard::dds
         if (!this->synchronized_)
         {
             logf_debug("Reading switches from server");
-            for (const CC::Switchboard::Switch &data : this->client()->get_switches().list())
+            CC::Switchboard::SwitchSelection request;
+            for (const CC::Switchboard::Switch &data : this->client()->get_switches(request).list())
             {
                 this->on_spec_update(
                     core::signal::MAP_ADDITION,

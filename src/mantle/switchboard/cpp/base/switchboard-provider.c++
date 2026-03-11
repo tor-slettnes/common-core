@@ -8,6 +8,7 @@
 #include "switchboard-provider.h++"
 #include "settings/settingsstore.h++"
 #include "status/exceptions.h++"
+#include "platform/path.h++"
 
 namespace switchboard
 {
@@ -133,6 +134,38 @@ namespace switchboard
         return this->switches;
     }
 
+    SwitchMap Provider::get_selected_switches(
+        const SwitchSelection &selection) const
+    {
+        if (selection.patterns.empty())
+        {
+            return this->get_switches();
+        }
+        else
+        {
+            SwitchMap matches =
+                selection.is_regex
+                    ? this->find_regex_matches(selection.patterns)
+                    : this->find_glob_matches(selection.patterns);
+
+            if (selection.with_ancestors)
+            {
+                SwitchMap indirect_matches;
+                for (const auto &[switch_name, sw] : matches)
+                {
+                    indirect_matches.try_emplace(switch_name, sw);
+                    for (const auto &ancestor : sw->get_ancestors())
+                    {
+                        indirect_matches.try_emplace(ancestor->name(), ancestor);
+                    }
+                }
+                matches.merge(std::move(indirect_matches));
+            }
+
+            return matches;
+        }
+    }
+
     SwitchRef Provider::get_or_add_switch(
         const SwitchName &name,
         bool active)
@@ -167,6 +200,50 @@ namespace switchboard
         {
             return {};
         }
+    }
+
+    SwitchMap Provider::find_regex_matches(
+        const std::vector<std::string> &patterns) const
+    {
+        SwitchMap matches;
+
+        std::vector<std::regex> rx_patterns;
+        rx_patterns.reserve(patterns.size());
+        for (const std::string &pattern : patterns)
+        {
+            rx_patterns.emplace_back(pattern);
+        }
+
+        for (const auto &[name, sw] : this->get_switches())
+        {
+            for (const std::regex &rx : rx_patterns)
+            {
+                if (std::regex_match(name, rx))
+                {
+                    matches.try_emplace(name, sw);
+                    break;
+                }
+            }
+        }
+        return matches;
+    }
+
+    SwitchMap Provider::find_glob_matches(
+        const std::vector<std::string> &patterns) const
+    {
+        SwitchMap matches;
+        for (const auto &[name, sw] : this->get_switches())
+        {
+            for (const std::string &pattern : patterns)
+            {
+                if (core::platform::path->filename_match(pattern, name, true))
+                {
+                    matches.try_emplace(name, sw);
+                    break;
+                }
+            }
+        }
+        return matches;
     }
 
     std::shared_ptr<Provider> provider;

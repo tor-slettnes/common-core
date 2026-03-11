@@ -69,7 +69,7 @@ namespace switchboard::grpc
     public:
         ::grpc::Status GetSwitches(
             ::grpc::ServerContext *context,
-            const ::google::protobuf::Empty *request,
+            const switchboard::protobuf::SwitchSelection *request,
             switchboard::protobuf::SwitchMap *reply) override;
 
         ::grpc::Status GetSwitch(
@@ -109,7 +109,7 @@ namespace switchboard::grpc
 
         ::grpc::Status GetSpecifications(
             ::grpc::ServerContext *context,
-            const switchboard::protobuf::SwitchIdentifiers *request,
+            const switchboard::protobuf::SwitchSelection *request,
             switchboard::protobuf::SpecificationMap *reply) override;
 
         ::grpc::Status AddDependency(
@@ -178,7 +178,7 @@ namespace switchboard::grpc
 
         ::grpc::Status GetStatuses(
             ::grpc::ServerContext *context,
-            const switchboard::protobuf::SwitchIdentifiers *request,
+            const switchboard::protobuf::SwitchSelection *request,
             switchboard::protobuf::StatusMap *reply) override;
 
         ::grpc::Status GetCulprits(
@@ -197,9 +197,6 @@ namespace switchboard::grpc
             ::grpc::ServerWriter<switchboard::protobuf::Signal> *writer) override;
 
     private:
-        SwitchMap get_switches(
-            const ::google::protobuf::RepeatedPtrField<std::string> &switch_names) const;
-
         InterceptorSessionID create_session(
             ::grpc::ServerContext *context,
             InterceptorStream *stream);

@@ -1028,6 +1028,12 @@ class Switch (DocBase):
         '''
 
     @abstractmethod
+    def get_ancestor_statuses(self) -> Mapping[str, Status]:
+        '''
+        Retrieve status of this switch from the server
+        '''
+
+    @abstractmethod
     def get_culprits(self, expected_position: bool = True) -> Mapping[str, Status]:
         '''
         Obtain root causes for a switch not being in the expected positiion.

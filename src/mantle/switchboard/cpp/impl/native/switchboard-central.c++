@@ -9,7 +9,6 @@
 #include "central-switch.h++"
 #include "switch-dependency.h++"
 #include "platform/symbols.h++"
-#include "platform/path.h++"
 #include "status/exceptions.h++"
 #include "settings/settings.h++"
 
@@ -37,6 +36,7 @@ namespace switchboard
     {
         return this->available();
     }
+
 
     std::pair<SwitchRef, bool> Central::add_switch(
         const SwitchName &switch_name,
@@ -230,50 +230,6 @@ namespace switchboard
             }
         }
         return removed;
-    }
-
-    SwitchMap Central::find_regex_matches(
-        const std::vector<std::string> &patterns) const
-    {
-        SwitchMap matches;
-
-        std::vector<std::regex> rx_patterns;
-        rx_patterns.reserve(patterns.size());
-        for (const std::string &pattern : patterns)
-        {
-            rx_patterns.emplace_back(pattern);
-        }
-
-        for (const auto &[name, sw] : this->switches)
-        {
-            for (const std::regex &rx : rx_patterns)
-            {
-                if (std::regex_match(name, rx))
-                {
-                    matches.try_emplace(name, sw);
-                    break;
-                }
-            }
-        }
-        return matches;
-    }
-
-    SwitchMap Central::find_glob_matches(
-        const std::vector<std::string> &patterns) const
-    {
-        SwitchMap matches;
-        for (const auto &[name, sw] : this->switches)
-        {
-            for (const std::string &pattern : patterns)
-            {
-                if (core::platform::path->filename_match(pattern, name, true))
-                {
-                    matches.try_emplace(name, sw);
-                    break;
-                }
-            }
-        }
-        return matches;
     }
 
     bool Central::import_switch(

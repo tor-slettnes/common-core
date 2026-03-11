@@ -31,7 +31,7 @@ module CC
         interface Switchboard
         {
             // List all switches including specifications and statuses
-            SwitchList get_switches();
+            SwitchList get_switches(SwitchSelection selection);
 
             // Get information about a single switch
             Switch get_switch(SwitchName switch_name);
