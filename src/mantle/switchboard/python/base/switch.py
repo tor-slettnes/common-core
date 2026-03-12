@@ -501,12 +501,11 @@ class Switch (DocBase):
                     predecessors[predecessor_name] = predecessor
         return predecessors
 
-    @property
     def all_ancestors(self) -> Mapping[str, 'Switch']:
         '''
         Return a map of all direct and indirect ancestors to this switch, as
         determined by following its dependencies recursively until a candidate
-        either has no further dependencies or its `is_primary` flag is True.
+        has no further dependencies.
         '''
 
         ancestors = {}
@@ -514,26 +513,31 @@ class Switch (DocBase):
             for predecessor_name, dep in self.dependencies.items():
                 if predecessor := board.get_switch(predecessor_name):
                     ancestors[predecessor_name] = predecessor
-                    ancestors.update(predecessor.all_ancestors)
+                    ancestors.update(predecessor.all_ancestors())
         return ancestors
 
-
-    @property
-    def ultimate_ancestors(self) -> Mapping[str, 'Switch']:
+    def ultimate_ancestors(self,
+                           beyond_primary: bool = False) -> Mapping[str, 'Switch']:
         '''
         Return a map of ultimate ancestors to this switch, as determined by
         following its dependencies recursively until a candidate either has no
-        further dependencies or its `is_primary` flag is True.
+        further dependencies, or its `is_primary` flag is True.
+
+        @param beyond_primary
+           Keep following dependencies even through switches for which the
+           `is_primary` flag is True.
         '''
 
         ancestors = {}
         if board := self.board():
             for predecessor_name, dep in self.dependencies.items():
                 if predecessor := board.get_switch(predecessor_name):
-                    if predecessor.is_primary or not predecessor.dependencies:
-                        ancestors[predecessor.name] = predecessor
+                    if ((beyond_primary or not predecessor.is_primary)
+                        and predecessor.dependencies):
+                        ancestors.update(predecessor.ultimate_ancestors(beyond_primary))
                     else:
-                        ancestors.update(predecessor.ultimate_ancestors)
+                        ancestors[predecessor.name] = predecessor
+
         return ancestors
 
 

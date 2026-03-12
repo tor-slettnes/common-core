@@ -55,6 +55,7 @@ cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
   SUMMARY "Common Core - Shared Python modules"
   DESCRIPTION "Common Core application framework for Python."
   DEPENDS ${SETTINGS_INSTALL_COMPONENT} ${PYTHON_REQUIREMENTS_INSTALL_COMPONENT}
+  DEB_DEPENDS python3-grpcio python3-protobuf
 )
 
 cc_cpack_add_group("${INSTALL_GROUP}"
