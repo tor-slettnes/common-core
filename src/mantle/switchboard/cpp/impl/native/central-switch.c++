@@ -84,7 +84,7 @@ namespace switchboard
     {
         if (this->spec_ref->interceptors.erase(name))
         {
-            logf_debug("Switch %r removing Interceptor %s",
+            logf_debug("Switch %r removing Interceptor %r",
                        this->name(),
                        name);
 
