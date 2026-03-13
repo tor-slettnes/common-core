@@ -18,8 +18,13 @@ def check_type(argument: object,
     '''
 
     if not isinstance(argument, expected_type):
-        raise TypeError('Expected %s, not %s (%s)'%(
-            expected_type.__name__, type(argument).__name__, argument))
+        raise TypeError(
+            'Expected %s, not %s (%s)'%(
+                expected_type.__name__,
+                type(argument).__name__,
+                argument,
+            )
+        )
 
 
 def process_name() -> str:

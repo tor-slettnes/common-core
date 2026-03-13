@@ -159,7 +159,7 @@ def ellipsize(text: str,
             return ELLIPSIS + text[-maxlen+len(ELLIPSIS):]
 
         case EllipsizePosition.MIDDLE:
-            cutoff_start = maxlen//2
+            cutoff_start = (maxlen - len(ELLIPSIS)) // 2
             cutoff_end = cutoff_start + len(ELLIPSIS)
             return text[:cutoff_start] + ELLIPSIS + text[-(maxlen-cutoff_end):]
 

@@ -181,11 +181,11 @@ class Client (BaseClient):
             method_name = unbound_method.__name__
             if getattr(type(instance), method_name, None) == unbound_method:
                 count += 1
-                bound_method = getattr(instance, method_name)
-                self.add_interceptor(
-                    interceptor_name = method_path(bound_method),
-                    callback = bound_method,
-                    **kwargs)
+                if bound_method := getattr(instance, method_name, None):
+                    self.add_interceptor(
+                        interceptor_name = method_path(bound_method),
+                        callback = bound_method,
+                        **kwargs)
 
         return count
 

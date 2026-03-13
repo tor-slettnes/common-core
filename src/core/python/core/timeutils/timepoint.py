@@ -439,27 +439,40 @@ class TimePoint (float):
     @classmethod
     def scaled_from(cls,
                     input: int|float,
-                    scale: float) -> 'TimePoint':
+                    scale: int|float) -> 'TimePoint':
         '''
         Create a new TimePoint from an Epoch-based input with specified
-        scaling/resolution.  Effectively, this is just a pedantic alternative to
-        `TimePoint(input * scale)`.
+        scaling/resolution.
 
         @param input
             Epoch-based timestamp value
 
         @param scale
-            Input timestamp scaling factor
+            This may be given as one of two types: An integer represnting the
+            decimal exponent / order of magnitude of the input (for example, -3
+            to indicate that the input is provided as millseconds), or a float
+            representing its actual scale relative to one second (for example,
+            0.001 to indicate milliseconds). The latter meaning is assumed for
+            any value 10 or higher.
 
 
         ### Example:
 
         ```python
         from cc.core.timeutils import TimePoint, MILLISECOND
-        tp = TimePoint.scaled_from(JAVA_TIMESTAMP, MILLSECOND)
+        assert MILLISECOND == 0.001
+
+        tp1 = TimePoint.scaled_from(JAVA_TIMESTAMP, MILLSECOND)
+        tp2 = TimePoint.scaled_from(JAVA_TIMESTAMP, -3)
+        assert tp1 == tp2
         ```
         '''
+
+        if isinstance(scale, int) and (scale < 10):
+            scale = 10**scale
+
         return TimePoint(input * scale)
+
 
 
     @classmethod
