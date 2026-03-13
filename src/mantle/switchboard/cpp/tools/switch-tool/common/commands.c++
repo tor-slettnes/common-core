@@ -89,9 +89,11 @@ namespace switchboard
 
         this->add_command(
             "status",
-            {"[SWITCH ...]"},
-            "Print the full status of each specified SWITCH "
-            "or otherwise all switches in one go.",
+            {"[PATTERN ...]"},
+            "Print the full status for switches mathing any provided PATTERN. "
+            "Each pattern may contain shell-style globbing characters such as "
+            "'*' or '?'. If no pattern is provided, list the status of all "
+            "switches.",
             std::bind(&Options::get_status, this));
 
         this->add_command(
@@ -120,30 +122,36 @@ namespace switchboard
 
         this->add_command(
             "dependencies",
-            {"[SWITCH ...]"},
-            "Print SWITCH's dependencies, one per line. "
-            "By default only the name of each predecessor is printed; "
-            "use \"--verbose\" to show more details.",
+            {"[PATTERN ...]"},
+            "Print the dependencies of switches mathing any provided PATTERN. "
+            "Each pattern may contain shell-style globbing characters such as "
+            "'*' or '?'. If no pattern is provided, list dependencies of all "
+            "all switches.  By default only the name of each predecessor is "
+            "printed; use \"--verbose\" to show more details.",
             std::bind(&Options::get_dependencies, this));
 
         this->add_command(
             "interceptors",
-            {"SWITCH"},
-            "Print SWITCH's interceptors, one per line. "
-            "By default only the name of each interceptor is printed; "
-            "use \"--verbose\" to show more details.",
+            {"[PATTERN ...]"},
+            "Print interceptors for switches mathing any provided PATTERN. "
+            "Each pattern may contain shell-style globbing characters such as "
+            "'*' or '?'. If no pattern is provided, list dependencies of all "
+            "all switches.  By default only the name of each interceptor is "
+            "printed; use \"--verbose\" to show more details.",
             std::bind(&Options::get_interceptors, this));
 
         this->add_command(
             "specification",
-            {"[SWITCH ...]"},
-            "Print the full specification of each specified SWITCH "
-            "or otherwise all switches in one go.",
+            {"[PATTERN ...]"},
+            "Print the full specifcation for switches mathing any provided "
+            "PATTERN. Each pattern may contain shell-style globbing characters "
+            "such as '*' or '?'. If no pattern is provided, list specifications "
+            "for all switches.",
             std::bind(&Options::get_specs, this));
 
         this->add_command(
             "spec",
-            {"[SWITCH ...]"},
+            {"[PATTERN ...]"},
             "Alias for \"specification\".",
             std::bind(&Options::get_specs, this));
 
@@ -857,18 +865,25 @@ namespace switchboard
 
     std::vector<switchboard::SwitchRef> Options::get_switches_or_all()
     {
-        if (auto sw = this->get_switch(false))
+        std::vector<std::string> patterns(this->current_arg, this->args.end());
+
+        if (patterns.empty())
         {
-            std::vector<switchboard::SwitchRef> switches{sw};
-            while (auto sw = this->get_switch(false))
-            {
-                switches.push_back(sw);
-            }
-            return switches;
+            return this->provider->get_switches().values();
         }
         else
         {
-            return this->provider->get_switches().values();
+            switchboard::SwitchSelection selection(patterns);
+            std::vector<switchboard::SwitchRef> switches;
+
+            for (const auto &[name, sw] : this->provider->get_switches())
+            {
+                if (selection.matches(name))
+                {
+                    switches.push_back(sw);
+                }
+            }
+            return switches;
         }
     }
 
