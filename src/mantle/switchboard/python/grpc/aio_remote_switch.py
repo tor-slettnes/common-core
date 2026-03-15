@@ -36,7 +36,12 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
 
     @override
     def publish_update_to(self, callback: SwitchUpdateSubscriber):
-        safe_invoke_maybe_async(callback, args = (self,))
+        safe_invoke_maybe_async(
+            callback,
+            args = (self,),
+            log_call = self.logger.debug,
+            log_failure = self.logger.error,
+        )
 
     @override
     async def set_specification(self,

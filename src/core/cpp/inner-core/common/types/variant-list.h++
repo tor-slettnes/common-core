@@ -117,7 +117,7 @@ namespace core::types
         static ValueList create_from(const ContainerT &container)
         {
             ValueList list;
-            list << container; 
+            list << container;
             return list;
         }
     };

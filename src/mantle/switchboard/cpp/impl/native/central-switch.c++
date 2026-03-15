@@ -59,10 +59,14 @@ namespace switchboard
             interceptor->name(),
             interceptor);
 
-        logf_debug("Switch %r adding Interceptor %s, immediate=%b",
-                   this->name(),
-                   *interceptor,
-                   immediate);
+        logf_debug(
+            "Switch %r adding Interceptor %r, transitions=%s, immediate=%b",
+            this->name(),
+            interceptor->name(),
+            core::str::join(
+                interceptor->state_transitions().as_valuelist().filter_by_type<std::string>(),
+                "|"),
+            immediate);
 
         this->notify_spec();
 

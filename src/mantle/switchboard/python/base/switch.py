@@ -68,7 +68,12 @@ class Switch (DocBase):
             self.publish_update_to(callback)
 
     def publish_update_to(self, callback: SwitchUpdateSubscriber):
-        safe_invoke(callback, args = (self,))
+        safe_invoke(
+            callback,
+            args = (self,),
+            log_call = self.logger.debug,
+            log_failure = self.logger.error,
+        )
 
     def subscribe_updates(self,
                           handle   : str,

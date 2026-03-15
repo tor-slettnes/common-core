@@ -229,7 +229,9 @@ class SignalClient (GenericClient):
                 (type(self).__name__,))
 
             store_type = CachingSignalStore if use_cache else SignalStore
-            self.signal_store = store_type(signal_type = signal_type)
+            self.signal_store = store_type(
+                signal_type = signal_type,
+                logger= self.logger)
 
 
         GenericClient.__init__(

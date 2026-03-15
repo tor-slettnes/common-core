@@ -103,7 +103,7 @@ class AsyncReader (AbstractReader):
         if not self.active():
             self.task = asyncio.create_task(
                 self.worker(stream, callback),
-                name='Message Reader')
+                name='gRPC Reader Task')
 
     @override
     def stop(self, wait = False):

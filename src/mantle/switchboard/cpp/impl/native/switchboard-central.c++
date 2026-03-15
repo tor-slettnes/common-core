@@ -222,6 +222,12 @@ namespace switchboard
         const std::optional<SwitchSelection> &switch_selection)
     {
         bool removed = false;
+
+        if (!switch_selection)
+        {
+            removed = this->interceptor_factory_map.erase(interceptor_name);
+        }
+
         for (const auto &[switch_name, sw] : this->get_switches())
         {
             if (!switch_selection || switch_selection->matches(switch_name))
@@ -229,6 +235,7 @@ namespace switchboard
                 removed |= sw->remove_interceptor(interceptor_name);
             }
         }
+
         return removed;
     }
 

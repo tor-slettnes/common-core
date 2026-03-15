@@ -91,7 +91,7 @@ def safe_invoke_maybe_async(
     return safe_invoke(
         function = invoke_maybe_async,
         kwargs = dict(function=function, args=args, kwargs=kwargs),
-        description = description,
+        description = description or invocation(function, args, kwargs),
         log_call = log_call,
         log_failure = log_failure)
 

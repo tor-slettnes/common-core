@@ -209,7 +209,8 @@ class Client (BaseClient):
                     invocation.interceptor_name,
                 ),
                 log_call = self.logger.debug,
-                log_failure = self.logger.error)
+                log_failure = self.logger.error,
+            )
         else:
             error = None
 

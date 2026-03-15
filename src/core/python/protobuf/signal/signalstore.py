@@ -10,18 +10,20 @@ author = 'Tor Slettnes'
 ### Standard Python modules
 from typing import Optional, Callable, Mapping, Union, Sequence
 import asyncio
-
-### Modules withn package
-from ...core.invocation import safe_invoke_maybe_async
-from ..utils import native_enum_from_proto
-from ..dissecter import decode_message
-
-### Generated from `.../protos/cc/protobuf/signal/signal.proto`
-from .signal_pb2 import Filter, MappingAction
+import logging
 
 ### Third-party modules
 from google.protobuf.message import Message
 from google.protobuf.descriptor import Descriptor, FieldDescriptor
+
+### Generated from `.../protos/cc/protobuf/signal/signal.proto`
+from .signal_pb2 import Filter, MappingAction
+
+### Modules withn package
+from ...core.logbase import LogBase
+from ...core.invocation import safe_invoke_maybe_async
+from ..utils import native_enum_from_proto
+from ..dissecter import decode_message
 
 
 #===============================================================================
@@ -34,7 +36,7 @@ Slot = Callable[[Message], None]
 #===============================================================================
 # SignalStore class
 
-class SignalStore:
+class SignalStore (LogBase):
     '''
     Implementation of signal/slot pattern using ProtoBuf messages as
     payload. Emitted signals can be serialized and propagated over transports
@@ -114,7 +116,9 @@ class SignalStore:
     ## Wildcard used to connect to all signals
     ALL_SIGNALS = '*'
 
-    def __init__(self, signal_type : type = None):
+    def __init__(self,
+                 signal_type : type = None,
+                 logger: logging.Logger|None = None):
         '''
         Instance initialization.
 
@@ -124,6 +128,8 @@ class SignalStore:
         mapping fields `mapping_action` and `mapping_key`. For details see
         the `SignalStore` class description.
         '''
+
+        LogBase.__init__(self, logger=logger)
 
         if signal_type:
             self.signal_type = signal_type
@@ -487,11 +493,14 @@ class SignalStore:
         result = safe_invoke_maybe_async(
             slot,
             args = (signal,),
-            description = "Signal %s slot %s(%s)"%(
+            description = "Signal %r slot %s(%s)"%(
                 signal_name,
                 slot.__name__,
                 decode_message(signal),
-            ))
+            ),
+            log_call = self.logger.debug,
+            log_failure = self.logger.error,
+        )
 
     def _mapping_controls(self, signal: SignalMessage) -> tuple[MappingAction, str]:
         try:

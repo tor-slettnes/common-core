@@ -29,7 +29,7 @@ from .switch    import Switch
 class HandlerSpec:
     pattern: re.Pattern
     actions: Set[MappingAction]
-    method: Callable[[Switch], None]
+    unbound_method: Callable[[Switch], None]
     states: Set[State]|None = None
 
 MAP_UPDATE = {MappingAction.ADDITION, MappingAction.UPDATE}
@@ -119,7 +119,7 @@ class SwitchboardObserver (DocBase, LogBase):
             handler = HandlerSpec(
                 pattern = cls._regex_pattern(pattern),
                 actions = actions,
-                method = method)
+                unbound_method = method)
 
             cls._spec_handlers.append(handler)
             return method
@@ -176,43 +176,13 @@ class SwitchboardObserver (DocBase, LogBase):
                 pattern = cls._regex_pattern(pattern),
                 actions = actions,
                 states = encodeStateSet(states),
-                method = method)
+                unbound_method = method)
 
             cls._status_handlers.append(handler)
             return method
 
         return decorator
 
-
-    def __del__(self):
-        self.disconnect_decorated_handlers()
-
-
-    def connect_switchboard_signals(self):
-        '''
-        Connect decorated handler methods from this object instance to the
-        Switchboard signal store in order to start observing update events.
-        '''
-        self.connect_decorated_handlers(self)
-
-
-    @classmethod
-    def connect_decorated_handlers(cls, instance: object):
-        '''
-        Connect decorated handler methods from the provided object instance
-        to the Switchboard signal store in order to start observing update
-        events.
-        '''
-
-        cls.signal_store.connect_signal(
-            cls.SPEC_SIGNAL,
-            lambda msg: cls._invoke_handlers(instance, cls._spec_handlers, msg),
-        )
-
-        cls.signal_store.connect_signal(
-            cls.STATUS_SIGNAL,
-            lambda msg: cls._invoke_handlers(instance, cls._status_handlers, msg),
-        )
 
 
     @classmethod
@@ -233,19 +203,53 @@ class SwitchboardObserver (DocBase, LogBase):
                 ))
 
 
-    @classmethod
-    def _invoke_handlers(cls,
+
+    def __del__(self):
+        self.disconnect_decorated_handlers()
+
+
+    def connect_switchboard_signals(self):
+        '''
+        Connect decorated handler methods from this object instance to the
+        Switchboard signal store in order to start observing update events.
+        '''
+        self.connect_decorated_handlers(self)
+
+
+    def connect_decorated_handlers(self, instance: object):
+        '''
+        Connect decorated handler methods from the provided object instance
+        to the Switchboard signal store in order to start observing update
+        events.
+        '''
+
+        self.signal_store.connect_signal(
+            self.SPEC_SIGNAL,
+            lambda msg: self._invoke_handlers(instance, self._spec_handlers, msg),
+        )
+
+        self.signal_store.connect_signal(
+            self.STATUS_SIGNAL,
+            lambda msg: self._invoke_handlers(instance, self._status_handlers, msg),
+        )
+
+
+    def _invoke_handlers(self,
                          instance: object,
                          handlers: Sequence[HandlerSpec],
                          msg: Signal):
 
         for handler in handlers:
-            if cls._handler_matches(instance, handler, msg):
-                safe_invoke_maybe_async(handler.method, args=(instance, msg))
+            if self._handler_matches(instance, handler, msg):
+                safe_invoke_maybe_async(
+                    handler.unbound_method,
+                    args=(instance, msg),
+                    log_call = self.logger.debug,
+                    log_failure = self.logger.error,
+                )
 
 
-    @classmethod
-    def _handler_matches(cls,
+    def _handler_matches(self,
                          instance: object,
                          handler: HandlerSpec,
                          msg: Signal,
@@ -254,8 +258,10 @@ class SwitchboardObserver (DocBase, LogBase):
         Determine whether a decorated function should receive a switch
         update.
         '''
+        method_name = handler.unbound_method.__name__
+
         return all((
-            getattr(type(instance), handler.method.__name__, None) == handler.method,
+            getattr(type(instance), method_name, None) == handler.unbound_method,
             msg.mapping_action in handler.actions,
             (handler.states is None) or (msg.status.current_state in handler.states),
             handler.pattern.match(msg.mapping_key),

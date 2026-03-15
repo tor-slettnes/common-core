@@ -130,8 +130,12 @@ class BaseClient (SwitchboardBase, SignalClient):
             except KeyError:
                 switch = self.switches[switch_name] = self._new_switch(switch_name)
                 switch.status.active = initially_active
-                invoke_maybe_async(self._call_add_switch,
-                                   args = (switch_name, initially_active))
+                invoke_maybe_async(
+                    self._call_add_switch,
+                    args = (switch_name, initially_active),
+                    log_call = self.logger.debug,
+                    log_failure = self.logger.error,
+                )
 
             return switch
 
