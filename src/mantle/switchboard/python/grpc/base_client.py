@@ -133,8 +133,6 @@ class BaseClient (SwitchboardBase, SignalClient):
                 invoke_maybe_async(
                     self._call_add_switch,
                     args = (switch_name, initially_active),
-                    log_call = self.logger.debug,
-                    log_failure = self.logger.error,
                 )
 
             return switch
