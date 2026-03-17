@@ -38,19 +38,19 @@ namespace core::types
         Value(const char *cstring);
         Value(const std::vector<Byte> &bytes);
         Value(const std::string_view &view);
-        Value(const std::string &string);
+        // Value(const std::string &string);
 
         Value(const ValueListPtr &list);
         Value(const ValueList &list);
         Value(ValueList &&list);
 
-        Value(const KeyValueMapPtr &kvmap);
-        Value(const KeyValueMap &kvmap);
-        Value(KeyValueMap &&kvmap);
-
         Value(const TaggedValueListPtr &tvlist);
         Value(const TaggedValueList &tvlist);
         Value(TaggedValueList &&tvlist);
+
+        Value(const KeyValueMapPtr &kvmap);
+        Value(const KeyValueMap &kvmap);
+        Value(KeyValueMap &&kvmap);
 
         // Additional constructor to allow std::optional values
         template <class T>
@@ -66,7 +66,6 @@ namespace core::types
         }
 
         virtual bool operator==(const Value &other) const;
-
         void clear();
         void reset();
 

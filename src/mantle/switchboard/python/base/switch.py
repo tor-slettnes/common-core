@@ -265,7 +265,7 @@ class Switch (DocBase):
         update = encodeLocalization(
             description = description,
             activate_text = activate_text,
-            deactivate_txt = deactivate_text,
+            deactivate_text = deactivate_text,
             state_texts = state_texts)
 
         return self.set_localizations({language_code: update})

@@ -12,15 +12,15 @@ namespace core::python
 {
     ContainerObject unpickle(const types::ByteVector &bytes)
     {
-        return runtime->call(
+        return core::python::runtime->call(
             "pickle",
             "loads",
-            {SimpleObject::pybytes_from_bytes(bytes)});
+            SimpleObject::Vector({SimpleObject::pybytes_from_bytes(bytes)}));
     }
 
     types::ByteVector pickle(const SimpleObject &object)
     {
-        ContainerObject result = runtime->call(
+        ContainerObject result = core::python::runtime->call(
             "pickle",
             "dumps",
             SimpleObject::Vector({object}));

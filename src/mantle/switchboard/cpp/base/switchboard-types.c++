@@ -340,11 +340,16 @@ namespace switchboard
 
     bool operator==(const Status &lhs, const Status &rhs)
     {
-        return ((lhs.current_state == rhs.current_state) &&
+        bool equals = ((lhs.current_state == rhs.current_state) &&
                 (lhs.settled_state == rhs.settled_state) &&
                 (lhs.active == rhs.active) &&
                 (lhs.error == rhs.error) &&
                 (lhs.attributes == rhs.attributes));
+        logf_info("operator==(lhs=%r, rhs=%r) -> %r",
+                  lhs,
+                  rhs,
+                  equals);
+        return equals;
     }
 
     bool operator!=(const Status &lhs, const Status &rhs)

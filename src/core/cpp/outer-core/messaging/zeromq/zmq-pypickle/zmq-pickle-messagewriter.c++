@@ -24,7 +24,9 @@ namespace core::zmq
 
     void PyPickleMessageWriter::write(const types::Value &value)
     {
-        this->write(python::SimpleObject::pyobj_from_value(value));
+        this->write(
+            core::python::SimpleObject(
+                python::SimpleObject::pyobj_from_value(value)));
     }
 
 }  // namespace core::zmq

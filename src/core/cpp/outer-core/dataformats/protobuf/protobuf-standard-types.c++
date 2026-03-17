@@ -206,7 +206,7 @@ namespace cc::protobuf
         switch (msg.kind_case())
         {
         case google::protobuf::Value::kNullValue:
-            *value = {};
+            *value = core::types::Value();
             break;
 
         case google::protobuf::Value::kNumberValue:

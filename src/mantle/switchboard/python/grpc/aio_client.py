@@ -75,7 +75,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
     async def import_switches(self,
                               declarations: PyValueMap,
                               replace_specifications: bool = False,
-                              replace_statuses: bool = True,
+                              replace_statuses: bool = False,
                               invoke_interceptors: InvocationStyle = InvocationStyle.INDIRECT,
                               ) -> int:
         response = await BaseClient.import_switches(**locals())
@@ -93,7 +93,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
     async def load_switches(self,
                             filename: FilePathInput,
                             replace_specifications: bool = False,
-                            replace_statuses: bool = True,
+                            replace_statuses: bool = False,
                             invoke_interceptors: InvocationStyle = InvocationStyle.INDIRECT):
         await BaseClient.load_switches(**locals())
 

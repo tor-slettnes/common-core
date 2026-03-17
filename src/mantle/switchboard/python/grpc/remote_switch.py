@@ -34,7 +34,6 @@ class RemoteSwitch (RemoteSwitchBase):
                           replace_localizations: bool = False,
                           replace_dependencies: bool = False,
                           replace_interceptors: bool = False,
-                          active: Optional[bool] = None,
                           update_state: Optional[bool] = None,
                           ):
         response = RemoteSwitchBase.set_specification(**locals())

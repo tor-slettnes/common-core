@@ -273,7 +273,7 @@ class SwitchboardBase (SwitchboardObserver):
     def import_switches(self,
                         declarations: PyValueMap,
                         replace_specifications: bool = False,
-                        replace_statuses: bool = True,
+                        replace_statuses: bool = False,
                         invoke_interceptors: InvocationStyle = InvocationStyle.ALL) -> int:
         '''
         Import switches from a list of key/value declarations, like those
@@ -325,7 +325,7 @@ class SwitchboardBase (SwitchboardObserver):
     def load_switches(self,
                       filename: FilePathInput,
                       replace_specifications: bool = False,
-                      replace_statuses: bool = True,
+                      replace_statuses: bool = False,
                       invoke_interceptors: InvocationStyle = InvocationStyle.ALL):
         '''
         Load switches from a settings file.  Valid file formats are those

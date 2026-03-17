@@ -81,10 +81,10 @@ namespace core::types
     {
     }
 
-    Value::Value(const std::string &string)
-        : ValueBase(string)
-    {
-    }
+    // Value::Value(const std::string &string)
+    //     : ValueBase(string)
+    // {
+    // }
 
     Value::Value(const ValueListPtr &list)
         : ValueBase(list ? list : std::make_shared<ValueList>())
@@ -98,21 +98,6 @@ namespace core::types
 
     Value::Value(ValueList &&list)
         : ValueBase(std::make_shared<ValueList>(std::move(list)))
-    {
-    }
-
-    Value::Value(const KeyValueMapPtr &kvmap)
-        : ValueBase(kvmap ? kvmap : std::make_shared<KeyValueMap>())
-    {
-    }
-
-    Value::Value(const KeyValueMap &kvmap)
-        : ValueBase(std::make_shared<KeyValueMap>(kvmap))
-    {
-    }
-
-    Value::Value(KeyValueMap &&kvmap)
-        : ValueBase(std::make_shared<KeyValueMap>(std::move(kvmap)))
     {
     }
 
@@ -131,13 +116,24 @@ namespace core::types
     {
     }
 
+    Value::Value(const KeyValueMapPtr &kvmap)
+        : ValueBase(kvmap ? kvmap : std::make_shared<KeyValueMap>())
+    {
+    }
+
+    Value::Value(const KeyValueMap &kvmap)
+        : ValueBase(std::make_shared<KeyValueMap>(kvmap))
+    {
+    }
+
+    Value::Value(KeyValueMap &&kvmap)
+        : ValueBase(std::make_shared<KeyValueMap>(std::move(kvmap)))
+    {
+    }
+
     bool Value::operator==(const Value &other) const
     {
-        if (static_cast<ValueBase>(*this) == static_cast<ValueBase>(other))
-        {
-            return true;
-        }
-        else if (this->type() == other.type())
+        if (this->type() == other.type())
         {
             switch (this->type())
             {
@@ -151,7 +147,7 @@ namespace core::types
                 return (this->get_kvmap() == other.get_kvmap());
 
             default:
-                return false;
+                return static_cast<ValueBase>(*this) == static_cast<ValueBase>(other);
             }
         }
         else

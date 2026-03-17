@@ -134,7 +134,10 @@ namespace switchboard::grpc
         req.set_target_state(
             cc::protobuf::encoded<::cc::platform::switchboard::protobuf::State>(target_state));
 
-        cc::protobuf::encode_shared(error, req.mutable_error());
+        if (error)
+        {
+            cc::protobuf::encode_shared(error, req.mutable_error());
+        }
         cc::protobuf::encode(attributes, req.mutable_attributes());
         req.set_clear_existing(clear_existing);
 

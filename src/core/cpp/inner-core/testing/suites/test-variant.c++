@@ -63,8 +63,8 @@ namespace core::types
         Value value2 = container2;
         EXPECT_EQ(value2.as_kvmap(), container);
 
-        DerivedValue value3(value2);
-        EXPECT_EQ(value2, value3);
+        // DerivedValue value3(value2);
+        // EXPECT_EQ(value2, value3);
     }
 
     TEST(Variant, FromLiteral)

@@ -73,7 +73,7 @@ def encodeStateSet(states: StateSet,
     return output
 
 
-def encodeLocalization(localization : Localization|None,
+def encodeLocalization(localization : Localization|None = None,
                        description: str|None = None,
                        activate_text: str|None = None,
                        deactivate_text: str|None = None,
@@ -86,13 +86,13 @@ def encodeLocalization(localization : Localization|None,
     if localization:
         result.CopyFrom(localization)
 
-    localization.MergeFrom(Localization(
+    result.MergeFrom(Localization(
         description = description,
         activate_text = activate_text,
         deactivate_text = deactivate_text,
         state_texts = state_texts))
 
-    return localization
+    return result
 
 
 def encodeLocalizationMap(localizations: LocalizationsInput) -> LocalizationMap:
@@ -100,7 +100,7 @@ def encodeLocalizationMap(localizations: LocalizationsInput) -> LocalizationMap:
         return localizations
 
     elif isinstance(localizations, Mapping):
-        return LocalizationsMap(
+        return LocalizationMap(
             map = {language:localization
                    for (language, localization) in localizations.items()})
 

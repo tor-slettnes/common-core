@@ -171,7 +171,7 @@ class BaseClient (SwitchboardBase, SignalClient):
     def import_switches(self,
                         declarations: PyValueMap,
                         replace_specifications: bool = False,
-                        replace_statuses: bool = True,
+                        replace_statuses: bool = False,
                         invoke_interceptors: InvocationStyle = InvocationStyle.INDIRECT,
                         ) -> ImportResponse:
 
@@ -291,23 +291,6 @@ class BaseClient (SwitchboardBase, SignalClient):
                 error,
                 origin = main_module_path(),
                 output = result.error,
-            )
-            self.logger.error(
-                "Switch %r state %s interceptor %r failed: [%s] %s"%(
-                    request.switch_name,
-                    State(request.state).name,
-                    request.interceptor_name,
-                    type(error).__name__,
-                    error,
-                )
-            )
-        else:
-            self.logger.debug(
-                "Switch %r state %s interceptor %r completed"%(
-                    request.switch_name,
-                    State(request.state).name,
-                    request.interceptor_name,
-                )
             )
 
         queue.put_nowait(result)

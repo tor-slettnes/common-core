@@ -52,19 +52,17 @@ class RemoteSwitchBase (Switch):
                           replace_localizations: bool = False,
                           replace_dependencies: bool = False,
                           replace_interceptors: bool = False,
-                          active: Optional[bool] = None,
                           update_state: Optional[bool] = None,
                           ) -> BoolValue:
 
         req = SetSpecificationRequest(
             switch_name = self.name,
             spec = specification,
-            active = active,
+            update_state=update_state,
             replace_aliases = replace_aliases,
             replace_localizations = replace_localizations,
             replace_dependencies = replace_dependencies,
-            replace_interceptors = replace_interceptors,
-            update_state = update_state)
+            replace_interceptors = replace_interceptors)
 
         return self.stub.SetSpecification(req)
 
