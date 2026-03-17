@@ -244,8 +244,8 @@ namespace switchboard
                     EH_IGNORE);
             }
         }
-        else if (!attributes.empty() ||
-                 (clear_existing && (attributes != this->attributes())))
+        else if ((!attributes.empty() || clear_existing) &&
+                 (attributes != this->attributes()))
         {
             this->set_attributes(attributes, clear_existing);
         }
