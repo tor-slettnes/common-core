@@ -974,7 +974,7 @@ namespace core::types
 
     Value Value::deepcopy() const
     {
-        switch(this->type())
+        switch (this->type())
         {
         case ValueType::VALUELIST:
             return ValueList::create_shared(this->get<ValueListPtr>()->deepcopy());
