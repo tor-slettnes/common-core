@@ -114,6 +114,17 @@ namespace core::types
         return filtered;
     }
 
+    ValueList ValueList::deepcopy() const noexcept
+    {
+        ValueList copy;
+        copy.reserve(this->size());
+        for (const auto &value: *this)
+        {
+            copy.push_back(value.deepcopy());
+        }
+        return copy;
+    }
+
     ValueList &ValueList::extend(const ValueList &other)
     {
         this->insert(this->end(), other.begin(), other.end());

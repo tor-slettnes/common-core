@@ -189,6 +189,16 @@ namespace core::types
         return flattened;
     }
 
+    KeyValueMap KeyValueMap::deepcopy() const noexcept
+    {
+        KeyValueMap copy;
+        for (const auto &[key, value]: *this)
+        {
+            copy.insert_or_assign(key, value.deepcopy());
+        }
+        return copy;
+    }
+
     KeyValueMap &KeyValueMap::update(const KeyValueMap &other) noexcept
     {
         for (const auto &[key, value] : other)
@@ -205,18 +215,32 @@ namespace core::types
         return *this;
     }
 
-    KeyValueMap &KeyValueMap::recursive_merge(KeyValueMap &other) noexcept
+    KeyValueMap &KeyValueMap::recursive_merge(const KeyValueMap &other) noexcept
+    {
+        for (const auto &[key, value] : other)
+        {
+            if (auto this_map = this->get_kvmap_ptr(key))
+            {
+                this_map->recursive_merge(value.as_kvmap());
+            }
+            else
+            {
+                this->try_emplace(key, value);
+            }
+        }
+        return *this;
+    }
+
+    KeyValueMap &KeyValueMap::recursive_merge(KeyValueMap &&other) noexcept
     {
         while (!other.empty())
         {
             auto nh = other.extract(other.begin());
-            if (auto this_it = this->find(nh.key()); this_it != this->end())
+            if (auto this_map = this->get_kvmap_ptr(nh.key()))
             {
-                KeyValueMapPtr *this_mapped = std::get_if<KeyValueMapPtr>(&this_it->second);
-                KeyValueMapPtr *other_mapped = std::get_if<KeyValueMapPtr>(&nh.mapped());
-                if (this_mapped && other_mapped)
+                if (auto other_map = nh.mapped().get_kvmap_ptr())
                 {
-                    (*this_mapped)->recursive_merge(**other_mapped);
+                    this_map->recursive_merge(std::move(*other_map));
                 }
             }
             else
@@ -225,11 +249,6 @@ namespace core::types
             }
         }
         return *this;
-    }
-
-    KeyValueMap &KeyValueMap::recursive_merge(KeyValueMap &&other) noexcept
-    {
-        return this->recursive_merge(other);
     }
 
     KeyValueMap &KeyValueMap::recursive_unmerge(const KeyValueMap &basemap) noexcept

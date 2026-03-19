@@ -103,6 +103,9 @@ namespace core::types
         /// Return a copy where items with empty values are filtered out
         TaggedValueList filtered_values() const noexcept;
 
+        /// Return a copy with composite items copied recursively.
+        TaggedValueList deepcopy() const noexcept;
+
         /// @brief
         ///    Add tagged values from an existing TaggedValueList instance
         /// @param[in] other

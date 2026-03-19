@@ -105,7 +105,7 @@ def encodeLocalizationMap(localizations: LocalizationsInput) -> LocalizationMap:
                    for (language, localization) in localizations.items()})
 
     else:
-        raise TypeError("Expected a 'LocalizationMap()' message or a dictinary, not %s"%
+        raise TypeError("Expected a 'LocalizationMap' message or a dictionary, got %s"%
                         (type(localizations).__name__))
 
 

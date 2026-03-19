@@ -38,7 +38,6 @@ namespace core::types
         Value(const char *cstring);
         Value(const std::vector<Byte> &bytes);
         Value(const std::string_view &view);
-        // Value(const std::string &string);
 
         Value(const ValueListPtr &list);
         Value(const ValueList &list);
@@ -221,6 +220,9 @@ namespace core::types
         Value &operator[](const std::string &key);
         Value &operator[](const uint index);
         Value &operator[](const int index);
+
+        Value deepcopy() const;
+
 
     public:
         /// Send a readable representation of this value to an output stream

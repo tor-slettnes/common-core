@@ -295,6 +295,17 @@ namespace core::types
         return filtered;
     }
 
+    TaggedValueList TaggedValueList::deepcopy() const noexcept
+    {
+        TaggedValueList copy;
+        copy.reserve(this->size());
+        for (const auto &[tag, value]: *this)
+        {
+            copy.emplace_back(tag, value.deepcopy());
+        }
+        return copy;
+    }
+
     KeyValueMap TaggedValueList::as_kvmap() const noexcept
     {
         return *this->as_kvmap_ptr();

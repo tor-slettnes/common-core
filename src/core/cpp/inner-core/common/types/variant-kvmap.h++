@@ -93,6 +93,7 @@ namespace core::types
         TaggedValueList as_tvlist() const;
         KeyValueMap filtered() const noexcept;
         KeyValueMap flattened() const noexcept;
+        KeyValueMap deepcopy() const noexcept;
 
         /// @brief
         ///   Replace items in this list with those from another map
@@ -113,7 +114,7 @@ namespace core::types
         /// @return
         ///   A reference to this updated instance
 
-        KeyValueMap &recursive_merge(KeyValueMap &other) noexcept;
+        KeyValueMap &recursive_merge(const KeyValueMap &other) noexcept;
         KeyValueMap &recursive_merge(KeyValueMap &&other) noexcept;
 
         /// @brief

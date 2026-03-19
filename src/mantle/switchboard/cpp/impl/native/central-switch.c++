@@ -255,7 +255,7 @@ namespace switchboard
     core::types::KeyValueMap CentralSwitch::get_attributes(
         bool inherit) const
     {
-        core::types::KeyValueMap attributes = this->attributes();
+        core::types::KeyValueMap attributes = this->attributes().deepcopy();
 
         if (inherit)
         {

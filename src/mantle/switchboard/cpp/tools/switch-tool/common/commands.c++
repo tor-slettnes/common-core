@@ -417,31 +417,16 @@ namespace switchboard
             {
                 std::cout << switch_name << std::endl;
             }
-            else
+            else if (auto culprit = this->provider->get_switch(switch_name))
             {
-                core::status::Error::ptr error;
-                if (auto culprit = this->provider->get_switch(switch_name))
-                {
-                    error = culprit->error();
-                }
+                std::cout << "["
+                          << culprit->name()
+                          << "]"
+                          << std::endl;
 
-                if (error)
-                {
-                    core::str::format(std::cout,
-                                      "%20s: %s: [%s] (%s) %s\n",
-                                      switch_name,
-                                      state,
-                                      error->symbol(),
-                                      error->origin(),
-                                      error->text());
-                }
-                else
-                {
-                    core::str::format(std::cout,
-                                      "%20s: %s\n",
-                                      switch_name,
-                                      state);
-                }
+                this->print_tvlist(culprit->status()->as_tvlist());
+
+                std::cout << std::endl;
             }
         }
     }

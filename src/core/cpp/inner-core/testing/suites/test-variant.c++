@@ -132,6 +132,43 @@ namespace core::types
 
     }
 
+    TEST(Variant, DeepCopy)
+    {
+        core::types::KeyValueMap kvmap = {
+            {"my_bool", true},
+            {"my_int", 42},
+            {"my_real", 3.141592653589793238},
+            {"my_string", "Some text here"},
+            {"my_bytes", core::types::ByteVector::from_string("some bytes here")},
+            {"my_map", core::types::KeyValueMap({{"one", 1}, {"two", "II"}, {"three", 3.14}})},
+            {"my_list",
+             core::types::ValueList({
+                        true,
+                        2,
+                        3.141592653589793238,
+                        "IV",
+                        core::types::KeyValueMap({{"one", "first"}, {"two", "second"}}),
+                 })},
+            {"my_timestamp", core::dt::Clock::now()},
+            {"my_5_seconds", std::chrono::seconds(5)},
+        };
+
+        core::types::KeyValueMap kvmap_copy = kvmap.deepcopy();
+
+        ASSERT_EQ(kvmap_copy.get("my_map").get("two"), "II");
+        ASSERT_EQ(kvmap_copy.get("my_list").get(4).get("one"), "first");
+
+        kvmap_copy["nineteen"] = 19;
+        kvmap_copy["my_list"][4][std::string("one")] = "FIRST";
+        kvmap_copy["my_list"][4][std::string("five")] = 5;
+
+        ASSERT_EQ(kvmap_copy.get("nineteen").as_sint(), 19);
+        ASSERT_EQ(kvmap.get("my_list").get(4).get("one").as_string(), "first");
+        ASSERT_EQ(kvmap_copy.get("my_list").get(4).get("one").as_string(), "FIRST");
+        ASSERT_EQ(kvmap_copy.get("my_list").get(4).get("five").as_sint(), 5);
+
+    }
+
 
     // TEST(StringTest, WideString)
     // {

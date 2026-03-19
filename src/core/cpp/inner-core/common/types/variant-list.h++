@@ -45,6 +45,9 @@ namespace core::types
         /// Return a copy where items with empty values are filtered out
         ValueList filtered_values() const noexcept;
 
+        /// Return a copy with composite values recursively expanded
+        ValueList deepcopy() const noexcept;
+
         /// @brief
         ///    Add values from an existing ValueList instance
         /// @param[in] other

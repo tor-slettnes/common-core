@@ -81,11 +81,6 @@ namespace core::types
     {
     }
 
-    // Value::Value(const std::string &string)
-    //     : ValueBase(string)
-    // {
-    // }
-
     Value::Value(const ValueListPtr &list)
         : ValueBase(list ? list : std::make_shared<ValueList>())
     {
@@ -974,6 +969,24 @@ namespace core::types
         else
         {
             return {};
+        }
+    }
+
+    Value Value::deepcopy() const
+    {
+        switch(this->type())
+        {
+        case ValueType::VALUELIST:
+            return ValueList::create_shared(this->get<ValueListPtr>()->deepcopy());
+
+        case ValueType::TVLIST:
+            return TaggedValueList::create_shared(this->get<TaggedValueListPtr>()->deepcopy());
+
+        case ValueType::KVMAP:
+            return KeyValueMap::create_shared(this->get<KeyValueMapPtr>()->deepcopy());
+
+        default:
+            return *this;
         }
     }
 

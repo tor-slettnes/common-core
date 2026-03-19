@@ -52,8 +52,8 @@ def native_enum_from_proto(proto_type: EnumTypeWrapper,
 
     if strip_common_prefix:
         prefix_length, prefix = common_prefix(proto_type.keys())
-        symbols = [key[prefix_length:] for key in proto_type.keys()]
-        items = zip(symbols, proto_type.values())
+        items = [(key[prefix_length:], value)
+                 for (key, value) in proto_type.items()]
     else:
         items = proto_type.items()
 
