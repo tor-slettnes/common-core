@@ -6,6 +6,7 @@ status.py - ProtoBuf status type wrapper
 import logging
 
 ### Modules within package
+from ...core.invocation import process_name
 from ..utils import native_enum_from_proto
 from ..wellknown import TimestampType, encodeCurrentTime, encodeTimestamp
 from ..variant import encodeKeyValueMap
@@ -25,7 +26,7 @@ level_map = {
     Level.WARNING: logging.WARNING,
     Level.ERROR: logging.ERROR,
     Level.CRITICAL: logging.CRITICAL,
-    Level.FATAL+10: logging.FATAL,
+    Level.FATAL: logging.FATAL+10,
 }
 
 
@@ -100,6 +101,8 @@ def encodeError(error: Error|Exception|str,
 
     if origin is not None:
         output.origin = origin
+    elif domain == Domain.APPLICATION:
+        output.origin = process_name()
 
     if level is not None:
         output.level = level
