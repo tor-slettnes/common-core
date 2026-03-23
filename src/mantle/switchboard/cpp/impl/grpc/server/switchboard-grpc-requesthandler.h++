@@ -137,6 +137,11 @@ namespace switchboard::grpc
             const switchboard::protobuf::SwitchIdentifier *request,
             switchboard::protobuf::SwitchIdentifiers *reply) override;
 
+        ::grpc::Status GetDependencyStatuses(
+            ::grpc::ServerContext *context,
+            const switchboard::protobuf::SwitchIdentifier *request,
+            switchboard::protobuf::DependencyStatusMap *reply) override;
+
         ::grpc::Status AddInterceptor(
             ::grpc::ServerContext *context,
             const cc::platform::switchboard::protobuf::AddInterceptorRequest *request,

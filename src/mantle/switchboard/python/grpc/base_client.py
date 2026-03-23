@@ -92,9 +92,11 @@ class BaseClient (SwitchboardBase, SignalClient):
     def __del__(self):
         self.stop_intercepting()
 
+
     def initialize(self):
         SwitchboardBase.initialize(self)
         SignalClient.initialize(self)
+
 
     def deinitialize(self):
         SignalClient.deinitialize(self)

@@ -20,6 +20,7 @@ from ..protobuf import (
     Specification, SetSpecificationRequest,
     Localization, LocalizationMap, Dependency, DependencyMap,
     AddDependencyRequest, RemoveDependencyRequest, DependencyPolarity,
+    DependencyStatus, DependencyStatusMap,
     InterceptorSpec, InterceptorInvocation, InterceptorResult,
     SetTargetRequest, SetTargetResponse,
     SetAttributesRequest, SetAttributesResponse,
@@ -183,14 +184,10 @@ class RemoteSwitchBase (Switch):
 
         return self.stub.GetStatuses(req)
 
-
     @override
-    def get_ancestor_statuses(self) -> StatusMap:
-        req = SwitchSelection(
-            patterns = [self.name],
-            with_ancestors = True)
-        return self.stub.GetStatuses(req)
-
+    def get_dependency_statuses(self) -> DependencyStatusMap:
+        req = SwitchIdentifier(switch_name = self.name)
+        return self.stub.GetDependencyStatuses(req)
 
     @override
     def get_culprits(self,

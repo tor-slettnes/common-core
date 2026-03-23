@@ -36,6 +36,7 @@ namespace switchboard
     struct Status;
     class Dependency;
     class Interceptor;
+    struct DependencyStatus;
 
     //==========================================================================
     // Switch states
@@ -169,6 +170,8 @@ namespace switchboard
 
     using DependencyRef = std::shared_ptr<Dependency>;
     using DependencyMap = core::types::ValueMap<SwitchName, DependencyRef>;
+    using DependencyStatusRef = std::shared_ptr<DependencyStatus>;
+    using DependencyStatusMap = core::types::ValueMap<SwitchName, DependencyStatusRef>;
 
     using InterceptorName = std::string;
     using InterceptorOwner = std::string;
@@ -247,6 +250,19 @@ namespace switchboard
 
         friend bool operator==(const Status &lhs, const Status &rhs);
         friend bool operator!=(const Status &lhs, const Status &rhs);
+    };
+
+    //==========================================================================
+    // DependencyStatus
+
+    struct DependencyStatus : public core::types::Listable
+    {
+        DependencyRef dependency;
+        StatusRef status;
+        std::optional<bool> satisfied;
+        DependencyStatusMap dependency_statuses;
+
+       void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
 }  // namespace switchboard

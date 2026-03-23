@@ -357,4 +357,34 @@ namespace switchboard
         return !(lhs == rhs);
     }
 
+
+    //==========================================================================
+    // DependencyStatus
+
+    void DependencyStatus::to_tvlist(core::types::TaggedValueList *tvlist) const
+    {
+        tvlist->emplace_back("spec", this->dependency->as_tvlist());
+        tvlist->emplace_back("status", this->status->as_tvlist());
+        if (this->satisfied.has_value())
+        {
+            tvlist->emplace_back("satisified", this->satisfied.value());
+        }
+        else
+        {
+            tvlist->emplace_back("satisfied", core::types::nullvalue);
+        }
+
+        if (!this->dependency_statuses.empty())
+        {
+            auto statuses = core::types::TaggedValueList::create_shared();
+            tvlist->emplace_back("dependency_statuses", statuses);
+
+            statuses->reserve(this->dependency_statuses.size());
+            for (const auto &[switch_name, dep_status]: this->dependency_statuses)
+            {
+                statuses->emplace_back(switch_name, dep_status->as_tvlist());
+            }
+        }
+    }
+
 }  // namespace switchboard

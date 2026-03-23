@@ -327,6 +327,23 @@ namespace switchboard::grpc
         }
     }
 
+    ::grpc::Status RequestHandler::GetDependencyStatuses(
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::DependencyStatusMap *reply)
+    {
+        try
+        {
+            SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
+            cc::protobuf::encode(sw->dependency_statuses(), reply);
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, this->peer(context));
+        }
+    }
+
     ::grpc::Status RequestHandler::AddInterceptor(
         ::grpc::ServerContext *context,
         const cc::platform::switchboard::protobuf::AddInterceptorRequest *request,

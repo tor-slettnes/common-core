@@ -39,10 +39,10 @@ class MessageDissecter (LogBase):
     '''
 
     def __init__(self):
-        self.decoders: dict[str, Decoder] = type(self).message_decoders.copy()
+        self.decoders: dict[str, Decoder] = MessageDissecter.message_decoders.copy()
 
     def register_decoder(self,
-                         message_type: MessageType,
+                         message_type: MessageType|str,
                          decoder: Decoder,
                          ):
         '''
@@ -60,7 +60,10 @@ class MessageDissecter (LogBase):
             return a decomposed value (normally native Python object).
         '''
 
-        self.decoders[message_type.DESCRIPTOR.full_name] = decoder
+        type_name = (message_type if isinstance(message_type, str)
+                     else message_type.DESCRIPTOR.full_name)
+
+        self.decoders[type_name] = decoder
 
 
     def to_json(self,

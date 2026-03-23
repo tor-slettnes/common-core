@@ -337,7 +337,7 @@ namespace cc::protobuf
 
     void decode(const cc::platform::switchboard::protobuf::Dependency &proto,
                 const switchboard::ProviderRef &provider,
-                const std::string &predecessor_name,
+                const switchboard::SwitchName &predecessor_name,
                 switchboard::DependencyRef *native)
     {
         *native = switchboard::Dependency::create_shared(
@@ -369,6 +369,82 @@ namespace cc::protobuf
         for (const auto &[predecessor_name, spec] : msg.map())
         {
             decode(spec, provider, predecessor_name, &(*map)[predecessor_name]);
+        }
+    }
+
+    //==========================================================================
+    // DependencyStatus
+
+    void encode(const switchboard::DependencyStatus &native,
+                cc::platform::switchboard::protobuf::DependencyStatus *proto)
+    {
+        encode(native.dependency, proto->mutable_dependency());
+
+        if (native.status)
+        {
+            encode_shared(native.status, proto->mutable_status());
+        }
+
+        if (!native.dependency_statuses.empty())
+        {
+            encode(native.dependency_statuses, proto->mutable_dependency_statuses());
+        }
+
+        if (native.satisfied.has_value())
+        {
+            proto->set_satisfied(native.satisfied.value());
+        }
+    }
+
+    void decode(const cc::platform::switchboard::protobuf::DependencyStatus &proto,
+                const switchboard::ProviderRef &provider,
+                const switchboard::SwitchName &predecessor_name,
+                switchboard::DependencyStatus *native)
+    {
+        decode(proto.dependency(), provider, predecessor_name, &native->dependency);
+
+        if (proto.has_status())
+        {
+            decode_shared(proto.status(), &native->status);
+        }
+
+        if (proto.has_dependency_statuses())
+        {
+            decode(proto.dependency_statuses(), provider, &native->dependency_statuses);
+        }
+
+        if (proto.has_satisfied())
+        {
+            native->satisfied = proto.satisfied();
+        }
+    }
+
+    //==========================================================================
+    // DependencyStatusMap
+
+    void encode(const switchboard::DependencyStatusMap &native,
+                cc::platform::switchboard::protobuf::DependencyStatusMap *proto)
+    {
+        auto &protomap = *proto->mutable_map();
+        for (const auto &[switch_name, dep_status] : native)
+        {
+            encode_shared(dep_status, &protomap[switch_name]);
+        }
+    }
+
+    void decode(const cc::platform::switchboard::protobuf::DependencyStatusMap &proto,
+                const switchboard::ProviderRef &provider,
+                switchboard::DependencyStatusMap *native)
+    {
+        native->clear();
+        for (const auto &[switch_name, proto_dep_status] : proto.map())
+        {
+            native->insert_or_assign(
+                switch_name,
+                decoded_shared<switchboard::DependencyStatus>(
+                    proto_dep_status,
+                    provider,
+                    switch_name));
         }
     }
 

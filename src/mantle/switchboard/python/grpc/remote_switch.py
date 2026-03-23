@@ -18,7 +18,7 @@ from cc.protobuf.variant import PyValueMap, KeyValueMap
 from ..protobuf import (
     Specification, Status, State, StateSet,
     ExceptionHandling, InvocationStyle, CascadeStyle,
-    Dependency, DependencyPolarity,
+    Dependency, DependencyPolarity, DependencyStatus,
 )
 
 from .remote_switch_base import RemoteSwitchBase
@@ -111,8 +111,8 @@ class RemoteSwitch (RemoteSwitchBase):
         return response.map.get(self.name)
 
     @override
-    def get_ancestor_statuses(self) -> Mapping[str, Status]:
-        response = RemoteSwitchBase.get_ancestor_statuses(**locals())
+    def get_dependency_statuses(self) -> Mapping[str, DependencyStatus]:
+        response = RemoteSwitchBase.get_dependency_statuses(**locals())
         return response.map
 
     @override

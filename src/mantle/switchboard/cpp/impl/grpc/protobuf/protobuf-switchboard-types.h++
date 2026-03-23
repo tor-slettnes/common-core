@@ -142,7 +142,7 @@ namespace cc::protobuf
 
     void decode(const cc::platform::switchboard::protobuf::Dependency &proto,
                 const switchboard::ProviderRef &provider,
-                const std::string &predecessor_name,
+                const switchboard::SwitchName &predecessor_name,
                 switchboard::DependencyRef *native);
 
     //==========================================================================
@@ -154,6 +154,28 @@ namespace cc::protobuf
     void decode(const cc::platform::switchboard::protobuf::DependencyMap &msg,
                 const switchboard::ProviderRef &provider,
                 switchboard::DependencyMap *map);
+
+    //==========================================================================
+    // DependencyStatus
+
+    void encode(const switchboard::DependencyStatus &native,
+                cc::platform::switchboard::protobuf::DependencyStatus *proto);
+
+    void decode(const cc::platform::switchboard::protobuf::DependencyStatus &proto,
+                const switchboard::ProviderRef &provider,
+                const switchboard::SwitchName &predecessor_name,
+                switchboard::DependencyStatus *native);
+
+
+    //==========================================================================
+    // DependencyStatusMap
+
+    void encode(const switchboard::DependencyStatusMap &native,
+                cc::platform::switchboard::protobuf::DependencyStatusMap *proto);
+
+    void decode(const cc::platform::switchboard::protobuf::DependencyStatusMap &proto,
+                const switchboard::ProviderRef &provider,
+                switchboard::DependencyStatusMap *native);
 
     //==========================================================================
     // Interceptor

@@ -23,7 +23,7 @@ from cc.protobuf.variant import (
 ### Swithboard modules
 from ..protobuf import (
     Specification, Status, State, StateSet, encodeStateSet,
-    Dependency, DependencyMap, DependencyPolarity,
+    Dependency, DependencyMap, DependencyPolarity, DependencyStatus,
     Localization, LocalizationMap, encodeLocalization, encodeLocalizationMap,
     InterceptorSpec, InterceptorInvocation, InterceptorMethod,
     InterceptorPhase, ExceptionHandling, InvocationStyle, CascadeStyle,
@@ -1037,9 +1037,10 @@ class Switch (DocBase):
         '''
 
     @abstractmethod
-    def get_ancestor_statuses(self) -> Mapping[str, Status]:
+    def get_dependency_statuses(self) -> Mapping[str, DependencyStatus]:
         '''
-        Retrieve status of this switch from the server
+        Return a recursive tree of ancestors for this switch, with indication of
+        each ancestor's current state and whether the dependency is satisifed.
         '''
 
     @abstractmethod

@@ -5,7 +5,6 @@ __init__.py - Switchboard ProtoBuf type wrappers
 ### Types generated from `switchboard_types.proto`
 from .switchboard_types_pb2 import *
 
-
 from .switchboard_types import (
     ### Overridden type enumerations
     InvocationStyle,
@@ -36,4 +35,9 @@ from .switchboard_types import (
     encodeStateSet,
     encodeSwitchSelection,
     encodeOptionalSwitchSelection,
+)
+
+from .switchboard_decoder import (
+    SwitchboardDecoder,
+    switchboard_decoder,
 )

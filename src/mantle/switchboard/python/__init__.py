@@ -28,6 +28,9 @@ from .protobuf import (
     encodeStateSet,
     encodeSwitchSelection,
     encodeOptionalSwitchSelection,
+
+    SwitchboardDecoder,
+    switchboard_decoder,
 )
 
 from .base import (

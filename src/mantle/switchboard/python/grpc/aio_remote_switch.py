@@ -22,7 +22,7 @@ from cc.protobuf.variant import PyValueMap, KeyValueMap
 from ..protobuf import (
     Specification, Status, State, StateSet,
     ExceptionHandling, InvocationStyle, CascadeStyle,
-    Dependency, DependencyPolarity,
+    Dependency, DependencyPolarity, DependencyStatus,
     InterceptorResult,
 )
 
@@ -146,8 +146,8 @@ class AsyncRemoteSwitch (RemoteSwitchBase):
         return response.map.get(self.name)
 
     @override
-    async def get_ancestor_statuses(self) -> Mapping[str, Status]:
-        response = await RemoteSwitchBase.get_ancestor_statuses(**locals())
+    async def get_dependency_statuses(self) -> Mapping[str, DependencyStatus]:
+        response = await RemoteSwitchBase.get_dependency_statuses(**locals())
         return response.map
 
     @override

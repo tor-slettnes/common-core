@@ -335,6 +335,19 @@ namespace switchboard
     }
 
     std::optional<std::string> Switch::state_text(
+        const std::string &lang) const noexcept
+    {
+        if (const auto &localized = this->localization(lang))
+        {
+            return localized->state_texts.try_to_string(this->state());
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    std::optional<std::string> Switch::state_text(
         State state,
         const std::string &lang) const noexcept
     {
@@ -660,6 +673,38 @@ namespace switchboard
         }
 
         return culprits;
+    }
+
+    DependencyStatusMap Switch::dependency_statuses() const noexcept
+    {
+        DependencyStatusMap map;
+
+        for (const auto &[pred_name, dep]: this->dependencies())
+        {
+            auto dep_status = std::make_shared<DependencyStatus>();
+            map.insert_or_assign(dep->predecessor_name(), dep_status);
+
+            dep_status->dependency = dep;
+
+            if (const auto &pred = dep->predecessor())
+            {
+                dep_status->status = pred->status();
+
+                if (const std::optional<State> expected_state = dep->expected_state())
+                {
+                    dep_status->satisfied = (expected_state == State::STATE_ACTIVE);
+                }
+
+                dep_status->dependency_statuses = pred->dependency_statuses();
+            }
+            else
+            {
+                dep_status->satisfied = false;
+            }
+
+        }
+
+        return map;
     }
 
     bool Switch::is_in_selection(const SwitchSelection &selection) const noexcept

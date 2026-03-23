@@ -96,6 +96,7 @@ namespace switchboard
         /// Return references to all direct and indirect successors of this switch
         SwitchSet get_descendants() const noexcept;
 
+
         /// Return a map of this switch's interceptors
         const InterceptorMap &interceptors() const noexcept;
 
@@ -221,7 +222,15 @@ namespace switchboard
         std::optional<std::string> deactivate_text(
             const LanguageCode &lanugage_code = DEFAULT_LANGUAGE) const noexcept;
 
-        /// Return a textual explanation of an reason, e.g.:
+        /// Return a textual explanation of the current state of this switch, e.g.:
+        /// @code
+        ///    get_switch("Network:Available").state_text()
+        ///         -> "no network is available"
+        /// @endcode
+        std::optional<std::string> state_text(
+            const std::string &language_code = DEFAULT_LANGUAGE) const noexcept;
+
+        /// Return a textual explanation of a reason, e.g.:
         /// @code
         ///    get_switch("Network:Available").state_text(STATE_INACTIVE)
         ///         -> "no network is available"
@@ -467,6 +476,11 @@ namespace switchboard
         /// becoming active, either because they are in a FAILED state
         /// or due to a (direct or indirect) conflict.
         CulpritsMap culprits(bool expected = true) const noexcept;
+
+        /// Return a recursive tree of ancestors for this switch, with
+        /// indication of each ancestor's current state and whether the
+        /// dependency is satisfied.
+        DependencyStatusMap dependency_statuses() const noexcept;
 
         bool is_in_selection(const SwitchSelection &selection) const noexcept;
 
