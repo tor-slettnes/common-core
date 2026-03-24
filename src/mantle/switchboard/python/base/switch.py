@@ -835,7 +835,10 @@ class Switch (DocBase):
         '''
         Return any error currently associated with switch
         '''
-        return self.status.error
+        if self.status.error.level:
+            return self.status.error
+        else:
+            return None
 
 
     @abstractmethod
