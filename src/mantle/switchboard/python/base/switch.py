@@ -133,7 +133,7 @@ class Switch (DocBase):
         '''
         Return language codes mapped to text strings for this switch,
         including its description, texts explaining each target action
-        (True/False), and texts explaining each state (INITIAL, DEACTICATING,
+        (True/False), and texts explaining each state (UNSET, DEACTICATING,
         INACTIVE, ACTIVATING, ACTIVE, FAILING, FAILED).
         '''
         return self.specification.localizations.map
@@ -168,7 +168,7 @@ class Switch (DocBase):
         '''
         Return language-specific text strings for this switch, including its
         description, texts explaining each target action (True/False), and texts
-        explaining each state (INITIAL, DEACTICATING, INACTIVE, ACTIVATING,
+        explaining each state (UNSET, DEACTICATING, INACTIVE, ACTIVATING,
         ACTIVE, FAILING, _FAILED).
 
         @param language_choices
@@ -826,7 +826,7 @@ class Switch (DocBase):
     def settled_state(self) -> State:
         '''
         Return the settled state of this switch. This will be one of
-        INITIAL, ACTIVE, INACTIVE, FAILED.
+        UNSET, ACTIVE, INACTIVE, FAILED.
         '''
         return State(self.status.settled_state)
 
