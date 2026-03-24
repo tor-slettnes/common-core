@@ -34,12 +34,14 @@ from ..protobuf import (
     InterceptorInvocation, InterceptorResult, InterceptorMethod,
     InterceptorSpec, InterceptorPhase,
     ExceptionHandling, InvocationStyle,
+    SwitchboardDecoder,
 )
+
 from ..base.baseboard import SwitchboardBase
 from .remote_switch import RemoteSwitch
 
 
-class BaseClient (SwitchboardBase, SignalClient):
+class BaseClient (SwitchboardBase, SignalClient, SwitchboardDecoder):
     '''
     Switchboard abstract gRPC base client.
 

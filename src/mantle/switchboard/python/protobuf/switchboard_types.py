@@ -15,7 +15,7 @@ from cc.protobuf.utils import native_enum_from_proto
 
 ### Generated from `.../protos/cc/platform/switchboard/protobuf/switchboard_types.proto`
 from .switchboard_types_pb2 import (
-    DependencyPolarity,
+    DependencyPolarity, DependencyStatus,
     InterceptorPhase, InterceptorInvocation,
     ExceptionHandling, InvocationStyle, CascadeStyle, State,
     Localization, LocalizationMap, SwitchSelection,
@@ -155,3 +155,5 @@ def encodeSwitchSelection(patterns: SwitchSelectionInput,
         is_regex = use_regex,
         with_ancestors = with_ancestors,
     )
+
+
