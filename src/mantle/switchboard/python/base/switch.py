@@ -15,7 +15,7 @@ from cc.core.decorators import virtual
 from cc.core.docbase import DocBase
 from cc.core.maputils import recursive_merge
 from cc.core.invocation import safe_invoke
-from cc.protobuf.status import Error, encodeError
+from cc.protobuf.status import Error, encodeError, Level
 from cc.protobuf.variant import (
     PyValueMap, KeyValueMap, encodeKeyValueMap,
 )
@@ -752,6 +752,11 @@ class Switch (DocBase):
         Callback handler for intercept invocations from service.
         '''
 
+    def has_error(self) -> bool:
+        '''
+        Indicate whether this switch is currently FAILING or FAILED.
+        '''
+        return self.error.Level >= Level.ERROR
 
     def is_active(self) -> bool:
         '''
@@ -830,10 +835,7 @@ class Switch (DocBase):
         '''
         Return any error currently associated with switch
         '''
-        if self.status.error.level:
-            return self.status.error
-        else:
-            return None
+        return self.status.error
 
 
     @abstractmethod
