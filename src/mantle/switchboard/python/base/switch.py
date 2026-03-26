@@ -979,7 +979,7 @@ class Switch (DocBase):
         argument set to `None`.
 
         '''
-        self.set_target(
+        return self.set_target(
             target_state = None,
             attributes = attributes,
             clear_existing = clear_existing,

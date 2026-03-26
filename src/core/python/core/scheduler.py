@@ -11,6 +11,7 @@ from typing      import Callable, Optional
 import time, os, sys, traceback, uuid, enum, logging
 
 from .logbase import LogBase
+from .timeutils import TimePoint, TimeInterval
 
 try:
     # Python 3 has math.inf, but does not allow sorting between numeric types and strings
@@ -68,13 +69,12 @@ class Scheduler (LogBase):
 
     def alignmentOffset(self, interval, align=TaskAlignment.LOCAL, timestamp=None):
         if timestamp is None:
-            timestamp = time.time()
+            timestamp = TimePoint.now()
 
         if align == TaskAlignment.UTC:
             tz  = 0
         elif align == TaskAlignment.LOCAL:
-            dst = time.localtime(timestamp)[-1]
-            tz  = (time.timezone, time.altzone)[dst]
+            tz = TimePoint.tz_offset(time.localtime(timestamp))
         else:
             tz = self._starttime
 
@@ -309,7 +309,7 @@ class Scheduler (LogBase):
         return int(time / self.speedFactor / self._tick)
 
     def _timerloop(self):
-        self._starttime = nexttime = now = time.time()
+        self._starttime = nexttime = now = TimePoint.now()
 
         while self._running:
             try:
@@ -320,14 +320,15 @@ class Scheduler (LogBase):
                         except ThreadError:
                             pass
 
-                    now = time.time()
+                    now = TimePoint.now()
 
                     if abs(now - nexttime) > self._timeshiftlimit:
                         shift = now - nexttime
                         self.logger.warning(
-                            "Clock skew detected. "
-                            "Shifting time reference %.1f seconds (from %.1f to %.1f)"%
-                            (shift, self._starttime, self._starttime+shift))
+                            "Clock skew detected: "
+                            "Expected to wake up at %s, but now it is %s. "
+                            "Shifting time reference %.1f seconds"%
+                            (nexttime, now, shift))
                         self._starttime += shift
 
                     maxticks   = self._tickCount(now + self._maxsleep - self._starttime)
