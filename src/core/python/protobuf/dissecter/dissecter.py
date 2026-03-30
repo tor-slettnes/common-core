@@ -2,14 +2,15 @@
 dissecter - Deconstruct ProtoBuf messages into native Python types
 '''
 
-
 __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
 ### Standard Python modules
 from typing import Callable, Sequence, Mapping
 from enum import IntEnum
+from functools import wraps
 from typing import Container, Callable
+import asyncio
 import dataclasses
 import json
 
@@ -17,7 +18,6 @@ import json
 from google.protobuf.descriptor import Descriptor, FieldDescriptor, EnumDescriptor
 
 ### Common Core modules
-from cc.core.logbase import LogBase
 from cc.core.enumutils import symbolize_value
 from cc.core.stringutils import common_prefix
 from cc.protobuf.wellknown import Message, MessageType
@@ -30,7 +30,7 @@ import cc.protobuf.status    as status    # Status types
 Decoder = Callable[[Message], object]
 
 
-class MessageDissecter (LogBase):
+class MessageDissecter:
     '''
     Dissect ProtoBuf messages into native Python value.
 
@@ -38,8 +38,39 @@ class MessageDissecter (LogBase):
     e.g. gRPC service clients.
     '''
 
-    def __init__(self):
-        self.decoders: dict[str, Decoder] = MessageDissecter.message_decoders.copy()
+    decoders = None
+
+    @classmethod
+    def decode_response(cls, method: Callable) -> Callable:
+        '''
+        Method decorator that will dissect a ProtoBuf return value into a
+        native Python object.  The class containing the decorated method must
+        derive `MessageDissecter`.
+        '''
+
+        if asyncio.iscoroutinefunction(method):
+            @wraps(method)
+            async def wrapper(self, *args, **kwargs):
+                response = await method(self, *args, **kwargs)
+                return self.to_dataclass(response)
+
+        else:
+            @wraps(method)
+            def wrapper(self, *args, **kwargs):
+                response = method(self, *args, **kwargs)
+                return self.to_dataclass(response)
+
+        return wrapper
+
+
+    def register_decoders(self):
+        '''
+        Add custom decoders.
+        '''
+        self.decoders = {}
+        for message_type, decoder in self.message_decoders.items():
+            self.register_decoder(message_type, decoder)
+
 
     def register_decoder(self,
                          message_type: MessageType|str,
@@ -66,18 +97,40 @@ class MessageDissecter (LogBase):
         self.decoders[type_name] = decoder
 
 
-    def to_json(self,
-                message: Message,
-                symbolic_enums: bool = True,
-                ) -> dict:
+    def decode(self, value: Message|Mapping|Sequence|object) -> object:
         '''
-        Decode a ProtoBuf message into a JSON string.
+        Equivalent to `to_dataclass()`.
+        '''
+        return self.to_dataclass(value)
 
-        @param symbolic_enums
-            If True, decode ProtoBuf enumerations to strings instead of IntEnum.
+
+    def to_dataclass(self, value: Message|Mapping|Sequence|object) -> object:
+        '''
+        Decode a ProtoBuf value into a Python dataclass object.
         '''
 
-        return json.dumps(self.to_dict(message, symbolic_enums))
+        if self.decoders is None:
+            self.register_decoders()
+
+        try:
+            decoder = self.decoders[value.DESCRIPTOR.full_name]
+
+        except AttributeError:
+            if isinstance(value, Mapping):
+                return {k: self.to_dataclass(v)
+                        for k, v in value.items()}
+
+            elif isinstance(value, Sequence) and not isinstance(value, str):
+                return [self.to_dataclass(value) for value in value]
+
+            else:
+                return value
+
+        except KeyError:
+            return self.dissect_message(value)
+
+        else:
+            return decoder(value)
 
 
     def to_dict(self,
@@ -91,16 +144,23 @@ class MessageDissecter (LogBase):
             If True, decode ProtoBuf enumerations to strings instead of IntEnum.
         '''
 
-        result = self.decode(message)
+        result = self.to_dataclass(message)
 
         if dataclasses.is_dataclass(result):
             result = dataclasses.asdict(result)
 
         elif isinstance(result, Mapping):
-            result = {k:self.to_dict(v)
-                      for (k,v) in result.items()}
+            try:
+                result = {k:self.to_dict(v)
+                          for (k,v) in result.items()}
+            except Exception as e:
+                print("Failed to dissect result %r: [%s] %s"%(
+                    result,
+                    type(e).__name__,
+                    e))
+                raise
 
-        elif isinstance(result, Sequence):
+        elif isinstance(result, Sequence) and not isinstance(result, str):
             result = [self.to_dict(v) for v in result]
 
         if symbolic_enums:
@@ -109,30 +169,18 @@ class MessageDissecter (LogBase):
         return result
 
 
-    def decode(self, value: Message|Mapping|Sequence|object) -> object:
+    def to_json(self,
+                message: Message,
+                symbolic_enums: bool = True,
+                ) -> dict:
         '''
-        Decode a ProtoBuf value into a native Python value.
+        Decode a ProtoBuf message into a JSON string.
+
+        @param symbolic_enums
+            If True, decode ProtoBuf enumerations to strings instead of IntEnum.
         '''
 
-        try:
-            decoder = self.decoders[value.DESCRIPTOR.full_name]
-
-        except AttributeError:
-            if isinstance(value, Mapping):
-                return {k: self.decode(v)
-                        for k, v in value.items()}
-
-            elif isinstance(value, Sequence) and not isinstance(value, str):
-                return [self.decode(value) for value in value]
-
-            else:
-                return value
-
-        except KeyError:
-            return self.dissect_message(value)
-
-        else:
-            return decoder(value)
+        return json.dumps(self.to_dict(message, symbolic_enums))
 
 
     def dissect_message(self, message: Message) -> object:
@@ -253,7 +301,6 @@ class MessageDissecter (LogBase):
             else:
                 field_type = None
 
-
     type_map = {
         FieldDescriptor.TYPE_BOOL    : bool,
         FieldDescriptor.TYPE_FIXED32 : int,
@@ -303,40 +350,17 @@ class MessageDissecter (LogBase):
 
 
 
+
+
 ### Generic instance
 dissecter = MessageDissecter()
-
-def dissecter_instance(function: Callable) -> MessageDissecter:
-    try:
-        instance = function.__self__
-    except AttributeError:
-        return dissecter
-    else:
-        if isinstance(instance, MessageDissecter):
-            return instance
-        else:
-            return dissecter
-
-
-def decode_response(function: Callable) -> Callable:
-    '''
-    Function decorator that will dissect a ProtoBuf return value into a
-    native Python object.
-    '''
-
-    def wrapper(*args, **kwargs):
-        response = function(*args, **kwargs)
-        dissecter = dissecter_instance(function)
-        return dissecter.decode(response)
-
-    return wrapper
 
 
 def decode_message(message: Message) -> object:
     '''
     Dissect a message using the generic MessageDissecter() instance.
     '''
-    return dissecter.decode(message)
+    return dissecter.to_dataclass(message)
 
 
 def decode_to_dict(message: Message) -> dict:

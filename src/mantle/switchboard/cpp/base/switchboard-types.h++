@@ -74,7 +74,7 @@ namespace switchboard
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
-    const StateSet SETTLED_STATES = {STATE_UNSET, STATE_ACTIVE, STATE_INACTIVE, STATE_FAILED};
+    const StateSet SETTLED_STATES = {STATE_ACTIVE, STATE_INACTIVE, STATE_FAILED};
     const StateSet PENDING_STATES = {STATE_ACTIVATING, STATE_DEACTIVATING, STATE_FAILING};
     const StateSet ACTIVATION_STATES = {STATE_ACTIVATING, STATE_DEACTIVATING};
 

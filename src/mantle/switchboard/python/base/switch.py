@@ -6,8 +6,7 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Standard ProtoBuf modules
-from typing import Optional, Mapping, Sequence, Set, Callable
-from abc import abstractmethod
+from typing import Mapping, Sequence, Set, Callable
 from weakref import ref
 
 ### Core modules
@@ -17,51 +16,266 @@ from cc.core.maputils import recursive_merge
 from cc.core.invocation import safe_invoke
 from cc.protobuf.status import Error, encodeError, Level
 from cc.protobuf.variant import (
-    PyValueMap, KeyValueMap, encodeKeyValueMap,
+    PyValueMap, KeyValueMap,
+    encodeKeyValueMap, decodeKeyValueMap,
 )
 
 ### Swithboard modules
 from ..protobuf import (
-    Specification, Status, State, StateSet, encodeStateSet,
-    Dependency, DependencyMap, DependencyPolarity, DependencyStatus,
-    Localization, LocalizationMap, encodeLocalization, encodeLocalizationMap,
+    SwitchboardDissecter,
+    Specification, SpecificationMap,
+    Dependency, DependencyMap, DependencyPolarity, DependencyStatus, DependencyStatusMap,
+    Localization, LocalizationMap, LocalizationsInput, encodeLocalization, encodeLocalizationMap,
     InterceptorSpec, InterceptorInvocation, InterceptorMethod,
     InterceptorPhase, ExceptionHandling, InvocationStyle, CascadeStyle,
-    LanguageCode, LanguageChoice, LocalizationsInput,
+    LanguageCode, LanguageChoice, GetAttributesResponse,
+    Status, StatusMap, ErrorMap, State, StateSet, encodeStateSet,
+    DEFAULT_LANGUAGE,
 )
 
 InterceptorName = str
 SwitchUpdateSubscriber = Callable[['Switch'], None]
 
 
-class Switch (DocBase):
+class Switch (DocBase, SwitchboardDissecter):
     '''
-    Representation of a binary runtime conditition. (e.g. "Door is open",
-    "Temperature control subsystem is ready", "Connected to the Internet").
+    Local proxy object representing a single switch.
     '''
-
-    DEFAULT_LANGUAGE = "en"
 
     def __init__(self,
                  name: str,
                  board: 'SwitchboardBase',
                  ):
         self.name = name
-        self.board = ref(board)
-        self.specification = Specification()
-        self.status = Status()
+        self._board = ref(board)
         self.subscriptions = {}
+        self.raw_specification = Specification()
+        self.raw_status = Status()
 
     def __repr__ (self):
         return "Switch(%r, %s)"%(self.name, self.current_state.name)
 
+    @classmethod
+    def _inputs(cls,
+                inputs: dict,
+                ignore: Sequence|str|None = None,
+                ):
+
+        ignore_list = ['self', 'board']
+        if isinstance(ignore, str):
+            ignore_list.append(ignore)
+        elif isinstance(ignore, Sequence):
+            ignore_list.extend(ignore)
+
+        params = {
+            k:v
+            for (k, v) in inputs.items()
+            if not k in ignore_list
+        }
+        return params
+
+    @property
+    def board(self) -> object:
+        if board := self._board():
+            return board
+        else:
+            raise RuntimeError(
+                "Switchboard is not available (shutdown in progress?)"
+            )
+
+    @property
+    @SwitchboardDissecter.decode_response
+    def specification(self) -> object:
+        '''
+        Return the complete specification for this switch.
+        '''
+        return self.raw_specification
+
+    @property
+    @SwitchboardDissecter.decode_response
+    def status(self) -> object:
+        '''
+        Return the complete status for this switch.
+        '''
+        return self.raw_status
+
+
+    @property
+    def is_primary(self) -> bool:
+        '''
+        Indicate whether switch is `is_primary`, i.e. whether to stop
+        descending further into its dependencies when looking for culprits
+        '''
+        return self.specification.is_primary
+
+    @property
+    def aliases(self) -> Sequence[str]:
+        '''
+        Return a list of aliaes for this string.
+        '''
+        return self.specification.aliases
+
+    @property
+    def localizations(self) -> Mapping[str, Localization]:
+        '''
+        Return language codes mapped to text strings for this switch,
+        including its description, texts explaining each target action
+        (True/False), and texts explaining each state (UNSET, DEACTICATING,
+        INACTIVE, ACTIVATING, ACTIVE, FAILING, FAILED).
+        '''
+        return self.specification.localizations
+
+    @property
+    def dependencies(self) -> Mapping[str, Dependency]:
+        '''
+        Return a map of dependencies for this switch. @sa add_dependency().
+        '''
+        return self.specification.dependencies
+
+    @property
+    def successors(self) -> Mapping[str, 'Switch']:
+        '''
+        Return a map of immediate successors to this switch, i.e., switches
+        with a direct dependency on this one.
+        '''
+        successors = {}
+        for candidate in self.board.switches.values():
+            if self.name in candidate.dependencies:
+                successors[candidate.name] = candidate
+        return successors
+
+    @property
+    def predecessors(self) -> Mapping[str, 'Switch']:
+        '''
+        Return a map of immediate ancestors to this switch, i.e., switches
+        that are direct dependencies of this one.
+        '''
+        predecessors = {}
+        for predecessor_name, dep in self.dependencies.items():
+            if predecessor := self.board.get_switch(predecessor_name):
+                predecessors[predecessor_name] = predecessor
+        return predecessors
+
+    @property
+    def interceptors(self) -> Mapping[str, InterceptorSpec]:
+        '''
+        Return a list of interceptors associated with this switch.
+
+        @see add_interceptor()
+        '''
+
+        return self.specification.interceptors
+
+    @property
+    def active(self) -> bool:
+        '''
+        Indicate whether the switch is currently active
+        '''
+        return self.status.active
+
+    @property
+    def pending(self) -> bool:
+        '''
+        Indicate whether the switch is currently in a "pending" state
+        (DEACTIVATING, ACTIVATING, FAILING).
+        '''
+        return self.status.pending
+
+    @property
+    def settled(self) -> bool:
+        '''
+        Indicate whether the switch is currently in a "settled" state
+        (INACTIVE, ACTIVE, FAILED).
+        '''
+        return not self.status.pending
+
+    @property
+    def target(self) -> bool|None:
+        '''
+        Return the target position (False/True) if a transition is currently
+        in progress, otherwise None.
+        '''
+
+        if self.current_state == State.ACTIVATING:
+            return True
+        elif self.current_state == State.DEACTIVATING:
+            return False
+        else:
+            return None
+
+    @property
+    def state(self) -> object:
+        '''
+        Return the current state of this switch.
+        Identical to `currrent_state`.
+        '''
+
+        return State(self.status.current_state)
+
+
+    @property
+    def current_state(self) -> State:
+        '''
+        Return the current state of this switch
+        '''
+
+        return State(self.status.current_state)
+
+
+    @property
+    def settled_state(self) -> State:
+        '''
+        Return the settled state of this switch. This will be one of
+        UNSET, ACTIVE, INACTIVE, FAILED.
+        '''
+
+        return State(self.status.settled_state)
+
+
+    @property
+    def error(self) -> object|None:
+        '''
+        Return any error currently associated with switch
+        '''
+
+        return self.status.error
+
+
+    @property
+    def attributes(self) -> dict:
+        '''
+        Return a dictinoary of arbitrary key/value pairs currently associated
+        with this switch.
+        '''
+
+        return self.status.attributes
+
+
+    @property
+    def cascaded_attributes(self) -> dict:
+        '''
+        Create and return a dictionary of attributes for this switch, with
+        those from its ancestors merged in recursively.  Preference is tiven to
+        keys from this switch, but the merging order of values from ancestors is
+        undetermined.
+        '''
+
+        attributes = self.attributes
+        for predecessor in self.predecessors.values():
+            recursive_merge(attributes, predecessor.cascaded_attributes)
+
+        return attributes
+
+
     def update_specification(self, specification: Specification):
-        self.specification.CopyFrom(specification)
+        self.raw_specification.CopyFrom(specification)
         return self.publish_update()
 
+
     def update_status(self, status: Status):
-        self.status.CopyFrom(status)
+        self.raw_status.CopyFrom(status)
         return self.publish_update()
+
 
     def publish_update(self):
         for (handle, callback) in self.subscriptions.items():
@@ -115,28 +329,39 @@ class Switch (DocBase):
         return self.subscriptions.pop(handle, None) is not None
 
 
-    @abstractmethod
     def set_specification(self,
                           specification: Specification,
                           replace_aliases: bool = False,
                           replace_localizations: bool = False,
                           replace_dependencies: bool = False,
                           replace_interceptors: bool = False,
-                          active: Optional[bool] = None,
-                          update_state: Optional[bool] = None):
+                          active: bool|None = None,
+                          update_state: bool|None = None) -> bool:
         '''
         Set or update the specification of this switch.
         '''
 
-    @property
-    def localizations(self) -> Mapping[str, Localization]:
+        return self.board.set_specification(
+            self.name,
+            **self._inputs(locals()))
+
+
+    def get_specification(self) -> Specification:
         '''
-        Return language codes mapped to text strings for this switch,
-        including its description, texts explaining each target action
-        (True/False), and texts explaining each state (UNSET, DEACTICATING,
-        INACTIVE, ACTIVATING, ACTIVE, FAILING, FAILED).
+        Return specifications for this switch.
         '''
-        return self.specification.localizations.map
+
+        specs = self.board.get_specifications(selection = [self.name])
+        return specs.get(self.name)
+
+
+    def get_status(self) -> Status:
+        '''
+        Retrieve status of this switch from the server
+        '''
+
+        specs = self.board.get_specifications(selection = [self.name])
+        return specs.get(self.name)
 
 
     def set_localizations(self,
@@ -158,13 +383,14 @@ class Switch (DocBase):
         spec = Specification(
             localizations = encodeLocalizationMap(localizations))
 
-        return self.set_specification(spec,
-                                      replace_localizations=replace)
+        return self.set_specification(
+            spec,
+            replace_localizations=replace)
 
 
     def get_localization(self,
                          language_choices: LanguageChoice = DEFAULT_LANGUAGE,
-                         ) -> Localization:
+                         ) -> Localization|None:
         '''
         Return language-specific text strings for this switch, including its
         description, texts explaining each target action (True/False), and texts
@@ -193,17 +419,17 @@ class Switch (DocBase):
             except KeyError:
                 pass
         else:
-            raise KeyError("No such localization(s) exist(s)", candidates)
+            return None
 
 
     def set_localization(self,
                          language_code: LanguageCode = DEFAULT_LANGUAGE,
-                         localization: Optional[Localization] = None,
+                         localization: Localization|None = None,
                          *,
-                         description: Optional[str] = None,
-                         activate_text: Optional[str] = None,
-                         deactivate_text: Optional[str] = None,
-                         state_texts: Optional[Mapping[State, str]]  = None
+                         description: str|None = None,
+                         activate_text: str|None = None,
+                         deactivate_text: str|None = None,
+                         state_texts: Mapping[State, str]|None  = None
                          ) -> bool:
         '''
         Change or add localization for this switch.
@@ -281,7 +507,8 @@ class Switch (DocBase):
             which will be used in order to look up the switch description.
             See `get_localization()` for details.
         '''
-        return self.get_localization(language_choices).description
+        if localization := self.get_localization(language_choices):
+            return localization.description
 
 
     def get_activate_text(self,
@@ -297,7 +524,8 @@ class Switch (DocBase):
 
         '''
 
-        return self.get_localization(language_choices).activate_text
+        if localization := self.get_localization(language_choices):
+            return localization.activate_text
 
     def get_deactivate_text(self,
                             language_choices: LanguageChoice = DEFAULT_LANGUAGE,
@@ -312,11 +540,13 @@ class Switch (DocBase):
 
         '''
 
-        return self.get_localization(language_choices).deactivate_text
+        if localization := self.get_localization(language_choices):
+            return localization.deactivate_text
+
 
     def get_target_text(self,
                         language_choices: LanguageChoice = DEFAULT_LANGUAGE,
-                        target: Optional[bool] = None
+                        target: bool|None = None
                         ) -> str:
         '''
         If the switch is currently in the ACTIVATING or DEACTIVATING state,
@@ -339,8 +569,10 @@ class Switch (DocBase):
         if target is None:
             target = self.is_active()
 
-        return (self.get_activate_text(language_choices) if target
-                else self.get_deactivate_text(language_choices))
+        if target:
+            return self.get_activate_text(language_choices)
+        else:
+            return self.get_deactivate_text(language_choices)
 
     def set_activate_text(self,
                           text: str,
@@ -389,11 +621,12 @@ class Switch (DocBase):
             'cannot {target_text} because {state_text}'.
         '''
 
-        return self.get_localization(language_choices).state_texts
+        if localization := self.get_localization(language_choices):
+            return localization.state_texts
 
     def get_state_text(self,
                        language_choices: LanguageChoice = DEFAULT_LANGUAGE,
-                       ) -> Optional[str]:
+                       ) -> str|None:
         '''
         Obtain human readable text describing the current state. If no text is
         available, returns `None`.
@@ -402,7 +635,9 @@ class Switch (DocBase):
             Text string describing the current state, if defined.
         '''
 
-        return self.get_state_texts(language_choices).get(self.status.current_state)
+        if state_texts := self.get_state_texts(language_choices):
+            return state_texts.get(self.status.current_state)
+
 
     def set_state_texts(self,
                         texts: Mapping[State, str],
@@ -417,24 +652,6 @@ class Switch (DocBase):
         '''
         self.set_localization(language_code,
                               state_texts = texts)
-
-
-    @property
-    def is_primary(self) -> bool:
-        '''
-        Indicate whether switch is `is_primary`, i.e. whether to stop
-        descending further into its dependencies when looking for culprits
-        '''
-        return self.specification.is_primary
-
-
-    @property
-    def aliases(self) -> set[str]:
-        '''
-        Return a list of aliaes for this string.
-        '''
-        return set(self.specification.aliases)
-
 
     def set_aliases(self, *aliases: str):
         '''
@@ -472,40 +689,6 @@ class Switch (DocBase):
         spec = Specification(is_primary = primary)
         return self.set_specification(spec)
 
-
-    @property
-    def dependencies(self) -> Mapping[str, Dependency]:
-        '''
-        Return a map of dependencies for this switch. @sa add_dependency().
-        '''
-        return self.specification.dependencies.map
-
-    @property
-    def successors(self) -> Mapping[str, 'Switch']:
-        '''
-        Return a map of immediate successors to this switch, i.e., switches
-        with a direct dependency on this one.
-        '''
-        successors = {}
-        if board := self.board():
-            for candidate in board.switches.values():
-                if self.name in candidate.dependencies:
-                    successors[candidate.name] = candidate
-        return successors
-
-    @property
-    def predecessors(self) -> Mapping[str, 'Switch']:
-        '''
-        Return a map of immediate ancestors to this switch, i.e., switches
-        that are direct dependencies of this one.
-        '''
-        predecessors = {}
-        if board := self.board():
-            for predecessor_name, dep in self.dependencies.items():
-                if predecessor := board.get_switch(predecessor_name):
-                    predecessors[predecessor_name] = predecessor
-        return predecessors
-
     def all_ancestors(self) -> Mapping[str, 'Switch']:
         '''
         Return a map of all direct and indirect ancestors to this switch, as
@@ -514,11 +697,10 @@ class Switch (DocBase):
         '''
 
         ancestors = {}
-        if board := self.board():
-            for predecessor_name, dep in self.dependencies.items():
-                if predecessor := board.get_switch(predecessor_name):
-                    ancestors[predecessor_name] = predecessor
-                    ancestors.update(predecessor.all_ancestors())
+        for predecessor_name, dep in self.dependencies.items():
+            if predecessor := self.board.get_switch(predecessor_name):
+                ancestors[predecessor_name] = predecessor
+                ancestors.update(predecessor.all_ancestors())
         return ancestors
 
     def ultimate_ancestors(self,
@@ -534,27 +716,25 @@ class Switch (DocBase):
         '''
 
         ancestors = {}
-        if board := self.board():
-            for predecessor_name, dep in self.dependencies.items():
-                if predecessor := board.get_switch(predecessor_name):
-                    if ((beyond_primary or not predecessor.is_primary)
-                        and predecessor.dependencies):
-                        ancestors.update(predecessor.ultimate_ancestors(beyond_primary))
-                    else:
-                        ancestors[predecessor.name] = predecessor
+        for predecessor_name, dep in self.dependencies.items():
+            if predecessor := self.board.get_switch(predecessor_name):
+                if ((beyond_primary or not predecessor.is_primary)
+                    and predecessor.dependencies):
+                    ancestors.update(predecessor.ultimate_ancestors(beyond_primary))
+                else:
+                    ancestors[predecessor.name] = predecessor
 
         return ancestors
 
 
-    @abstractmethod
     def add_dependency(self,
                        predecessor: str,
                        trigger_states: StateSet = State.SETTLED,
                        polarity: DependencyPolarity = DependencyPolarity.POSITIVE,
                        hard: bool = False,
                        sufficient: bool = False,
-                       allow_update: Optional[bool] = None,
-                       reevaluate: Optional[bool] = None,
+                       allow_update: bool|None = None,
+                       reevaluate: bool|None = None,
                        ) -> bool:
         '''
         Add a new upstream dependency (direct ancestor) to this switch.
@@ -595,8 +775,15 @@ class Switch (DocBase):
             Recalculate this switch's state after adding the dependency.
         '''
 
+        if isinstance(predecessor, Switch):
+            predecessor = predecessor.name
 
-    @abstractmethod
+        return self.board.add_dependency(
+            self.name,
+            predecessor,
+            **self._inputs(locals(), ignore='predecessor'))
+
+
     def remove_dependency(self,
                           predecessor: str,
                           reevaluate: bool = True,
@@ -612,19 +799,35 @@ class Switch (DocBase):
            Recalculate state after removing dependency
         '''
 
+        if isinstance(predecessor, Switch):
+            predecessor = predecessor.name
 
-    @property
-    def interceptors(self) -> Mapping[str, InterceptorSpec]:
+        return self.board.remove_dependency(
+            self.name,
+            predecessor,
+            reevaluate)
+
+    def invoke_interceptor(self,
+                           interceptor_name : str,
+                           state : State|None = None,
+                           ) -> Error|None:
         '''
-        Return a list of interceptors associated with this switch.
+        Manually invoke a specific interceptor, as if it were triggered by a
+        switch changing its current state.  Primarily a diagnostic tool.
 
-        @see add_interceptor()
+        @param interceptor_name
+            Name of interceptor to invoke.
+
+        @param state
+            State to pass as input argument for the interceptor. If not
+            provided, defaults to the current state of this switch.
         '''
 
-        return self.specification.interceptors.map
+        return self.board.invoke_interceptor(
+            intereptor_name = interceptor_name,
+            switch_name = self.name,
+            state = state)
 
-
-    @abstractmethod
     def add_interceptor(self,
                         interceptor_name: str,
                         state_transitions: StateSet,
@@ -632,9 +835,10 @@ class Switch (DocBase):
                         phase: InterceptorPhase = InterceptorPhase.NORMAL,
                         asynchronous: bool = False,
                         rerun: bool = False,
+                        immediate: bool = False,
+                        future: bool = False,
                         on_cancel: ExceptionHandling = ExceptionHandling.ABORT,
                         on_error: ExceptionHandling = ExceptionHandling.FAIL,
-                        immediate: bool = False,
                         ) -> bool:
         '''
         Add a new interceptor to be executed once the switch enters the
@@ -682,30 +886,15 @@ class Switch (DocBase):
             True if the interceptor was added.
         '''
 
-        if board := self.board():
-            return board.register_interceptor(
-                switch_name = self.name,
-                interceptor_name = interceptor_name,
-                registration = InterceptorRegistration(
-                    spec = InterceptorSpec(
-                        state_transitions = encodeStateSet(state_transitions),
-                        asynchronous = asynchronous,
-                        phase = phase,
-                        rerun = rerun,
-                        on_cancel = on_cancel,
-                        on_error = on_error,
-                    ),
-                    immediate = immediate,
-                ),
-                method = callback,
-            )
-        else:
-            return False
+        return self.board.add_interceptor(
+            switch_selection = [self.name],
+            **self._inputs(locals()),
+        )
 
 
-    @abstractmethod
     def remove_interceptor(self,
                            interceptor_name: str,
+                           abandon_pending: bool = True,
                            ) -> bool:
         '''
         Remove an existing interceptor from a switch.
@@ -713,139 +902,24 @@ class Switch (DocBase):
         @param interceptor_name
             Name of interceptor to remove
 
+        @param abandon_pending
+            Abandon any pending invocations of this interceptor.
+
         @returns
             True if the interceptor existed and was removed.
         '''
 
-        if board := self.board():
-            return board.deregister_interceptor(
-                switch_name = self.name,
-                interceptor_name = interceptor_name,
-            )
-        else:
-            return False
+        return self.board.remove_interceptor(
+            interceptor_name = interceptor_name,
+            switch_selection = [self.name],
+            abandon_pending = abandon_pending,
+        )
 
 
-    @abstractmethod
-    def invoke_interceptor(self,
-                           interceptor_name : str,
-                           state : Optional[State] = None,
-                           ) -> Optional[Error]:
-        '''
-        Manually invoke a specific interceptor, as if it were triggered by a
-        switch changing its current state.  Primarily a diagnostic tool.
-
-        @param interceptor_name
-            Name of interceptor to invoke.
-
-        @param state
-            State to pass as input argument for the interceptor. If not
-            provided, defaults to the current state of this switch.
-        '''
-
-
-    @abstractmethod
-    def on_intercept(self,
-                     interceptor_name : str,
-                     state : State):
-        '''
-        Callback handler for intercept invocations from service.
-        '''
-
-    def has_error(self) -> bool:
-        '''
-        Indicate whether this switch is currently FAILING or FAILED.
-        '''
-        return self.error.Level >= Level.ERROR
-
-    def is_active(self) -> bool:
-        '''
-        Indicate whether the switch is currently active
-        '''
-        return self.status.active
-
-    def is_pending(self) -> bool:
-        '''
-        Indicate whether the switch is currently in a "pending" state
-        (DEACTIVATING, ACTIVATING, FAILING).
-        '''
-        return self.status.pending
-
-    def is_settled(self) -> bool:
-        '''
-        Indicate whether the switch is currently in a "settled" state
-        (INACTIVE, ACTIVE, FAILED).
-        '''
-        return not self.status.pending
-
-    @property
-    def active(self) -> bool:
-        '''
-        Indicate whether the switch is currently active
-        '''
-        return self.status.active
-
-    @property
-    def pending(self) -> bool:
-        '''
-        Indicate whether the switch is currently in a "pending" state
-        (DEACTIVATING, ACTIVATING, FAILING).
-        '''
-        return self.status.pending
-
-    @property
-    def settled(self) -> bool:
-        '''
-        Indicate whether the switch is currently in a "settled" state
-        (INACTIVE, ACTIVE, FAILED).
-        '''
-        return not self.status.pending
-
-    @property
-    def target(self) -> Optional[bool]:
-        '''
-        Return the target position (False/True) if a transition is currently
-        in progress, otherwise None.
-        '''
-
-        if self.current_state == State.ACTIVATING:
-            return True
-        elif self.current_state == State.DEACTIVATING:
-            return False
-        else:
-            return None
-
-    @property
-    def current_state(self) -> State:
-        '''
-        Return the current state of this switch
-        '''
-        return State(self.status.current_state)
-
-    @property
-    def settled_state(self) -> State:
-        '''
-        Return the settled state of this switch. This will be one of
-        UNSET, ACTIVE, INACTIVE, FAILED.
-        '''
-        return State(self.status.settled_state)
-
-    @property
-    def error(self) -> Optional[Error]:
-        '''
-        Return any error currently associated with switch
-        '''
-        if self.status.error.level:
-            return self.status.error
-        else:
-            return None
-
-
-    @abstractmethod
     def set_target(self,
-                   target_state: Optional[State],
+                   target_state: State|None,
                    error: Error|Exception|str|None = None,
-                   attributes: Optional[PyValueMap] = None,
+                   attributes: PyValueMap|None = None,
                    clear_existing: bool = False,
                    invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
                    cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
@@ -910,10 +984,14 @@ class Switch (DocBase):
             True iff the target state was modified
         '''
 
+        return self.board.set_target(
+            switch_name = self.name,
+            **self._inputs(locals()))
+
 
     def set_active(self,
                    active: bool,
-                   attributes: Optional[PyValueMap] = None,
+                   attributes: PyValueMap|None = None,
                    clear_existing: bool = False,
                    invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
                    cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
@@ -930,19 +1008,12 @@ class Switch (DocBase):
 
         return self.set_target(
             target_state = (State.INACTIVE, State.ACTIVE)[bool(active)],
-            attributes = attributes,
-            clear_existing = clear_existing,
-            invoke_interceptors = invoke_interceptors,
-            cascade_descendants = cascade_descendants,
-            reenter = reenter,
-            on_cancel = on_cancel,
-            on_error = on_error)
-
+            **self._inputs(locals(), ignore='active'))
 
 
     def set_error(self,
                   error: Error|Exception|str,
-                  attributes: Optional[PyValueMap] = None,
+                  attributes: PyValueMap|None = None,
                   clear_existing: bool = False,
                   invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
                   cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
@@ -956,17 +1027,11 @@ class Switch (DocBase):
 
         return self.set_target(
             State.FAILED,
-            error = encodeError(error),
-            attributes = attributes,
-            clear_existing = clear_existing,
-            invoke_interceptors = invoke_interceptors,
-            cascade_descendants = cascade_descendants,
-            reenter = reenter,
-            on_cancel = on_cancel,
-            on_error = on_error)
+            **self._inputs(locals()))
+
 
     def set_auto(self,
-                 attributes: Optional[PyValueMap] = None,
+                 attributes: PyValueMap|None = None,
                  clear_existing: bool = False,
                  invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
                  cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
@@ -981,88 +1046,101 @@ class Switch (DocBase):
         '''
         return self.set_target(
             target_state = None,
-            attributes = attributes,
-            clear_existing = clear_existing,
-            invoke_interceptors = invoke_interceptors,
-            cascade_descendants = cascade_descendants,
-            reenter = reenter,
-            on_cancel = on_cancel,
-            on_error = on_error)
-
-    @property
-    def attributes(self) -> KeyValueMap:
-        '''
-        Return a dictinoary of arbitrary key/value pairs currently associated
-        with this switch.
-        '''
-
-        return self.status.attributes
+            **self._inputs(locals()))
 
 
-    @abstractmethod
     def get_attributes(self,
-                       inherit: bool = False) -> KeyValueMap:
+                       inherit: bool = False) -> GetAttributesResponse:
         '''
-        Obtain a key/value map of attributes assigned to this switch
+        Obtain a key/value map of attributes assigned to this switch from
+        server.
 
         @param inherit
             Also recursively merge in attributes from its ancestors
         '''
 
+        return self.board.get_attributes(
+            switch_name = self.name,
+            inherit = inherit,
+        )
 
-    @abstractmethod
+
     def set_attributes(self,
-                       attributes: Optional[PyValueMap] = None,
-                       clear_existing: bool = False):
+                       attributes: PyValueMap|None = None,
+                       clear_existing: bool = False) -> bool:
         '''
         Assign arbitrary key/value pairs to this switch.
         See `set_target()` for details on the input arguments.
         '''
 
-    @property
-    def cascaded_attributes(self):
-        '''
-        Create and return a dictionary of attributes for this switch, with
-        those from its ancestors merged in recursively.  Preference is tiven to
-        keys from this switch, but the merging order of values from ancestors is
-        undetermined.
-        '''
-
-        attributes = self.attributes
-        for predecessor in self.predecessors.values():
-            recursive_merge(attributes, predecessor.cascaded_attributes)
-
-        return attributes
+        return self.board.set_attributes(
+            switch_name = self.name,
+            **self._inputs(locals()))
 
 
-    @abstractmethod
-    def get_status(self) -> Status:
-        '''
-        Retrieve status of this switch from the server
-        '''
-
-    @abstractmethod
-    def get_dependency_statuses(self) -> Mapping[str, DependencyStatus]:
+    def get_dependency_statuses(self) -> DependencyStatusMap:
         '''
         Return a recursive tree of ancestors for this switch, with indication of
         each ancestor's current state and whether the dependency is satisifed.
         '''
 
-    @abstractmethod
-    def get_culprits(self, expected_position: bool = True) -> Mapping[str, Status]:
+        return self.board.get_dependency_statuses(
+            switch_name = self.name,
+        )
+
+
+    def get_culprits(self, expected_position: bool = True) -> StatusMap:
         '''
         Obtain root causes for a switch not being in the expected positiion.
+
+        @param expected_position
+          Report culprits iff the current value of the switch is different from this.
 
         @returns
           Dictionary of conflicting upstream state names and their corresponding states.
         '''
 
-    @abstractmethod
-    def get_errors(self) -> Mapping[str, Error]:
+        return self.board.get_culprits(
+            switch_name = self.name,
+        )
+
+
+    def get_errors(self) -> ErrorMap:
         '''
         Obtain errors assigned to this switch and its ancestors.
 
         @returns
-          Dictionary of errors assigned to this switch and its ancestors
+          Switch names mapped to corresponding errors.
         '''
+
+        return self.board.get_errors(
+            switch_name = self.name,
+        )
+
+
+    def has_error(self) -> bool:
+        '''
+        Indicate whether this switch is currently FAILING or FAILED.
+        '''
+        return self.error and (self.error.Level >= Level.ERROR)
+
+    def is_active(self) -> bool:
+        '''
+        Indicate whether the switch is currently active
+        '''
+        return self.status.active
+
+    def is_pending(self) -> bool:
+        '''
+        Indicate whether the switch is currently in a "pending" state
+        (DEACTIVATING, ACTIVATING, FAILING).
+        '''
+        return self.status.pending
+
+    def is_settled(self) -> bool:
+        '''
+        Indicate whether the switch is currently in a "settled" state
+        (INACTIVE, ACTIVE, FAILED).
+        '''
+        return not self.status.pending
 

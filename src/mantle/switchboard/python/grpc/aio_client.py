@@ -16,21 +16,23 @@ from cc.core.decorators import override
 from cc.core.invocation import method_path, safe_await
 from cc.core.paths import FilePathInput
 from cc.core.settingsstore import SettingsStore
-from cc.protobuf.status import encodeError
-from cc.protobuf.variant import PyValueMap, decodeKeyValueMap
+from cc.protobuf.status import encodeError, Error
+from cc.protobuf.variant import PyValueMap, KeyValueMap, decodeKeyValueMap
 from cc.messaging.grpc import SignalClient, AsyncMixIn
 
 ### Switchboard modules
-
 from ..protobuf import (
-    Specification, Status, State, StateSet,
+    SwitchboardDissecter,
+    SwitchInfo, SwitchSelectionInput,
+    Specification, Status,
+    State, StateSet,
+    DependencyStatus, DependencyPolarity,
     InterceptorMethod, InterceptorInvocation, InterceptorResult,
-    InterceptorPhase, ExceptionHandling, InvocationStyle,
-    SwitchSelectionInput,
+    InterceptorPhase, ExceptionHandling, InvocationStyle, CascadeStyle,
 )
 
+from ..base import AsyncSwitch
 from .base_client import BaseClient
-from .aio_remote_switch import AsyncRemoteSwitch
 
 class AsyncClient (AsyncMixIn, BaseClient):
     '''
@@ -38,64 +40,64 @@ class AsyncClient (AsyncMixIn, BaseClient):
     '''
 
     @override
-    def _new_switch(self, switch_name: str) -> AsyncRemoteSwitch:
-        '''Obtain a new Switch instance in response to update signals from server'''
-        return AsyncRemoteSwitch(switch_name, self)
+    def _new_switch(self, switch_name: str) -> AsyncSwitch:
+        return AsyncSwitch(switch_name, self)
 
-    @override
-    async def get_status(self,
-                         selection: SwitchSelectionInput|None = None,
-                         with_ancestors: bool = False,
-                         ) -> Mapping[str, Status]:
-        response = await BaseClient.get_status(**locals())
-        return response.map
+    async def get_or_add_switch(self,
+                                switch_name: str,
+                                initially_active: bool = False,
+                                ) -> AsyncSwitch:
+
+        proxy, added = self._get_or_add_switch_proxy(switch_name, initially_active)
+
+        if added:
+            await self.call_add_switch(switch_name, initially_active)
+
+        return proxy
 
     @override
     async def add_switch(self,
                          switch_name: str,
-                         initially_active: bool = False) -> bool:
+                         initially_active: bool = False) -> AsyncSwitch:
 
-        switch =  BaseClient.add_switch(**locals())
-        await self._call_add_switch(switch_name, initially_active)
-        return switch
+        proxy, _ = self._get_or_add_switch_proxy(switch_name, initially_active)
+        await self.call_add_switch(switch_name, initially_active)
+        return proxy
 
-    @override
-    async def remove_switch(self, switch_name: str, propagate: bool = True) -> bool:
-        response = await BaseClient.remove_switch(**locals())
-        return response.value
 
     @override
+    @SwitchboardDissecter.decode_response
+    async def remove_switch(self,
+                            switch_name: str,
+                            propagate: bool = True,
+                            ) -> bool:
+        return await BaseClient.call_remove_switch(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
     async def clear_switches(self,
                              reload: bool = False,
                              ) -> bool:
-        response = await BaseClient.clear_switches(**locals())
-        return response.value
+        return await BaseClient.call_clear_switches(**locals())
 
     @override
+    @SwitchboardDissecter.decode_response
     async def import_switches(self,
                               declarations: PyValueMap,
                               replace_specifications: bool = False,
                               replace_statuses: bool = False,
                               invoke_interceptors: InvocationStyle = InvocationStyle.INDIRECT,
                               ) -> int:
-        response = await BaseClient.import_switches(**locals())
-        return response.import_count
+        return await BaseClient.call_import_switches(**locals())
 
     @override
+    @SwitchboardDissecter.decode_response
     async def export_switches(self,
                               selection: SwitchSelectionInput|None = None,
                               include_specifications: bool = False,
-                              include_statuses: bool = True) -> Sequence[Mapping]:
-        response = await BaseClient.export_switches(**locals())
-        return decodeKeyValueMap(response.declarations)
+                              include_statuses: bool = True) -> Mapping[str, Mapping]:
 
-    @override
-    async def load_switches(self,
-                            filename: FilePathInput,
-                            replace_specifications: bool = False,
-                            replace_statuses: bool = False,
-                            invoke_interceptors: InvocationStyle = InvocationStyle.INDIRECT):
-        await BaseClient.load_switches(**locals())
+        return await BaseClient.call_export_switches(**locals())
 
     @override
     async def save_switches(self,
@@ -114,8 +116,160 @@ class AsyncClient (AsyncMixIn, BaseClient):
         store.update(declarations)
         return store.save(filename)
 
+    @override
+    @SwitchboardDissecter.decode_response
+    async def get_switch_info(self,
+                              selection: SwitchSelectionInput|None = None,
+                              with_ancestors: bool = False,
+                              ) -> Mapping[str, SwitchInfo]:
+        return await BaseClient.call_get_switch_info(**locals())
 
     @override
+    @SwitchboardDissecter.decode_response
+    async def set_specification(self,
+                                switch_name: str,
+                                specification: Specification,
+                                replace_aliases: bool = False,
+                                replace_localizations: bool = False,
+                                replace_dependencies: bool = False,
+                                replace_interceptors: bool = False,
+                                active: bool|None = None,
+                                update_state: bool|None = None) -> bool:
+
+        return await BaseClient.call_set_specification(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def get_specifications(self,
+                                 selection: SwitchSelectionInput|None = None,
+                                 with_ancestors: bool = False,
+                                 ) -> Mapping[str, Status]:
+
+        return await BaseClient.call_get_specifications(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def add_dependency(self,
+                             switch_name: str,
+                             predecessor_name: str,
+                             trigger_states: StateSet = State.SETTLED,
+                             polarity: DependencyPolarity = DependencyPolarity.POSITIVE,
+                             hard: bool = False,
+                             sufficient: bool = False,
+                             allow_update: bool|None = None,
+                             reevaluate: bool|None = None,
+                             ) -> bool:
+
+        return await BaseClient.call_add_dependency(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def remove_dependency(self,
+                                switch_name: str,
+                                predecessor_name: str,
+                                reevaluate: bool = True,
+                                ) -> bool:
+
+        return await BaseClient.call_remove_dependency(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def get_ancestors(self,
+                            switch_name: str) -> Sequence[str]:
+
+        return await BaseClient.call_get_ancestors(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def get_descendants(self,
+                              switch_name: str) -> Sequence[str]:
+
+        return await BaseClient.call_get_descendants(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def set_target(self,
+                         switch_name: str,
+                         target_state: State|None = None,
+                         error: Error|Exception|str|None = None,
+                         attributes: PyValueMap|None = None,
+                         clear_existing: bool = False,
+                         invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
+                         cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
+                         reenter: bool = False,
+                         on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
+                         on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
+                         ) -> bool:
+
+        return await BaseClient.call_set_target(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def get_statuses(self,
+                           selection: SwitchSelectionInput|None = None,
+                           with_ancestors: bool = False,
+                           ) -> Mapping[str, Status]:
+
+        return await BaseClient.call_get_statuses(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def get_dependency_status(self,
+                                    switch_name: str,
+                                    ) -> Mapping[str, DependencyStatus]:
+
+        return await BaseClient.call_get_dependency_status(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def set_attributes(self,
+                             switch_name: str,
+                             attributes: PyValueMap|None = None,
+                             clear_existing: bool = False):
+
+        return await BaseClient.call_set_attributes(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def get_attributes(self,
+                             switch_name: str,
+                             inherit: bool = False) -> dict:
+        return await BaseClient.call_get_attributes(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def get_culprits(self,
+                           switch_name: str,
+                           expected_position: bool = True) -> Mapping[str, Status]:
+
+        return await BaseClient.call_get_culprits(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def get_errors(self,
+                         switch_name: str,
+                         ) -> Mapping[str, Error]:
+        return await BaseClient.call_get_errors(**locals())
+
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def invoke_interceptor(self,
+                                 interceptor_name: str,
+                                 switch_name: str,
+                                 state: State|None = None
+                                 ) -> Error|None:
+
+        response = await BaseClient.call_invoke_interceptor(**locals())
+
+        if response.Hasfield('error'):
+            return response.error
+        else:
+            return None
+
+
+    @override
+    @SwitchboardDissecter.decode_response
     async def add_interceptor(self,
                               interceptor_name: str,
                               switch_selection: SwitchSelectionInput,
@@ -129,19 +283,18 @@ class AsyncClient (AsyncMixIn, BaseClient):
                               immediate: bool = False,
                               future: bool = False) -> bool:
 
-        response = await BaseClient.add_interceptor(**locals())
-        return response.value
+        return await BaseClient.call_add_interceptor(**locals())
 
 
     @override
+    @SwitchboardDissecter.decode_response
     async def remove_interceptor(self,
                                  interceptor_name: str,
                                  switch_selection: SwitchSelectionInput|None = None,
                                  abandon_pending: bool = True,
                                  ) -> bool:
 
-        response = await BaseClient.remove_interceptor(**locals())
-        return response.value
+        return await BaseClient.call_remove_interceptor(**locals())
 
 
     def init_intercept(self):
@@ -213,7 +366,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
         if method := self.interceptor_methods.get(invocation.interceptor_name):
             result, error = await safe_await(
                 method,
-                args = (invocation,),
+                args = (self.decode(invocation),),
                 description = 'switch %r interceptor %r' % (
                     invocation.switch_name,
                     invocation.interceptor_name,

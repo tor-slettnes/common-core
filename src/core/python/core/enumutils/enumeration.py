@@ -6,6 +6,7 @@
 #===============================================================================
 
 from collections import UserDict
+from typing import Mapping, Sequence
 import logging
 
 
@@ -14,13 +15,20 @@ class EnumValue(int):
     An enumerated value, derived from and compatible with `int`.
     '''
 
-    def __new__ (cls, value, name):
+    def __new__ (cls, value, name, enum_name = None):
         self = int.__new__(cls, value)
         self.name = name
+        self.value = int(value)
+        self.enum_name = enum_name
         return self
 
-    def __repr__ (self):
+    def __str__ (self):
         return str(self.name)
+
+    def __repr__ (self):
+        return ('.'.join((self.enum_name, self.name)) if self.enum_name
+                else self.name)
+
 
 
 class Enumeration (dict):
@@ -46,8 +54,8 @@ class Enumeration (dict):
     '''
 
     def __init__ (self,
-                  enumeration: dict[str,int]|list[tuple[str,int]]|list[str],
-                  name = None):
+                  name: str,
+                  enumeration: Mapping[str,int]|Sequence[tuple[str,int]]|Sequence[str]):
         '''
         Initializer.
 
@@ -89,7 +97,7 @@ class Enumeration (dict):
 
 
         for (name, value) in items:
-            self[value] = item = EnumValue(value, name)
+            self[value] = item = EnumValue(value, name, self.name)
             setattr(self, name, item)
 
     def __repr__ (self):

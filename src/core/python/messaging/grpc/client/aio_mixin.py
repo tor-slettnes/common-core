@@ -42,7 +42,6 @@ class AsyncClient (AsyncMixIn, GenericClient):
     and as such are coroutines that should be awaited.
     '''
 
-
 class AsyncSignalClient(AsyncMixIn, SignalClient):
     '''
     gRPC client with additional functionality to receive streamed Signal

@@ -13,11 +13,13 @@ from typing import abstractmethod
 import grpc
 
 ### Modules within package
+from ....protobuf.dissecter import MessageDissecter
 from ..base import Base
 from .interceptors import GenericClientInterceptor
 from .readers import AbstractReader, ThreadReader
 
-class GenericClient (Base):
+
+class GenericClient (Base, MessageDissecter):
     '''
     Abstract base class for gRPC service clients.
 
@@ -151,4 +153,3 @@ class GenericClient (Base):
             args,
             kwargs,
         ))
-

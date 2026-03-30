@@ -1,5 +1,5 @@
 '''
-Switch controlled via a remote gRPC service
+Switch controlled via a gRPC service
 '''
 
 __docformat__ = 'javadoc en'
@@ -21,11 +21,11 @@ from ..protobuf import (
     Dependency, DependencyPolarity, DependencyStatus,
 )
 
-from .remote_switch_base import RemoteSwitchBase
+from .base_switch_proxy import BaseSwitchProxy
 from .switchboard_service_pb2_grpc import SwitchboardStub
 
 
-class RemoteSwitch (RemoteSwitchBase):
+class StandardSwitchProxy (BaseSwitchProxy):
 
     @override
     def set_specification(self,
@@ -36,9 +36,14 @@ class RemoteSwitch (RemoteSwitchBase):
                           replace_interceptors: bool = False,
                           update_state: Optional[bool] = None,
                           ):
-        response = RemoteSwitchBase.set_specification(**locals())
+        response = BaseSwitchProxy.set_specification(**locals())
         return response.value
 
+
+    @override
+    def get_specification(self):
+        response = BaseSwitchProxy.get_specification(**locals())
+        return self.to_dataclass(response).get(self.name)
 
     @override
     def add_dependency(self,
@@ -51,7 +56,7 @@ class RemoteSwitch (RemoteSwitchBase):
                        reevaluate: Optional[bool] = None,
                        ) -> bool:
 
-        response = RemoteSwitchBase.add_dependency(**locals())
+        response = BaseSwitchProxy.add_dependency(**locals())
         return response.value
 
 
@@ -61,9 +66,8 @@ class RemoteSwitch (RemoteSwitchBase):
                           reevaluate: bool = True,
                           ) -> bool:
 
-        response = RemoteSwitchBase.remove_dependency(**locals())
+        response = BaseSwitchProxy.remove_dependency(**locals())
         return response.value
-
 
     @override
     def invoke_interceptor(self,
@@ -71,9 +75,11 @@ class RemoteSwitch (RemoteSwitchBase):
                            state : Optional[int] = None
                            ) -> Optional[Error]:
 
-        response = RemoteSwitchBase.invoke_interceptor(**locals())
-        return response.error
-
+        response = BaseSwitchProxy.invoke_interceptor(**locals())
+        if response.Hasfield('error'):
+            return self.to_dataclass(response.error)
+        else:
+            return None
 
     @override
     def set_target(self,
@@ -88,42 +94,42 @@ class RemoteSwitch (RemoteSwitchBase):
                    on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
                    ) -> bool:
 
-        response = RemoteSwitchBase.set_target(**locals())
+        response = BaseSwitchProxy.set_target(**locals())
         return response.updated
+
+    @override
+    def get_status(self) -> Status:
+        response = BaseSwitchProxy.get_status(**locals())
+        return self.to_dataclass(response).get(self.name)
+
+    @override
+    def get_dependency_statuses(self) -> Mapping[str, DependencyStatus]:
+        response = BaseSwitchProxy.get_dependency_statuses(**locals())
+        return self.to_dataclass(response)
 
     @override
     def get_attributes(self,
                        inherit: bool = False) -> KeyValueMap:
-        response = RemoteSwitchBase.get_attributes(**locals())
-        return response.attributes
+        response = BaseSwitchProxy.get_attributes(**locals())
+        return self.to_dataclass(response.attributes)
 
     @override
     def set_attributes(self,
                        attributes: Optional[PyValueMap] = None,
                        clear_existing: bool = False):
 
-        response = RemoteSwitchBase.set_attributes(**locals())
+        response = BaseSwitchProxy.set_attributes(**locals())
         return response.updated
-
-    @override
-    def get_status(self) -> Status:
-        response = RemoteSwitchBase.get_status(**locals())
-        return response.map.get(self.name)
-
-    @override
-    def get_dependency_statuses(self) -> Mapping[str, DependencyStatus]:
-        response = RemoteSwitchBase.get_dependency_statuses(**locals())
-        return response.map
 
     @override
     def get_culprits(self,
                      expected_position: bool = True) -> Mapping[str, Status]:
 
-        response = RemoteSwitchBase.get_culprits(**locals())
-        return response.map
+        response = BaseSwitchProxy.get_culprits(**locals())
+        return self.to_dataclass(response)
 
 
     @override
     def get_errors(self) -> Mapping[str, Error]:
-        response = RemoteSwitchBase.get_errors(**locals())
-        return response.map
+        response = BaseSwitchProxy.get_errors(**locals())
+        return self.to_dataclass(response)

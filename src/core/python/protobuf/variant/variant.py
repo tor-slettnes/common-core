@@ -108,7 +108,8 @@ def decodeValue(input: Value) -> PyValue:
     Python value.
     '''
 
-    if fieldname := input.WhichOneof('value'):
+    if isinstance(input, Value):
+        fieldname = input.WhichOneof('value')
         match(fieldname):
             case 'value_timestamp':
                 return decodeTimestamp(input.value_timestamp)
@@ -126,10 +127,26 @@ def decodeValue(input: Value) -> PyValue:
                 return decodeKeyValueMap(input.value_kvmap)
 
             case _:
-                return getattr(input, fieldname)
+                return getattr(input, fieldname, None)
 
-    else:
-        return None
+    elif isinstance(input, ValueList):
+        return decodeValueList(input)
+
+    elif isinstance(input, TaggedValueList):
+        return decodeTaggedValueList(input)
+
+    elif isinstance(input, KeyValueMap):
+        return decodeKeyValueMap(input)
+
+    elif isinstance(input, PyValue):
+        return input
+
+    elif input is not None:
+        raise TypeError(
+            "decodeValue() expects a Value input, got %s: %s" % (
+                type(input).__name__,
+                input,
+            ))
 
 
 #-------------------------------------------------------------------------------
@@ -170,7 +187,18 @@ def decodeValueList(input: ValueList) -> PyValueList:
     native values.
     '''
 
-    return [decodeValue(v) for v in input.items]
+    if isinstance(input, ValueList):
+        return [decodeValue(v) for v in input.items]
+    elif isinstance(input, Sequence):
+        return [decodeValue(v) for v in input]
+    else:
+        raise TypeError(
+            'decodeValueList() expects a ValueList input, got %s: %s' % (
+                type(input).__name__,
+                input,
+            ))
+
+
 
 
 #-------------------------------------------------------------------------------
@@ -210,7 +238,18 @@ def decodeTaggedValue(input: TaggedValue) -> PyTaggedValue:
     (tag, value) tuple.
     '''
 
-    return (input.tag, decodeValue(input.value))
+
+    if isinstance(input, TaggedValue):
+        return (input.tag, decodeValue(input.value))
+    elif isinstance(input, Sequence) and not isinstance(input, str) and len(input) == 2:
+        return input
+    else:
+        raise TypeError(
+            'decodeTaggedValue() expects a (tag, value) pair, got %s: %s' % (
+                type(input).__name__,
+                input,
+            ))
+
 
 
 #-------------------------------------------------------------------------------
@@ -305,7 +344,18 @@ def decodeKeyValueMap(input: KeyValueMap) -> PyValueMap:
     '''
     Decode a `protobuf.variant.KeyValueMap` instance to a native Python dictionary.
     '''
-    return {key:decodeValue(value) for (key, value) in input.map.items()}
+    if isinstance(input, KeyValueMap):
+        return {key:decodeValue(value) for (key, value) in input.map.items()}
+
+    elif isinstance(input, Mapping):
+        return {key:decodeValue(value) for (key, value) in input.items()}
+
+    else:
+        raise TypeError(
+            'decodeKeyValueMap() expects a mappable input, got %s: %s' % (
+                type(input).__name__,
+                input,
+            ))
 
 
 def keyValueMap(**kwargs) -> KeyValueMap:

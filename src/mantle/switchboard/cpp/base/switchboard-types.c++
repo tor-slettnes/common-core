@@ -68,7 +68,7 @@ namespace switchboard
 
     bool is_settled(State state)
     {
-        return SETTLED_STATES.count(state);
+        return !is_pending(state);
     }
 
     bool is_pending(State state)

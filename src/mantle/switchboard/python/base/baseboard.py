@@ -2,7 +2,6 @@
 Abstract switchboard implementation.
 '''
 
-__all__ = ['SwitchboardBase']
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
@@ -18,18 +17,23 @@ from cc.core.paths import FilePathInput
 from cc.core.decorators import virtual
 from cc.core.invocation import method_path
 from cc.core.settingsstore import SettingsStore
-from cc.protobuf.dissecter import dissecter
+from cc.protobuf.wellknown import BoolValue
+from cc.protobuf.status import Error
 from cc.protobuf.signal import SignalStore, MappingAction
-from cc.protobuf.variant import PyValueMap
+from cc.protobuf.variant import KeyValueMap, PyValueMap
 
 ### Modules within package
 from ..protobuf import (
-    Signal, Specification, Status,
-    InterceptorSpec, InterceptorMethod, InterceptorPhase,
+    Signal, SwitchInfo, SwitchSelectionInput, SwitchMap,
+    Specification, SpecificationMap,
+    Dependency, DependencyMap, DependencyPolarity,
+    DependencyStatus, DependencyStatusMap,
+    Status, StatusMap, GetAttributesResponse, ErrorMap,
+    InterceptorMethod, InterceptorPhase,
     InterceptorInvocation, InterceptorResult,
-    ExceptionHandling, InvocationStyle,
+    ExceptionHandling, InvocationStyle, CascadeStyle,
     State, StateMask, StateSet, encodeStateSet,
-    SwitchSelectionInput,
+    ExportResponse,
 )
 
 from .switch import Switch
@@ -115,50 +119,7 @@ class SwitchboardBase (SwitchboardObserver):
         Create a local Switch object without adding it to the board.
         Intended for local updates in response to server signals.
         '''
-
-    @abstractmethod
-    def get_switches(self,
-                     selection: SwitchSelectionInput|None = None,
-                     with_ancestors: bool = False) -> Mapping[str, Switch]:
-        '''
-        Get avaialble switches directly from the server
-
-        @param selection
-            Switch name patterns to include in response.  These may be strings
-            representing individual switches, shell-style globbing expressions
-            containing placeholders such as '*', '?', and/or '[a-z]', or
-            compiled regular expression objects.
-
-        @param with_ancestors
-            Recursively include ancestors, i.e., switches that are direct or
-            indirect dependencies of those included in 'selection'.
-
-        @return
-            A map of ProtoBuf `Switch` structures.
-        '''
-
-
-    @abstractmethod
-    def get_status(self,
-                   selection: SwitchSelectionInput|None = None,
-                   with_ancestors: bool = False,
-                   ) -> Mapping[str, Status]:
-        '''
-        Get a mapping of switch names and corresponding statuses.
-
-        @param selection
-            Switch name patterns to include in response.  These may be strings
-            representing individual switches, shell-style globbing expressions
-            containing placeholders such as '*', '?', and/or '[a-z]', or
-            compiled regular expression objects.
-
-        @param with_ancestors
-            Recursively include ancestors, i.e., switches that are direct or
-            indirect dependencies of those included in 'selection'.
-
-        @return
-            A map of switch names and corresponding Status objects.
-        '''
+        # return Switch(switch_name, self)
 
 
     def get_switch(self,
@@ -166,10 +127,29 @@ class SwitchboardBase (SwitchboardObserver):
                    required: bool = False,
                    ) -> Switch|None:
         '''
-        Get the named switch.
+        Return the local proxy for the named switch, if available.
 
-        @returns
-            The named `Switch` instance if it exists, otherwise `None`.
+        @param switch_name
+            Name or alias of switch to obtain
+
+        @param required
+            Raise a KeyError if the switch does not exist.
+
+        @note
+            `Switch` objects are created and updated locally in response to
+            asynchronous specification and status updates from the Switchboard
+            server. As such, do not rely on such a proxy immediately after
+            invoking `add_switch()`, or from an interceptor that gets invoked as
+            a new switch is created on the server side.  If you need to ensure
+            the switch exists before proceeding, use `get_or_add_switch()`
+            instead.
+
+        @throws KeyError
+            The `required` argument is set, and specified switch/proxy does not
+            exist.
+
+        @return
+            `Switch` proxy if it exists, otherwise None.
         '''
 
         if switch := self.switches.get(switch_name):
@@ -191,20 +171,22 @@ class SwitchboardBase (SwitchboardObserver):
                           initially_active: bool = False,
                           ) -> Switch:
         '''
-        Get the named switch, or create it if missing.
+        Get the local proxy for the named switch, or create it if missing.
 
-        This differs from `add_switch()` in that it return immediately even if
-        the switch has to be added, sending the service request to do in the
-        background.  This is useful if you want to avoid blockng in case the
-        Switchboard service is not yet available.
+        This differs from `add_switch()` in that the Switch object is returned
+        immediately from the local cache if it exists. Only if it does not is a
+        request sent to the server to add the switch.
 
-        If you need to modify the switch after creation (e.g. to modify its
-        dependencies or state), use `add_switch()` instead.  This ensures that
-        the switch exists on the server side before you attempt those
-        modifications.
+        @param switch_name
+            Name or alias of switch to obtain
+
+        @param initially_active
+            Set the initial value of the switch on creation. Until dependencies
+            are added, this also determines its initial state ('INACTIVE` or
+            'ACTIVE').
 
         @returns
-            An existing or new `Switch`
+            An existing or new `Switch` object
         '''
 
 
@@ -225,7 +207,6 @@ class SwitchboardBase (SwitchboardObserver):
         On the other hand, this call may block or fail if the server is
         unavailable.
 
-
         @param switch_name
             Name for the new switch.
 
@@ -235,6 +216,7 @@ class SwitchboardBase (SwitchboardObserver):
         @returns
             Switch object
         '''
+
 
     @abstractmethod
     def remove_switch(self,
@@ -277,10 +259,10 @@ class SwitchboardBase (SwitchboardObserver):
                         invoke_interceptors: InvocationStyle = InvocationStyle.ALL) -> int:
         '''
         Import switches from a list of key/value declarations, like those
-        found in settings files.
+        found in declaration files and/or exported via `export_switches()`.
 
         @param declarations
-            A list of key/value objects, like those read from a settings file.
+            A list of key/value objects, like those read from declaratio files.
 
         @param replace_specifications
             Replace existing specifications: aliases, localizations, dependencies
@@ -300,7 +282,7 @@ class SwitchboardBase (SwitchboardObserver):
     def export_switches(self,
                         selection: SwitchSelectionInput|None = None,
                         include_specifications: bool = False,
-                        include_statuses: bool = True) -> Mapping[str, Mapping]:
+                        include_statuses: bool = True) -> ExportResponse:
         '''
         Export switches to dictionary, in a format that can subsequently be
         imported with `import_switches()`.
@@ -378,6 +360,337 @@ class SwitchboardBase (SwitchboardObserver):
         This file can later be imported using `load_switches()`.
         '''
 
+    @abstractmethod
+    def get_switch_info(self,
+                        selection: SwitchSelectionInput|None = None,
+                        with_ancestors: bool = False,
+                        ) -> SwitchMap:
+        '''
+        Get available switch information directly from the server
+
+        @param selection
+            Switch name patterns to include in response.  These may be strings
+            representing individual switches, shell-style globbing expressions
+            containing placeholders such as '*', '?', and/or '[a-z]', or
+            compiled regular expression objects.
+
+        @param with_ancestors
+            Recursively include ancestors, i.e., switches that are direct or
+            indirect dependencies of those included in 'selection'.
+
+        @return
+            True if the specification was updated, False otherwise
+        '''
+
+
+    @abstractmethod
+    def set_specification(self,
+                          switch_name: str,
+                          specification: Specification,
+                          replace_aliases: bool = False,
+                          replace_localizations: bool = False,
+                          replace_dependencies: bool = False,
+                          replace_interceptors: bool = False,
+                          active: bool|None = None,
+                          update_state: bool|None = None) -> bool:
+        '''
+        Set or update the specification of a switch.
+        '''
+
+
+    @abstractmethod
+    def get_specifications(self,
+                           selection: SwitchSelectionInput|None = None,
+                           with_ancestors: bool = False,
+                           ) -> SpecificationMap:
+        '''
+        Get a mapping of switch names and corresponding specifications.
+
+        @param selection
+            Switch name patterns to include in response.  These may be strings
+            representing individual switches, shell-style globbing expressions
+            containing placeholders such as '*', '?', and/or '[a-z]', or
+            compiled regular expression objects.
+
+        @param with_ancestors
+            Recursively include ancestors, i.e., switches that are direct or
+            indirect dependencies of those included in 'selection'.
+
+        @return
+            A map of switch names and corresponding `Specification` objects.
+        '''
+
+
+    @abstractmethod
+    def add_dependency(self,
+                       switch_name: str,
+                       predecessor_name: str,
+                       trigger_states: StateSet = State.SETTLED,
+                       polarity: DependencyPolarity = DependencyPolarity.POSITIVE,
+                       hard: bool = False,
+                       sufficient: bool = False,
+                       allow_update: bool|None = None,
+                       reevaluate: bool|None = None,
+                       ) -> bool:
+        '''
+        Add a new upstream dependency (direct ancestor) to this switch.
+
+        @param switch_name
+            The name of the switch from which we are adding a dependency.
+
+        @param predecessor_name
+            The name of an existing switch that is to be removed as a predecessor
+
+        @param trigger_states
+            A bitmask representing which of the predecessor's state transitions
+            that will automatically trigger a reevaluation of this switch's
+            state, based on this and its other dependencies. A value of zero
+            means that this switch does not automatically update its state in
+            response to a change in this predecessor. See also `set_auto()`.
+            The default value, `State.SETTLED`, is equivalent to `State.ACTIVE |
+            State.INACTIVE | State.FAILED`.
+
+        @param polarity
+            Whether this is a normal/positive dependency, a negative/conflicting
+            dependency, or this switch toggles/flip-flops in response to the
+            predecessor's value changing.
+
+        @param hard
+            Hard dependency: This switch cannot be set unless this dependency is
+            satisfied
+
+        @param sufficient
+            Whether or not this dependency alone is sufficient to activate this
+            switch, irrespective of other dependencies. This implies a logical
+            OR instead of AND conditition, and as a side effect, this dependency
+            becomes redundant if the successor's other dependencies are
+            satisfied.
+
+        @param allow_update
+            Allow existing dependency to be updated
+
+        @param reevaluate
+            Recalculate this switch's state after adding the dependency.
+        '''
+
+
+    @abstractmethod
+    def remove_dependency(self,
+                          switch_name: str,
+                          predecessor_name: str,
+                          reevaluate: bool = True,
+                          ) -> bool:
+        '''
+        Remove an existing dependency from a switch.
+
+        @param switch_name
+            The name of the switch from which we are removing a dependency.
+
+        @param predecessor_name
+            The name of an existing switch that is to be removed as a predecessor
+
+        @param reevaluate
+           Recalculate state after removing dependency
+        '''
+
+
+    @abstractmethod
+    def get_ancestors(self,
+                      switch_name: str) -> Sequence[str]:
+        '''
+        Obtain a list of direct and indirect ancestors of a switch.
+        '''
+
+    @abstractmethod
+    def get_descendants(self,
+                        switch_name: str) -> Sequence[str]:
+        '''
+        Obtain a list of direct and indirect descendants of a switch.
+        '''
+
+    @abstractmethod
+    def set_target(self,
+                   switch_name: str,
+                   target_state: State|None,
+                   error: Error|Exception|str|None = None,
+                   attributes: PyValueMap|None = None,
+                   clear_existing: bool = False,
+                   invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
+                   cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,
+                   reenter: bool = False,
+                   on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
+                   on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
+                   ) -> bool:
+        '''
+        Transition a switch to the specified `target_state`. If not provided, then
+          * if `error` is given, the target state is inferred as `State.FAILED`;
+          * otherwise, the target state is inferred based on the current state of the
+            switch's dependencies.
+
+        @param switch_name
+            Name of switch whose state we are changing.
+
+        @param target_state
+            Desired target state. Normally this is one of the "settled" states
+            (ACTIVE, INACTIVE, or FAILED), in which case the switch will first
+            change to the corresponding pending state (ACTIVATING, DEACTIVATING,
+            FAILING), triggering any associated descendant updates and
+            interceptor invocations on the way.
+
+        @param error
+            Any error data associated with this switch. Ignored if the target is
+            specified but is not one of `FAILING` or `FAILED`.
+
+        @param attributes
+            Arbitrary key/value pairs assigned to the switch. These may be
+            cleared in a future state change.
+
+        @param clear_existing
+            Clear all existing attributes before setting those provided here.
+
+        @param invoke_interceptors
+            Run interceptors associated with each state transition (e.g.  if
+            `target_state` is ACTIVE, first run interceptors for ACTIVATING, and
+            if successful, those for ACTIVE).  Options are: NONE (do not run
+            interceptors), ALL (run interceptors on switch and all its
+            descendants), or INDIRECT (run interceptors only on descendants).
+
+        @param cascade_descendants
+            Whether and how to cascade the state change, if any, the switch's
+            descendants, starting with its immediate successors. Only switches
+            with dependencies that include the corresponding state transition(s)
+            of this switch are reevaluated.
+
+        @param reenter
+            Make the transition (via the applicable pending state) even if the
+            switch is already in the desired target state, invoking any relevant
+            interceptors on the way.
+
+        @param on_cancel
+            What to do if the state transition is cancelled, e.g. if pre-empted
+            by another target setting while executing interceptrs.  If omitted,
+            the highest-numbered `on_cancel` attribute amongst the associated
+            interceptors is used.
+
+        @param on_error
+            What to do if the interceptors associated with the state transition
+            encounters errors.  If omitted, the highest-numbered `on_error`
+            attribute amongst the associated interceptors is used.
+
+        @returns
+            True iff the target state was modified
+        '''
+
+
+    @abstractmethod
+    def get_statuses(self,
+                     selection: SwitchSelectionInput|None = None,
+                     with_ancestors: bool = False,
+                     ) -> StatusMap:
+        '''
+        Get a mapping of switch names and corresponding statuses.
+
+        @param selection
+            Switch name patterns to include in response.  These may be strings
+            representing individual switches, shell-style globbing expressions
+            containing placeholders such as '*', '?', and/or '[a-z]', or
+            compiled regular expression objects.
+
+        @param with_ancestors
+            Recursively include ancestors, i.e., switches that are direct or
+            indirect dependencies of those included in 'selection'.
+
+        @return
+            A map of switch names and corresponding Status objects.
+        '''
+
+
+    @abstractmethod
+    def get_dependency_statuses(self,
+                                switch_name: str) -> DependencyStatusMap:
+        '''
+        Obtain a recursive tree of ancestors for a switch, with indication
+        of each ancestor's current state and whether the dependency is
+        satisfied.
+        '''
+
+
+    @abstractmethod
+    def set_attributes(self,
+                       switch_name: str,
+                       attributes: PyValueMap|None = None,
+                       clear_existing: bool = False,
+                       ) -> BoolValue:
+        '''
+        Assign arbitrary key/value pairs to a switch.
+        See `set_target()` for details on the input arguments.
+        '''
+
+    @abstractmethod
+    def get_attributes(self,
+                       switch_name: str,
+                       inherit: bool = False) -> GetAttributesResponse:
+        '''
+        Obtain a key/value map of attributes assigned to a switch
+
+        @param inherit
+            Also recursively merge in attributes from its ancestors
+        '''
+
+    @abstractmethod
+    def get_culprits(self,
+                     switch_name: str,
+                     expected_position: bool = True) -> StatusMap:
+        '''
+        Obtain root causes for a switch not being in the expected positiion.
+
+        @param switch_name
+          Switch whose culprits we are querying
+
+        @param expected_position
+          Report culprits iff the current value of the switch is different from this.
+
+        @returns
+          Dictionary of conflicting upstream state names and their corresponding states.
+        '''
+
+    @abstractmethod
+    def get_errors(self,
+                   switch_name: str,
+                   ) -> ErrorMap:
+        '''
+        Obtain errors assigned to a switch and its ancestors.
+
+        @param switch_name
+          Switch whose errors we are querying
+
+        @returns
+          Switch names mapped to corresponding errors.
+        '''
+
+
+    @abstractmethod
+    def invoke_interceptor(self,
+                           interceptor_name: str,
+                           switch_name: str,
+                           state: State|None = None
+                           ) -> Error|None:
+        '''
+        Manually invoke a specific interceptor, as if it were triggered by a
+        switch changing its current state.  Primarily a diagnostic tool.
+
+        @param interceptor_name
+            Name of interceptor to invoke.
+
+        @param switch_name
+            Switch on behalf of which the interceptor is to be invoked
+
+        @param state
+            State to pass as input argument for the interceptor. If not
+            provided, defaults to the current state of this switch.
+        '''
+
+
 
     @abstractmethod
     def init_intercept(self):
@@ -395,8 +708,8 @@ class SwitchboardBase (SwitchboardObserver):
                         callback: InterceptorMethod,
                         phase: InterceptorPhase = InterceptorPhase.NORMAL,
                         asynchronous: bool = False,
-                        immediate: bool = False,
                         rerun: bool = False,
+                        immediate: bool = False,
                         future: bool = False,
                         on_cancel: ExceptionHandling = ExceptionHandling.ABORT,
                         on_error: ExceptionHandling = ExceptionHandling.FAIL,
@@ -477,6 +790,9 @@ class SwitchboardBase (SwitchboardObserver):
             True if the interceptor was added.
         '''
 
+        self.register_interceptor(interceptor_name, callback)
+        self.start_intercepting()
+
 
     @abstractmethod
     def remove_interceptor(self,
@@ -501,6 +817,8 @@ class SwitchboardBase (SwitchboardObserver):
         @returns
             `true` if a removal took place.
         '''
+
+        self.deregister_interceptor(interceptor_name)
 
 
     def register_interceptor(self,
@@ -598,6 +916,44 @@ class SwitchboardBase (SwitchboardObserver):
         return decorator
 
 
+    @abstractmethod
+    def is_intercepting(self) -> bool:
+        '''
+        Indicate whether the the client is operating any interceptors.
+        '''
+
+    @abstractmethod
+    def start_intercepting(self):
+        '''
+        Start a worker task to handle Interceptor invocations from the
+        server. Does nothing if the task is already running.
+        '''
+
+    @abstractmethod
+    def stop_intercepting(self, wait=True):
+        '''
+        Stop any running worker task to handle Interceptor invocations from
+        the server.
+
+        @param wait
+            Wait for the worker task to finish before returning.
+        '''
+
+
+    @virtual
+    def register_decorated_interceptors(self, instance: object) -> int:
+        '''
+        Register interceptor decorated interceptor methods with server.
+        This must be invoked for those interceptors to become effective.
+
+        @param instance
+            Instance of the class that contains decorated interceptors
+
+        @returns
+            Number of interceptors that were registered.
+        '''
+
+
     def register_decorated_handlers(self, instance: object):
         '''
         Register to invoke handler methods wrapped by any of the following
@@ -617,16 +973,3 @@ class SwitchboardBase (SwitchboardObserver):
         self.register_decorated_interceptors(instance)
         self.connect_decorated_handlers(instance)
 
-
-    @virtual
-    def register_decorated_interceptors(self, instance: object) -> int:
-        '''
-        Register interceptor decorated interceptor methods with server.
-        This must be invoked for those interceptors to become effective.
-
-        @param instance
-            Instance of the class that contains decorated interceptors
-
-        @returns
-            Number of interceptors that were registered.
-        '''

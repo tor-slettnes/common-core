@@ -20,6 +20,7 @@ from cc.protobuf.signal import MappingAction
 ### Switchboard modules
 from ..protobuf import (
     Signal, State, StateMask, StateSet, encodeStateSet,
+    SwitchboardDissecter,
 )
 
 from .signals   import switchboard_signals, CachingSignalStore
@@ -35,7 +36,7 @@ class HandlerSpec:
 MAP_UPDATE = {MappingAction.ADDITION, MappingAction.UPDATE}
 
 
-class SwitchboardObserver (DocBase, LogBase):
+class SwitchboardObserver (DocBase, LogBase, SwitchboardDissecter):
     '''
     Mix-in base class for capturing Switchboard updates via decorated methods.
 
@@ -105,7 +106,7 @@ class SwitchboardObserver (DocBase, LogBase):
         ```python
         from cc.platform.switchboard.protobuf import Signal
 
-        @SwitchboardObserver.specification_handler('Devices:*:Online')
+        @SwitchboardObserver.specification_handler('Device:*:Online')
         async def on_device_online_spec(self, msg: Signal):
             device_name = ' '.join(msg.mapping_key.split(':')[1:-1])
             print("Device %s online switch created: {msg.specification}")
@@ -239,11 +240,16 @@ class SwitchboardObserver (DocBase, LogBase):
                          handlers: Sequence[HandlerSpec],
                          msg: Signal):
 
+        decoded_signal = None
+
         for handler in handlers:
             if self._handler_matches(instance, handler, msg):
+                if not decoded_signal:
+                    decoded_signal = self.decode(msg)
+
                 safe_invoke_maybe_async(
                     handler.unbound_method,
-                    args=(instance, msg),
+                    args=(instance, decoded_signal),
                     log_call = self.logger.debug,
                     log_failure = self.logger.error,
                 )

@@ -32,21 +32,21 @@ StateMask          = int
 StateSet           = Set[State] | Sequence[State]
 StateSetInput      = StateSet | State | StateMask
 
-LanguageCode = str
-LanguageChoice = LanguageCode | Sequence[LanguageCode]
+SwitchNamePattern     = str | re.Pattern
+SwitchSelectionInput  = SwitchSelection | SwitchNamePattern | Sequence[SwitchNamePattern]
+
+InterceptorMethod = Callable[[InterceptorInvocation], None]
 
 TargetTextsInput = Mapping[State, str]
 
 LocalizationInput = Localization | Mapping[str, object]
 LocalizationsInput = LocalizationMap | Mapping[str, LocalizationInput]
 
+LanguageCode = str
+LanguageChoice = LanguageCode | Sequence[LanguageCode]
+
 DEFAULT_LANGUAGE = "en"
 DEFAULT_LANGUAGES = (DEFAULT_LANGUAGE,)
-
-SwitchNamePattern     = str | re.Pattern
-SwitchSelectionInput  = SwitchSelection | SwitchNamePattern | Sequence[SwitchNamePattern]
-
-InterceptorMethod = Callable[[InterceptorInvocation], None]
 
 
 def encodeStateSet(states: StateSet,
@@ -110,12 +110,13 @@ def encodeLocalizationMap(localizations: LocalizationsInput) -> LocalizationMap:
 
 
 def encodeOptionalSwitchSelection(patterns: SwitchSelectionInput|None,
+                                  with_ancestors: bool|None = None,
                                   ) -> SwitchSelection|None:
 
     if patterns is None:
         return None
     else:
-        return encodeSwitchSelection(patterns)
+        return encodeSwitchSelection(patterns, with_ancestors)
 
 
 def encodeSwitchSelection(patterns: SwitchSelectionInput,

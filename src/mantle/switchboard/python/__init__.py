@@ -16,9 +16,17 @@ from .protobuf import (
     State,
 
     ### Additional types
+    DEFAULT_LANGUAGE,
+    DEFAULT_LANGUAGES,
+    TargetTextsInput,
+    LanguageChoice,
+    LanguageCode,
+    LocalizationInput,
+    LocalizationsInput,
     InterceptorMethod,
     StateMask,
     StateSet,
+    StateSetInput,
     SwitchNamePattern,
     SwitchSelectionInput,
 
@@ -29,8 +37,8 @@ from .protobuf import (
     encodeSwitchSelection,
     encodeOptionalSwitchSelection,
 
-    SwitchboardDecoder,
-    switchboard_decoder,
+    SwitchboardDissecter,
+    switchboard_dissecter,
 )
 
 from .base import (
@@ -39,6 +47,7 @@ from .base import (
 
     # Types from `switch.py`
     Switch,
+    AsyncSwitch,
     InterceptorName,
     SwitchUpdateSubscriber,
 
@@ -53,10 +62,7 @@ from .base import (
 
 from .grpc import (
     BaseClient,
-    Client,
+    StandardClient,
     AsyncClient,
-
-    RemoteSwitchBase,
-    RemoteSwitch,
-    AsyncRemoteSwitch,
+    Client,
 )

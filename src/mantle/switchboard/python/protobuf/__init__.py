@@ -17,17 +17,17 @@ from .switchboard_types import (
     ### Additional types
     DEFAULT_LANGUAGE,
     DEFAULT_LANGUAGES,
-    InterceptorMethod,
+    TargetTextsInput,
     LanguageChoice,
     LanguageCode,
     LocalizationInput,
     LocalizationsInput,
+    InterceptorMethod,
     StateMask,
     StateSet,
     StateSetInput,
     SwitchNamePattern,
     SwitchSelectionInput,
-    TargetTextsInput,
 
     ### ProtoBuf encode/decode utility methods
     encodeLocalization,
@@ -37,7 +37,7 @@ from .switchboard_types import (
     encodeOptionalSwitchSelection,
 )
 
-from .switchboard_decoder import (
-    SwitchboardDecoder,
-    switchboard_decoder,
+from .switchboard_dissecter import (
+    SwitchboardDissecter,
+    switchboard_dissecter,
 )
