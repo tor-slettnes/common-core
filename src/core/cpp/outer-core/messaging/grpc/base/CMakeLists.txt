@@ -43,8 +43,7 @@ cmake_path(RELATIVE_PATH GRPCSTATUSFILE
 add_custom_command(
     OUTPUT ${GRPCSTATUSFILE}
     COMMAND python3 ${GRPCSTATUSSCRIPT} --output ${GRPCSTATUSFILE} --sysroot "${BUILD_ROOT}/"
-    COMMENT "Generating ${statusfile_relpath}"
-    BYPRODUCTS ${GRPCSTATUSFILE})
+    COMMENT "Generating ${statusfile_relpath}")
 add_custom_target(grpcstatuslist DEPENDS ${GRPCSTATUSFILE})
 add_dependencies(${TARGET} grpcstatuslist)
 

@@ -232,15 +232,15 @@ cmake-gui: cmake
 	@cmake-gui --preset "$(CONFIG_PRESET)"
 
 .PHONY: cmake
-cmake: submodule/protos $(CMAKE_CACHE) $(CMAKE_TAG)
+cmake: submodule/protos $(CMAKE_CACHE)
 
 ### If we have defined custom arguments to CMake (see above), we force
 ### regeneration of the CMake cache by declaring any previous result as phony.
 ifneq ($(or $(CMAKE_FORCE_REGENERATE),$(CMAKE_CONFIG_ARGS)),)
-.PHONY: $(CMAKE_TAG)
+.PHONY: $(CMAKE_CACHE)
 endif
 
-$(CMAKE_CACHE) $(CMAKE_TAG):
+$(CMAKE_CACHE):
 	@echo
 	@echo "#############################################################"
 	@echo "Generating CMake preset: $(CONFIG_PRESET)"
