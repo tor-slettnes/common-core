@@ -8,6 +8,7 @@ doxygen
 locales-all
 libgtest-dev
 rapidjson-dev
+libtool-bin
 libyaml-dev
 uuid-dev
 libudev-dev

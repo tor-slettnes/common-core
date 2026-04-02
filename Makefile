@@ -85,23 +85,24 @@ define remove
 endef
 
 
-MAKEFLAGS          += --no-print-directory
+MAKEFLAGS          	+= --no-print-directory
 
-CONFIG_PRESET      ?= default
-BUILD_PRESET       ?= default
-TEST_PRESET        ?= default
-PACKAGE_PRESET     ?= debs
-THIS_DIR           ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-PYTHON             ?= /usr/bin/python3
-TARGET             ?= $(shell uname -s)-$(shell uname -m)
-TOOLCHAIN_FILE      = $(THIS_DIR)build/cmake/toolchain-$(TARGET).cmake
+CONFIG_PRESET      	?= default
+BUILD_PRESET       	?= default
+TEST_PRESET        	?= default
+PACKAGE_PRESET     	?= debs
+THIS_DIR           	?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+PYTHON             	?= /usr/bin/python3
+TARGET             	?= $(shell uname -s)-$(shell uname -m)
+TOOLCHAIN_FILE     	 = $(THIS_DIR)build/cmake/toolchain-$(TARGET).cmake
 
-export OUT_DIR     ?= $(CURDIR)/out
-export BUILD_DIR   ?= $(OUT_DIR)/build/$(CONFIG_PRESET)
-export INSTALL_DIR ?= $(OUT_DIR)/$(CONFIG_PRESET)
-export PACKAGE_DIR ?= $(OUT_DIR)/packages
-PYTHON_INSTALL_DIR  = $(strip $(shell $(call get_cached,PYTHON_INSTALL_DIR)))
-EXEC_NAME_PREFIX    = $(strip $(shell $(call get_cached,EXEC_NAME_PREFIX)))
+export EXTERNAL_DIR ?= $(CURDIR)/external
+export OUT_DIR     	?= $(CURDIR)/out
+export BUILD_DIR   	?= $(OUT_DIR)/build/$(CONFIG_PRESET)
+export INSTALL_DIR 	?= $(OUT_DIR)/$(CONFIG_PRESET)
+export PACKAGE_DIR 	?= $(OUT_DIR)/packages
+PYTHON_INSTALL_DIR 	 = $(strip $(shell $(call get_cached,PYTHON_INSTALL_DIR)))
+EXEC_NAME_PREFIX   	 = $(strip $(shell $(call get_cached,EXEC_NAME_PREFIX)))
 
 
 ifneq ($(wildcard $(TOOLCHAIN_FILE)),)
@@ -119,12 +120,12 @@ OVERRIDES = $(filter-out TARGET=% CONFIG_PRESET=% BUILD_PRESET=% TEST_PRESET=% P
 CMAKE_CONFIG_ARGS += $(foreach override,$(OVERRIDES),-D$(override))
 
 ### Build targets
-.PHONY: local
-local: ctest install
+.PHONY: default
+default: ctest install
 
 .PHONY: release
-release: ctest package
-
+release:
+	@cmake --workflow --preset "release" $(CMAKE_BUILD_ARGS)
 
 .PHONY: package debs deb
 package debs deb: build
@@ -133,7 +134,7 @@ package debs deb: build
 	@echo "Creating Debian release packages in $(PACKAGE_DIR)"
 	@echo "#############################################################"
 	@echo
-	@cpack --preset "$(PACKAGE_PRESET)"
+	@cpack --preset "debs" $(CMAKE_BUILD_ARGS)
 
 .PHONY: debs-arm
 debs-arm:
@@ -151,18 +152,18 @@ wheels: cmake
 	@echo "Creating PIP-installable Python distributions ('.whl')"
 	@echo "#############################################################"
 	@echo
-	@cmake --build --preset $(BUILD_PRESET) --target python_wheels $(CMAKE_BUILD_ARGS)
+	@cmake --build --preset "wheels" $(CMAKE_BUILD_ARGS)
 	@echo
 	@echo "Wheels are created in '$(OUT_DIR)/python/wheels'"
 
-.PHONY: install
-install: build
+.PHONY: install local
+install local: build
 	@echo
 	@echo "#############################################################"
 	@echo "Installing in ${INSTALL_DIR}"
 	@echo "#############################################################"
 	@echo
-	@cmake --build --preset "$(BUILD_PRESET)" --target install $(CMAKE_BUILD_ARGS)
+	@cmake --build --preset "install" $(CMAKE_BUILD_ARGS)
 
 .PHONY: install/strip
 install/strip: build
@@ -232,7 +233,7 @@ cmake-gui: cmake
 	@cmake-gui --preset "$(CONFIG_PRESET)"
 
 .PHONY: cmake
-cmake: submodule/protos $(CMAKE_CACHE)
+cmake: submodule/protos $(CMAKE_CACHE) $(CMAKE_TAG)
 
 ### If we have defined custom arguments to CMake (see above), we force
 ### regeneration of the CMake cache by declaring any previous result as phony.
@@ -240,7 +241,7 @@ ifneq ($(or $(CMAKE_FORCE_REGENERATE),$(CMAKE_CONFIG_ARGS)),)
 .PHONY: $(CMAKE_CACHE)
 endif
 
-$(CMAKE_CACHE):
+$(CMAKE_CACHE) $(CMAKE_TAG):
 	@echo
 	@echo "#############################################################"
 	@echo "Generating CMake preset: $(CONFIG_PRESET)"
@@ -324,6 +325,10 @@ clean/core:
 clean/build:
 	@$(call remove,$(BUILD_DIR))
 
+.PHONY: clean/external
+clean/external:
+	@$(call remove,$(EXTERNAL_DIR))
+
 .PHONY: clean/install uninstall
 clean/install uninstall:
 	@$(call remove,$(INSTALL_DIR))
@@ -347,7 +352,7 @@ clean/out cleanout:
 realclean: clean/core clean/python clean/cmake clean/package clean/install clean/build
 
 .PHONY: distclean pristine
-distclean pristine: clean/core clean/out
+distclean pristine: clean/core clean/out clean/external
 
 
 .PHONY: help
@@ -372,4 +377,6 @@ clean_%:
 
 %:
 	@[ -f "$(CMAKE_TAG)" ] || cmake --preset "$(CONFIG_PRESET)" $(CMAKE_CONFIG_ARGS)
-	@cmake --build --preset "$(BUILD_PRESET)" --target $* $(CMAKE_BUILD_ARGS)
+	@make -C $(BUILD_DIR) $* $(CMAKE_BUILD_ARGS)
+
+# @cmake --build --preset "$(BUILD_PRESET)" --target $* $(CMAKE_BUILD_ARGS)

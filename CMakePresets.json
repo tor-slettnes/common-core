@@ -48,7 +48,7 @@
             "name": "install",
             "inherits": "default",
             "description": "Install artifacts locally",
-            "targets": ["install"]
+            "targets": ["install/fast"]
         },
         {
             "name": "wheels",
@@ -93,6 +93,16 @@
             "name": "default",
             "steps": [
                 {"type": "configure", "name": "default"},
+                {"type": "build",     "name": "default"},
+                {"type": "test",      "name": "default"},
+                {"type": "build",     "name": "install"}
+            ]
+        },
+        {
+            "name": "local",
+            "steps": [
+                {"type": "configure", "name": "default"},
+                {"type": "build",     "name": "default"},
                 {"type": "build",     "name": "install"}
             ]
         },

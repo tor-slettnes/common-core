@@ -173,9 +173,12 @@ class SwitchboardBase (SwitchboardObserver):
         '''
         Get the local proxy for the named switch, or create it if missing.
 
-        This differs from `add_switch()` in that the Switch object is returned
-        immediately from the local cache if it exists. Only if it does not is a
-        request sent to the server to add the switch.
+        This differs from `add_switch()` in that the Switch proxy object is
+        returned immediately from the local cache if it exists. Only if it does
+        not is a request sent to the server to add the switch.
+
+        This call may block or fail if the switch proxy does not yet exist and
+        the server is unavailable.
 
         @param switch_name
             Name or alias of switch to obtain
@@ -201,11 +204,8 @@ class SwitchboardBase (SwitchboardObserver):
         This differs from `get_or_add_switch()` in that it always sends a
         service request to add the switch, even if it already exists locally.
         and returns only after the server has responded to this request.
-        This makes it safe to then perform other operations on the switch,
-        such as modifying its dependencies or its state.
 
-        On the other hand, this call may block or fail if the server is
-        unavailable.
+        This call may block or fail if the server is unavailable.
 
         @param switch_name
             Name for the new switch.
@@ -873,7 +873,8 @@ class SwitchboardBase (SwitchboardObserver):
 
         To actually register these interceptors with the server, the object
         instance that contains the decorated methods must invoke
-        `register_decorated_handlers()`, passing in its own object as the sole
+        `register_decorated_interceptors()` (possibly indirectly via
+        `register_decorated_handlers()`), passing in its own object as the sole
         argument.
 
         For more details, including a descripion of input arguments, see

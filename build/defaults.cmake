@@ -50,10 +50,10 @@ set(EXEC_NAME_PREFIX "${ORG_PREFIX}-"
 #-------------------------------------------------------------------------------
 # Various directories
 
-set(CC_PROTOS_BASE_DIR "${CMAKE_SOURCE_DIR}/protos"
-  CACHE STRING "Root directory for common `.proto` files")
+cmake_path(SET CC_PROTOS_BASE_DIR
+  NORMALIZE "${CMAKE_CURRENT_LIST_DIR}/../protos")
 
-set(FETCHCONTENT_BASE_DIR "${CMAKE_SOURCE_DIR}/external"
+set(EXTERNAL_SOURCE_DIR "${CMAKE_SOURCE_DIR}/external"
   CACHE STRING "Root directory in which to unpack external sources")
 
 set(DATA_DIR "share/${ORGANIZATION}"
@@ -214,18 +214,16 @@ option(BUILD_RAPIDJSON    "Build fast JSON parsing using RapidJSON" ON)
 option(BUILD_YAML         "Build support for YAML parsing" ON)
 
 # Messaging frameworks
-option(BUILD_KAFKA        "Build support for Apache Kafka" ON)
 option(BUILD_GRPC         "Build support for gRPC Remote Procedure Calls" ON)
 option(BUILD_ZMQ          "Build support for ZeroMQ" ON)
 option(BUILD_HTTP         "Build support for HTTP requests, incl. REST API" ON)
 option(BUILD_WEBSOCKETS   "Build support for WebSockets" OFF)
+option(BUILD_KAFKA        "Build support for Apache Kafka" ON)
 option(BUILD_DDS          "Build support for Distributed Data Service (DDS)" OFF)
-
 cmake_dependent_option(BUILD_RTI_DDS
   "Build support for RTI ConnextDDS"
   ON "BUILD_DDS"
   OFF)
-
 cmake_dependent_option(BUILD_RTI_LOGGER
   "Build support for RTI Distributed Logger"
   ON "BUILD_RTI_DDS"

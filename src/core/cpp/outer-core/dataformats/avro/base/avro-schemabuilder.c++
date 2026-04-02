@@ -65,10 +65,16 @@ namespace avro
     {
         if (this->defined_schemas.count(name))
         {
+            // We have defined this schema in this builder instance already.
+            // Return just its name.
             return name;
         }
         else
         {
+            // This is a new schema within this builder instance.  Prepend its
+            // name to the provided specification, and return the result.  We
+            // use a `TaggedValueList` rather than `KeyValueMap` to preserve
+            // field order once this schema is converted to JSON.
             this->defined_schemas.insert(name);
             spec.emplace(spec.begin(), SchemaField_Name, name);
             return spec;

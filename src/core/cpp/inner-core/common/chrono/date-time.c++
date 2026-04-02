@@ -793,7 +793,7 @@ namespace core
 
             if (!local)
             {
-                tp += tz_offset.value();
+                tp -= tz_offset.value();
             }
             return tp;
         }
@@ -826,13 +826,33 @@ namespace core
             const std::optional<int> multiplier_decimal_exponent)
         {
             static const std::regex rx(
-                "(\\d{4})-(\\d{2})-(\\d{2}).(\\d{2}):(\\d{2}):(\\d{2})(\\.\\d+)?(Z)?");
+                "(\\d{4})-(\\d{2})-(\\d{2})."  // (1) year, (2) month, (3) day,
+                "(\\d{2}):(\\d{2}):(\\d{2})"   // (4) hour, (5) minute, (6) seconds
+                "(\\.\\d+)?"                   // (7) fraction
+                "(?:(Z)|"                      // (8) Zulu (UTC)
+                "([-+])(\\d{2}):?(\\d{2})?)?"  // (9) ±, (10) hour, (11) minute
+            );
 
             std::match_results<std::string_view::iterator> match;
             if (std::regex_match(input.begin(), input.end(), match, rx))
             {
                 std::optional<Duration> opt_zone_offset;
-                if ((match.length(8) > 0) || !assume_local)
+                if (match.length(10) > 0)
+                {
+                    std::chrono::hours h(str::convert_to<std::uint32_t>(match.str(10)));
+                    std::chrono::minutes m(str::convert_to<std::uint32_t>(match.str(11), 0));
+                    dt::Duration offset(
+                        std::chrono::duration_cast<dt::Duration>(h) +
+                        std::chrono::duration_cast<dt::Duration>(m));
+
+                    if (match.str(9) == "-")
+                    {
+                        offset = -offset;
+                    }
+
+                    opt_zone_offset = offset;
+                }
+                else if ((match.length(8) > 0) || !assume_local)
                 {
                     // Time is provided in UTC -> zero offset.
                     opt_zone_offset = Duration::zero();
