@@ -111,12 +111,12 @@ class BaseClient (SwitchboardBase, SignalClient):
 
         with self._switch_lock:
             try:
-                return self.switches[switch_name], True
+                return self.switches[switch_name], False
 
             except KeyError:
                 switch = self.switches[switch_name] = self._new_switch(switch_name)
                 switch.status.active = initially_active
-                return switch, False
+                return switch, True
 
     def call_add_switch(self,
                         switch_name: str,

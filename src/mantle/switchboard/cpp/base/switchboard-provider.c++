@@ -192,9 +192,9 @@ namespace switchboard
         }
         else if (required)
         {
-            throwf(core::exception::NotFound,
-                   ("Switch not found: %s", name),
-                   name);
+            throwf_args(core::exception::NotFound,
+                        ("Switch not found: %s", name),
+                        name);
         }
         else
         {

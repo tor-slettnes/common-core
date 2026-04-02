@@ -642,9 +642,9 @@ namespace switchboard
             else if (lowerkey == "failed")
                 localization.state_texts[switchboard::STATE_FAILED] = value;
             else
-                throwf(core::exception::InvalidArgument,
-                       ("Unknown specification field: %r", key),
-                       key);
+                throwf_args(core::exception::InvalidArgument,
+                            ("Unknown specification field: %r", key),
+                            key);
         }
         //    Switchboard::LocalizationMap({{language, localization}};
         sw->set_localizations({{language, localization}});
