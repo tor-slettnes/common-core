@@ -109,25 +109,27 @@ def decodeValue(input: Value) -> PyValue:
     '''
 
     if isinstance(input, Value):
-        fieldname = input.WhichOneof('value')
-        match(fieldname):
-            case 'value_timestamp':
-                return decodeTimestamp(input.value_timestamp)
+        if fieldname := input.WhichOneof('value'):
+            match(fieldname):
+                case 'value_timestamp':
+                    return decodeTimestamp(input.value_timestamp)
 
-            case 'value_duration':
-                return decodeDuration(input.value_duration)
+                case 'value_duration':
+                    return decodeDuration(input.value_duration)
 
-            case 'value_list':
-                return decodeValueList(input.value_list)
+                case 'value_list':
+                    return decodeValueList(input.value_list)
 
-            case 'value_tvlist':
-                return decodeTaggedValueList(input.value_tvlist)
+                case 'value_tvlist':
+                    return decodeTaggedValueList(input.value_tvlist)
 
-            case 'value_kvmap':
-                return decodeKeyValueMap(input.value_kvmap)
+                case 'value_kvmap':
+                    return decodeKeyValueMap(input.value_kvmap)
 
-            case _:
-                return getattr(input, fieldname, None)
+                case _:
+                    return getattr(input, fieldname, None)
+        else:
+            return None
 
     elif isinstance(input, ValueList):
         return decodeValueList(input)

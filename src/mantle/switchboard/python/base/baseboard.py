@@ -282,7 +282,8 @@ class SwitchboardBase (SwitchboardObserver):
     def export_switches(self,
                         selection: SwitchSelectionInput|None = None,
                         include_specifications: bool = False,
-                        include_statuses: bool = True) -> ExportResponse:
+                        include_statuses: bool = True,
+                        ) -> PyValueMap:
         '''
         Export switches to dictionary, in a format that can subsequently be
         imported with `import_switches()`.
@@ -300,7 +301,8 @@ class SwitchboardBase (SwitchboardObserver):
             Include current switch statuses in export
 
         @return
-            A list of dictionaries, each representing one switch
+            A recursive dictionary of switches and their coorresponding
+            declarations.
         '''
 
 
@@ -364,9 +366,9 @@ class SwitchboardBase (SwitchboardObserver):
     def get_switch_info(self,
                         selection: SwitchSelectionInput|None = None,
                         with_ancestors: bool = False,
-                        ) -> SwitchMap:
+                        ) -> Mapping[str, object]:
         '''
-        Get available switch information directly from the server
+        Get and decode available switch information directly from the server.
 
         @param selection
             Switch name patterns to include in response.  These may be strings
@@ -379,7 +381,8 @@ class SwitchboardBase (SwitchboardObserver):
             indirect dependencies of those included in 'selection'.
 
         @return
-            True if the specification was updated, False otherwise
+            A map of switch names to dynamically created data objects,
+            decoded from the ProtoBuf `SwitchMap` response from the server.
         '''
 
 
@@ -402,7 +405,7 @@ class SwitchboardBase (SwitchboardObserver):
     def get_specifications(self,
                            selection: SwitchSelectionInput|None = None,
                            with_ancestors: bool = False,
-                           ) -> SpecificationMap:
+                           ) -> Mapping[str, object]:
         '''
         Get a mapping of switch names and corresponding specifications.
 
@@ -417,7 +420,8 @@ class SwitchboardBase (SwitchboardObserver):
             indirect dependencies of those included in 'selection'.
 
         @return
-            A map of switch names and corresponding `Specification` objects.
+            A map of switch names to dynamically created data objects, decoded
+            from the ProtoBuf `SpecificationMap` response from the server.
         '''
 
 
@@ -586,7 +590,7 @@ class SwitchboardBase (SwitchboardObserver):
     def get_statuses(self,
                      selection: SwitchSelectionInput|None = None,
                      with_ancestors: bool = False,
-                     ) -> StatusMap:
+                     ) -> Mapping[str, object]:
         '''
         Get a mapping of switch names and corresponding statuses.
 
@@ -601,17 +605,26 @@ class SwitchboardBase (SwitchboardObserver):
             indirect dependencies of those included in 'selection'.
 
         @return
-            A map of switch names and corresponding Status objects.
+            A map of switch names to dynamically created data objects,
+            decoded from the ProtoBuf `StatusMap` response from the server.
         '''
 
 
     @abstractmethod
     def get_dependency_statuses(self,
-                                switch_name: str) -> DependencyStatusMap:
+                                switch_name: str,
+                                ) -> Mapping[str, object]:
         '''
         Obtain a recursive tree of ancestors for a switch, with indication
         of each ancestor's current state and whether the dependency is
         satisfied.
+
+        @param switch_name
+            Switch name for which we are obtaining dependency statuses.
+
+        @return
+            A map of switch names to dynamically created data objects, decoded
+            from the ProtoBuf `DependencyStatusMap` response from the server.
         '''
 
 
@@ -620,7 +633,7 @@ class SwitchboardBase (SwitchboardObserver):
                        switch_name: str,
                        attributes: PyValueMap|None = None,
                        clear_existing: bool = False,
-                       ) -> BoolValue:
+                       ) -> bool:
         '''
         Assign arbitrary key/value pairs to a switch.
         See `set_target()` for details on the input arguments.
@@ -629,18 +642,22 @@ class SwitchboardBase (SwitchboardObserver):
     @abstractmethod
     def get_attributes(self,
                        switch_name: str,
-                       inherit: bool = False) -> GetAttributesResponse:
+                       inherit: bool = False) -> PyValueMap:
         '''
         Obtain a key/value map of attributes assigned to a switch
 
         @param inherit
-            Also recursively merge in attributes from its ancestors
+            Also recursively merge in attributes from its ancestors.
+
+        @return
+            A recursive key/value map of values assigned to this switch, decoded
+            from the ProtoBuf `GetAttributesResponse` response from the serer.
         '''
 
     @abstractmethod
     def get_culprits(self,
                      switch_name: str,
-                     expected_position: bool = True) -> StatusMap:
+                     expected_position: bool = True) -> Mapping[str, Status]:
         '''
         Obtain root causes for a switch not being in the expected positiion.
 
@@ -651,13 +668,14 @@ class SwitchboardBase (SwitchboardObserver):
           Report culprits iff the current value of the switch is different from this.
 
         @returns
-          Dictionary of conflicting upstream state names and their corresponding states.
+          A map of switch names to dynamically created data objects, decoded
+          from the ProtoBuf `StatusMap` response from the server.
         '''
 
     @abstractmethod
     def get_errors(self,
                    switch_name: str,
-                   ) -> ErrorMap:
+                   ) -> Mapping[str, object]:
         '''
         Obtain errors assigned to a switch and its ancestors.
 
@@ -665,7 +683,8 @@ class SwitchboardBase (SwitchboardObserver):
           Switch whose errors we are querying
 
         @returns
-          Switch names mapped to corresponding errors.
+          A map of switch names to dynamically created data objects, decoded
+          from the ProtoBuf `ErrorMap` response from the server.
         '''
 
 

@@ -120,8 +120,8 @@ class StandardClient (BaseClient):
     def get_switch_info(self,
                         selection: SwitchSelectionInput|None = None,
                         with_ancestors: bool = False,
-                        ) -> Mapping[str, SwitchInfo]:
-        return BaseClient.call_get_switch_info(**locals())
+                        ) -> Mapping[str, object]:
+        response = BaseClient.call_get_switch_info(**locals())
 
     @override
     @SwitchboardDissecter.decode_response
@@ -142,7 +142,7 @@ class StandardClient (BaseClient):
     def get_specifications(self,
                            selection: SwitchSelectionInput|None = None,
                            with_ancestors: bool = False,
-                           ) -> Mapping[str, Status]:
+                           ) -> Mapping[str, object]:
 
         return BaseClient.call_get_specifications(**locals())
 
@@ -207,7 +207,7 @@ class StandardClient (BaseClient):
     def get_statuses(self,
                      selection: SwitchSelectionInput|None = None,
                      with_ancestors: bool = False,
-                     ) -> Mapping[str, Status]:
+                     ) -> Mapping[str, object]:
 
         return BaseClient.call_get_statuses(**locals())
 
@@ -215,7 +215,7 @@ class StandardClient (BaseClient):
     @SwitchboardDissecter.decode_response
     def get_dependency_status(self,
                               switch_name: str,
-                              ) -> Mapping[str, DependencyStatus]:
+                              ) -> Mapping[str, object]:
 
         return BaseClient.call_get_dependency_status(**locals())
 
@@ -239,7 +239,7 @@ class StandardClient (BaseClient):
     @SwitchboardDissecter.decode_response
     def get_culprits(self,
                      switch_name: str,
-                     expected_position: bool = True) -> Mapping[str, Status]:
+                     expected_position: bool = True) -> Mapping[str, object]:
 
         return BaseClient.call_get_culprits(**locals())
 
@@ -247,7 +247,7 @@ class StandardClient (BaseClient):
     @SwitchboardDissecter.decode_response
     def get_errors(self,
                    switch_name: str,
-                   ) -> Mapping[str, Error]:
+                   ) -> Mapping[str, object]:
         return BaseClient.call_get_errors(**locals())
 
     @override

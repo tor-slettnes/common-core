@@ -121,7 +121,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
     async def get_switch_info(self,
                               selection: SwitchSelectionInput|None = None,
                               with_ancestors: bool = False,
-                              ) -> Mapping[str, SwitchInfo]:
+                              ) -> Mapping[str, object]:
         return await BaseClient.call_get_switch_info(**locals())
 
     @override
@@ -143,7 +143,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
     async def get_specifications(self,
                                  selection: SwitchSelectionInput|None = None,
                                  with_ancestors: bool = False,
-                                 ) -> Mapping[str, Status]:
+                                 ) -> Mapping[str, object]:
 
         return await BaseClient.call_get_specifications(**locals())
 
@@ -208,7 +208,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
     async def get_statuses(self,
                            selection: SwitchSelectionInput|None = None,
                            with_ancestors: bool = False,
-                           ) -> Mapping[str, Status]:
+                           ) -> Mapping[str, object]:
 
         return await BaseClient.call_get_statuses(**locals())
 
@@ -216,7 +216,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
     @SwitchboardDissecter.decode_response
     async def get_dependency_status(self,
                                     switch_name: str,
-                                    ) -> Mapping[str, DependencyStatus]:
+                                    ) -> Mapping[str, object]:
 
         return await BaseClient.call_get_dependency_status(**locals())
 
@@ -240,7 +240,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
     @SwitchboardDissecter.decode_response
     async def get_culprits(self,
                            switch_name: str,
-                           expected_position: bool = True) -> Mapping[str, Status]:
+                           expected_position: bool = True) -> Mapping[str, object]:
 
         return await BaseClient.call_get_culprits(**locals())
 
@@ -248,7 +248,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
     @SwitchboardDissecter.decode_response
     async def get_errors(self,
                          switch_name: str,
-                         ) -> Mapping[str, Error]:
+                         ) -> Mapping[str, object]:
         return await BaseClient.call_get_errors(**locals())
 
 

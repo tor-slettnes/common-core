@@ -116,7 +116,7 @@ class Switch (DocBase, SwitchboardDissecter):
         return self.specification.aliases
 
     @property
-    def localizations(self) -> Mapping[str, Localization]:
+    def localizations(self) -> Mapping[str, object]:
         '''
         Return language codes mapped to text strings for this switch,
         including its description, texts explaining each target action
@@ -126,7 +126,7 @@ class Switch (DocBase, SwitchboardDissecter):
         return self.specification.localizations
 
     @property
-    def dependencies(self) -> Mapping[str, Dependency]:
+    def dependencies(self) -> Mapping[str, object]:
         '''
         Return a map of dependencies for this switch. @sa add_dependency().
         '''
@@ -157,7 +157,7 @@ class Switch (DocBase, SwitchboardDissecter):
         return predecessors
 
     @property
-    def interceptors(self) -> Mapping[str, InterceptorSpec]:
+    def interceptors(self) -> Mapping[str, object]:
         '''
         Return a list of interceptors associated with this switch.
 
