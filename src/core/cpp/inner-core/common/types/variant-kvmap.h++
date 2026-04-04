@@ -10,6 +10,7 @@
 #include "string/convert.h++"
 #include "types/streamable.h++"
 #include "types/create-shared.h++"
+#include "types/valuemap.h++"
 
 namespace core::types
 {
@@ -39,7 +40,6 @@ namespace core::types
             const std::string &key,
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
-
 
         /// @brief
         ///   Obtain a optional container to the value specified by `key`, if found.
@@ -194,10 +194,10 @@ namespace core::types
         /// @brief
         ///   Obtain key/value pairs where the value is a specific type
 
-        template <class T>
-        std::map<std::string, T> filter_by_type() const
+        template <class T, class MapType = std::map<std::string, T>>
+        ValueMap<std::string, T, MapType> filter_by_type() const
         {
-            std::map<std::string, T> result;
+            ValueMap<std::string, T, MapType> result;
             for (const auto &item : *this)
             {
                 if (const T *ptr = item.second.get_if<T>())
