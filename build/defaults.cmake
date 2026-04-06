@@ -204,22 +204,25 @@ cmake_dependent_option(BUILD_PUBSUB
 #-------------------------------------------------------------------------------
 # C++ options
 
-option(BUILD_CPP          "Build/Install C++ code"  ON)
+option(BUILD_CPP             "Build/Install C++ code"  ON)
 option(BUILD_CPP_STATIC_LIBS "Build static rather than shared libraries" ON)
-option(BUILD_ALL_LIBS     "Build all libraries even if not used (to validate syntax)" OFF)
-option(BUILD_ALL_BINARIES "Build all executables even if not used (to validate syntax)" OFF)
+option(BUILD_ALL_LIBS        "Build all libraries even if not used (to validate syntax)" OFF)
+option(BUILD_ALL_BINARIES    "Build all executables even if not used (to validate syntax)" OFF)
 
 # Settings parsers
-option(BUILD_RAPIDJSON    "Build fast JSON parsing using RapidJSON" ON)
-option(BUILD_YAML         "Build support for YAML parsing" ON)
+option(BUILD_RAPIDJSON       "Build fast JSON parsing using RapidJSON" ON)
+option(BUILD_YAML            "Build support for YAML parsing" ON)
 
 # Messaging frameworks
-option(BUILD_GRPC         "Build support for gRPC Remote Procedure Calls" ON)
-option(BUILD_ZMQ          "Build support for ZeroMQ" ON)
-option(BUILD_HTTP         "Build support for HTTP requests, incl. REST API" ON)
-option(BUILD_WEBSOCKETS   "Build support for WebSockets" OFF)
-option(BUILD_KAFKA        "Build support for Apache Kafka" ON)
-option(BUILD_DDS          "Build support for Distributed Data Service (DDS)" OFF)
+option(BUILD_GRPC            "Build support for gRPC Remote Procedure Calls" ON)
+option(BUILD_ZMQ             "Build support for ZeroMQ" ON)
+option(BUILD_HTTP            "Build support for HTTP requests, incl. REST API" ON)
+option(BUILD_WEBSOCKETS      "Build support for WebSockets" OFF)
+option(BUILD_KAFKA           "Build support for Apache Kafka" ON)
+option(BUILD_SCHEMA_WRAPPER  "Build support for schema ID wrappers" ON)
+option(BUILD_SCHEMA_REGISTRY "Build support for Confluent schema registry" ON)
+
+option(BUILD_DDS             "Build support for Distributed Data Service (DDS)" OFF)
 cmake_dependent_option(BUILD_RTI_DDS
   "Build support for RTI ConnextDDS"
   ON "BUILD_DDS"
@@ -230,14 +233,14 @@ cmake_dependent_option(BUILD_RTI_LOGGER
   OFF)
 
 # Object serialization
-option(BUILD_SQLITE3      "Build support for SQLite3 DB" ON)
-option(BUILD_AVRO         "Build support for Apache AVRO" ${BUILD_KAFKA})
-option(BUILD_PROTOBUF     "Build support for Google Protocol Buffers" ON)
-option(BUILD_PYTHON_IO    "Build Python embedded environment for C++" ON)
+option(BUILD_SQLITE3         "Build support for SQLite3 DB" ON)
+option(BUILD_AVRO            "Build support for Apache AVRO" ${BUILD_KAFKA})
+option(BUILD_PROTOBUF        "Build support for Google Protocol Buffers" ON)
+option(BUILD_PYTHON_IO       "Build Python embedded environment for C++" ON)
 
 # Platform integration
-option(BUILD_DBUS         "Build support for D-Bus" ON)
-option(BUILD_DNSSD_AVAHI  "Build suport for DNS-SD via Avahi" ON)
+option(BUILD_DBUS            "Build support for D-Bus" ON)
+option(BUILD_DNSSD_AVAHI     "Build suport for DNS-SD via Avahi" ON)
 
 #-------------------------------------------------------------------------------
 # Python options

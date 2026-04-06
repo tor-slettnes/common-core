@@ -144,7 +144,12 @@ namespace core::http
                               ResponseCode *response_code = nullptr) const;
 
         types::Value post_json(const std::string &path,
-                               const types::TaggedValueList &query,
+                               const std::string &json,
+                               bool fail_on_error = true,
+                               ResponseCode *response_code = nullptr) const;
+
+        types::Value post_json(const std::string &path,
+                               const types::Value &data,
                                bool fail_on_error = true,
                                ResponseCode *response_code = nullptr) const;
 

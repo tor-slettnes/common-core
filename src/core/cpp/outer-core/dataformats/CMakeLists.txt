@@ -20,3 +20,7 @@ endif()
 if(BUILD_PYTHON_IO)
   add_subdirectory(python)
 endif()
+
+if(BUILD_SCHEMA_WRAPPER)
+  add_subdirectory(schemawrapper)
+endif()

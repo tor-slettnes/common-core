@@ -27,11 +27,13 @@
 #
 # The syntax for the user-provided service address (URL) for both the C++
 # and Python gRPC wrappers is as follows:
-#   [SCHEME:#]HOST[:PORT][/PATH]
+#   [SCHEME://][USERNAME[:PASSWORD]@]HOST[:PORT][/PATH]
 #
 # The following per-service defaults are used to populate any missing portion
 # of that correpsonding URL:
 #  - `scheme`        : Scheme part of the server URL (`http` or `https`)
+#  - `username`      : Username portion of the URL
+#  - `password`      : Password portion of the URL
 #  - `host`          : Host portion of the URL
 #  - `port`          : Port portion of the URL
 #  - `path`          : Local resource within the server
@@ -44,6 +46,8 @@
 
 Example Service:
   scheme        : "http"
+  uername       : "someuser"
+  password      : "abc123"
   host          : "localhost"
   port          : 8000
   path          : "/example/api"

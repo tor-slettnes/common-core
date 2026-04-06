@@ -118,22 +118,30 @@ namespace core::http
 
     types::Value RESTClient::post_json(
         const std::string &path,
-        const types::TaggedValueList &query,
+        const std::string &json,
         bool fail_on_error,
         ResponseCode *response_code) const
     {
-        std::stringstream request;
-        std::stringstream response;
-        json::fast_writer.write_stream(request, query.as_kvmap());
-
         return json::fast_reader.read_stream(
             this->post(
                 path,                // location
                 this->content_type,  // content_type
-                request.str(),       // data
+                json,                // data
                 this->content_type,  // expected_content_type
                 fail_on_error,       // fail_on_error
                 response_code));     // response_code
+    }
+
+    types::Value RESTClient::post_json(
+        const std::string &path,
+        const types::Value &data,
+        bool fail_on_error,
+        ResponseCode *response_code) const
+    {
+        std::stringstream request;
+        json::fast_writer.write_stream(request, data);
+
+        return this->post_json(path, request.str(), fail_on_error, response_code);
     }
 
     types::Value RESTClient::del_json(

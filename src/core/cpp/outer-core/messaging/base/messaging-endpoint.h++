@@ -25,6 +25,7 @@ namespace core::messaging
     {
     protected:
         // Keys to look up settings in grpc-endpoints-*.json
+        static constexpr auto DEFAULT_CHANNEL = "_default_";
         static constexpr auto SCHEME_OPTION = "scheme";
         static constexpr auto PORT_OPTION = "port";
         static constexpr auto HOST_OPTION = "host";
@@ -52,6 +53,8 @@ namespace core::messaging
         std::string messaging_flavor() const;
         std::string endpoint_type() const;
         std::string channel_name() const;
+
+        std::vector<std::string> all_channel_names() const;
 
         std::shared_ptr<SettingsStore> settings() const;
         types::Value setting(const std::string &key,

@@ -31,3 +31,7 @@ endif()
 if(BUILD_KAFKA)
   add_subdirectory(kafka)
 endif()
+
+if(BUILD_SCHEMA_REGISTRY)
+  add_subdirectory(schemaregistry)
+endif()

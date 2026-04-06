@@ -1,0 +1,5 @@
+_default_:
+  fetch_by_id   : "/schemas/ids/{id}"                # GET
+  fetch_by_name : "/subjects/{name}/versions/latest" # GET
+  register      : "/subjects/{name}/versions"        # POST
+

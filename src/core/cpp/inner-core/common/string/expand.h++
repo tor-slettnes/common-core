@@ -16,7 +16,7 @@
 namespace core::str
 {
     /// @brief
-    ///     Expands brace-enclosed keys wihtin to string to corresponding values from map.
+    ///     Expands brace-enclosed keys within to string to corresponding values from map.
     /// @tparam V
     ///     Value type. Must support output stream "<<" operator.
     /// @param[in] format

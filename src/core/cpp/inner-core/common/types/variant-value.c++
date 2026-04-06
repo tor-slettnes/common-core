@@ -990,6 +990,11 @@ namespace core::types
         }
     }
 
+    Value &Value::operator[](const char *key)
+    {
+        return this->operator[](std::string(key));
+    }
+
     Value &Value::operator[](const std::string &key)
     {
         switch (this->type())
@@ -1066,24 +1071,6 @@ namespace core::types
         }
     }
 
-    Value Value::get(
-        const std::string &key,
-        const Value &fallback,
-        bool ignoreCase) const noexcept
-    {
-        switch (this->type())
-        {
-        case ValueType::KVMAP:
-            return std::get<KeyValueMapPtr>(*this)->get(key, fallback, ignoreCase);
-
-        case ValueType::TVLIST:
-            return std::get<TaggedValueListPtr>(*this)->get(key, fallback, ignoreCase);
-
-        default:
-            return fallback;
-        }
-    }
-
     Value Value::get(const uint index, const Value &fallback) const noexcept
     {
         switch (this->type())
@@ -1108,6 +1095,32 @@ namespace core::types
 
         case ValueType::TVLIST:
             return std::get<TaggedValueListPtr>(*this)->get(index, fallback);
+
+        default:
+            return fallback;
+        }
+    }
+
+    Value Value::get(
+        const char *key,
+        const Value &fallback,
+        bool ignoreCase) const noexcept
+    {
+        return this->get(std::string(key), fallback, ignoreCase);
+    }
+
+    Value Value::get(
+        const std::string &key,
+        const Value &fallback,
+        bool ignoreCase) const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::KVMAP:
+            return std::get<KeyValueMapPtr>(*this)->get(key, fallback, ignoreCase);
+
+        case ValueType::TVLIST:
+            return std::get<TaggedValueListPtr>(*this)->get(key, fallback, ignoreCase);
 
         default:
             return fallback;

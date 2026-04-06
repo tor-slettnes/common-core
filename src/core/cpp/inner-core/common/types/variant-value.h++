@@ -190,17 +190,22 @@ namespace core::types
             const Value &fallback = {}) const noexcept;
 
         Value get(
-            const std::string &key,
-            const Value &fallback = {},
-            bool ignoreCase = false) const noexcept;
-
-        Value get(
             const uint index,
             const Value &fallback = {}) const noexcept;
 
         Value get(
             const int index,
             const Value &fallback = {}) const noexcept;
+
+        Value get(
+            const char *key,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
+
+        Value get(
+            const std::string &key,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
 
         Value get_any(
             const std::vector<std::string> &candidates,
@@ -217,6 +222,7 @@ namespace core::types
         std::optional<Value> try_get(
             const int index) const noexcept;
 
+        Value &operator[](const char *key);
         Value &operator[](const std::string &key);
         Value &operator[](const uint index);
         Value &operator[](const int index);

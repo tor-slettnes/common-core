@@ -73,6 +73,21 @@ namespace core::messaging
         return this->channel_name_;
     }
 
+    std::vector<std::string> Endpoint::all_channel_names() const
+    {
+        std::vector<std::string> names;
+        names.reserve(this->settings()->size());
+        for (const auto &[candidate_name, settings]: *this->settings())
+        {
+            if (candidate_name != DEFAULT_CHANNEL)
+            {
+                names.push_back(candidate_name);
+            }
+        }
+        names.shrink_to_fit();
+        return names;
+    }
+
     std::shared_ptr<SettingsStore> Endpoint::settings() const
     {
         if (!this->settings_->loaded())
@@ -102,7 +117,7 @@ namespace core::messaging
             return opt_value.value();
         }
 
-        if (auto opt_value = this->settings()->get("_default_").try_get(key))
+        if (auto opt_value = this->settings()->get(DEFAULT_CHANNEL).try_get(key))
         {
             return opt_value.value();
         }
