@@ -16,7 +16,10 @@ namespace core::sr
         const std::string &registry_url,
         const std::string &registry_name,
         const std::string &messaging_flavor)
-        : Super(registry_url, registry_name, "SchemaRegistry")
+        : Super(registry_url,
+                registry_name,
+                "SchemaRegistry",
+                "application/vnd.schemaregistry.v1+json")
     {
     }
 
