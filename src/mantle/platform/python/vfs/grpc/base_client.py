@@ -47,12 +47,6 @@ class BaseClient (GenericClient):
     ## `cc.messaging.grpc.GenericClient` base to instantiate `self.stub`.
     from .vfs_service_pb2_grpc import VirtualFileSystemStub as Stub
 
-    ## Ensure that methods overridden in subclasses inherit the docstrings
-    ## below.
-    # def __init_subclass__(subclass, **kwargs):
-    #     super().__init_subclass__(**kwargs)
-    #     BaseClient.inherit_docstrings(subclass)
-
     def get_contexts(self,
                      open_only: bool = False,
                      removable_only: bool = False,

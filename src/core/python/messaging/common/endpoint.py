@@ -98,26 +98,6 @@ class Endpoint (DocBase, LogBase):
             type(self).__name__,
         )
 
-    @classmethod
-    def inherit_docstrings(cls, subclass):
-        '''
-        Helper method to ensure docstrings are inherited when creating subclasses.
-
-        Example usage:
-
-        ```python
-        class MyEndpointBase (Endpoint):
-            def __init_subclass__(subclass, **kwargs):
-                super().__init_subclass__(**kwargs)
-                MyEndpointBase.inherit_docstrings(subclass)
-        ```
-        '''
-        for name, method in subclass.__dict__.items():
-            if callable(method) and method.__doc__ is None:
-                if parent_method := cls.__dict__.get(name):
-                    if callable(parent_method):
-                        method.__doc__ = parent_method.__doc__
-
     def initialize(self):
         self.initialized = True
 

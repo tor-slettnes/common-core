@@ -285,11 +285,11 @@ class TimePoint (float):
 
     @classmethod
     def try_from(cls,
-                 input: TimePointType|str|float|int,
+                 input: TimePointType|str|float|int|None,
                  fallback: object = None,
                  decimal_exponent: int|None = None,
                  assume_utc: bool = False,
-                 ) -> 'TimePoint':
+                 ) -> 'TimePoint|None':
         '''
         Try creating a new TimePoint from a variant/undetermined type, such
         as an uncontrolled JSON or YAML settings value.
@@ -302,10 +302,11 @@ class TimePoint (float):
         arguments and other details.
         '''
 
-        try:
-            return cls.from_value(input, decimal_exponent, assume_utc)
-        except (ValueError, TypeError):
-            pass
+        if input is not None:
+            try:
+                return cls.from_value(input, decimal_exponent, assume_utc)
+            except (ValueError, TypeError):
+                pass
 
         if fallback is not None:
             try:
@@ -321,7 +322,7 @@ class TimePoint (float):
                    input: TimePointType|str|float|int,
                    decimal_exponent: int|None = None,
                    assume_utc: bool = False,
-                   ) -> 'TimePoint|None':
+                   ) -> 'TimePoint':
 
         '''
         Create a new TimePoint value from any supported time representation.
@@ -374,7 +375,7 @@ class TimePoint (float):
         '''
 
         if input is None:
-            return TimePoint.now()
+            return TimePoint()
 
         elif isinstance(input, TimePoint):
             return input
