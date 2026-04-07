@@ -140,7 +140,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
 
     async def _write_worker(self):
         while self.writer_task:
-            while publication := await self._write_queue.get():
+            while publication := await self.write_queue.get():
                 await self.stub.Publish(publication)
 
     @override
