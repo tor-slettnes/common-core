@@ -10,6 +10,7 @@ __author__ = 'Tor Slettnes'
 from typing import Sequence, Mapping
 from threading import Thread, Lock
 from queue import Queue
+from logging import Logger
 import sys
 
 ### Common Core modules
@@ -28,6 +29,7 @@ from ..protobuf import (
     DependencyStatus, DependencyMap, DependencyPolarity,
     InterceptorMethod, InterceptorInvocation, InterceptorResult,
     InterceptorPhase, ExceptionHandling, InvocationStyle, CascadeStyle,
+    Signal,
 )
 
 from ..base import Switch
@@ -38,9 +40,37 @@ class StandardClient (BaseClient):
     Python client for Switchboard gRPC service.
     '''
 
+    def __init__(self,
+                 host: str = "",
+                 wait_for_ready: bool = True,
+                 watch_all: bool = True,
+                 product_name: str|None = None,
+                 project_name: str|None = None,
+                 logger: Logger|None = None,
+                 ):
+
+        self._switch_lock = Lock()
+        BaseClient.__init__(**locals())
+
     @override
     def _new_switch(self, switch_name: str) -> Switch:
         return Switch(switch_name, self)
+
+
+    @override
+    def _get_or_add_switch_proxy(self,
+                                 switch_name: str,
+                                 initially_active: bool = False,
+                                 ) -> tuple[Switch, bool]:
+        with self._switch_lock:
+            return BaseClient._get_or_add_switch_proxy(**locals())
+
+
+    @override
+    def _get_or_map_switch(self, msg: Signal) -> Switch|None:
+        with self._switch_lock:
+            return BaseClient._get_or_map_switch(**locals())
+
 
     @override
     def get_or_add_switch(self,

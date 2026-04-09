@@ -9,7 +9,7 @@ import traceback
 import inspect
 import logging
 import asyncio
-import multiprocessing
+import threading
 
 from .asynctask import async_tasks
 
@@ -33,10 +33,19 @@ def safe_invoke(function    : Callable,
         if log_call:
             log_call('Invoking %s'%(description,))
 
-        return function(*args, **kwargs), None
+        result = function(*args, **kwargs), None
+
+        if log_call:
+            log_call('Completed %s()'%(description,))
+
+        return result
 
     except Exception as e:
-        log_invocation_failure(description, log_failure, e)
+        log_invocation_failure(
+            description,
+            log_failure,
+            e,
+        )
         return None, e
 
 
@@ -61,6 +70,9 @@ async def safe_await(function    : Callable,
         result = function(*args, **kwargs)
         if asyncio.iscoroutine(result):
             result = await result
+
+        if log_call:
+            log_call('Completed %s'%(description,))
 
         return result, None
 
@@ -91,7 +103,7 @@ def safe_invoke_maybe_async(
     return safe_invoke(
         function = invoke_maybe_async,
         kwargs = dict(function=function, args=args, kwargs=kwargs),
-        description = description or invocation(function, args, kwargs),
+        description = description,
         log_call = log_call,
         log_failure = log_failure)
 
@@ -127,6 +139,34 @@ def invoke_maybe_async(function: Callable,
     else:
         return None
 
+
+def invoke_background(function: Callable,
+                      args: Sequence = (),
+                      kwargs: Mapping = {},
+                      description : Optional[str] = None,
+                      log_call    : Optional[Callable[[str], None]] = logging.debug,
+                      log_failure : Optional[Callable[[str], None]] = logging.error,
+                      ) -> asyncio.Task|threading.Thread:
+    '''
+    Invoke the provided function in a new AsyncIO task or Python thread,
+    depending on whether it is a coroutine function or not.
+
+    The invocation itself and any encountered exceptions are logged vi via the
+    respective callables `log_call` and `log_failure`.
+    '''
+    if asyncio.iscoroutinefunction(function):
+        return async_tasks.add_coroutine(
+            coroutine = function(*args, **kwargs),
+            log_failure = log_failure)
+    else:
+        thread = threading.Thread(
+            name = function.__qualname__,
+            target = safe_invoke,
+            args = (function, args, kwargs, description, log_call, log_failure),
+            daemon = True,
+        )
+        thread.start()
+        return thread
 
 
 def log_invocation_failure(description : Optional[str],

@@ -1,6 +1,7 @@
 from .invocation import (
     safe_invoke, safe_await, safe_invoke_maybe_async,
     invoke_async, invoke_maybe_async,
+    invoke_background,
     log_invocation_failure, invocation,
 )
 

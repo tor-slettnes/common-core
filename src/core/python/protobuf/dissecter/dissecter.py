@@ -150,15 +150,8 @@ class MessageDissecter:
             result = dataclasses.asdict(result)
 
         elif isinstance(result, Mapping):
-            try:
-                result = {k:self.to_dict(v)
-                          for (k,v) in result.items()}
-            except Exception as e:
-                print("Failed to dissect result %r: [%s] %s"%(
-                    result,
-                    type(e).__name__,
-                    e))
-                raise
+            result = {k:self.to_dict(v)
+                      for (k,v) in result.items()}
 
         elif isinstance(result, Sequence) and not isinstance(result, str):
             result = [self.to_dict(v) for v in result]

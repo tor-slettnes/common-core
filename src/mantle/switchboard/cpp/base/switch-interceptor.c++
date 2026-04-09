@@ -164,49 +164,10 @@ namespace switchboard
         SwitchRef sw,
         State state)
     {
-        std::packaged_task<void()> task(std::bind(&This::run_invocation, this, sw, state));
+        std::packaged_task<void()> task(std::bind(this->invocation_, sw, state));
         std::future<void> future_result = task.get_future();
         std::thread thread(std::move(task));
         thread.detach();
         return future_result;
     }
-
-    void Interceptor::wait(std::future<void> &result)
-    {
-        if (this->asynchronous())
-        {
-            logf_debug("Interceptor %r is running asynchronously",
-                       this->name());
-        }
-        else
-        {
-            logf_info("Waiting for interceptor %r", this->name());
-            result.get();
-        }
-    }
-
-    void Interceptor::run_invocation(SwitchRef sw, State state)
-    {
-        logf_debug("Invoking switch %r interceptor %r for state %s",
-                   sw->name(),
-                   this->name(),
-                   state);
-        try
-        {
-            this->invocation_(sw, state);
-            logf_debug("Switch %r interceptor %r completed",
-                       sw->name(),
-                       this->name());
-        }
-        catch (...)
-        {
-            logf_message(this->log_failure_level_,
-                         "Switch %r interceptor %r failed: %s",
-                         sw->name(),
-                         this->name(),
-                         std::current_exception());
-            std::rethrow_exception(std::current_exception());
-        }
-    }
-
 }  // namespace switchboard

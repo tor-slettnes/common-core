@@ -14,7 +14,7 @@ import fnmatch
 ### Common Core modules
 from cc.core.docbase import DocBase
 from cc.core.logbase import LogBase
-from cc.core.invocation import safe_invoke_maybe_async
+from cc.core.invocation import method_path, invoke_background
 from cc.protobuf.signal import MappingAction
 
 ### Switchboard modules
@@ -247,9 +247,14 @@ class SwitchboardObserver (DocBase, LogBase, SwitchboardDissecter):
                 if not decoded_signal:
                     decoded_signal = self.decode(msg)
 
-                safe_invoke_maybe_async(
+                invoke_background(
                     handler.unbound_method,
                     args=(instance, decoded_signal),
+                    description="switch %r %s handler: %r" % (
+                        msg.mapping_key,
+                        self.signal_store.signal_name(msg),
+                        method_path(handler.unbound_method),
+                    ),
                     log_call = self.logger.debug,
                     log_failure = self.logger.error,
                 )

@@ -349,6 +349,12 @@ namespace switchboard
         bool result = this->invoke_interceptors(state, PHASE_EARLY, on_cancel, on_error) &&
                       this->invoke_interceptors(state, PHASE_NORMAL, on_cancel, on_error) &&
                       this->invoke_interceptors(state, PHASE_LATE, on_cancel, on_error);
+        if (result)
+        {
+            logf_debug("Switch %r interceptors completed transition to %r",
+                       this->name(),
+                       state);
+        }
         // this->interceptor_mutex.unlock();
         return result;
     }
@@ -378,14 +384,20 @@ namespace switchboard
                 // }
                 this->notify_status();
 
-                logf_debug("Switch %r invoking %s %s interceptor %r",
+                logf_debug("Switch %r invoking %s interceptor %r for state %s",
                            this->name(),
                            phase,
-                           ic->asynchronous() ? "asynchronous" : "synchronous",
-                           name);
+                           name,
+                           state);
 
                 std::future<void> future_result = ic->invoke(this->shared_from_this(), state);
-                if (!ic->asynchronous())
+                if (ic->asynchronous())
+                {
+                    logf_debug("Switch %r interceptor %r is running asynchronously",
+                               this->name(),
+                               ic->name());
+                }
+                else
                 {
                     results.insert_or_assign(ic, std::move(future_result));
                 }
@@ -399,14 +411,18 @@ namespace switchboard
         {
             try
             {
-                logf_debug("Waiting for switch %r interceptor %r",
+                result.get();
+                logf_debug("Switch %r interceptor %r completed",
                            this->name(),
                            ic->name());
-                result.get();
             }
             catch (...)
             {
                 errors.insert_or_assign(ic, std::current_exception());
+                logf_notice("Switch %r interceptor %r failed: %s",
+                           this->name(),
+                           ic->name(),
+                           std::current_exception());
             }
         }
 

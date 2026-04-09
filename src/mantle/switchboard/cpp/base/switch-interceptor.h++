@@ -83,10 +83,6 @@ namespace switchboard
         bool applicable(State state, InterceptorPhase phase);
 
         std::future<void> invoke(SwitchRef sw, State state);
-        void wait(std::future<void> &result);
-
-    private:
-        void run_invocation(SwitchRef sw, State state);
 
     public:
         std::string name_;

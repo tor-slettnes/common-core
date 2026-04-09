@@ -59,7 +59,7 @@ namespace core::sr
 
         SchemaRecord register_schema(
             const SchemaName &name,
-            const SchemaText &schema);
+            const SchemaText &schema_text);
 
     private:
         core::types::Value extract_schema(

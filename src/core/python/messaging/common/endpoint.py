@@ -88,8 +88,12 @@ class Endpoint (DocBase, LogBase):
             if scope_name])
 
         self.initialized = False
-        self.logger.debug("Loaded %s settings from %s: %s"%
-                          (self.channel_name, self.settings.filepaths, self.settings))
+        self.logger.debug(
+            "Loaded %s settings from %s: %s"%(
+                self.channel_name,
+                [str(path) for path in self.settings.filepaths],
+                self.settings,
+            ))
 
 
     def __repr__ (self):

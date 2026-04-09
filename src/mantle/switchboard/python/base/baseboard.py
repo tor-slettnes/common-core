@@ -8,7 +8,6 @@ __author__ = 'Tor Slettnes'
 ### Standard Python modules
 from abc import abstractmethod
 from typing import Callable, Sequence, Mapping
-from threading import Lock
 from logging import Logger
 import os
 
@@ -57,7 +56,6 @@ class SwitchboardBase (SwitchboardObserver):
 
         self.init_intercept()
         self.switches = {}
-        self._switch_lock = Lock()
         self._connect_signals()
 
     def _connect_signals(self):
@@ -90,16 +88,15 @@ class SwitchboardBase (SwitchboardObserver):
         switch = None
 
         if switch_name := msg.mapping_key:
-            with self._switch_lock:
-                match msg.mapping_action:
-                    case MappingAction.ADDITION | MappingAction.UPDATE:
-                        try:
-                            switch = self.switches[switch_name]
-                        except KeyError:
-                            switch = self.switches[switch_name] = self._new_switch(switch_name)
+            match msg.mapping_action:
+                case MappingAction.ADDITION | MappingAction.UPDATE:
+                    try:
+                        switch = self.switches[switch_name]
+                    except KeyError:
+                        switch = self.switches[switch_name] = self._new_switch(switch_name)
 
-                    case MappingAction.REMOVAL:
-                        switch = self.switches.pop(switch_name, None)
+                case MappingAction.REMOVAL:
+                    switch = self.switches.pop(switch_name, None)
 
         return switch
 

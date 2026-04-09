@@ -81,7 +81,7 @@ namespace core::sr
 
     SchemaRecord SchemaRegistryClient::register_schema(
         const SchemaName &name,
-        const SchemaText &schema)
+        const SchemaText &schema_text)
     {
         std::string rel_path = core::str::expand(
             this->setting("register").as_string(),
@@ -90,7 +90,7 @@ namespace core::sr
             });
 
         core::types::KeyValueMap request = {
-            {"schema", schema},
+            {"schema", schema_text},
         };
 
         core::types::Value response = this->post_json(rel_path, request);
