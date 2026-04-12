@@ -38,9 +38,9 @@ namespace pubsub::grpc
         void on_monitor_start() override;
         void on_monitor_end() override;
 
-        static void on_message(
+        void on_message(
             const Topic &topic,
-            const Payload &payload);
+            const core::types::Value &payload) const;
 
     protected:
         std::shared_ptr<pubsub::Subscriber> subscriber();
@@ -51,7 +51,7 @@ namespace pubsub::grpc
         const std::string signal_handle;
         Transport transport_;
         fs::path input_file_;
-        bool json_input_;
+        bool json_output_;
         std::shared_ptr<pubsub::Subscriber> subscriber_;
         std::shared_ptr<pubsub::Publisher> publisher_;
     };

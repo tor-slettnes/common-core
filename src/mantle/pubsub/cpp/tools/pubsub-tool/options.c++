@@ -11,6 +11,7 @@
 #include "relay-grpc-client.h++"
 #include "platform/symbols.h++"
 #include "parsers/json/reader.h++"
+#include "parsers/json/writer.h++"
 #include "types/symbolmap.h++"
 
 namespace pubsub::grpc
@@ -33,9 +34,8 @@ namespace pubsub::grpc
 
     Options::Options()
         : signal_handle(TYPE_NAME_FULL(This)),
-          transport_(Transport::GRPC),
-          json_input_(false)
-
+          json_output_(false),
+          transport_(Transport::GRPC)
     {
         this->describe("Send or receive messages via Relay");
     }
@@ -59,21 +59,13 @@ namespace pubsub::grpc
         this->add_opt<fs::path>(
             {"--input"},
             "FILENAME",
-            "Read input for \"publish\" command from a JSON file. "
-            "Unless the \"--json\" option is used, the file contents "
-            "are published as plain text.",
+            "Read input for \"publish\" command from a JSON file. ",
             &this->input_file_);
 
         this->add_const<bool>(
-            {"--text"},
-            "Publish inputs as plain text [default]",
-            &this->json_input_,
-            false);
-
-        this->add_const<bool>(
             {"--json"},
-            "Parse inputs as JSON text",
-            &this->json_input_,
+            "Format outputs as JSON text",
+            &this->json_output_,
             true);
 
         this->add_commands();
@@ -83,11 +75,25 @@ namespace pubsub::grpc
     {
         this->add_command(
             "publish",
-            {"TOPIC", "[PAYLOAD] ... "},
-            "Publish a message. "
-            "Alternatively, use \"--input\" to read from a JSON file. "
-            "Unless the \"--json\" option is used, the input is "
-            "read and  published as plain text.",
+            {"TOPIC", "[", "VALUE", "|", "[KEY VALUE]", "...", "]"},
+            "Build and publish a message on the specified TOPIC. "
+            "\n\n"
+            "If a single VALUE argument follows TOPIC, it is published as is. "
+            "Alternatively, an even number of arguments are interpreted as "
+            "KEY/VALUE pairs and used to construct a variant value map."
+            "\n\n"
+            "The type of each VALUE argument is inferred heuristically, "
+            "with words such as `true`, `false` and `null` as well as "
+            "numeric literals yielding the most appropriate type. "
+            "To force a particular value type, use JSON syntax: "
+            "string values in \"double quotes\", "
+            "maps as {KEY: VALUE} pairs within in curly braces, "
+            "and value lists inside [SQUARE BRACKETS]."
+            "Such values may need to be further escaped in the user's shell, "
+            "for instance within single quotations marks: "
+            "'{\"pi\": 3.141592653589793238}'."
+            "\n\n"
+            "Alternatively, use \"--input\" to read the payload from a JSON file.",
             std::bind(&Options::publish, this));
 
         this->add_command(
@@ -108,21 +114,30 @@ namespace pubsub::grpc
 
         try
         {
-            while (auto payload = this->next_arg())
-            {
-                core::types::Value value =
-                    this->json_input_ ? core::json::reader.decoded(*payload)
-                                      : core::types::Value(*payload);
-
-                publisher->publish(topic, value);
-                published = true;
-            }
-
             if (!this->input_file_.empty())
             {
                 core::types::Value value = core::json::reader.read_file(this->input_file_);
                 publisher->publish(topic, value);
                 published = true;
+            }
+
+            if (std::distance(this->current_arg, this->args.end()) == 1)
+            {
+                // Single argument; interpret as JSON
+                std::string literal = this->get_arg("VALUE");
+                core::types::Value value = core::types::Value::from_literal(literal);
+                publisher->publish(topic, value);
+                published = true;
+            }
+
+            else
+            {
+                core::types::TaggedValueList payload = this->get_tvlist(false);
+                if (!payload.empty())
+                {
+                    publisher->publish(topic, payload);
+                    published = true;
+                }
             }
 
             if (!published)
@@ -152,11 +167,14 @@ namespace pubsub::grpc
             topics.insert(*arg);
         }
 
+        using namespace std::placeholders;
         this->subscriber()->initialize();
         this->subscriber()->subscribe(
             this->signal_handle,
             topics,
-            This::on_message);
+            [&](const Topic &topic, const core::types::Value &message) {
+                this->on_message(topic, message);
+            });
     }
 
     void Options::on_monitor_end()
@@ -167,9 +185,22 @@ namespace pubsub::grpc
 
     void Options::on_message(
         const Topic &topic,
-        const Payload &payload)
+        const core::types::Value &payload) const
     {
-        core::str::format(std::cout, "[%s] %s\n", topic, payload);
+        std::cout << "["
+                  << topic
+                  << "] ";
+
+        if (this->json_output_)
+        {
+            std::cout << core::json::writer.encoded(payload);
+        }
+        else
+        {
+            std::cout << payload;
+        }
+
+        std::cout << std::endl;
     }
 
     std::shared_ptr<pubsub::Subscriber> Options::subscriber()

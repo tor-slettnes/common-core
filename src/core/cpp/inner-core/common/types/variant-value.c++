@@ -11,6 +11,7 @@
 #include "variant-tvlist.h++"
 #include "create-shared.h++"
 #include "string/convert.h++"
+#include "parsers/json/reader.h++"
 
 #include <sstream>
 
@@ -1308,6 +1309,7 @@ namespace core::types
         static const std::regex rx_null("^(null|NULL|None)?$");
         static const std::regex rx_bytevector("^(['\"]?)%[[:alnum:]\\+/]+={0,2}%?\\1$");
         static const std::regex rx_literal_string("(['\"])((?:\\\\.|[^\\\\\\r\\n])*)\\1");
+        static const std::regex rx_composite("^(?:\\{.*\\}|\\[.*\\])$");
 
         if (literal.empty())
         {
@@ -1352,6 +1354,10 @@ namespace core::types
         else if (std::regex_match(literal.begin(), literal.end(), rx_literal_string))
         {
             return str::unquoted(literal);
+        }
+        else if (std::regex_match(literal.begin(), literal.end(), rx_composite))
+        {
+            return core::json::reader.decoded(literal);
         }
         else
         {

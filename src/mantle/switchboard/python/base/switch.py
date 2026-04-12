@@ -111,7 +111,7 @@ class Switch (DocBase, SwitchboardDissecter):
     @property
     def aliases(self) -> Sequence[str]:
         '''
-        Return a list of aliaes for this string.
+        Return a list of aliases for this string.
         '''
         return self.specification.aliases
 
@@ -237,7 +237,6 @@ class Switch (DocBase, SwitchboardDissecter):
         '''
         Return any error currently associated with switch
         '''
-
         return self.status.error
 
 
@@ -247,7 +246,6 @@ class Switch (DocBase, SwitchboardDissecter):
         Return a dictinoary of arbitrary key/value pairs currently associated
         with this switch.
         '''
-
         return self.status.attributes
 
 
@@ -259,7 +257,6 @@ class Switch (DocBase, SwitchboardDissecter):
         keys from this switch, but the merging order of values from ancestors is
         undetermined.
         '''
-
         attributes = self.attributes
         for predecessor in self.predecessors.values():
             recursive_merge(attributes, predecessor.cascaded_attributes)

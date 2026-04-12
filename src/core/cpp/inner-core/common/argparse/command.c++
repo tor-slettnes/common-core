@@ -105,8 +105,8 @@ namespace core::argparse
         types::TaggedValueList tvlist;
         while (this->current_arg != this->args.end())
         {
-            std::string key = this->get_arg("key");
-            std::string value = this->get_arg("value");
+            std::string key = this->get_arg("KEY");
+            std::string value = this->get_arg("VALUE");
             tvlist.emplace_back(key, types::Value::from_literal(value));
         }
         return tvlist;
