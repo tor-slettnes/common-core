@@ -443,7 +443,11 @@ class SignalStore (LogBase):
          * the field indicated by `signal_name` set to `value`.
         '''
 
-        msg = self.create_signal_message(**locals())
+        msg = self.create_signal_message(
+            signal_name = signal_name,
+            key = key,
+            value = value,
+            action = action)
         self.emit(msg)
 
 

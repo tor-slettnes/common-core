@@ -30,7 +30,7 @@ from .switch    import Switch
 class HandlerSpec:
     pattern: re.Pattern
     actions: Set[MappingAction]
-    unbound_method: Callable[[Switch], None]
+    unbound_method: Callable[[Signal], None]
     states: Set[State]|None = None
 
 MAP_UPDATE = {MappingAction.ADDITION, MappingAction.UPDATE}
@@ -113,7 +113,7 @@ class SwitchboardObserver (DocBase, LogBase, SwitchboardDissecter):
         ```
         '''
 
-        def decorator(method: Callable[[Switch], None]):
+        def decorator(method: Callable[[Signal], None]):
             '''
             Function decorator for Switchboard specification updates
             '''
@@ -168,7 +168,7 @@ class SwitchboardObserver (DocBase, LogBase, SwitchboardDissecter):
         ```
         '''
 
-        def decorator(method: Callable[[Switch], None]):
+        def decorator(method: Callable[[Signal], None]):
             '''
             Function decorator for Switchboard status updates
             '''
