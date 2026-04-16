@@ -314,7 +314,10 @@ def find_settings_files(basename: FilePathInput,
 
     else:
         filepaths = []
-        for folder in (search_path or settings_path(package)):
+        if search_path is None:
+            search_path = settings_path(package)
+
+        for folder in search_path:
             if isinstance(folder, str):
                 folder = pathlib.Path(folder)
 
