@@ -43,21 +43,8 @@ class SettingsStore (dict):
     one or more JSON, YAML and/or INI file(s) located within specific settings
     folders.
 
-    Settings may be loaded on initialization or subsequently by invoking
-    `load_settings()`.  In either case, each provided filename is resolved as
-    follows:
-
-    - If the file name is relative, it is resolved with respect to each folder
-      in the search path for this instance (see `__init__()`), possibly
-      resulting in multiple candidate paths.
-
-    - If the file name ends in '.json', `.yaml` or `.ini` the corresponding
-      parser is used.  If the file name has no suffix, each of these supported
-      suffixes is in turn appended to each candidate path, in that order.  Any
-      filename with a different/unsupported suffix is ignored.
-
-    - If one or more of the resulting candidate path(s) exist on the filesystem,
-      they are consecutively parsed and merged in with the existing settings.
+    Settings may be loaded from absolute or relative paths on initialization or
+    subsequently; see `__init__()` and `load_settings()` for details.
 
     Comments are supported as follows:
 
@@ -68,6 +55,33 @@ class SettingsStore (dict):
 
     - INI files are parsed with Python's native RawConfigParser, which supports
       comments following `;` or `#`.
+
+
+    ### Example
+
+    Consider a deployment where this module is located somewhere inside
+    `/usr`, and default configurations are stored in YAML files within the
+    folder `/usr/share/common-core/settings`.  Let's say you create a
+    `SettingsStore` instance as follows:
+
+    ```python
+    my_settings = SettingsStore('my_settings')
+    ```
+
+    Since `searchpath` is not explicitly provided on instantiation, the
+    default value `['/etc/common-core', 'share/common-core/settings']` is
+    used.  Settings are then loaded and merged in from whichever of the
+    following paths exist, in turn:
+
+    1. `$HOME/.config/common-core/my_settings.json`
+    2. `$HOME/.config/common-core/my_settings.yaml`
+    3. `$HOME/.config/common-core/my_settings.ini`
+    4. `/etc/common-core/my_settings.json`
+    5. `/etc/common-core/my_settings.yaml`
+    6. `/etc/common-core/my_settings.ini`
+    7. `/usr/share/common-core/settings/my_settings.json`
+    8. `/usr/share/common-core/settings/my_settings.yaml`
+    9. `/usr/share/common-core/settings/my_settings.ini`
     '''
 
     parser_map = {
@@ -86,11 +100,11 @@ class SettingsStore (dict):
         located relative to one or more folders in `searchpath` if provided,
         otherwise in the default search path.
 
-        Filenames may be relative or absolute paths; see the `SettingsStore()`
-        class description above for details.
+        The `filenames` argument may contain absolute or relative file paths;
+        see `load_settings()` for details.
 
-        Each directory name in `searchpath` may also be relative or absolute.
-        In the latter case, names are resolved with respect to
+        Similarly, each directory name in `searchpath` may also be relative or
+        absolute.  In the latter case, names are resolved with respect to
         `cc.core.paths.install_root()`, defined at build time (e.g. `/usr`).
 
         If no `searchpath` is provided, a default search path is obtained as
@@ -142,46 +156,36 @@ class SettingsStore (dict):
 
 
     def load_settings(self,
-                      filename : FilePathInput):
+                      filename : FilePathInput,
+                      searchpath : SearchPathInput|None = None):
 
         '''
         Load values from the specified settings file, if found.  Values are
         merged in recursively, with precedence given to those already in the
         store.  To replace existing values, first invoke `.clear()`.
 
-        @param filename
-            Absolute or relative path to a JSON, YAML or INI file from which to
-            load additional settings.  See `__init__()` for details.
+        The provided `filename` is resolved as follows:
 
+        - If the name is relative, it is resolved with respect to each folder in
+          the search path (see below), possibly resulting in multiple candidate
+          paths.
 
-        ### Example
+        - If the file name ends in '.json', `.yaml` or `.ini` the corresponding
+          parser is used.  If the file name has no suffix, each of these
+          supported suffixes is in turn appended to each candidate path, in that
+          order.  Any filename with a different/unsupported suffix is ignored.
 
-        Consider a deployment where this module is located somewhere inside
-        `/usr`, and default configurations are stored in YAML files within the
-        folder `/usr/share/common-core/settings`.
-        Let's say you create a `SettingsStore` instance as follows:
+        - If one or more of the resulting candidate path(s) exist on the
+          filesystem, they are consecutively parsed and merged in with the
+          existing settings.
 
-        ```python
-        my_settings = SettingsStore('my_settings')
-        ```
-
-        Since `searchpath` is not explicitly provided, the default value
-        `['/etc/common-core', 'share/common-core/settings']` is used.  Settings
-        are then loaded and merged in from whichever of the following paths
-        exist, in turn:
-
-        1. `$HOME/.config/common-core/my_settings.json`
-        2. `$HOME/.config/common-core/my_settings.yaml`
-        3. `$HOME/.config/common-core/my_settings.ini`
-        4. `/etc/common-core/my_settings.json`
-        5. `/etc/common-core/my_settings.yaml`
-        6. `/etc/common-core/my_settings.ini`
-        7. `/usr/share/common-core/settings/my_settings.json`
-        8. `/usr/share/common-core/settings/my_settings.yaml`
-        9. `/usr/share/common-core/settings/my_settings.ini`
+        If provided, `searchpath` overrides the default search path constructed
+        by `__init__()`. As in that case, it may similarly contain absolute or
+        relative paths, each of which are then resolved with respect to
+        `cc.core.paths.install_root()` as defined at build time (e.g. `/usr`).
         '''
 
-        for filepath in self.find_paths(filename):
+        for filepath in self.find_paths(filename, searchpath):
             self.merge_file(filepath)
 
         self._filenames.append(filename)
@@ -516,7 +520,9 @@ class SettingsStore (dict):
         return self._filepaths
 
 
-    def find_paths(self, basename: FilePathInput) -> FilePaths:
+    def find_paths(self,
+                   basename: FilePathInput,
+                   searchpath: SearchPathInput|None = None) -> FilePaths:
         '''
         Find settings files with the specified base name within the
         specified search path, or the default search path for this SettingsStore
@@ -527,14 +533,23 @@ class SettingsStore (dict):
             If no suffix is provided, each of the supported settings suffixes
             is tried in turn: `.json`, `.yaml`, `.ini`'
 
+        @param searchpath
+            Folder paths in which to look for files.  Each path may be absolute
+            or relative; in the latter case, it is resolved with respect to
+            `cc.core.paths.install_root()` as defined at build time
+            (e.g. `/usr`).
+
         @return
             A list of absolute pathnames to matching settings files.
         '''
 
         return find_settings_files(
             basename = basename,
-            search_path = self.searchpath)
-
+            search_path = (
+                normalized_search_path(searchpath) if searchpath is not None
+                else self.searchpath
+            )
+        )
 
     def recursive_delta(self) -> dict:
         '''
