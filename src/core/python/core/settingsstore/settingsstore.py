@@ -7,7 +7,7 @@ __author__ = 'Tor Slettnes'
 
 
 ### Standard Python modules
-from typing import Sequence, Mapping, Optional, Union, Any
+from typing import Sequence, Mapping, Hashable, Optional, Union, Any
 import yaml
 import json
 import os
@@ -90,10 +90,14 @@ class SettingsStore (dict):
         '.ini': INIFileReader.parse_text,
     }
 
+    ### Delimiter between elements in settings paths
+    PATH_DELIMITER = '.'
+
     def __init__(self,
                  filenames  : FilePathInput|FilePathInputs|None = [],
                  searchpath : SearchPathInput|None = None,
-                 package    : str|None = None):
+                 package    : str|None = None,
+                 name       : str|None = None):
 
         '''
         Initialize a new SettingsStore instance from the specified file(s),
@@ -132,10 +136,14 @@ class SettingsStore (dict):
 
            * the folder in which the Python package `package` (if provided) is
              installed.  This is intended for submodule settings.
+
+        If `name` is provided it will be used to identify this SettingsStore
+        instance in any generated log messages and exceptions.
         '''
 
         self._filenames = []
         self._filepaths = []
+        self.name       = name
         self.package    = package
         if searchpath is not None:
             self.searchpath = normalized_search_path(searchpath)
@@ -154,6 +162,16 @@ class SettingsStore (dict):
                 raise TypeError("Unsupported type for filenames argument: %s"%
                                 (type(filenames).__name__,))
 
+
+    @property
+    def description(self):
+        if self.name is not None:
+            return self.name
+        else:
+            return '%s(%s)'%(
+                type(self).__name__,
+                self.filenames,
+            )
 
     def load_settings(self,
                       filename : FilePathInput,
@@ -225,34 +243,24 @@ class SettingsStore (dict):
 
 
     def get_value(self,
-                  key: str|None = None,
-                  path: Sequence[str|int]|None = None,
+                  key: str|Sequence[str|int]|None = None,
                   expected_type: Union[type]|None = None,
                   default: Variant|None = None,
+                  *,
+                  path: str|Sequence[str|int]|None = None,
                   raise_invalid_type: bool = False,
                   raise_missing: bool = False,
                   ) -> Variant:
         '''
-        Return the value referenced either by `key` or by `path`, where
-
-          - `key` is a single string, denoting a value at the root of this
-            instance,
-
-          - `path` is a sequence comprising a string followed by any number of
-            strings and/or integers, denoting a hierarchical path to the target
-            value.  Within this sequence, a string (including the first path
-            element) descends into a corresopnding dictionary item along the
-            way, whereas an integer selects a list item.
-
-        Only one of these may be provided:
+        Return the value referenced by `key`.
 
         @param key
-            A single settings key to retrieve a value directly within the
-            top-level settings object
-
-        @param path
-            Either a sequence of strings and/or integers, denoting the
-            hierarchical path to the desired target value.
+            Either a single '.'-delimited string or a sequence comprising a
+            string followed by any number of strings and/or integers, in either
+            case denoting a hierarchical path to the target value.  Within this
+            sequence, a string (including the first path element) descends into
+            a corresponding dictionary item along the way, whereas an integer
+            selects a list item.
 
         @param expected_type
             A type or a union of types (normally separated by `|`).
@@ -260,6 +268,9 @@ class SettingsStore (dict):
         @param default
             Value to return if `path` does not reference an existing value, or
             if the value is not of the requested type(s).
+
+        @param path
+            Keyword-only alternative to `key` for backwards compatibilty.
 
         @param raise_invalid_type
             Raise a TypeError if `path` is found but the corresponding value is
@@ -277,32 +288,53 @@ class SettingsStore (dict):
             expected type, otherwise `default`
         '''
 
-        if (key and path) or (not key and not path):
+
+        if (key is not None and path is not None) or (key is None and path is None):
             raise TypeError(
-                "Exactly one of `key` or `path` must be provided")
+                "%s: Exactly one of `key` or `path` must be provided"%(
+                    self.description,
+                )
+            )
 
-        elif isinstance(key, str):
-            path = [key]
+        elif key is None:
+            key = path
 
-        elif isinstance(path, str):
-            path = [path]
+
+        if isinstance(key, str):
+            path = key.split(self.PATH_DELIMITER)
+
+        elif isinstance(key, Sequence) and len(key) > 0:
+            path = key
+
+        elif key is not None:
+            path = [str(key)]
 
         elif not isinstance(path, Sequence) or len(path) == 0:
             raise ValueError(
-                "`path` must be a string or a non-empty sequence of strings and/or ints")
+                "%s: `path` must be a non-empty sequence of strings and/or ints"%(
+                    self.description,
+                )
+            )
 
+        components = []
         try:
             value = self
             for component in path:
-                if isinstance(component, int) and not isinstance(value, (tuple, list)):
-                    raise TypeError
+                components.append(str(component))
+
+                if isinstance(value, (tuple, list)):
+                    if isinstance(component, str) and component.isdigit():
+                        component = int(component)
 
                 value = value[component]
 
         except KeyError:
             if raise_missing:
                 raise KeyError(
-                    f"Settings key {component!r} missing from value: {value}"
+                    "%s: No such setting: %r"%(
+                        self.description,
+                        self.PATH_DELIMITER.join(components),
+                    )
                 ) from None
             else:
                 return default
@@ -310,7 +342,10 @@ class SettingsStore (dict):
         except IndexError:
             if raise_missing:
                 raise IndexError(
-                    f"Settings index {component} out of range for value: {value}"
+                    "%s: Index out of range: %r"%(
+                        self.description,
+                        self.PATH_DELIMITER.join(components),
+                    )
                 ) from None
             else:
                 return default
@@ -318,8 +353,11 @@ class SettingsStore (dict):
         except TypeError:
             if raise_invalid_type:
                 raise TypeError(
-                    f"Cannot obtain settings key/index {component!r} "
-                    f"from {type(value).__name__} value: {value!r}"
+                    "%s: Invalid key for dereferencing %s value: %r"%(
+                        self.description,
+                        type(value).__name__,
+                        self.PATH_DELIMITER.join(components),
+                    )
                 ) from None
             else:
                 return default
@@ -327,60 +365,145 @@ class SettingsStore (dict):
         if expected_type is None or isinstance(value, expected_type):
             return value
 
-        if isinstance(value, str):
-            try:
-                return expected_type(value)
-            except ValueError:
-                pass
+        try:
+            return expected_type(value)
+        except (TypeError, ValueError):
+            if raise_invalid_type:
+                raise TypeError(
+                    "%s: Expected setting %r to be of type %s, got %s: %r"%(
+                        self.description,
+                        self.PATH_DELIMITER.join(components),
+                        expected_type.__name__,
+                        type(value).__name__,
+                        value,
+                    )
+                ) from None
 
-        if raise_invalid_type:
-            pathstring = ' -> '.join([str(element) for element in path])
-            raise TypeError(
-                f"Expected settings value ({pathstring}) "
-                f"to be of type {expected_type.__name__}, "
-                f"got {type(value).__name__}: {value!r}"
-            ) from None
-
-        else:
-            return default
+            else:
+                return default
 
 
     def set(self,
-            key: str|Sequence[str],
+            key: str|Sequence[str|int],
             value: Variant,
+            *,
+            raise_missing: bool = False,
             save: bool = False):
         '''
-        Set the specified `key` to `value`.
+        Set the value referenced by `key` to `value`.
 
         @param key
-            The hierarchical location of the setting to update, as either a
-            string or a sequence of strings. In the latter case, any leading
-            components of the settings key are created as needed.
+            Either a single '.'-delimited string or a sequence comprising a
+            string followed by any number of strings and/or integers, in either
+            case denoting a hierarchical path to the target value.  Within this
+            sequence, a string (including the first path element) descends into
+            a corresponding dictionary item along the way, whereas an integer
+            selects a list item.
 
         @param value
             The new or updated value associated with the specified key.
 
+        @param raise_missing
+            Raise a KeyError after failing to descend into an intermediate path
+            element because the corresponding key is missing from the preceding
+            dictionary. Without this flag, leading path components are created
+            as needed.
+
         @param save
             Automatically save the resulting settings store delta in the local
             settings folder.
+
+        @raises IndexError
+            The provided `path` contains a index to dereference an intermediate
+            list value, but the index is not within `range(len(LIST)+1)`.
+
+        @raises TypeError
+            An attempt was made to dereference an intermediate object that is
+            either not a dictionary or a list, or using a path element of an
+            invalid type (for instance an unhashable type, or a non-integer
+            value to dereference a list).
+
+        @raises KeyError
+            An attempt was made to dereference an intermediate dictionary value
+            with a non-existing key, with the `raise_missing` option set.
         '''
 
         if isinstance(key, str):
-            path = []
+            path = key.split(self.PATH_DELIMITER)
+            key = path.pop()
 
         elif isinstance(key, Sequence) and len(key) > 0:
             path = list(key)
             key = path.pop()
 
         else:
-            raise ValueError("Settings key must be a string or a non-empty sequence of strings")
+            raise ValueError(
+                "%s: `key` must be a string or a non-empty sequence of strings and/or ints"%(
+                    self.description,
+                )
+            )
 
         obj = self
-        for element in path:
-            sub = obj.get(element)
-            if not isinstance(sub, dict):
-                sub = obj[element] = {}
-                obj = sub
+        components = []
+        for component in path:
+            components.append(component)
+
+            if isinstance(obj, list):
+                if isinstance(component, str) and component.isdigit():
+                    component = int(component)
+
+                if component == len(obj):
+                    obj.append({})
+
+            try:
+                sub = obj[component]
+
+            except IndexError:
+                raise IndexError(
+                    "%s: Index out of range: %r"%(
+                        self.description,
+                        self.PATH_DELIMITER.join(components),
+                    )
+                ) from None
+
+            except KeyError:
+                if raise_missing:
+                    raise KeyError(
+                        "%s: No such setting: %r"%(
+                            self.description,
+                            self.PATH_DELIMITER.join(components),
+                        )
+                    ) from None
+                else:
+                    sub = obj[component] = {}
+
+            except TypeError:
+                if not isinstance(component, typing.Hashable):
+                    raise TypeError(
+                        "%s: Unhashable path component type %s: %s"%(
+                            self.description,
+                            type(component).__name__,
+                            self.PATH_DELIMITER.join(components),
+                        )
+                    ) from None
+
+                else:
+                    raise TypeError(
+                        "%s: Invalid key for dereferencing %s value: %r"%(
+                            self.description,
+                            type(value).__name__,
+                            self.PATH_DELIMITER.join(components),
+                        )
+                    ) from None
+
+            obj = sub
+
+        if isinstance(obj, list):
+            if isinstance(key, str) and key.isdigit():
+                key = int(key)
+
+            if key == len(obj):
+                obj.append(None)
 
         obj[key] = value
 

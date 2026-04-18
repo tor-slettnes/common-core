@@ -90,8 +90,8 @@ class AsyncTasks (set):
                         task.get_name(),
                         type(e).__name__,
                         e,
-                ))
-
+                    ),
+                    exc_info=e)
 
     def cancel_all(self):
         '''
