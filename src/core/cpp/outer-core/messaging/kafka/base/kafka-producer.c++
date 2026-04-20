@@ -35,8 +35,8 @@ namespace core::kafka
     {
         Super::initialize();
         this->init_dr_capture();
-        this->init_handle();
-        this->start_poll();
+        // this->init_handle();
+        // this->start_poll();
     }
 
     void Producer::deinitialize()
@@ -97,7 +97,7 @@ namespace core::kafka
 
     void Producer::poll_worker()
     {
-        while (this->handle()->poll(1000) || this->keep_polling_)
+        while (this->handle() && (this->handle()->poll(1000) || this->keep_polling_))
         {
         }
     }
@@ -134,6 +134,11 @@ namespace core::kafka
             headers_->add(key, value);
         }
 
+        if (!this->handle())
+        {
+            this->init_handle();
+        }
+
         RdKafka::ErrorCode error_code = this->handle()->produce(
             topic,                                              // topic_name
             RdKafka::Topic::PARTITION_UA,                       // partition
@@ -158,6 +163,8 @@ namespace core::kafka
                     {"topic", topic},
                 });
         }
+
+        this->start_poll();
     }
 
     void Producer::shutdown()
