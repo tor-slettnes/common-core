@@ -26,6 +26,15 @@
             }
         },
         {
+            "name": "release",
+            "description": "Release CI/CD build",
+            "inherits": "default",
+            "cacheVariables":
+            {
+                "BUILD_DEMO": "OFF"
+            }
+        },
+        {
             "name": "cross-arm",
             "description": "Cross-compilation for ARM",
             "inherits": "default",
@@ -57,6 +66,13 @@
             "targets": ["python_wheels"]
         },
         {
+            "name": "release",
+            "inherits": "default",
+            "configurePreset": "release",
+            "targets": ["all", "python_wheels"],
+            "description": "Official release build"
+        },
+        {
             "name": "cross-arm",
             "inherits": "default",
             "description": "Cross-compile for ARM",
@@ -69,6 +85,11 @@
             "configurePreset": "default",
             "output": {"outputOnFailure": true},
             "execution": {"noTestsAction": "error", "stopOnFailure": true}
+        },
+        {
+            "name": "release",
+            "inherits": "default",
+            "configurePreset": "release"
         }
     ],
     "packagePresets": [
@@ -76,6 +97,15 @@
             "name": "debs",
             "description": "Build native Debian packages",
             "configurePreset": "default",
+            "packageDirectory": "$env{PACKAGE_DIR}",
+            "generators": [
+                "DEB"
+            ]
+        },
+        {
+            "name": "release",
+            "description": "Build official Debian packages",
+            "configurePreset": "release",
             "packageDirectory": "$env{PACKAGE_DIR}",
             "generators": [
                 "DEB"
@@ -140,11 +170,10 @@
         {
             "name": "release",
             "steps": [
-                {"type": "configure", "name": "default"},
-                {"type": "build",     "name": "default"},
-                {"type": "test",      "name": "default"},
-                {"type": "build",     "name": "wheels"},
-                {"type": "package",   "name": "debs"}
+                {"type": "configure", "name": "release"},
+                {"type": "build",     "name": "release"},
+                {"type": "test",      "name": "release"},
+                {"type": "package",   "name": "release"}
             ]
         }
     ]
