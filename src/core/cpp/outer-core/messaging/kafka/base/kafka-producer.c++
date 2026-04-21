@@ -61,12 +61,18 @@ namespace core::kafka
         }
         else
         {
-            throw exception::Unavailable(error_string);
+            throw exception::Unavailable(
+                "Failed to create Kafka producer: " + error_string);
         }
     }
 
-    RdKafka::Producer *Producer::handle() const
+    RdKafka::Producer *Producer::handle()
     {
+        if (!this->producer_handle_)
+        {
+            this->init_handle();
+        }
+
         return this->producer_handle_;
     }
 
@@ -97,7 +103,7 @@ namespace core::kafka
 
     void Producer::poll_worker()
     {
-        while (this->handle() && (this->handle()->poll(1000) || this->keep_polling_))
+        while (this->handle()->poll(1000) || this->keep_polling_)
         {
         }
     }
@@ -132,11 +138,6 @@ namespace core::kafka
         for (const auto &[key, value] : headers)
         {
             headers_->add(key, value);
-        }
-
-        if (!this->handle())
-        {
-            this->init_handle();
         }
 
         RdKafka::ErrorCode error_code = this->handle()->produce(

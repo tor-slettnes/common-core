@@ -43,7 +43,7 @@ namespace core::kafka
         void set_server_address(const std::string &server_address);
 
     public:
-        virtual RdKafka::Handle *handle() const = 0;
+        virtual RdKafka::Handle *handle() = 0;
 
         RdKafka::Conf *conf() const;
         RdKafka::Conf *topic_conf() const;

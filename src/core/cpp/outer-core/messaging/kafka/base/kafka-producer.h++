@@ -31,7 +31,7 @@ namespace core::kafka
         void init_handle();
 
     public:
-        RdKafka::Producer *handle() const override;
+        RdKafka::Producer *handle() override;
         void set_dr_callback(const DeliveryReportCapture::Callback &callback);
 
     private:
