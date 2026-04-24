@@ -46,7 +46,7 @@ namespace switchboard
         ProviderRef provider() const;
         SwitchRef predecessor() const;
         const SwitchName &predecessor_name() const;
-        State predecessor_state() const;
+        State predecessor_state(bool allow_pending = true) const;
 
         StateSet trigger_states() const;
         DependencyPolarity polarity() const;
@@ -55,8 +55,8 @@ namespace switchboard
 
     public:
         bool auto_trigger(State pred_state) const;
-        std::optional<State> derived_state(State state) const;
-        std::optional<State> expected_state() const;
+        std::optional<State> derived_state(State current_state) const;
+        std::optional<State> expected_state(bool allow_pending = false) const;
         std::optional<bool> expected_predecessor_value(bool expected_successor_value) const;
         static State inverted(State state);
 

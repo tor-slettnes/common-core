@@ -340,23 +340,17 @@ namespace switchboard
 
     bool operator==(const Status &lhs, const Status &rhs)
     {
-        bool equals = ((lhs.current_state == rhs.current_state) &&
-                       (lhs.settled_state == rhs.settled_state) &&
-                       (lhs.active == rhs.active) &&
-                       (lhs.error == rhs.error) &&
-                       (lhs.attributes == rhs.attributes));
-        logf_trace("operator==(lhs=%r, rhs=%r) -> %r",
-                   lhs,
-                   rhs,
-                   equals);
-        return equals;
+        return ((lhs.current_state == rhs.current_state) &&
+                (lhs.settled_state == rhs.settled_state) &&
+                (lhs.active == rhs.active) &&
+                (lhs.error == rhs.error) &&
+                (lhs.attributes == rhs.attributes));
     }
 
     bool operator!=(const Status &lhs, const Status &rhs)
     {
         return !(lhs == rhs);
     }
-
 
     //==========================================================================
     // DependencyStatus
@@ -380,7 +374,7 @@ namespace switchboard
             tvlist->emplace_back("dependency_statuses", statuses);
 
             statuses->reserve(this->dependency_statuses.size());
-            for (const auto &[switch_name, dep_status]: this->dependency_statuses)
+            for (const auto &[switch_name, dep_status] : this->dependency_statuses)
             {
                 statuses->emplace_back(switch_name, dep_status->as_tvlist());
             }

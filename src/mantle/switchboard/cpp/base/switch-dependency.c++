@@ -78,11 +78,11 @@ namespace switchboard
         return this->predecessor_name_;
     }
 
-    State Dependency::predecessor_state() const
+    State Dependency::predecessor_state(bool allow_pending) const
     {
         if (auto pred = this->predecessor())
         {
-            return pred->state();
+            return allow_pending ? pred->state() : pred->settled_state();
         }
         else
         {
@@ -115,33 +115,32 @@ namespace switchboard
         return this->trigger_states().count(pred_state);
     }
 
-    std::optional<State> Dependency::derived_state(State state) const
+    std::optional<State> Dependency::derived_state(State current_state) const
     {
-        if (this->polarity() == DependencyPolarity::TOGGLE)
+        if (this->polarity() != DependencyPolarity::TOGGLE)
         {
-            if (this->auto_trigger(this->predecessor_state()))
-            {
-                return This::inverted(state);
-            }
+            bool allow_pending = this->auto_trigger(this->predecessor_state());
+            return this->expected_state(allow_pending);
         }
-        else if (is_settled(this->predecessor_state()) ||
-                 this->auto_trigger(this->predecessor_state()))
+        else if (this->auto_trigger(this->predecessor_state()))
         {
-            return this->expected_state();
+            return This::inverted(current_state);
         }
-
-        return {};
+        else
+        {
+            return {};
+        }
     }
 
-    std::optional<State> Dependency::expected_state() const
+    std::optional<State> Dependency::expected_state(bool allow_pending) const
     {
         switch (this->polarity())
         {
         case DependencyPolarity::POSITIVE:
-            return this->predecessor_state();
+            return this->predecessor_state(allow_pending);
 
         case DependencyPolarity::NEGATIVE:
-            return this->inverted(this->predecessor_state());
+            return this->inverted(this->predecessor_state(allow_pending));
 
         case DependencyPolarity::TOGGLE:
             return {};

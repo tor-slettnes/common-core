@@ -451,55 +451,72 @@ namespace switchboard
 
         auto msg = standard_log_message(core::status::Level::TRACE);
         msg->format(
-            "Switch [%r]: Determining auto state:\n",
+            "Switch [%s]: Determining auto state:\n",
             this->name());
 
         State current_state = this->state();
 
         for (const auto &[name, dep] : this->dependencies())
         {
+            std::string vote;
+
             if (auto derived_state = dep->derived_state(current_state))
             {
                 switch (derived_state.value())
                 {
                 case STATE_ACTIVATING:
                     satisfied |= PENDING;
+                    vote = "pending satisfaction";
                     break;
 
                 case STATE_ACTIVE:
-                    satisfied |= (dep->sufficient() ? STRONG : WEAK);
+                    satisfied |= dep->sufficient() ? STRONG : WEAK;
+                    vote = dep->sufficient() ? "strong" : "weak";
+                    vote += " satisfaction";
                     break;
 
                 case STATE_DEACTIVATING:
                     unsatisfied |= PENDING;
+                    vote = "pending dissatisfaction";
                     break;
 
                 case STATE_INACTIVE:
                     unsatisfied |= (dep->sufficient() ? WEAK : STRONG);
+                    vote = dep->sufficient() ? "weak" : "strong";
+                    vote += " dissatisfaction";
                     break;
 
                 case STATE_FAILING:
                     failed = PENDING;
+                    vote = " pending failure";
                     break;
 
                 case STATE_FAILED:
                     failed = STRONG;
+                    vote = " failure";
                     break;
 
                 default:
                     undetermined |= (dep->sufficient() ? WEAK : STRONG);
+                    vote = dep->sufficient() ? "weak" : "strong";
+                    vote += " unsettled";
                     break;
                 }
-
-                msg->format(
-                    "     %r: satisfied=%#02X, unsatisified=%#02X, failed=%#02X, undetermined=%#02X\n",
-                    *dep,
-                    satisfied,
-                    unsatisfied,
-                    failed,
-                    undetermined);
             }
+            else
+            {
+                vote = "no vote";
+            }
+
+            msg->format("    %s: %s\n", name, vote);
         }
+
+        msg->format(
+            "     tally: satisfied=%#02X, unsatisified=%#02X, failed=%#02X, undetermined=%#02X\n",
+            satisfied,
+            unsatisfied,
+            failed,
+            undetermined);
 
         State state = failed & STRONG       ? STATE_FAILED
                     : satisfied & STRONG    ? STATE_ACTIVE
@@ -630,10 +647,9 @@ namespace switchboard
     CulpritsMap Switch::culprits(bool expected) const noexcept
     {
         CulpritsMap culprits;
-        State current_state = this->state();
         State expected_state = this->target_state(expected);
 
-        if (current_state != expected_state)
+        if (this->settled_state() != expected_state)
         {
             if (!this->primary())
             {
@@ -679,7 +695,7 @@ namespace switchboard
     {
         DependencyStatusMap map;
 
-        for (const auto &[pred_name, dep]: this->dependencies())
+        for (const auto &[pred_name, dep] : this->dependencies())
         {
             auto dep_status = std::make_shared<DependencyStatus>();
             map.insert_or_assign(dep->predecessor_name(), dep_status);
@@ -701,7 +717,6 @@ namespace switchboard
             {
                 dep_status->satisfied = false;
             }
-
         }
 
         return map;

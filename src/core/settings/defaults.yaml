@@ -306,4 +306,4 @@ log sinks:
     queue size: 65536
 
     # Log threshold
-    threshold: DEBUG
+    threshold: TRACE
