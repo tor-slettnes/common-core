@@ -70,12 +70,24 @@ namespace sysconfig
                (this->build_number > 0);
     }
 
+    bool Version::operator==(const Version &other) const
+    {
+        return (this->major == other.major) &&
+               (this->minor == other.minor) &&
+               (this->patch == other.patch);
+    }
+
+    bool Version::operator!=(const Version &other) const
+    {
+        return !this->operator==(other);
+    }
+
     bool Version::operator<(const Version &other) const
     {
-        return (this->major != other.major)   ? (this->major < other.major)
-               : (this->minor != other.minor) ? (this->minor < other.minor)
-               : (this->patch != other.patch) ? (this->patch < other.patch)
-                                              : (this->build_number < other.build_number);
+        return (this->major != other.major) ? (this->major < other.major)
+             : (this->minor != other.minor) ? (this->minor < other.minor)
+             : (this->patch != other.patch) ? (this->patch < other.patch)
+                                            : (this->build_number < other.build_number);
     }
 
     bool Version::operator>(const Version &other) const

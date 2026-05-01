@@ -178,7 +178,7 @@ namespace core
                            const std::optional<std::string> &daysformat = "%zd",
                            const std::optional<std::string> &monthsformat = {},
                            const std::optional<std::string> &yearsformat = "%zy",
-                           uint max_divisions = 3,
+                           uint max_divisions = 6,
                            const std::string delimiter = " ",
                            const std::string &date_prefix = "",
                            const std::string &time_prefix = "",

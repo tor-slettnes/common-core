@@ -22,6 +22,17 @@ namespace upgrade
         return this->location_type() != LocationType::NONE;
     }
 
+    bool PackageSource::operator==(const PackageSource &other) const
+    {
+        return this->location == other.location;
+    }
+
+    bool PackageSource::operator!=(const PackageSource &other) const
+    {
+        return !this->operator==(other);
+    }
+
+
     bool PackageSource::empty() const noexcept
     {
         return this->location_type() == LocationType::NONE;

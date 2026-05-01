@@ -93,10 +93,10 @@ namespace core::types
         // Value complex_control = Value(std::complex(3.141592653589793238, -2.0));
         // EXPECT_EQ(complex_parsed, complex_control);
 
-        Value iso_dur_parsed = Value::from_literal("P54DT43H32M21.123S");
+        Value iso_dur_parsed = Value::from_literal("P5DT43H32M21.123S");
         EXPECT_EQ(iso_dur_parsed.type(), ValueType::DURATION);
 
-        Value iso_dur_control(std::chrono::hours(54 * 24 + 43) +
+        Value iso_dur_control(std::chrono::hours(5 * 24 + 43) +
                               std::chrono::minutes(32) +
                               std::chrono::seconds(21) +
                               std::chrono::milliseconds(123));

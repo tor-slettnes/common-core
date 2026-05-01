@@ -247,8 +247,9 @@ namespace switchboard
         else if ((!attributes.empty() || clear_existing) &&
                  (attributes != this->attributes()))
         {
-            this->set_attributes(attributes, clear_existing);
+            return this->set_attributes(attributes, clear_existing);
         }
+
         return false;
     }
 
@@ -420,9 +421,9 @@ namespace switchboard
             {
                 errors.insert_or_assign(ic, std::current_exception());
                 logf_notice("Switch %r interceptor %r failed: %s",
-                           this->name(),
-                           ic->name(),
-                           std::current_exception());
+                            this->name(),
+                            ic->name(),
+                            std::current_exception());
             }
         }
 

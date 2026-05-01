@@ -41,6 +41,8 @@ namespace upgrade
         PackageSource(const Location &location = {});
 
         operator bool() const noexcept;
+        bool operator==(const PackageSource &other) const;
+        bool operator!=(const PackageSource &other) const;
         bool empty() const noexcept;
 
         LocationType location_type() const;

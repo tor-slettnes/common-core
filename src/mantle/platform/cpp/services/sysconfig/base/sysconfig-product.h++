@@ -23,6 +23,8 @@ namespace sysconfig
         static Version from_value(const core::types::Value &value);
 
         operator bool() const noexcept;
+        bool operator==(const Version &other) const;
+        bool operator!=(const Version &other) const;
         bool operator<(const Version &other) const;
         bool operator>(const Version &other) const;
 

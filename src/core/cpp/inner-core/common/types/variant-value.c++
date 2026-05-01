@@ -133,6 +133,39 @@ namespace core::types
         {
             switch (this->type())
             {
+            case ValueType::NONE:
+                return true;
+
+            case ValueType::BOOL:
+                return this->get<bool>() == other.get<bool>();
+
+            case ValueType::CHAR:
+                return this->get<char>() == other.get<char>();
+
+            case ValueType::UINT:
+                return this->get<largest_uint>() == other.get<largest_uint>();
+
+            case ValueType::SINT:
+                return this->get<largest_sint>() == other.get<largest_sint>();
+
+            case ValueType::REAL:
+                return this->get<largest_real>() == other.get<largest_real>();
+
+            case ValueType::COMPLEX:
+                return this->get<complex>() == other.get<complex>();
+
+            case ValueType::STRING:
+                return this->get<std::string>() == other.get<std::string>();
+
+            case ValueType::BYTEVECTOR:
+                return this->get<ByteVector>() == other.get<ByteVector>();
+
+            case ValueType::TIMEPOINT:
+                return this->get<dt::TimePoint>() == other.get<dt::TimePoint>();
+
+            case ValueType::DURATION:
+                return this->get<dt::Duration>() == other.get<dt::Duration>();
+
             case ValueType::VALUELIST:
                 return (this->get_valuelist() == other.get_valuelist());
 
@@ -143,7 +176,7 @@ namespace core::types
                 return (this->get_kvmap() == other.get_kvmap());
 
             default:
-                return static_cast<ValueBase>(*this) == static_cast<ValueBase>(other);
+                return false;
             }
         }
         else
