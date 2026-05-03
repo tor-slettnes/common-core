@@ -22,7 +22,6 @@ from cc.protobuf.variant import (
 
 ### Swithboard modules
 from ..protobuf import (
-    SwitchboardDissecter,
     Specification, SpecificationMap,
     Dependency, DependencyMap, DependencyPolarity, DependencyStatus, DependencyStatusMap,
     Localization, LocalizationMap, LocalizationsInput, encodeLocalization, encodeLocalizationMap,
@@ -31,6 +30,7 @@ from ..protobuf import (
     LanguageCode, LanguageChoice, GetAttributesResponse,
     Status, StatusMap, ErrorMap, State, StateSet, encodeStateSet,
     DEFAULT_LANGUAGE,
+    SwitchboardDissecter,
 )
 
 InterceptorName = str
@@ -49,6 +49,8 @@ class Switch (DocBase, SwitchboardDissecter):
         self.name = name
         self._board = ref(board)
         self.subscriptions = {}
+        self._cached_specification = None
+        self._cached_status = None
         self.raw_specification = Specification()
         self.raw_status = Status()
 
@@ -84,20 +86,24 @@ class Switch (DocBase, SwitchboardDissecter):
             )
 
     @property
-    @SwitchboardDissecter.decode_response
     def specification(self) -> object:
         '''
         Return the complete specification for this switch.
         '''
-        return self.raw_specification
+        if self._cached_specification is None:
+            self._cached_specification = self.to_dataclass(self.raw_specification)
+
+        return self._cached_specification
 
     @property
-    @SwitchboardDissecter.decode_response
     def status(self) -> object:
         '''
         Return the complete status for this switch.
         '''
-        return self.raw_status
+        if self._cached_status is None:
+            self._cached_status = self.to_dataclass(self.raw_status)
+
+        return self._cached_status
 
 
     @property
@@ -266,11 +272,13 @@ class Switch (DocBase, SwitchboardDissecter):
 
     def update_specification(self, specification: Specification):
         self.raw_specification.CopyFrom(specification)
+        self._cached_specification = None
         return self.publish_update()
 
 
     def update_status(self, status: Status):
         self.raw_status.CopyFrom(status)
+        self._cached_status = None
         return self.publish_update()
 
 
@@ -1117,7 +1125,7 @@ class Switch (DocBase, SwitchboardDissecter):
 
     def has_error(self) -> bool:
         '''
-        Indicate whether this switch is currently FAILING or FAILED.
+        Indicate whether an error is assigned directly to this switch.
         '''
         return self.error and (self.error.Level >= Level.ERROR)
 

@@ -224,58 +224,49 @@ class SwitchboardObserver (DocBase, LogBase, SwitchboardDissecter):
         events.
         '''
 
-        self.signal_store.connect_signal(
+        self._connect_decorated_handlers(
+            instance,
             self.SPEC_SIGNAL,
-            lambda msg: self._invoke_handlers(instance, self._spec_handlers, msg),
-        )
+            self._spec_handlers)
 
-        self.signal_store.connect_signal(
+        self._connect_decorated_handlers(
+            instance,
             self.STATUS_SIGNAL,
-            lambda msg: self._invoke_handlers(instance, self._status_handlers, msg),
-        )
+            self._status_handlers)
 
 
-    def _invoke_handlers(self,
-                         instance: object,
-                         handlers: Sequence[HandlerSpec],
-                         msg: Signal):
-
-        decoded_signal = None
-
+    def _connect_decorated_handlers(self,
+                                    instance: object,
+                                    signal_name: str,
+                                    handlers: list[HandlerSpec]):
         for handler in handlers:
-            if self._handler_matches(instance, handler, msg):
-                if not decoded_signal:
-                    decoded_signal = self.decode(msg)
-
-                invoke_background(
-                    handler.unbound_method,
-                    args=(instance, decoded_signal),
-                    description="switch %r %s handler: %r" % (
-                        msg.mapping_key,
-                        self.signal_store.signal_name(msg),
-                        method_path(handler.unbound_method),
-                    ),
-                    log_call = self.logger.debug,
-                    log_failure = self.logger.error,
-                )
+            method_name = handler.unbound_method.__name__
+            if getattr(type(instance), method_name, None) == handler.unbound_method:
+                self.signal_store.connect_signal(
+                    signal_name,
+                    lambda msg: self._invoke_handler(instance, handler, msg))
 
 
-    def _handler_matches(self,
-                         instance: object,
-                         handler: HandlerSpec,
-                         msg: Signal,
-                         ) -> bool:
-        '''
-        Determine whether a decorated function should receive a switch
-        update.
-        '''
-        method_name = handler.unbound_method.__name__
+    def _invoke_handler(self,
+                        instance: object,
+                        handler: HandlerSpec,
+                        signal: Signal):
+        is_match = all([
+            signal.mapping_action in handler.actions,
+            (handler.states is None) or (signal.status.current_state in handler.states),
+            handler.pattern.match(signal.mapping_key)
+        ])
 
-        return all((
-            getattr(type(instance), method_name, None) == handler.unbound_method,
-            msg.mapping_action in handler.actions,
-            (handler.states is None) or (msg.status.current_state in handler.states),
-            handler.pattern.match(msg.mapping_key),
-        ))
-
+        if is_match:
+            invoke_background(
+                handler.unbound_method,
+                args=(instance, signal),
+                description="switch %r %s handler: %r" % (
+                    signal.mapping_key,
+                    self.signal_store.signal_name(signal),
+                    method_path(handler.unbound_method),
+                ),
+                log_call = self.logger.info,
+                log_failure = self.logger.error,
+            )
 

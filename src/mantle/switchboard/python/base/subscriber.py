@@ -15,7 +15,6 @@ import fnmatch
 ### Common Core modules
 from cc.core.decorators import override
 from cc.core.invocation import method_path
-from cc.protobuf.dissecter import decode_message
 from cc.protobuf.signal import SignalStore, MappingAction
 
 ### Switchboard modules
