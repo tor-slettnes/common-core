@@ -97,7 +97,7 @@ try:
 except ImportError:
     ProtoBufDuration = None
 else:
-    TimeIntervalType |= ProtoBufDuration
+    TimeIntervalType = ProtoBufDuration | TimeIntervalType
 
 
 class TimeInterval (float):
@@ -639,4 +639,6 @@ class TimeInterval (float):
             nanos = int((self - int(self)) * 1e9))
 
 
-TimeIntervalType |= TimeInterval
+TimeIntervalType  = TimeInterval | TimeIntervalType
+TimeIntervalInput = TimeIntervalType|float|int
+

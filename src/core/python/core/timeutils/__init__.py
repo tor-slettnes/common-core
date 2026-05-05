@@ -1,9 +1,10 @@
 from .timeinterval import (
-    TimeInterval, TimeIntervalType,
+    TimeInterval, TimeIntervalType, TimeIntervalInput,
     NANOSECOND, MICROSECOND, MILLISECOND, SECOND,
     MINUTE, HOUR, DAY, WEEK, MONTH, YEAR, LEAP,
 )
 
 from .timepoint import (
-    TimePoint, TimePointType, ZoneSuffix,
+    TimePoint, TimePointType, TimePointInput,
+    ZoneSuffix,
 )

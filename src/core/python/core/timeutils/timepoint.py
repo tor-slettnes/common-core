@@ -145,7 +145,7 @@ try:
 except ImportError:
     ProtoBufTimestamp = None
 else:
-    TimePointType |= ProtoBufTimestamp
+    TimePointType = ProtoBufTimestamp | TimePointType
 
 
 class ZoneSuffix(enum.IntEnum):
@@ -858,5 +858,5 @@ class TimePoint (float):
             nanos = int((self - int(self)) * 1e9))
 
 
-TimePointType |= TimePoint
-
+TimePointType  = TimePoint | TimePointType
+TimePointInput = TimePointType|float|int
