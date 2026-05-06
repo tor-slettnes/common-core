@@ -155,17 +155,21 @@ namespace core::types
 
         core::types::KeyValueMap kvmap_copy = kvmap.deepcopy();
 
-        ASSERT_EQ(kvmap_copy.get("my_map").get("two"), "II");
-        ASSERT_EQ(kvmap_copy.get("my_list").get(4).get("one"), "first");
+        EXPECT_EQ(kvmap, kvmap_copy);
+
+        EXPECT_EQ(kvmap_copy.get("my_map").get("two"), "II");
+        EXPECT_EQ(kvmap_copy.get("my_list").get(4).get("one"), "first");
 
         kvmap_copy["nineteen"] = 19;
         kvmap_copy["my_list"][4][std::string("one")] = "FIRST";
         kvmap_copy["my_list"][4][std::string("five")] = 5;
 
-        ASSERT_EQ(kvmap_copy.get("nineteen").as_sint(), 19);
-        ASSERT_EQ(kvmap.get("my_list").get(4).get("one").as_string(), "first");
-        ASSERT_EQ(kvmap_copy.get("my_list").get(4).get("one").as_string(), "FIRST");
-        ASSERT_EQ(kvmap_copy.get("my_list").get(4).get("five").as_sint(), 5);
+        EXPECT_EQ(kvmap_copy.get("nineteen").as_sint(), 19);
+        EXPECT_EQ(kvmap.get("my_list").get(4).get("one").as_string(), "first");
+        EXPECT_EQ(kvmap_copy.get("my_list").get(4).get("one").as_string(), "FIRST");
+        EXPECT_EQ(kvmap_copy.get("my_list").get(4).get("five").as_sint(), 5);
+
+        EXPECT_NE(kvmap, kvmap_copy);
 
     }
 
