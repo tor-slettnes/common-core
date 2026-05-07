@@ -66,8 +66,8 @@ class ServerWrapperBase:
         self.server.add_insecure_port(bind_address, credentials)
 
     def add_request_handler(self,
-                     request_handler: RequestHandler,
-                     add_listener: bool = True):
+                            request_handler: RequestHandler,
+                            add_listener: bool = True):
         self.request_handlers.append(request_handler)
         request_handler.add_to_server(self.server, add_listener = add_listener)
 
