@@ -15,14 +15,14 @@ from google.protobuf.duration_pb2 import Duration
 ### Common Core Modules
 from cc.core.timeutils import TimeIntervalType, TimeInterval
 from cc.core.timeutils import TimePointType, TimePoint
-from ..wellknown import TimestampType, \
+from ..wellknown import \
     encodeTimestamp, decodeTimestamp, encodeDuration, decodeDuration
 
 ### Generated from `.../protos/cc/protobuf/variant/variant.proto`
 from .variant_pb2 import Value, ValueList, \
     TaggedValue, TaggedValueList, KeyValueMap
 
-PyValue = None|bool|int|float|str|bytes|Duration|TimestampType|list|tuple|dict
+PyValue = None|bool|int|float|str|bytes|TimeIntervalType|TimePointType|list|tuple|dict
 PyTaggedValue = tuple[str, PyValue]
 PyValueList = Sequence[PyValue]
 PyValueMap = Mapping[str, PyValue]
@@ -326,7 +326,7 @@ def encodeKeyValueMap(input: PyValueMap,
         output = KeyValueMap()
 
     if isinstance(input, KeyValueMap):
-        output.CopyFrom(inpute)
+        output.CopyFrom(input)
 
     elif isinstance(input, Mapping):
         for (key, value) in input.items():

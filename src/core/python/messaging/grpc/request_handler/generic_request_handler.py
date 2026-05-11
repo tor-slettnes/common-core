@@ -155,13 +155,19 @@ class RequestHandler (Base, MessageBuilder):
 
     @classmethod
     def _servicer_name_and_base(cls):
+        servicer = None
         for candidate in cls.__mro__:
-            if candidate.__name__.endswith(cls.SERVICER_SUFFIX):
-                return candidate.__name__, candidate
+            if (candidate is not cls) and candidate.__name__.endswith(cls.SERVICER_SUFFIX):
+                servicer = candidate
+
+        if servicer:
+            return servicer.__name__, servicer
         else:
             raise TypeError(
-                'gRPC service class %r must derive from a generated Servicer base'%
-                (cls.__name__,))
+                'gRPC service class %r must derive from a generated Servicer base'%(
+                    cls.__name__,
+                )
+            )
 
     @classmethod
     def _service_name(cls):

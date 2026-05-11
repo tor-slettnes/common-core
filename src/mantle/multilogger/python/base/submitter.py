@@ -17,7 +17,8 @@ import threading
 
 ### Core modules
 import cc.core.paths
-from cc.protobuf.wellknown import TimestampType, encodeTimestamp
+from cc.core.timeutils import TimePointInput
+from cc.protobuf.wellknown import encodeTimestamp
 from cc.protobuf.variant import encodeKeyValueMap
 from cc.protobuf.status import Domain, Level, encodeLogLevel
 
@@ -155,7 +156,7 @@ class Submitter (logging.Handler):
 
     def create_message(self, /,
                        text: str|None = None,
-                       timestamp: TimestampType|None = None,
+                       timestamp: TimePointInput|None = None,
                        level: Level | int = Level.NONE,
                        host: str|None = None,
                        application: str|None = None,
@@ -197,7 +198,7 @@ class Submitter (logging.Handler):
     def log_data(self, /,
                  contract_id: str,
                  attributes: dict,
-                 timestamp: TimestampType|None = None,
+                 timestamp: TimePointInput|None = None,
                  **kwargs):
 
         return self.submit(self.create_data(contract_id, attributes, timestamp, **kwargs))
@@ -206,7 +207,7 @@ class Submitter (logging.Handler):
     def create_data(self,
                     contract_id: str,
                     attributes: dict,
-                    timestamp: TimestampType|None = None,
+                    timestamp: TimePointInput|None = None,
                     /,
                     **kwargs):
 

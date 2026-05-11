@@ -15,14 +15,10 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.struct_pb2 import Value, ListValue, Struct, NULL_VALUE
 
 ### Modules within this package
-from cc.core.timeutils import TimeIntervalType, TimeInterval
-from cc.core.timeutils import TimePointType, TimePoint
+from cc.core.timeutils import TimeIntervalInput, TimeInterval
+from cc.core.timeutils import TimePointInput, TimePoint
 
-### Type type hint for timestamps
-TimestampType = TimePointType|Timestamp|int|float
-DurationType = TimeIntervalType|Duration|int|float
-
-def encodeCurrentTime(output: Timestamp|None = None) -> Timestamp:
+def encodeCurrentTime(output: TimePointInput|None = None) -> Timestamp:
     if output is None:
         output = Timestamp()
 
@@ -37,7 +33,7 @@ def decodeTimestamp(prototime: Timestamp) -> TimePoint:
     return TimePoint.from_protobuf(prototime)
 
 
-def encodeTimestamp(input: TimestampType,
+def encodeTimestamp(input: TimePointInput,
                     output: Timestamp|None = None) -> Timestamp:
     '''
     Convert an existing timestamp to a ProtoBuf `Timestamp` value.
@@ -70,10 +66,10 @@ def decodeDuration(duration: Duration) -> TimeInterval:
     Decode a ProtoBuf Timestamp input into a Python-compatible time interval
     (`float` representing seconds).
     '''
-    return TimeInterval.from_protobuf(duration)
+    return TimeInterval(duration.ToNanoseconds() / 1e9)
 
 
-def encodeDuration(input: TimeIntervalType,
+def encodeDuration(input: TimeIntervalInput,
                    output: Duration|None = None) -> Duration:
     '''
     Encode an existing duration to a ProtoBuf `Duration` value.

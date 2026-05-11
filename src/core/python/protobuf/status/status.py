@@ -7,8 +7,9 @@ import logging
 
 ### Modules within package
 from ...core.invocation import process_name
+from ...core.timeutils import TimePointInput
 from ..utils import native_enum_from_proto
-from ..wellknown import TimestampType, encodeCurrentTime, encodeTimestamp
+from ..wellknown import encodeCurrentTime, encodeTimestamp
 from ..variant import encodeKeyValueMap
 
 ### Generated from `.../protos/cc/protobuf/status/status.proto`
@@ -54,7 +55,7 @@ def encodePossibleError(error: Error|Exception|str,
                         level: Level = Level.ERROR,
                         symbol: str|None = None,
                         code: int|None = None,
-                        timestamp: TimestampType|None = None,
+                        timestamp: TimePointInput|None = None,
                         attributes: dict|None = None,
                         output: Error|None = None,
                         ) -> Error|None:
@@ -71,7 +72,7 @@ def encodeError(error: Error|Exception|str,
                 level: Level = Level.ERROR,
                 symbol: str|None = None,
                 code: int|None = None,
-                timestamp: TimestampType|None = None,
+                timestamp: TimePointInput|None = None,
                 attributes: dict|None = None,
                 output: Error|None = None,
                 ) -> Error:

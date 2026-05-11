@@ -7,9 +7,9 @@ from typing import Sequence
 
 ### Common Core modules
 from cc.core.decorators import override
-from cc.core.timeutils import TimePoint
+from cc.core.timeutils import TimePoint, TimePointInput
 from cc.protobuf.version import version_to_string
-from cc.protobuf.wellknown import TimestampType, decodeTimestamp
+from cc.protobuf.wellknown import decodeTimestamp
 from cc.messaging.grpc.client import AsyncMixIn
 
 ### SysConfig modules
@@ -61,7 +61,7 @@ class SimpleAsyncClient (AsyncMixIn, BaseClient):
         await BaseClient.set_host_name(**locals())
 
     @override
-    async def set_current_time(self, timestamp: TimestampType):
+    async def set_current_time(self, timestamp: TimePointInput):
         await BaseClient.set_current_time(**locals())
 
     @override
@@ -128,7 +128,7 @@ class SimpleAsyncClient (AsyncMixIn, BaseClient):
     @override
     async def get_timezone_info(self,
                                 canonical_zone: str|None = None,
-                                time: TimestampType|None = None
+                                time: TimePointInput|None = None
                                 ) -> TimeZoneInfo:
         return await BaseClient.get_timezone_info(**locals())
 

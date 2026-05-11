@@ -9,11 +9,12 @@ __docformat__ = 'javadoc en'
 from typing import abstractmethod, Sequence
 
 ### Common Core modules
+from cc.core.timeutils import TimePointInput
 from cc.protobuf.version import version_to_string
 from cc.messaging.grpc.client import GenericClient
 from cc.protobuf.wellknown import (
     empty, StringValue,
-    Timestamp, TimestampType, encodeTimestamp
+    Timestamp, encodeTimestamp
 )
 
 ### SysConfig modules
@@ -99,7 +100,7 @@ class BaseClient (GenericClient):
         input = StringValue(value=name)
         return self.stub.SetHostName(input)
 
-    def set_current_time(self, timestamp: TimestampType):
+    def set_current_time(self, timestamp: TimePointInput):
         '''
         Set the current time. Not available with automatic time
         configuration.
@@ -245,7 +246,7 @@ class BaseClient (GenericClient):
 
     def get_timezone_info(self,
                           canonical_zone: str|None = None,
-                          time: TimestampType|None = None
+                          time: TimePointInput|None = None
                           ) -> TimeZoneInfo:
         '''
         Get effecitve time zone information.
