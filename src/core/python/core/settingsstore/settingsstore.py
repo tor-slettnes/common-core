@@ -24,7 +24,7 @@ from ..paths import (
     FilePathInput, FilePathInputs, SearchPathInput,
     normalized_search_path, settings_path,
     local_settings_path, preinstalled_settings_path,
-    find_settings_files,
+    find_settings_files, settings_suffixes,
 )
 from ..maputils import recursive_merge, recursive_delta
 from .jsonreader import JsonReader
@@ -580,6 +580,8 @@ class SettingsStore (dict):
             if save and self.filenames:
                 self.save_delta()
 
+            return True
+
 
     def defaults(self,
                  filenames: FilePathInputs|None = None,
@@ -600,6 +602,7 @@ class SettingsStore (dict):
 
     def save_delta(self,
                    filename: FilePathInput|None = None,
+                   keep_empty: bool = False,
                    sort_keys: bool = True,
                    skipkeys: bool = False,
                    ensure_ascii: bool = True,
@@ -629,6 +632,7 @@ class SettingsStore (dict):
 
     def save(self,
              filename: FilePathInput|None = None,
+             keep_empty: bool = False,
              only_delta: bool = False,
              sort_keys: bool = True,
              skipkeys: bool = False,
@@ -648,7 +652,12 @@ class SettingsStore (dict):
             if missing.  If not specified, the first filename from which
             settings were loaded (but with a .`json` suffix) is used.
 
-        @param delta
+        @param keep_empty
+            Save to the file even if this settings object is empty.  Otherwise,
+            nothing is saved, and any existing file matches are removed from the
+            local settings folder.
+
+        @param only_delta
             Save only the recursive difference between the current settings
             hierarchy and the default settings, obtained from the software
             distribution (i.e, corresponding filenames within
@@ -669,27 +678,37 @@ class SettingsStore (dict):
             except IndexError:
                 raise RuntimeError('No settings file specified, and none has been loaded')
 
-        for candidate_folder in local_settings_path():
-            filepath = candidate_folder.joinpath(filename).with_suffix('.json')
-            try:
-                os.makedirs(candidate_folder, exist_ok=True)
-                fp = filepath.open('w')
-            except EnvironmentError as e:
-                failure = e
+        if settings or keep_empty:
+            failure = None
+            for candidate_folder in local_settings_path():
+                filepath = candidate_folder.joinpath(filename).with_suffix('.json')
+                try:
+                    os.makedirs(candidate_folder, exist_ok=True)
+                    fp = filepath.open('w')
+                except EnvironmentError as e:
+                    failure = e
+                else:
+                    with fp:
+                        json.dump(settings,
+                                  fp,
+                                  sort_keys = sort_keys,
+                                  skipkeys = skipkeys,
+                                  ensure_ascii = ensure_ascii,
+                                  check_circular = check_circular,
+                                  allow_nan = allow_nan,
+                                  indent = indent)
+                    break
             else:
-                with fp:
-                    json.dump(settings,
-                              fp,
-                              sort_keys = sort_keys,
-                              skipkeys = skipkeys,
-                              ensure_ascii = ensure_ascii,
-                              check_circular = check_circular,
-                              allow_nan = allow_nan,
-                              indent = indent)
-                break
+                if failure:
+                    raise failure
+
         else:
-            if failure:
-                raise failure
+            for path in find_settings_files(filename, search_path=local_settings_path()):
+                try:
+                    os.remove(path)
+                except EnvironmentError as e:
+                    pass
+
 
 
     @property
