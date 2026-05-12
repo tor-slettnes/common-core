@@ -511,6 +511,76 @@ class SettingsStore (dict):
             self.save_delta()
 
 
+    def unset(self,
+              key: str|Sequence[str|int],
+              *,
+              save: bool = False) -> bool:
+        '''
+        Remove an existing key, as well as any empty intermediate objects
+        leading up to it.
+
+        @param key
+            Either a single '.'-delimited string or a sequence comprising a
+            string followed by any number of strings and/or integers, in either
+            case denoting a hierarchical path to the target value.
+
+        @param save
+            Automatically save the resulting settings store delta in the local
+            settings folder.
+
+        @return
+            True iff an existing key key was removed.
+        '''
+
+        if isinstance(key, str):
+            path = key.split(self.PATH_DELIMITER)
+            key = path.pop()
+
+        elif isinstance(key, Sequence) and len(key) > 0:
+            path = list(key)
+            key = path.pop()
+
+        else:
+            raise ValueError(
+                "%s: `key` must be a string or a non-empty sequence of strings and/or ints"%(
+                    self.description,
+                )
+            )
+
+        obj = self
+        stack = []
+        for component in path:
+            if isinstance(obj, list):
+                if isinstance(component, str) and component.isdigit():
+                    component = int(component)
+
+
+            try:
+                sub = obj[component]
+            except (IndexError, KeyError, TypeError):
+                return False
+
+            stack.append((component, obj, sub))
+            obj = sub
+
+        if isinstance(obj, list):
+            if isinstance(key, str) and key.isdigit():
+                key = int(key)
+
+        try:
+            del obj[key]
+        except (IndexError, KeyError):
+            return False
+        else:
+            while stack:
+                component, obj, sub = stack.pop()
+                if not sub:
+                    del obj[component]
+
+            if save and self.filenames:
+                self.save_delta()
+
+
     def defaults(self,
                  filenames: FilePathInputs|None = None,
                  ) -> 'SettingsStore':
