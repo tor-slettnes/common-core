@@ -899,14 +899,11 @@ class SwitchboardBase (SwitchboardObserver):
         **Example:**
 
         ```python
-        from cc.platform.switchboard import (
-            AsyncClient as Switchboard,
-            State,
-            InterceptorInvocation,
-        )
+        from cc.platform.switchboard.grpc import AsyncClient as SwitchboardClient
+        from cc.platform.switchboard.protobuf import State, InterceptorInvocation
 
         def __init__(self):
-            self.switchboard = Switchboard('localhost')
+            self.switchboard = SwitchboardClient('localhost')
             self.switchboard.register_decorated_interceptors(self)
             self.switchboard.initialize()
 

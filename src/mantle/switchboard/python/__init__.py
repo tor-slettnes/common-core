@@ -1,3 +1,7 @@
+from . import base
+from . import protobuf
+from . import grpc
+
 from .protobuf import (
     ### Types generated from `switchboard_types.proto`
     Dependency,
