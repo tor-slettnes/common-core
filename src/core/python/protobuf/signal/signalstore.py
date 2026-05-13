@@ -299,7 +299,7 @@ class SignalStore (LogBase):
         assert callable(slot), \
             "Slot must be a callable object, like a function"
 
-        if not name in self.signal_names():
+        if (name != self.ALL_SIGNALS) and not name in self.signal_names():
             raise AttributeError(
                 "Message type %s does not have a %r field" %
                 (self.signal_type.__name__, name))
