@@ -18,8 +18,10 @@
 
 namespace core::http
 {
-    HTTPClient::HTTPClient(const std::string &base_url)
-        : base_url_(base_url)
+    HTTPClient::HTTPClient(const std::string &base_url,
+                           bool verify_cert)
+        : base_url_(base_url),
+          verify_cert_(verify_cert)
     {
     }
 
@@ -105,6 +107,7 @@ namespace core::http
                                      header_receiver,
                                      content_receiver,
                                      fail_on_error,
+                                     this->get_verify_cert(),
                                      response_code);
     }
 
@@ -215,6 +218,7 @@ namespace core::http
                                        header_receiver,
                                        content_receiver,
                                        fail_on_error,
+                                       this->get_verify_cert(),
                                        response_code);
         }
         catch (...)
@@ -327,6 +331,7 @@ namespace core::http
                                        header_receiver,
                                        content_receiver,
                                        fail_on_error,
+                                       this->get_verify_cert(),
                                        response_code);
         }
         catch (...)
@@ -390,14 +395,15 @@ namespace core::http
             logf_debug("HTTP client deleting resource: %s", url);
         }
 
-        return This::perform_request(url,                   // url
-                                     handle,                // handle
-                                     code,                  // code
-                                     content_type,          // received_content_type
-                                     receive_header_data,   // receive_header_data
-                                     receive_content_data,  // receive_content_data
-                                     fail_on_error,         // fail_on_error
-                                     response_code);        // response_code
+        return This::perform_request(url,                      // url
+                                     handle,                   // handle
+                                     code,                     // code
+                                     content_type,             // received_content_type
+                                     receive_header_data,      // receive_header_data
+                                     receive_content_data,     // receive_content_data
+                                     fail_on_error,            // fail_on_error
+                                     this->get_verify_cert(),  // verify_cert
+                                     response_code);           // response_code
     }
 
     bool HTTPClient::perform_request(const std::string &url,
@@ -407,6 +413,7 @@ namespace core::http
                                      const ReceiveFunction &receive_header_data,
                                      const ReceiveFunction &receive_content_data,
                                      bool fail_on_error,
+                                     bool verify_cert,
                                      ResponseCode *response_code)
     {
         ResponseCode response = 0;
@@ -429,6 +436,11 @@ namespace core::http
         if (code == CURLE_OK)
         {
             code = curl_easy_setopt(handle, CURLOPT_WRITEDATA, &receive_content_data);
+        }
+
+        if (code == CURLE_OK)
+        {
+            code = curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, verify_cert);
         }
 
         if (code == CURLE_OK)
@@ -471,6 +483,11 @@ namespace core::http
         }
 
         return successful_response(response);
+    }
+
+    bool HTTPClient::get_verify_cert() const
+    {
+        return this->verify_cert_;
     }
 
     void HTTPClient::check_content_type(const std::string &location,

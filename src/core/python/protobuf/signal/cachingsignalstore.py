@@ -292,7 +292,9 @@ class CachingSignalStore (SignalStore):
         try:
             return  self._cache[signal_name]
         except KeyError:
-            if signal_name in self.descriptor().fields_by_name:
+            if ((signal_name == self.ALL_SIGNALS)
+                or (signal_name in self.descriptor().fields_by_name)):
+
                 if wait_complete:
                     self.wait_complete()
                 return self._cache.get(signal_name, {})

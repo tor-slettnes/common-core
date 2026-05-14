@@ -13,13 +13,16 @@
 
 namespace core::http
 {
+    static constexpr auto SETTING_VERIFY_CERT = "verify certificate";
+
     RESTClient::RESTClient(
         const std::string &base_url,
         const std::string &service_name,
         const std::string &messaging_flavor,
         const std::string &content_type)
         : RESTBase(messaging_flavor, "client", service_name),
-          HTTPClient(this->real_url(base_url)),
+          HTTPClient(this->real_url(base_url),
+                     this->setting(SETTING_VERIFY_CERT, true).as_bool()),
           content_type(content_type)
     {
     }

@@ -33,7 +33,8 @@ namespace core::http
         using SendFunction = std::function<std::size_t(char *, std::size_t)>;
 
     public:
-        HTTPClient(const URL &base_url = {});
+        HTTPClient(const URL &base_url = {},
+                   bool verify_cert = true);
         virtual ~HTTPClient();
 
     public:
@@ -146,6 +147,8 @@ namespace core::http
                  ResponseCode *response_code = nullptr) const;
 
     protected:
+        virtual bool get_verify_cert() const;
+
         void check_content_type(
             const std::string &location,
             const std::string &received_content_type,
@@ -160,6 +163,7 @@ namespace core::http
             const ReceiveFunction &receive_header_data,
             const ReceiveFunction &receive_content_data,
             bool fail_on_error,
+            bool verify_cert,
             ResponseCode *response_code);
 
         static ReceiveFunction stream_receiver(std::ostream *stream);
@@ -171,6 +175,7 @@ namespace core::http
 
     private:
         std::string base_url_;
+        bool verify_cert_;
         std::mutex mtx_;
         HandleMap handles_;
     };
