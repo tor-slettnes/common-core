@@ -100,15 +100,15 @@ class SettingsStore (dict):
                  name       : str|None = None):
 
         '''
-        Initialize a new SettingsStore instance from the specified file(s),
-        located relative to one or more folders in `searchpath` if provided,
-        otherwise in the default search path.
+        Initialize a new SettingsStore instance from the specified file(s).
 
         The `filenames` argument may contain absolute or relative file paths;
-        see `load_settings()` for details.
+        in the latter case, it is located relative to one or more folders in
+        `searchpath` if provided, otherwise in the default search path.
+        See `load_settings()` for details.
 
-        Similarly, each directory name in `searchpath` may also be relative or
-        absolute.  In the latter case, names are resolved with respect to
+        Similarly, each directory name in `searchpath` may also be absolute or
+        relative.  In the latter case, names are resolved with respect to
         `cc.core.paths.install_root()`, defined at build time (e.g. `/usr`).
 
         If no `searchpath` is provided, a default search path is obtained as
@@ -175,12 +175,15 @@ class SettingsStore (dict):
 
     def load_settings(self,
                       filename : FilePathInput,
-                      searchpath : SearchPathInput|None = None):
+                      searchpath : SearchPathInput|None = None,
+                      clear: bool = False):
 
         '''
-        Load values from the specified settings file, if found.  Values are
-        merged in recursively, with precedence given to those already in the
-        store.  To replace existing values, first invoke `.clear()`.
+        Load values from the specified settings file, if found.
+
+        If `clear` is True, existing values are cleared.  Otherwise, new values
+        are merged in recursively, with precedence given to those already in the
+        store.
 
         The provided `filename` is resolved as follows:
 
@@ -202,6 +205,9 @@ class SettingsStore (dict):
         relative paths, each of which are then resolved with respect to
         `cc.core.paths.install_root()` as defined at build time (e.g. `/usr`).
         '''
+
+        if clear:
+            self.clear()
 
         for filepath in self.find_paths(filename, searchpath):
             self.merge_file(filepath)
