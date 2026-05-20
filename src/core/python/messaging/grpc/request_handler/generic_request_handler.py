@@ -66,7 +66,8 @@ class RequestHandler (Base, MessageBuilder):
     endpoint_type = 'request handler'
 
     def __init__(self,
-                 bind_address: str ="",
+                 bind_address: str = "",
+                 bind_port: int|None = None,
                  product_name: str|None = None,
                  project_name: str|None = None,
                  ):
@@ -88,6 +89,10 @@ class RequestHandler (Base, MessageBuilder):
            the server will listen bind to port 8080 on all available network
            interfaces.
 
+        @param bind_port
+            Explicit port number. If provided, this overides any `:PORT` portion
+            of `bind_address`.
+
         @param product_name
             Name of the product, used to locate corresponding settings files
             (e.g. `grpc-endpoints-PRODUCT.yaml`).
@@ -102,12 +107,14 @@ class RequestHandler (Base, MessageBuilder):
                       product_name = product_name,
                       project_name = project_name)
 
-        self.service_address = self.realaddress(
-            bind_address,
-            "interface",
-            "port",
-            "[::]",
-            8080)
+        self.service_address = self.sanitize_address(
+            host = bind_address,
+            port = bind_port,
+            hostOption = "interface",
+            portOption = "port",
+            defaultHost = "[::]",
+            defaultPort = 8080,
+        )
 
     @property
     def bind_address(self) -> str:

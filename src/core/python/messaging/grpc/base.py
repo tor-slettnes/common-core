@@ -70,17 +70,22 @@ class Base (Endpoint):
         return urllib.parse.unquote(context.peer())
 
 
-    def realaddress(self,
-                     provided        : Optional[str],
-                     hostOption      : str,
-                     portOption      : int,
-                     defaultHost     : str,
-                     defaultPort     : int = 8080) -> AddressPair:
+    def sanitize_address(self,
+                         host       : str|None,
+                         port       : str|int|None,
+                         hostOption : str,
+                         portOption : int,
+                         defaultHost: str,
+                         defaultPort: int = 8080) -> AddressPair:
         '''
-        Sanitize a service address of the form `[HOST][:PORT]` (where any or
-        all components may be present) to the full form `HOST:PORT`.
+        Sanitize a host string and/or port number to a valid (host, port)
+        tuple.
 
-        If either HOST or PORT is missing, defaults are determined as follows:
+        The `host` input may optionally include the port number, in the form
+        `HOST:PORT`. However, if a `port` input is also provided explicitly,
+        that takes precedence.
+
+        If either host or port is missing, defaults are determined as follows:
 
         * If the product-specific settings file
           `grpc-endpoints-PRODUCT_NAME.json` contains a map entry for this gRPC
@@ -93,8 +98,11 @@ class Base (Endpoint):
         * Any attribute(s) that are still missing are populated from
           `defaultHost` or `defaultPort`, respectively.
 
-        @param provided
-          Address to sanitize, normally provided as a command-line option.
+        @param host
+          Host address to sanitize, normally provided as a command-line option.
+
+        @param port
+          Explicit port number, if any.
 
         @param hostOption
           Key to locate the host name in the settings file
@@ -113,7 +121,7 @@ class Base (Endpoint):
           integer.
         '''
 
-        (host, port) = self._splitAddress(provided or "")
+        (host, port) = self._splitAddress(host or "", port)
 
         if hostOption and not host:
             host = self.setting(hostOption, defaultHost)
@@ -129,17 +137,18 @@ class Base (Endpoint):
         "(?::(\\d+))?$"                    # port
     )
 
-    def _splitAddress(self, target : str):
-        if match := self._rx_address.match(target):
-            host = match.group(1) or ""
-            try:
-                port = int(match.group(2))
-            except (TypeError, ValueError):
-                port = None
+    def _splitAddress(self,
+                      target: str,
+                      port: int|None = None):
+
+        if m := self._rx_address.match(target):
+            host = m.group(1) or ""
+            if port is None and m.group(2):
+                port = int(m.group(2))
 
             return host, port
         else:
-            return "", None
+            return "", port
 
     def _joinAddress(self, pair: AddressPair):
 

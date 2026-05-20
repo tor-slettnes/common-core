@@ -54,6 +54,7 @@ class GenericClient (Base, MessageDissecter):
 
     def __init__(self,
                  host: str|None = None,
+                 port: int|None = None,
                  wait_for_ready: bool = False,
                  product_name: str|None = None,
                  project_name: str|None = None,
@@ -101,9 +102,14 @@ class GenericClient (Base, MessageDissecter):
                 type(self).__name__,
             ))
 
+
         self.wait_for_ready   = wait_for_ready
         self.intercept_errors = intercept_errors
-        self.service_address  = self.realaddress(host, "host", "port", "localhost", 8080)
+        self.service_address  = self.sanitize_address(
+            host, port,
+            "host", "port",
+            "localhost", 8080,
+        )
         self._stub            = None
         self._channel         = None
 
