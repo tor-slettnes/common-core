@@ -1,6 +1,6 @@
 '''
-aio_client.py - Generic gRPC client base, for making service calls through a
-gRPC AsyncIO channel.
+aio_mixin.py - Mix-in that modifies generic gRPC client base to make service
+calls through a gRPC AsyncIO channel.
 '''
 
 __author__ = "Tor Slettnes"

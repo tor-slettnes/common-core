@@ -18,6 +18,10 @@ from .interceptors import (
     AsyncClientInterceptor,
 )
 
+from .signal_mixin import (
+    SignalMixIn,
+)
+
 from .aio_mixin import (
     AsyncMixIn,
     AsyncClient,

@@ -67,11 +67,12 @@ class GenericClient (Base, MessageDissecter):
             `address` may be a hostname or an IPv4 or IPv6 address string.  If
             either address or host is missing, the default value is obtain from
             any of the following the settings file, in order:
-            - grpc-endpoints-SERVICE_NAME.json,
-            - grpc-endpoints-PRODUCT_NAME.json,
-            - grpc-endpoints-PROJECT_NAME.json,
-            - grpc-endpoints-common.json.
-           (The ALL CAPS portions are substituted as appropriate)
+            - grpc-endpoints-SERVICE_NAME.SETTINGS_SUFFIX,
+            - grpc-endpoints-PRODUCT_NAME.SETTINGS_SUFFIX,
+            - grpc-endpoints-PROJECT_NAME.SETTINGS_SUFIFX,
+            - grpc-endpoints-common.SETTINGS_SUFFIX.
+           (The ALL CAPS portions are substituted as appropriate;
+           specifically, SETTINGS_SUFFIX is any of `json`, `yaml`, or `ini`).
 
         @param wait_for_ready
             If a connection attempt fails, keep retrying until successful.

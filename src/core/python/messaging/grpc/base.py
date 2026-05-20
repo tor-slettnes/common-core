@@ -109,8 +109,8 @@ class Base (Endpoint):
           Fallback if port number is not provided nor found in settings file
 
         @returns
-          Sanitized address of the form HOST:PORT (where HOST may still be
-          empty)
+          A `(host, port)` tuple, where `host` is a string and `port` is an
+          integer.
         '''
 
         (host, port) = self._splitAddress(provided or "")
