@@ -13,6 +13,7 @@ from .context import (
     check_type,
     process_name,
     main_module_path,
+    main_package,
     method_path,
     caller_frame,
 )

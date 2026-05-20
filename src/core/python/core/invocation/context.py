@@ -29,7 +29,7 @@ def check_type(argument: object,
 
 def process_name() -> str:
     '''
-    Return the name of the currently runningn process
+    Return the name of the currently running process
     '''
     return multiprocessing.current_process().name
 
@@ -43,6 +43,15 @@ def main_module_path() -> str:
     except (KeyError, AttributeError):
         return ''
 
+
+def main_package() -> str:
+    '''
+    Return the package of the main module
+    '''
+    try:
+        return sys.modules['__main__'].__package__
+    except (KeyError, AttributeError):
+        return ''
 
 def method_path(method: Callable) -> str:
     '''
