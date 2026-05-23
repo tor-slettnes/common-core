@@ -24,6 +24,7 @@ from .aio_switch import (
 
 from .baseboard import (
     SwitchboardBase,
+    AddSwitchResult,
 )
 
 from .observer import (

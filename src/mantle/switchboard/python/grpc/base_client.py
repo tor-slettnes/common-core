@@ -42,7 +42,7 @@ from ..protobuf import (
     ExceptionHandling, InvocationStyle, CascadeStyle,
 )
 
-from ..base.baseboard import SwitchboardBase, Switch
+from ..base.baseboard import SwitchboardBase, Switch, AddSwitchResult
 
 class BaseClient (SwitchboardBase, SignalClient):
     '''
@@ -107,15 +107,15 @@ class BaseClient (SwitchboardBase, SignalClient):
 
     def _get_or_add_switch_proxy(self,
                                  switch_name: str,
-                                 initially_active: bool = False) -> tuple[Switch, bool]:
+                                 initially_active: bool = False) -> AddSwitchResult:
 
         try:
-            return self.switches[switch_name], False
+            return AddSwitchResult(self.switches[switch_name], False)
 
         except KeyError:
             switch = self.switches[switch_name] = self._new_switch(switch_name)
             switch.status.active = initially_active
-            return switch, True
+            return AddSwitchResult(switch, True)
 
     def call_add_switch(self,
                         switch_name: str,

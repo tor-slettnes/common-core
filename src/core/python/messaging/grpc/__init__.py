@@ -9,7 +9,7 @@ from .base import Base
 from .status import DetailedError
 
 from .client import (
-    GenericClient, SignalClient, ThreadReader,
+    GenericClient, SignalClient, ThreadReader, SignalMixIn,
     AsyncClient, AsyncSignalClient, AsyncReader, AsyncMixIn
 )
 

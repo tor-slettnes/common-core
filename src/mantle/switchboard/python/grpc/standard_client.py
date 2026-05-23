@@ -32,7 +32,7 @@ from ..protobuf import (
     Signal,
 )
 
-from ..base import Switch
+from ..base import Switch, AddSwitchResult
 from .base_client import BaseClient
 
 class StandardClient (BaseClient):
@@ -61,7 +61,7 @@ class StandardClient (BaseClient):
     def _get_or_add_switch_proxy(self,
                                  switch_name: str,
                                  initially_active: bool = False,
-                                 ) -> tuple[Switch, bool]:
+                                 ) -> AddSwitchResult:
         with self._switch_lock:
             return BaseClient._get_or_add_switch_proxy(**locals())
 
@@ -76,23 +76,24 @@ class StandardClient (BaseClient):
     def get_or_add_switch(self,
                           switch_name: str,
                           initially_active: bool = False,
-                          ) -> Switch:
+                          ) -> AddSwitchResult:
 
         proxy, added = self._get_or_add_switch_proxy(switch_name, initially_active)
 
         if added:
-            self.call_add_switch(switch_name, initially_active)
+            response = self.call_add_switch(switch_name, initially_active)
+            added = response.value
 
-        return proxy
+        return AddSwitchResult(proxy, added)
 
     @override
     def add_switch(self,
                    switch_name: str,
-                   initially_active: bool = False) -> Switch:
+                   initially_active: bool = False) -> AddSwitchResult:
 
         proxy, _ = self._get_or_add_switch_proxy(switch_name, initially_active)
-        self.call_add_switch(switch_name, initially_active)
-        return proxy
+        response = self.call_add_switch(switch_name, initially_active)
+        return AddSwitchResult(proxy, response.value)
 
     @override
     @SwitchboardDissecter.decode_response
@@ -100,6 +101,7 @@ class StandardClient (BaseClient):
                       switch_name: str,
                       propagate: bool = True,
                       ) -> bool:
+
         return BaseClient.call_remove_switch(**locals())
 
     @override
@@ -107,6 +109,7 @@ class StandardClient (BaseClient):
     def clear_switches(self,
                        reload: bool = False,
                        ) -> bool:
+
         return BaseClient.call_clear_switches(**locals())
 
     @override
@@ -117,6 +120,7 @@ class StandardClient (BaseClient):
                         replace_statuses: bool = False,
                         invoke_interceptors: InvocationStyle = InvocationStyle.INDIRECT,
                         ) -> int:
+
         return BaseClient.call_import_switches(**locals())
 
     @override

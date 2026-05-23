@@ -7,6 +7,7 @@ __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
 from abc import abstractmethod
+from collections import namedtuple
 from typing import Callable, Sequence, Mapping
 from logging import Logger
 import os
@@ -38,6 +39,8 @@ from ..protobuf import (
 from .switch import Switch
 from .observer import SwitchboardObserver
 
+
+AddSwitchResult = namedtuple('AddSwitchResult', ('switch', 'added'))
 
 class SwitchboardBase (SwitchboardObserver):
     '''
@@ -138,8 +141,8 @@ class SwitchboardBase (SwitchboardObserver):
             server. As such, do not rely on such a proxy immediately after
             invoking `add_switch()`, or from an interceptor that gets invoked as
             a new switch is created on the server side.  If you need to ensure
-            the switch exists before proceeding, use `get_or_add_switch()`
-            instead.
+            the local switch proxy exists before proceeding, use
+            `get_or_add_switch()` instead.
 
         @throws KeyError
             The `required` argument is set, and specified switch/proxy does not
@@ -166,7 +169,7 @@ class SwitchboardBase (SwitchboardObserver):
     def get_or_add_switch(self,
                           switch_name: str,
                           initially_active: bool = False,
-                          ) -> Switch:
+                          ) -> AddSwitchResult:
         '''
         Get the local proxy for the named switch, or create it if missing.
 
@@ -194,7 +197,7 @@ class SwitchboardBase (SwitchboardObserver):
     def add_switch(self,
                    switch_name: str,
                    initially_active: bool = False,
-                   ) -> Switch:
+                   ) -> AddSwitchResult:
         '''
         Add a new switch, or obtain the existing instance if any.
 

@@ -31,7 +31,7 @@ from ..protobuf import (
     InterceptorPhase, ExceptionHandling, InvocationStyle, CascadeStyle,
 )
 
-from ..base import AsyncSwitch
+from ..base import AsyncSwitch, AddSwitchResult
 from .base_client import BaseClient
 
 class AsyncClient (AsyncMixIn, BaseClient):
@@ -46,14 +46,15 @@ class AsyncClient (AsyncMixIn, BaseClient):
     async def get_or_add_switch(self,
                                 switch_name: str,
                                 initially_active: bool = False,
-                                ) -> AsyncSwitch:
+                                ) -> AddSwitchResult:
 
         proxy, added = self._get_or_add_switch_proxy(switch_name, initially_active)
 
         if added:
-            await self.call_add_switch(switch_name, initially_active)
+            response = await self.call_add_switch(switch_name, initially_active)
+            added = response.value
 
-        return proxy
+        return AddSwitchResult(proxy, added)
 
     @override
     async def add_switch(self,
@@ -61,8 +62,8 @@ class AsyncClient (AsyncMixIn, BaseClient):
                          initially_active: bool = False) -> AsyncSwitch:
 
         proxy, _ = self._get_or_add_switch_proxy(switch_name, initially_active)
-        await self.call_add_switch(switch_name, initially_active)
-        return proxy
+        response = await self.call_add_switch(switch_name, initially_active)
+        return AddSwitchResult(proxy, response.value)
 
 
     @override
