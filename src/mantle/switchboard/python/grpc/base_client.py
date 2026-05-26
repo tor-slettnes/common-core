@@ -30,7 +30,9 @@ from ..protobuf import (
     SwitchIdentifier, SwitchIdentifiers,
     SetTargetRequest, SetTargetResponse,
     SwitchMap, Specification, SpecificationMap, SetSpecificationRequest,
-    Dependency, DependencyStatus, DependencyStatusMap, DependencyPolarity,
+    Dependency, DependencyMap,
+    DependencyStatus, DependencyStatusMap,
+    DependencyPolarity,
     AddDependencyRequest, RemoveDependencyRequest,
     SetAttributesRequest, SetAttributesResponse,
     GetAttributesRequest, GetAttributesResponse,
@@ -248,6 +250,11 @@ class BaseClient (SwitchboardBase, SignalClient):
             reevaluate = reevaluate)
 
         return self.stub.RemoveDependency(req)
+
+    def call_get_dependencies(self,
+                              switch_name: str) -> DependencyMap:
+        request = SwitchIdentifier(switch_name = switch_name)
+        return self.stub.GetDependencies(request)
 
     def call_get_ancestors(self,
                            switch_name: str) -> Sequence[str]:

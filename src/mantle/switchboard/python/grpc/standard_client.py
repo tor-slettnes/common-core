@@ -26,7 +26,7 @@ from ..protobuf import (
     SwitchboardDissecter,
     SwitchInfo, SwitchSelectionInput, Specification, Status,
     State, StateSet,
-    DependencyStatus, DependencyMap, DependencyPolarity,
+    Dependency, DependencyStatus, DependencyPolarity,
     InterceptorMethod, InterceptorInvocation, InterceptorResult,
     InterceptorPhase, ExceptionHandling, InvocationStyle, CascadeStyle,
     Signal,
@@ -204,6 +204,13 @@ class StandardClient (BaseClient):
                           ) -> bool:
 
         return BaseClient.call_remove_dependency(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    def get_dependencies(self,
+                         switch_name: str) -> Mapping[str, Dependency]:
+        return BaseClient.call_get_dependencies(self, switch_name)
+
 
     @override
     @SwitchboardDissecter.decode_response

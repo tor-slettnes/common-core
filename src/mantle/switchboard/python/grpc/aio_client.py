@@ -26,7 +26,7 @@ from ..protobuf import (
     SwitchInfo, SwitchSelectionInput,
     Specification, Status,
     State, StateSet,
-    DependencyStatus, DependencyPolarity,
+    Dependency, DependencyStatus, DependencyPolarity,
     InterceptorMethod, InterceptorInvocation, InterceptorResult,
     InterceptorPhase, ExceptionHandling, InvocationStyle, CascadeStyle,
 )
@@ -172,6 +172,12 @@ class AsyncClient (AsyncMixIn, BaseClient):
                                 ) -> bool:
 
         return await BaseClient.call_remove_dependency(**locals())
+
+    @override
+    @SwitchboardDissecter.decode_response
+    async def get_dependencies(self,
+                               switch_name: str) -> Mapping[str, Dependency]:
+        return await BaseClient.call_get_dependencies(self, switch_name)
 
     @override
     @SwitchboardDissecter.decode_response

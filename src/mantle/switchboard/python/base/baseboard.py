@@ -497,6 +497,19 @@ class SwitchboardBase (SwitchboardObserver):
            Recalculate state after removing dependency
         '''
 
+    @abstractmethod
+    def get_dependencies(self,
+                         switch_name: str) -> Mapping[str, Dependency]:
+        '''
+        Obtain a map of direct dependencies for the given switch
+
+        @param switch_name
+            The name of the switch for which we are obtaining dependencies
+
+        @return
+            A map of switch names and corresponding Dependency objects.
+        '''
+
 
     @abstractmethod
     def get_ancestors(self,
