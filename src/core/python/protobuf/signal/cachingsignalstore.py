@@ -11,6 +11,7 @@ docformat = 'javadoc en'
 author = 'Tor Slettnes'
 
 ### Standard Python modules
+from typing import Mapping
 import threading
 
 ### Modules withn package
@@ -46,22 +47,24 @@ class CachingSignalStore (SignalStore):
 
     @override
     def connect_all(self,
-                    slot: Slot):
+                    slot: Slot,
+                    kwargs: Mapping[str, object]|None = None):
         '''
         Connect a handler to _all_ signals in this store.
         '''
 
-        SignalStore.connect_all(self, slot)
+        SignalStore.connect_all(self, slot, kwargs)
         for name in self.signal_names():
-            self.emit_cached_to(name, slot)
+            self.emit_cached_to(name, slot, kwargs)
 
     @override
     def connect_signal(self,
                        name: str,
-                       slot: Slot):
+                       slot: Slot,
+                       kwargs: Mapping[str, object]|None = None):
 
-        SignalStore.connect_signal(self, name, slot)
-        self.emit_cached_to(name, slot)
+        SignalStore.connect_signal(self, name, slot, kwargs)
+        self.emit_cached_to(name, slot, kwargs)
 
 
     @override
@@ -206,7 +209,10 @@ class CachingSignalStore (SignalStore):
                 value = updated_value)
 
 
-    def emit_cached_to(self, signal_name: str, slot: Slot):
+    def emit_cached_to(self,
+                       signal_name: str,
+                       slot: Slot,
+                       kwargs: Mapping[str, object]|None = None):
         '''
         Emit a cached (previously emitted) signal to a specific slot/receiver.
         '''
@@ -221,7 +227,7 @@ class CachingSignalStore (SignalStore):
                     action = MappingAction.ADDITION if key else None,
                 )
 
-                self._emit_to(signal_name, slot, msg)
+                self._emit_to(signal_name, slot, msg, kwargs)
 
 
     def get_cached_signal(self,

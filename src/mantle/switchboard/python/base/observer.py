@@ -78,7 +78,6 @@ class SwitchboardObserver (DocBase, LogBase, SwitchboardDissecter):
 
     signal_store = switchboard_signals
 
-
     @classmethod
     def specification_handler(cls,
                               pattern: str|re.Pattern,
@@ -223,59 +222,51 @@ class SwitchboardObserver (DocBase, LogBase, SwitchboardDissecter):
         to the Switchboard signal store in order to start observing update
         events.
         '''
-
-        self.signal_store.connect_signal(
-            self.SPEC_SIGNAL,
-            lambda msg: self._invoke_handlers(instance, self._spec_handlers, msg),
-        )
-
-        self.signal_store.connect_signal(
-            self.STATUS_SIGNAL,
-            lambda msg: self._invoke_handlers(instance, self._status_handlers, msg),
-        )
+        self._connect_handlers(instance, self.SPEC_SIGNAL, self._spec_handlers)
+        self._connect_handlers(instance, self.STATUS_SIGNAL, self._status_handlers)
 
 
-    def _invoke_handlers(self,
-                         instance: object,
-                         handlers: Sequence[HandlerSpec],
-                         msg: Signal):
-
-        decoded_signal = None
+    def _connect_handlers(self,
+                          instance: object,
+                          signal_name: str,
+                          handlers: list[HandlerSpec]):
 
         for handler in handlers:
-            if self._handler_matches(instance, handler, msg):
-                if not decoded_signal:
-                    decoded_signal = self.decode(msg)
+            method_name = handler.unbound_method.__name__
+            if getattr(type(instance), method_name, None) == handler.unbound_method:
+                if bound_method := getattr(instance, method_name, None):
+                    self.signal_store.connect_signal(
+                        signal_name,
+                        self._invoke_handler,
+                        kwargs = dict(
+                            method = bound_method,
+                            handler = handler,
+                        ))
 
-                invoke_background(
-                    handler.unbound_method,
-                    args=(instance, decoded_signal),
-                    description="switch %r %s handler: %r" % (
-                        msg.mapping_key,
-                        self.signal_store.signal_name(msg),
-                        method_path(handler.unbound_method),
-                    ),
-                    log_call = self.logger.debug,
-                    log_failure = self.logger.error,
-                )
+    def _invoke_handler(self,
+                        signal: Signal,
+                        method: Callable[[Signal], None],
+                        handler: HandlerSpec):
+
+        if self._signal_matches(signal, handler):
+            invoke_background(
+                method,
+                args=(signal,),
+                description="switch %r %s handler: %r" % (
+                    signal.mapping_key,
+                    self.signal_store.signal_name(signal),
+                    method_path(method),
+                ),
+                log_call = self.logger.debug,
+                log_failure = self.logger.error,
+            )
 
 
-    def _handler_matches(self,
-                         instance: object,
-                         handler: HandlerSpec,
-                         msg: Signal,
-                         ) -> bool:
-        '''
-        Determine whether a decorated function should receive a switch
-        update.
-        '''
-        method_name = handler.unbound_method.__name__
-
+    def _signal_matches(self,
+                        signal: Signal,
+                        handler: HandlerSpec):
         return all((
-            getattr(type(instance), method_name, None) == handler.unbound_method,
-            msg.mapping_action in handler.actions,
-            (handler.states is None) or (msg.status.current_state in handler.states),
-            handler.pattern.match(msg.mapping_key),
+            signal.mapping_action in handler.actions,
+            (handler.states is None) or (signal.status.current_state in handler.states),
+            handler.pattern.match(signal.mapping_key),
         ))
-
-

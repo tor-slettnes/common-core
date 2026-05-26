@@ -254,11 +254,13 @@ class SignalStore (LogBase):
 
 
     def connect_all(self,
-                    slot: Slot):
+                    slot: Slot,
+                    kwargs: Mapping[str, object]|None = None,
+                    ):
         '''
         Connect a handler to _all_ signals in this store.
         '''
-        self.connect_signal(self.ALL_SIGNALS, slot)
+        self.connect_signal(self.ALL_SIGNALS, slot, kwargs)
 
 
     def disconnect_all(self,
@@ -275,7 +277,8 @@ class SignalStore (LogBase):
 
     def connect_signal(self,
                        name: str,
-                       slot: Slot):
+                       slot: Slot,
+                       kwargs: Mapping[str, object]|None = None):
 
         '''
         Connect a callback handler (slot) to receive emitted `Signal`
@@ -287,7 +290,10 @@ class SignalStore (LogBase):
 
         @param slot
             A callable handler (e.g. a function) that accepts the Signal
-            instance as its first and only required argument.
+            instance as its sole required positional argument.
+
+        @param kwargs
+            Additional keyword arguments to include when invoking `slot`.
 
         This variant is mainly suitable for mapping signals, since the entire
         Signal message including the `mapping_action` and `mapping_key` fields
@@ -306,7 +312,7 @@ class SignalStore (LogBase):
 
         slots = self.slots.setdefault(name, [])
         if not slot in slots:
-            slots.append(slot)
+            slots.append((slot, kwargs))
 
 
     def disconnect_signal(self,
@@ -326,20 +332,22 @@ class SignalStore (LogBase):
         '''
 
         if slot:
-            try:
-                slots = self.slots[name]
-                slots.remove(name)
-            except (KeyError, ValueError):
-                return False
-            else:
-                return True
+            if slots := self.slots.get(name):
+                for index, invocation in slots:
+                    callback, kwargs = invocation
+                    if callback == slot:
+                        del slots[index]
+                        return True
+
+            return False
         else:
             return bool(self.slots.pop(name, None))
 
 
     def connect_signal_data(self,
                             name: str,
-                            slot: Slot):
+                            slot: Slot,
+                            kwargs: Mapping[str, object]|None = None):
 
         '''
         Connect a callback handler (slot) to a receive just the extracted
@@ -354,6 +362,9 @@ class SignalStore (LogBase):
         @param slot
             A callable handler (e.g. a function) that accepts the extracted
             signal data as its first and only required argument.
+
+        @param kwargs
+            Additional keyword arguments to include when invoking `slot`.
         '''
 
         assert callable(slot), \
@@ -366,7 +377,9 @@ class SignalStore (LogBase):
 
         self.connect_signal(
             name,
-            lambda signal: slot(getattr(signal, name)))
+            lambda signal: slot(getattr(signal, name)),
+            kwargs,
+        )
 
 
     def disconnect_signal_data(self,
@@ -407,12 +420,12 @@ class SignalStore (LogBase):
 
         if signal_name := self.signal_name(msg):
             ## Invoke each slot that was connected to this signal by name
-            for callback in self.slots.get(signal_name, []):
-                self._emit_to(signal_name, callback, msg)
+            for callback, kwargs in self.slots.get(signal_name, []):
+                self._emit_to(signal_name, callback, msg, kwargs)
 
             ## Invoke each slot that was connected to `all` signals
-            for callback in self.slots.get(self.ALL_SIGNALS, []):
-                self._emit_to(signal_name, callback, msg)
+            for callback, kwargs in self.slots.get(self.ALL_SIGNALS, []):
+                self._emit_to(signal_name, callback, msg, kwargs)
 
 
     def emit_event(self,
@@ -492,11 +505,13 @@ class SignalStore (LogBase):
     def _emit_to(self,
                  signal_name : str,
                  slot: Slot,
-                 signal: SignalMessage):
+                 signal: SignalMessage,
+                 kwargs: Mapping[str, object]|None):
 
         result = safe_invoke_maybe_async(
             slot,
             args = (signal,),
+            kwargs = kwargs or {},
             description = "Signal %r slot %s(%s)"%(
                 signal_name,
                 slot.__name__,
