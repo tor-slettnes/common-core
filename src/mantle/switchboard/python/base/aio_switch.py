@@ -149,9 +149,9 @@ class AsyncSwitch (Switch):
 
     @override
     async def set_target(self,
-                         target_state: Optional[State] = None,
+                         target_state: State|None = None,
                          error: Error|Exception|str|None = None,
-                         attributes: Optional[PyValueMap] = None,
+                         attributes: PyValueMap|None = None,
                          clear_existing: bool = False,
                          invoke_interceptors: InvocationStyle = InvocationStyle.ALL,
                          cascade_descendants: CascadeStyle = CascadeStyle.ASYNC,

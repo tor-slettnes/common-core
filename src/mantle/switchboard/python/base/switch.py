@@ -922,7 +922,7 @@ class Switch (DocBase, SwitchboardDissecter):
 
 
     def set_target(self,
-                   target_state: State|None,
+                   target_state: State|None = None,
                    error: Error|Exception|str|None = None,
                    attributes: PyValueMap|None = None,
                    clear_existing: bool = False,
