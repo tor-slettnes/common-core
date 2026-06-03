@@ -17,19 +17,21 @@
 
 namespace cc::platform::pubsub::grpc
 {
-    class Client
+    //--------------------------------------------------------------------------
+    // ClientImpl -- Inheritable base
+
+    class ClientImpl
         : public pubsub::Publisher,
           public pubsub::Subscriber,
-          public cc::grpc::ClientWrapper<cc::platform::pubsub::grpc::Relay>,
-          public core::types::enable_create_shared<Client>
+          public cc::grpc::ClientWrapper<cc::platform::pubsub::grpc::Relay>
     {
-        using This = Client;
+        using This = ClientImpl;
         using ClientBase = cc::grpc::ClientWrapper<cc::platform::pubsub::grpc::Relay>;
         using ClientWriter = ::grpc::ClientWriter<cc::platform::pubsub::protobuf::Publication>;
 
     protected:
         template <class... Args>
-        Client(const std::string &host = "", Args &&...args)
+        ClientImpl(const std::string &host = "", Args &&...args)
             : ClientBase(host, std::forward<Args>(args)...)
         {
         }
@@ -61,4 +63,15 @@ namespace cc::platform::pubsub::grpc
         std::unique_ptr<::google::protobuf::Empty> writer_response_;
         cc::grpc::Status writer_status_;
     };
+
+    //--------------------------------------------------------------------------
+    // Client -- Final
+
+    class Client : public ClientImpl,
+                   public core::types::enable_create_shared<Client>
+    {
+    protected:
+        using ClientImpl::ClientImpl;
+    };
+
 }  // namespace cc::platform::pubsub::grpc

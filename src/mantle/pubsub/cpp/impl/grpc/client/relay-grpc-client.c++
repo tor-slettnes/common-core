@@ -12,22 +12,22 @@
 
 namespace cc::platform::pubsub::grpc
 {
-    void Client::initialize()
+    void ClientImpl::initialize()
     {
         ClientBase::initialize();
         Publisher::initialize();
         Subscriber::initialize();
     }
 
-    void Client::deinitialize()
+    void ClientImpl::deinitialize()
     {
         Subscriber::deinitialize();
         Publisher::deinitialize();
         ClientBase::deinitialize();
     }
 
-    bool Client::write(const std::string &topic,
-                       const core::types::Value &value)
+    bool ClientImpl::write(const std::string &topic,
+                           const core::types::Value &value)
     {
         cc::platform::pubsub::protobuf::Publication msg;
         msg.set_topic(topic);
@@ -35,7 +35,7 @@ namespace cc::platform::pubsub::grpc
         return this->writer_->Write(msg);
     }
 
-    void Client::start_writer()
+    void ClientImpl::start_writer()
     {
         if (!this->writer_)
         {
@@ -49,7 +49,7 @@ namespace cc::platform::pubsub::grpc
         pubsub::Publisher::start_writer();
     }
 
-    void Client::stop_writer()
+    void ClientImpl::stop_writer()
     {
         pubsub::Publisher::stop_writer();
 
@@ -62,7 +62,7 @@ namespace cc::platform::pubsub::grpc
         }
     }
 
-    void Client::start_reader()
+    void ClientImpl::start_reader()
     {
         if (!this->reader_thread_.joinable())
         {
@@ -72,7 +72,7 @@ namespace cc::platform::pubsub::grpc
         pubsub::Subscriber::start_reader();
     }
 
-    void Client::stop_reader()
+    void ClientImpl::stop_reader()
     {
         pubsub::Subscriber::stop_reader();
         if (this->reader_thread_.joinable())
@@ -82,7 +82,7 @@ namespace cc::platform::pubsub::grpc
         }
     }
 
-    Reader::ptr Client::create_reader(
+    Reader::ptr ClientImpl::create_reader(
         const std::vector<std::string> &topics)
     {
         cc::platform::pubsub::protobuf::Filters filters;
@@ -90,7 +90,7 @@ namespace cc::platform::pubsub::grpc
         return Reader::create_shared(this->stub, filters);
     }
 
-    void Client::read_worker()
+    void ClientImpl::read_worker()
     {
         while (const auto &message_data = this->reader_->get())
         {
