@@ -9,7 +9,7 @@
 #include "platform/host.h++"
 #include "platform/symbols.h++"
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     HostConfigProvider::HostConfigProvider()
         : Super(TYPE_NAME_FULL(This))
@@ -54,4 +54,4 @@ namespace sysconfig::native
         signal_hostinfo.emit(this->get_host_info());
     }
 
-}  // namespace sysconfig::native
+}  // namespace cc::platform::sysconfig::native

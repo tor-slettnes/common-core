@@ -9,7 +9,7 @@
 #include "zmq-endpoint.h++"  // for `log_scope`
 #include "types/bytevector.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     using Filter = core::types::ByteVector;
     using MessageParts = std::vector<core::types::ByteVector>;
@@ -62,4 +62,4 @@ namespace core::zmq
         std::weak_ptr<Subscriber> subscriber_;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

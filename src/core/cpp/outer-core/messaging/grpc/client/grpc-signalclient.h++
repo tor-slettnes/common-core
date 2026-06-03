@@ -21,7 +21,7 @@
 
 #include <functional>
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class SignalClient<ServiceT, SignalT>
@@ -75,7 +75,7 @@ namespace core::grpc
                                  this,
                                  std::placeholders::_1)),
               watching(false),
-              completion_event(std::make_unique<types::BinaryEvent>())
+              completion_event(std::make_unique<core::types::BinaryEvent>())
         {
         }
 
@@ -123,7 +123,7 @@ namespace core::grpc
             if (!this->watching)
             {
                 this->watching = true;
-                this->watch_start = steady::Clock::now();
+                this->watch_start = core::steady::Clock::now();
                 cc::protobuf::signal::Filter filter = this->signal_filter();
                 logf_debug("Invoking %s::watch(filter=%s)",
                            this->servicename(true),
@@ -169,7 +169,7 @@ namespace core::grpc
         ///    Exit if the server cache has not been received within this time.
         /// @return
         ///    `true` if and only if the signal cache was received from the server
-        inline bool wait_complete(const steady::TimePoint &deadline) const
+        inline bool wait_complete(const core::steady::TimePoint &deadline) const
         {
             return this->completion_event->wait_until(deadline);
         }
@@ -181,11 +181,11 @@ namespace core::grpc
         ///    after the last `start_watching()` invocation.
         /// @return
         ///    `true` if and only if the signal cache was received from the server
-        inline bool wait_complete(const dt::Duration &timeout) const
+        inline bool wait_complete(const core::dt::Duration &timeout) const
         {
             return this->wait_complete(
                 this->watch_start +
-                std::chrono::duration_cast<steady::Duration>(timeout));
+                std::chrono::duration_cast<core::steady::Duration>(timeout));
         }
 
     protected:
@@ -199,10 +199,10 @@ namespace core::grpc
         bool watching;
 
     protected:
-        steady::TimePoint watch_start;
+        core::steady::TimePoint watch_start;
         std::thread watch_thread;
         ClientReceiver<ServiceT, SignalT, cc::protobuf::signal::Filter> receiver;
-        std::unique_ptr<types::BinaryEvent> completion_event;
+        std::unique_ptr<core::types::BinaryEvent> completion_event;
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

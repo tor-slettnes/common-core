@@ -11,7 +11,7 @@
 #include "thread/signaltemplate.h++"
 #include "types/listable.h++"
 
-namespace sysconfig
+namespace cc::platform::sysconfig
 {
     //--------------------------------------------------------------------------
     // Data types
@@ -85,16 +85,16 @@ namespace sysconfig
     // Signals
 
     extern core::signal::DataSignal<ProductInfo> signal_productinfo;
-}  // namespace sysconfig
+}  // namespace cc::platform::sysconfig
 
 namespace std
 {
     // Sorting support for sysconfig::Version
     template <>
-    struct less<sysconfig::Version>
+    struct less<cc::platform::sysconfig::Version>
     {
-        inline bool operator()(const sysconfig::Version &lhs,
-                               const sysconfig::Version &rhs) const
+        inline bool operator()(const cc::platform::sysconfig::Version &lhs,
+                               const cc::platform::sysconfig::Version &rhs) const
         {
             return lhs < rhs;
         }

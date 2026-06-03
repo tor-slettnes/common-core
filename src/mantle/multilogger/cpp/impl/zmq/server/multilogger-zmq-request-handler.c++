@@ -9,7 +9,7 @@
 #include "protobuf-multilogger-types.h++"
 #include "protobuf-inline.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     RequestHandler::RequestHandler(
         const std::shared_ptr<API> &provider,
@@ -104,4 +104,4 @@ namespace multilogger::zmq
             response->mutable_field_names());
     }
 
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

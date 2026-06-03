@@ -11,21 +11,21 @@
 
 #include <unordered_map>
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     void extract_addressdata(
-        const core::glib::VariantMaps &configs,
+        const cc::glib::VariantMaps &configs,
         AddressVector *addresses);
 
     namespace connection
     {
-        void extract_settings(const core::glib::SettingsContainer &settings,
+        void extract_settings(const cc::glib::SettingsContainer &settings,
                               ConnectionData *data);
 
         void insert_settings(const ConnectionData &data,
-                             core::glib::SettingsMap *settings);
+                             cc::glib::SettingsMap *settings);
 
-        core::glib::SettingsContainer build_settings_container(
+        cc::glib::SettingsContainer build_settings_container(
             const ConnectionData &data);
     }  // namespace connection
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

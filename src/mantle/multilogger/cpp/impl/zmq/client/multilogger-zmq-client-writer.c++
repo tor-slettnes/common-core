@@ -8,10 +8,10 @@
 #include "multilogger-zmq-client-writer.h++"
 #include "protobuf-inline.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
 
-    ClientWriter::ClientWriter(const std::shared_ptr<core::zmq::Publisher> &publisher)
+    ClientWriter::ClientWriter(const std::shared_ptr<cc::zmq::Publisher> &publisher)
         : Super(publisher)
     {
     }
@@ -23,4 +23,4 @@ namespace multilogger::zmq
                 loggable));
     }
 
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

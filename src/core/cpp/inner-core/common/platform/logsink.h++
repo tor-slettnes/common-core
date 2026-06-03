@@ -12,7 +12,7 @@
 
 #include <string>
 
-namespace core::platform
+namespace cc::core::platform
 {
     //--------------------------------------------------------------------------
     // @class LogSinkProvider
@@ -47,4 +47,4 @@ namespace core::platform
         },
         logging::DefaultOption::UNLESS_INTERACTIVE);
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

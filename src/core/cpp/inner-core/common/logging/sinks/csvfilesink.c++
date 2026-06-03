@@ -10,7 +10,7 @@
 #include "string/misc.h++"
 #include "status/exceptions.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     //--------------------------------------------------------------------------
     // CSVFileSink
@@ -134,4 +134,4 @@ namespace core::logging
             return field;
         }
     }
-}  // namespace core::logging
+}  // namespace cc::core::logging

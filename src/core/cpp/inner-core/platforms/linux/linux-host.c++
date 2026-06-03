@@ -12,7 +12,7 @@
 
 #include <fstream>
 
-namespace core::platform
+namespace cc::core::platform
 {
     constexpr auto HOSTNAME_FILE = "/etc/hostname";
     constexpr auto OS_RELEASE_FILE = "/etc/os-release";
@@ -70,4 +70,4 @@ namespace core::platform
         return kvmap;
     }
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

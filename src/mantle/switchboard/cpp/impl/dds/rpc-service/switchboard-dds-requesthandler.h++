@@ -12,7 +12,7 @@
 #include "switchboard-provider.h++"
 #include "types/create-shared.h++"
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     //==========================================================================
     // @class RequestHandler
@@ -82,4 +82,4 @@ namespace switchboard::dds
     private:
         std::shared_ptr<Provider> provider;
     };
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

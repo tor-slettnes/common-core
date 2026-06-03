@@ -13,7 +13,7 @@
 
 #include <thread>
 
-namespace core::kafka
+namespace cc::kafka
 {
     class Endpoint : public messaging::Endpoint
     {
@@ -94,4 +94,4 @@ namespace core::kafka
     protected:
         std::unordered_set<RdKafka::Topic *> topics;
     };
-}  // namespace core::kafka
+}  // namespace cc::kafka

@@ -13,7 +13,7 @@
 
 #include <unordered_set>
 
-namespace avro
+namespace cc::avro
 {
     //--------------------------------------------------------------------------
     /// @class ProtoBufSchema
@@ -80,4 +80,4 @@ namespace avro
 
     SchemaWrapper &schema_from_proto(const google::protobuf::Descriptor *descriptor);
 
-}  // namespace avro
+}  // namespace cc::avro

@@ -11,7 +11,7 @@
 #include "protobuf-switchboard-types.h++"
 #include "protobuf-message.h++"
 
-namespace switchboard::grpc
+namespace cc::platform::switchboard::grpc
 {
     void SignalQueue::initialize()
     {
@@ -40,4 +40,4 @@ namespace switchboard::grpc
         this->disconnect(switchboard::signal_spec);
         Super::deinitialize();
     }
-}  // namespace switchboard::grpc
+}  // namespace cc::platform::switchboard::grpc

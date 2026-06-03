@@ -12,7 +12,7 @@
 
 #include <future>
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     URLPackageHandler::URLPackageHandler(const core::SettingsStore::ptr &settings)
         : Super(settings)
@@ -35,9 +35,9 @@ namespace upgrade::native
                                        const fs::path &staging_folder) const
     {
         core::platform::Pipe pipe = core::platform::process->create_pipe();
-        core::http::HTTPClient http;
+        cc::http::HTTPClient http;
 
-        core::http::HTTPClient::ReceiveFunction receiver = std::bind(
+        cc::http::HTTPClient::ReceiveFunction receiver = std::bind(
             &core::platform::ProcessProvider::write_fd,  // method
             core::platform::process.get(),               // object
             pipe.at(core::platform::OUTPUT),             // fd
@@ -76,7 +76,7 @@ namespace upgrade::native
         }
     }
 
-    core::http::HTTPClient::ReceiveFunction URLPackageHandler::piper(
+    cc::http::HTTPClient::ReceiveFunction URLPackageHandler::piper(
         core::platform::FileDescriptor fd)
     {
         return [=](const char *data, std::size_t size) -> void {
@@ -84,4 +84,4 @@ namespace upgrade::native
         };
     }
 
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

@@ -24,7 +24,7 @@ using ulong = unsigned long;
 using uint = unsigned int;
 using namespace std::literals::string_literals;  // ""s
 
-namespace core::str
+namespace cc::core::str
 {
     /// @class Formatter
     /// @brief
@@ -405,6 +405,6 @@ namespace core::str
         Formatter(stream, format).add(args...).add_tail();
         return stream;
     }
-}  // namespace core::str
+}  // namespace cc::core::str
 
-using core::str::format;
+using cc::core::str::format;

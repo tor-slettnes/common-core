@@ -14,7 +14,7 @@
 #include "protobuf-inline.h++"
 #include "logging/logging.h++"
 
-namespace avro
+namespace cc::avro
 {
     ProtoBufValue::ProtoBufValue(const google::protobuf::Message &msg)
         : CompoundValue(schema_from_proto(msg.GetDescriptor()))
@@ -406,4 +406,4 @@ namespace avro
         avro::set_enum(avro_value, enum_value->index());
     }
 
-}  // namespace avro
+}  // namespace cc::avro

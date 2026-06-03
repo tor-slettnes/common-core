@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace core::types
+namespace cc::core::types
 {
     template <class K, class V, class MapType = std::map<K, V>>
     class ValueMap : public MapType
@@ -89,4 +89,4 @@ namespace core::types
             return result;
         }
     };
-}  // namespace core::types
+}  // namespace cc::core::types

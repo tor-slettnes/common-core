@@ -8,7 +8,7 @@
 #include "multilogger-zmq-server.h++"
 #include "multilogger-zmq-request-handler.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     Server::Server(const std::shared_ptr<API> &provider,
                    const std::string &bind_address)
@@ -20,4 +20,4 @@ namespace multilogger::zmq
     {
     }
 
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

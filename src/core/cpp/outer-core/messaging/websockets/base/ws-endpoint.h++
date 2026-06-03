@@ -12,7 +12,7 @@
 #define ASIO_STANDALONE 1
 #include <websocketpp/endpoint.hpp>
 
-namespace core::ws
+namespace cc::ws
 {
     define_log_scope("ws");
 
@@ -48,4 +48,4 @@ namespace core::ws
         uint port_;
     };
 
-}  // namespace core::ws
+}  // namespace cc::ws

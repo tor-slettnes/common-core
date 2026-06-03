@@ -8,7 +8,7 @@
 #pragma once
 #include "parserinput-base.h++"
 
-namespace core::parsers
+namespace cc::core::parsers
 {
     class StringInput : public Input
     {
@@ -28,4 +28,4 @@ namespace core::parsers
         std::string_view string_;
         std::size_t pos_, token_pos_;
     };
-}  // namespace core::parsing
+}  // namespace cc::core::parsing

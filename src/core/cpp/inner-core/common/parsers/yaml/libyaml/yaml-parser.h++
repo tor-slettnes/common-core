@@ -14,7 +14,7 @@
 #include <iostream>
 #include <unordered_set>
 
-namespace core::yaml
+namespace cc::core::yaml
 {
     class YamlParser
     {
@@ -67,4 +67,4 @@ namespace core::yaml
 
         yaml_parser_t parser;
     };
-} // namespace core::yaml
+} // namespace cc::core::yaml

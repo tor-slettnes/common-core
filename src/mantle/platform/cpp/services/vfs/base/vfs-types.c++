@@ -7,7 +7,7 @@
 
 #include "vfs-types.h++"
 
-namespace vfs
+namespace cc::platform::vfs
 {
     //==========================================================================
     /// Operational flags for copy(), move(), remove(), create_folder()
@@ -142,12 +142,12 @@ namespace vfs
         Path::check_relative(lhs.context, lhs.relpath / rhs);
         return {lhs.context, lhs.relpath / rhs};
     }
-}  // namespace vfs
+}  // namespace cc::platform::vfs
 
 namespace std::filesystem
 {
-    core::types::TaggedValueList &operator<<(
-        core::types::TaggedValueList &tvlist,
+    cc::core::types::TaggedValueList &operator<<(
+        cc::core::types::TaggedValueList &tvlist,
         const space_info &volinfo)
     {
         return tvlist.extend({
@@ -159,7 +159,7 @@ namespace std::filesystem
 
     std::ostream &operator<<(std::ostream &stream, const space_info &info)
     {
-        return stream << core::types::TaggedValueList::create_from(info);
+        return stream << cc::core::types::TaggedValueList::create_from(info);
     }
 
 }  // namespace std::filesystem

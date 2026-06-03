@@ -11,17 +11,17 @@
 
 #include "cc/demo/protobuf/demo_types.pb.h"
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
-    class SignalHandler : public core::zmq::ProtoBufSignalHandler<cc::demo::protobuf::Signal>,
+    class SignalHandler : public cc::zmq::ProtoBufSignalHandler<cc::demo::protobuf::Signal>,
                           public core::types::enable_create_shared<SignalHandler>
     {
         using This = SignalHandler;
-        using Super = core::zmq::ProtoBufSignalHandler<cc::demo::protobuf::Signal>;
+        using Super = cc::zmq::ProtoBufSignalHandler<cc::demo::protobuf::Signal>;
 
     protected:
         void initialize() override;
         void handle_message(const cc::demo::protobuf::Signal &message) override;
     };
 
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

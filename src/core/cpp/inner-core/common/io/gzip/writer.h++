@@ -10,7 +10,7 @@
 
 #include <ostream>
 
-namespace core::io
+namespace cc::core::io
 {
     //--------------------------------------------------------------------------
     /// @class GZipOutputBuffer
@@ -39,4 +39,4 @@ namespace core::io
         GZipOutputBuffer output_buffer;
     };
 
-} // namespace core::io
+} // namespace cc::core::io

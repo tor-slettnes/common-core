@@ -12,14 +12,23 @@
 
 namespace cc::protobuf
 {
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // Greeting
-    void encode(const ::demo::Greeting &greeting, cc::demo::protobuf::Greeting *msg);
-    void decode(const cc::demo::protobuf::Greeting &msg, ::demo::Greeting *greeting);
 
-    //==========================================================================
+    void encode(const cc::demo::Greeting &greeting,
+                cc::demo::protobuf::Greeting *msg);
+
+    void decode(const cc::demo::protobuf::Greeting &msg,
+                cc::demo::Greeting *greeting);
+
+
+    //--------------------------------------------------------------------------
     // TimeData
-    void encode(const ::demo::TimeData &timedata, cc::demo::protobuf::TimeData *msg);
-    void decode(const cc::demo::protobuf::TimeData &msg, ::demo::TimeData *timedata);
+
+    void encode(const cc::demo::TimeData &timedata,
+                cc::demo::protobuf::TimeData *msg);
+
+    void decode(const cc::demo::protobuf::TimeData &msg,
+                cc::demo::TimeData *timedata);
   // namespace cc::protobuf
 }

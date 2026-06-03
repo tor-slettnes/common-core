@@ -8,7 +8,7 @@
 #include "zmq-messagehandler.h++"
 #include "zmq-subscriber.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     MessageHandler::MessageHandler(
         const std::string &id,
@@ -80,4 +80,4 @@ namespace core::zmq
         return payload;
     }
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

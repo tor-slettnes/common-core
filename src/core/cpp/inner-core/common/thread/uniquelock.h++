@@ -8,7 +8,7 @@
 #pragma once
 #include <mutex>
 
-namespace core::types
+namespace cc::core::types
 {
     class UniqueLock
     {
@@ -29,4 +29,4 @@ namespace core::types
         std::unique_lock<std::mutex> lck;
     };
 
-}  // namespace core::types
+}  // namespace cc::core::types

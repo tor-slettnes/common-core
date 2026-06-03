@@ -17,7 +17,7 @@
 
 #include <thread>
 
-namespace core::dds
+namespace cc::dds
 {
     //==========================================================================
     // @class PubSubChannnel
@@ -170,4 +170,4 @@ namespace core::dds
         std::thread listen_thread;
         bool keep_listening;
     };
-}  // namespace core::dds
+}  // namespace cc::dds

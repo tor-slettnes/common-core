@@ -10,18 +10,18 @@
 #include "zmq-messagewriter.h++"
 #include "types/create-shared.h++"
 
-namespace pubsub::zmq
+namespace cc::platform::pubsub::zmq
 {
     //==========================================================================
     // @class SignalWriter
     // @brief Connect to local RELAY signals and write via ZMQ
 
-    class SignalWriter : public core::zmq::MessageWriter,
+    class SignalWriter : public cc::zmq::MessageWriter,
                          public core::types::enable_create_shared<SignalWriter>
     {
         // Convencience alias
         using This = SignalWriter;
-        using Super = core::zmq::MessageWriter;
+        using Super = cc::zmq::MessageWriter;
 
     protected:
         using Super::Super;
@@ -36,4 +36,4 @@ namespace pubsub::zmq
             const std::string &topic,
             const core::types::Value &payload);
     };
-}  // namespace pubsub::zmq
+}  // namespace cc::platform::pubsub::zmq

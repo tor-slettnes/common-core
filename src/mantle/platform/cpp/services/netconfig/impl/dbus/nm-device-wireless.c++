@@ -8,13 +8,13 @@
 #include "nm-device.h++"
 #include "status/exceptions.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     WirelessDevice::WirelessDevice(
-        core::dbus::ProxyContainer *container,
-        const core::dbus::ConnectionPtr &connection,
-        const core::dbus::ServiceName &servicename,
-        const core::dbus::ObjectPath &objectpath)
+        cc::dbus::ProxyContainer *container,
+        const cc::dbus::ConnectionPtr &connection,
+        const cc::dbus::ServiceName &servicename,
+        const cc::dbus::ObjectPath &objectpath)
         : DataWrapper<WirelessDeviceData>(
               container,
               connection,
@@ -39,7 +39,7 @@ namespace netconfig::dbus
     void WirelessDevice::initialize()
     {
         this->initialize_properties();
-        auto paths = this->get_cached_property<core::dbus::ObjectPaths>("AccessPoints");
+        auto paths = this->get_cached_property<cc::dbus::ObjectPaths>("AccessPoints");
         this->container->synchronize<AccessPoint>(paths);
         this->accesspoints = std::set(paths.begin(), paths.end());
         this->set_ready();
@@ -99,7 +99,7 @@ namespace netconfig::dbus
         const Glib::VariantContainerBase &parameters)
     {
         logf_trace("on_signal_accesspoint_added: %s", parameters);
-        auto path = core::glib::variant_cast<core::dbus::ObjectPath>(parameters, 0);
+        auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(parameters, 0);
         if (this->valid_path(path))
         {
             auto ref = this->container->add<AccessPoint>(path);
@@ -111,7 +111,7 @@ namespace netconfig::dbus
         const Glib::VariantContainerBase &parameters)
     {
         logf_trace("on_signal_accesspoint_removed: %s", parameters);
-        auto path = core::glib::variant_cast<core::dbus::ObjectPath>(parameters, 0);
+        auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(parameters, 0);
         this->accesspoints.erase(path);
         this->container->remove(path);
     }
@@ -119,7 +119,7 @@ namespace netconfig::dbus
     void WirelessDevice::on_property_active_accesspoint(
         const Glib::VariantBase &change)
     {
-        auto path = core::glib::variant_cast<core::dbus::ObjectPath>(change);
+        auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(change);
         if (this->valid_path(path))
         {
             auto ref = this->container->add<AccessPoint>(path);
@@ -134,7 +134,7 @@ namespace netconfig::dbus
     void WirelessDevice::on_property_lastscan(
         const Glib::VariantBase &change)
     {
-        auto millisecs = core::glib::variant_cast<std::int64_t>(change);
+        auto millisecs = cc::glib::variant_cast<std::int64_t>(change);
         std::chrono::duration uptime = core::steady::Clock::now().time_since_epoch();
         this->lastScan = core::dt::Clock::now() - uptime + std::chrono::milliseconds(millisecs);
     }
@@ -147,7 +147,7 @@ namespace netconfig::dbus
         // assigning it there.
         if (auto device = this->container->get<Device>(this->objectpath))
         {
-            core::glib::variant_cast(change, &device->hwAddress);
+            cc::glib::variant_cast(change, &device->hwAddress);
         }
     }
 
@@ -165,7 +165,7 @@ namespace netconfig::dbus
     }
 
     bool WirelessDevice::update_active_accesspoint(
-        const core::dbus::ProxyWrapper *source,
+        const cc::dbus::ProxyWrapper *source,
         core::signal::MappingAction action)
     {
         if (const auto *datasource = dynamic_cast<const AccessPoint *>(source))
@@ -204,4 +204,4 @@ namespace netconfig::dbus
             }
         }
     }
-} // namespace netconfig::dbus
+} // namespace cc::platform::netconfig::dbus

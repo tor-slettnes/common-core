@@ -10,11 +10,11 @@
 #include "protobuf-sysconfig-types.h++"
 #include "protobuf-standard-types.h++"
 
-namespace sysconfig::grpc
+namespace cc::platform::sysconfig::grpc
 {
     void SignalQueue::initialize()
     {
-        using ::cc::platform::sysconfig::protobuf::Signal;
+        using platform::sysconfig::protobuf::Signal;
 
         this->connect<core::dt::TimePoint>(
             Signal::kTime,
@@ -71,4 +71,4 @@ namespace sysconfig::grpc
         this->disconnect(sysconfig::signal_time);
         Super::deinitialize();
     }
-}  // namespace sysconfig::grpc
+}  // namespace cc::platform::sysconfig::grpc

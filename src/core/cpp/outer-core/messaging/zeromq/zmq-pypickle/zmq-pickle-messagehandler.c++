@@ -9,7 +9,7 @@
 #include "python-pickle.h++"
 #include "platform/symbols.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     PyPickleMessageHandler::PyPickleMessageHandler(
         const std::weak_ptr<Subscriber> &subscriber,
@@ -18,7 +18,7 @@ namespace core::zmq
     {
     }
 
-    void PyPickleMessageHandler::handle(const types::ByteVector &bytes)
+    void PyPickleMessageHandler::handle(const core::types::ByteVector &bytes)
     {
         this->handle_message(python::unpickle(bytes));
     }
@@ -28,4 +28,4 @@ namespace core::zmq
         this->handle_message(object.as_value());
     }
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

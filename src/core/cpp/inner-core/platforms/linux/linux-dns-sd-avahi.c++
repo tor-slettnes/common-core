@@ -10,7 +10,7 @@
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     AvahiServiceDiscoveryProvider::AvahiServiceDiscoveryProvider()
         : Super("AvahiServiceDiscoveryProvider"),
@@ -252,4 +252,4 @@ namespace core::platform
         return avahi_string_list_new_from_array(c_strings, strings.size());
     }
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

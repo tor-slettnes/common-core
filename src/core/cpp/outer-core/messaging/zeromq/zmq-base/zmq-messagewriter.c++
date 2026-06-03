@@ -9,7 +9,7 @@
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     MessageWriter::MessageWriter(const std::shared_ptr<Publisher> &publisher,
                                  const std::optional<Header> &header)
@@ -29,7 +29,7 @@ namespace core::zmq
         return this->publisher_.lock();
     }
 
-    void MessageWriter::write(const types::ByteVector &bytes)
+    void MessageWriter::write(const core::types::ByteVector &bytes)
     {
         if (auto publisher = this->publisher())
         {
@@ -40,4 +40,4 @@ namespace core::zmq
         }
     }
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

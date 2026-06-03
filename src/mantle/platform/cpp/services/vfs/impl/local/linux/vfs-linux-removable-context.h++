@@ -8,7 +8,7 @@
 #pragma once
 #include "vfs-local-context.h++"
 
-namespace vfs::local
+namespace cc::platform::vfs::local
 {
     class RemovableContext : public LocalContext
     {
@@ -32,4 +32,4 @@ namespace vfs::local
         std::string devnode;
         std::string fstype;
     };
-}  // namespace vfs::local
+}  // namespace cc::platform::vfs::local

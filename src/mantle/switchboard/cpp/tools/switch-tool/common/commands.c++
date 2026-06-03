@@ -11,7 +11,7 @@
 
 #include <algorithm>
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     void Options::add_commands()
     {
@@ -954,4 +954,4 @@ namespace switchboard
             }
         }
     }
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

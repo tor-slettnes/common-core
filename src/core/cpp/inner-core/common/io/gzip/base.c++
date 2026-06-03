@@ -8,7 +8,7 @@
 #include "base.h++"
 #include "io/cutils.h++"
 
-namespace core::io
+namespace cc::core::io
 {
     //--------------------------------------------------------------------------
     // GZipBuffer
@@ -35,4 +35,4 @@ namespace core::io
         }
     }
 
-} // namespace core::io
+} // namespace cc::core::io

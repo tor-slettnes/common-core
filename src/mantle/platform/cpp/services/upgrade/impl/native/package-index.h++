@@ -8,7 +8,7 @@
 #pragma once
 #include "upgrade-types.h++"
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     class PackageIndex
     {
@@ -30,4 +30,4 @@ namespace upgrade::native
     protected:
         std::vector<PackageInfo::ptr> available_packages;
     };
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

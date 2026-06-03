@@ -7,7 +7,7 @@
 
 #include "options.h++"
 
-namespace pubsub
+namespace cc::platform::pubsub
 {
     Options::Options()
         : Super(),
@@ -50,5 +50,6 @@ namespace pubsub
 #endif
     }
 
-    std::unique_ptr<Options> options;
-}  // namespace pubsub
+}  // namespace cc::platform::pubsub
+
+std::unique_ptr<cc::platform::pubsub::Options> options;

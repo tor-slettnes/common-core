@@ -9,7 +9,7 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
-namespace core::kafka
+namespace cc::kafka
 {
     const auto SETTING_SHUTDOWN_TIMEOUT = "shutdown timeout";
     const auto DEFAULT_SHUTDOWN_TIMEOUT = 2.0;
@@ -61,7 +61,7 @@ namespace core::kafka
         }
         else
         {
-            throw exception::Unavailable(
+            throw core::exception::Unavailable(
                 "Failed to create Kafka producer: " + error_string);
         }
     }
@@ -120,7 +120,7 @@ namespace core::kafka
 
     void Producer::produce(
         const std::string &topic,
-        const types::Bytes &payload,
+        const core::types::Bytes &payload,
         const std::optional<core::dt::TimePoint> &timepoint,
         const std::optional<std::string_view> &key,
         const HeaderMap &headers,
@@ -144,11 +144,11 @@ namespace core::kafka
             topic,                                              // topic_name
             RdKafka::Topic::PARTITION_UA,                       // partition
             RdKafka::Producer::RK_MSG_COPY,                     // msgflags
-            const_cast<types::Byte *>(payload.data()),          // payload
+            const_cast<core::types::Byte *>(payload.data()),          // payload
             payload.size(),                                     // len
             key_ ? const_cast<char *>(key_->data()) : nullptr,  // key
             key_ ? key_->size() : 0,                            // key_len
-            dt::to_milliseconds(tp_),                           // timestamp
+            core::dt::to_milliseconds(tp_),                           // timestamp
             headers_,                                           // headers
             this->dr_capture_.add_callback_data(cb_data));      // msg_opaque
 
@@ -172,7 +172,7 @@ namespace core::kafka
     {
         if (this->handle())
         {
-            this->handle()->flush(dt::to_milliseconds(this->shutdown_timeout_));
+            this->handle()->flush(core::dt::to_milliseconds(this->shutdown_timeout_));
         }
     }
-}  // namespace core::kafka
+}  // namespace cc::kafka

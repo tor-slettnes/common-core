@@ -18,7 +18,7 @@
 #include <functional>
 #include <iostream>
 
-namespace core::logging
+namespace cc::core::logging
 {
     //--------------------------------------------------------------------------
     /// @class StreamSink
@@ -82,4 +82,4 @@ namespace core::logging
             return std::make_shared<StreamSink>(sink_id, std::cerr);
         },
         DefaultOption::IF_INTERACTIVE);
-}  // namespace core::logging
+}  // namespace cc::core::logging

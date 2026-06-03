@@ -18,7 +18,7 @@
 #include <fstream>
 #include <mutex>
 
-namespace core::logging
+namespace cc::core::logging
 {
     //--------------------------------------------------------------------------
     // JsonFileSink
@@ -55,4 +55,4 @@ namespace core::logging
             return JsonFileSink::create_shared(sink_id);
         });
 
-}  // namespace core::logging
+}  // namespace cc::core::logging

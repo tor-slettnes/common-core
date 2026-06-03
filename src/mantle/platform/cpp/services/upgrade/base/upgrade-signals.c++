@@ -7,7 +7,7 @@
 
 #include "upgrade-signals.h++"
 
-namespace upgrade
+namespace cc::platform::upgrade
 {
     core::signal::DataSignal<ScanProgress::ptr>
         signal_scan_progress("signal_scan_progress", true);
@@ -21,4 +21,4 @@ namespace upgrade
     core::signal::DataSignal<UpgradeProgress::ptr>
         signal_upgrade_progress("upgrade_progress", true);
 
-}  // namespace upgrade
+}  // namespace cc::platform::upgrade

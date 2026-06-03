@@ -89,6 +89,6 @@ namespace google::protobuf
     std::ostream &operator<<(std::ostream &stream,
                              const RepeatedPtrField<T> &ptr_field)
     {
-        return core::stream::write_sequence(stream, ptr_field);
+        return cc::core::stream::write_sequence(stream, ptr_field);
     }
 }  // namespace google::protobuf

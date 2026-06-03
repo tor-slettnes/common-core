@@ -14,7 +14,7 @@
 #include "protobuf-message.h++"
 #include "logging/logging.h++"
 
-namespace vfs::grpc
+namespace cc::platform::vfs::grpc
 {
     RequestHandler::RequestHandler()
         : provider(vfs::vfs.get_shared())
@@ -359,7 +359,7 @@ namespace vfs::grpc
     ::grpc::Status RequestHandler::GetAttributes(
         ::grpc::ServerContext *cxt,
         const vfs::protobuf::Path *request,
-        ::cc::protobuf::variant::KeyValueMap *response)
+        cc::protobuf::variant::KeyValueMap *response)
     {
         try
         {
@@ -411,7 +411,7 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::Watch(
         ::grpc::ServerContext *context,
-        const ::cc::protobuf::signal::Filter *filter,
+        const cc::protobuf::signal::Filter *filter,
         ::grpc::ServerWriter<vfs::protobuf::Signal> *writer)
     {
         return this->stream_signals<vfs::protobuf::Signal, SignalQueue>(
@@ -420,4 +420,4 @@ namespace vfs::grpc
             writer);
     }
 
-}  // namespace vfs::grpc
+}  // namespace cc::platform::vfs::grpc

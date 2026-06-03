@@ -11,7 +11,7 @@
 #include "logging/sinks/factory.h++"
 #include "settings/settings.h++"
 
-namespace core::argparse
+namespace cc::core::argparse
 {
     // Use `shared` scope for logging within this namespace
     use_shared_scope();
@@ -102,4 +102,4 @@ namespace core::argparse
     using RegisterLoggerFunction = std::function<void(Parser *)>;
     extern std::unordered_map<LongOpt, RegisterLoggerFunction> add_logger_methods;
 
-}  // namespace core::argparse
+}  // namespace cc::core::argparse

@@ -11,7 +11,7 @@
 #include "platform/symbols.h++"
 #include "status/exceptions.h++"
 
-namespace demo
+namespace cc::demo
 {
     constexpr const char *SIGNAL_HANDLE = "demo-notify";
     constexpr const char *TIMER_TASK_HANDLE = "demo-timer";
@@ -60,4 +60,4 @@ namespace demo
         log_notice("Stopping periodic time updates");
         core::scheduler.remove(TIMER_TASK_HANDLE);
     }
-}  // namespace demo
+}  // namespace cc::demo

@@ -9,7 +9,7 @@
 #include "package-index.h++"
 #include "types/create-shared.h++"
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     class URLPackageIndex : public PackageIndex
     {
@@ -25,4 +25,4 @@ namespace upgrade::native
     private:
         URL url;
     };
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

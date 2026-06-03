@@ -18,7 +18,7 @@
 #include <vector>
 #include <deque>
 
-namespace core::types
+namespace cc::core::types
 {
     /// Classes implemented here.
     class Boolean;
@@ -112,4 +112,4 @@ namespace core::types
     extern std::string typetree(const KeyValueMapPtr &kvmap);
     extern std::string typetree(const TaggedValueListPtr &tvlist);
 
-}  // namespace core::types
+}  // namespace cc::core::types

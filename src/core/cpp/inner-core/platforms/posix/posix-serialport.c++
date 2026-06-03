@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-namespace core::platform
+namespace cc::core::platform
 {
     PosixSerialPort::PosixSerialPort(
         const std::string &device,
@@ -211,4 +211,4 @@ namespace core::platform
         return std::make_shared<PosixSerialPort>(device, speed);
     }
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

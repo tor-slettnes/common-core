@@ -15,16 +15,16 @@
 #include "grpc-clientwrapper.h++"
 #include "types/create-shared.h++"
 
-namespace pubsub::grpc
+namespace cc::platform::pubsub::grpc
 {
     class Client
         : public pubsub::Publisher,
           public pubsub::Subscriber,
-          public core::grpc::ClientWrapper<cc::platform::pubsub::grpc::Relay>,
+          public cc::grpc::ClientWrapper<cc::platform::pubsub::grpc::Relay>,
           public core::types::enable_create_shared<Client>
     {
         using This = Client;
-        using ClientBase = core::grpc::ClientWrapper<cc::platform::pubsub::grpc::Relay>;
+        using ClientBase = cc::grpc::ClientWrapper<cc::platform::pubsub::grpc::Relay>;
         using ClientWriter = ::grpc::ClientWriter<cc::platform::pubsub::protobuf::Publication>;
 
     protected:
@@ -59,6 +59,6 @@ namespace pubsub::grpc
         std::unique_ptr<ClientWriter> writer_;
         std::unique_ptr<::grpc::ClientContext> writer_context_;
         std::unique_ptr<::google::protobuf::Empty> writer_response_;
-        core::grpc::Status writer_status_;
+        cc::grpc::Status writer_status_;
     };
-}  // namespace pubsub::grpc
+}  // namespace cc::platform::pubsub::grpc

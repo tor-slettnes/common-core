@@ -8,7 +8,7 @@
 #include "dbus-proxywrapper-properties.h++"
 #include "glib-errors.h++"
 
-namespace core::dbus
+namespace cc::dbus
 {
     constexpr auto properties_interface = "org.freedesktop.DBus.Properties";
 
@@ -50,8 +50,8 @@ namespace core::dbus
         }
         catch (...)
         {
-            core::glib::log_exception(std::current_exception());
+            cc::glib::log_exception(std::current_exception());
         }
     }
 
-}  // namespace core::dbus
+}  // namespace cc::dbus

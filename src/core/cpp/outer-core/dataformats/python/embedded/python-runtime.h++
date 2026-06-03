@@ -11,7 +11,7 @@
 #include "types/filesystem.h++"
 #include "types/value.h++"
 
-namespace core::python
+namespace cc::python
 {
     /// @brief Abstract provider for process invocation
     class Runtime
@@ -36,10 +36,11 @@ namespace core::python
         ///    Named arguments
         /// @return
         ///    Returned value from the called method, decoded as a variant Value
-        types::Value call(const std::optional<std::string> &module_name,
-                          const std::string &method_name,
-                          const types::ValueList &args = {},
-                          const types::KeyValueMap &kwargs = {});
+        core::types::Value call(
+            const std::optional<std::string> &module_name,
+            const std::string &method_name,
+            const core::types::ValueList &args = {},
+            const core::types::KeyValueMap &kwargs = {});
 
         /// @brief
         ///    Call an imported Python method with encoded Python inputs and return value
@@ -53,10 +54,11 @@ namespace core::python
         ///    A map of managed objects as keyword (named) input arguments
         /// @return
         ///    Returned value from the called method
-        ContainerObject call(const std::optional<std::string> &module_name,
-                             const std::string &method_name,
-                             const SimpleObject::Vector &args,
-                             const SimpleObject::Map &kwargs = {});
+        ContainerObject call(
+            const std::optional<std::string> &module_name,
+            const std::string &method_name,
+            const SimpleObject::Vector &args,
+            const SimpleObject::Map &kwargs = {});
 
         /// @brief
         ///    Call an imported Python method with encoded Python inputs and return value
@@ -70,10 +72,11 @@ namespace core::python
         ///    A managed object containing a dictionary with keyword (named) input arguments
         /// @return
         ///    Return value from the called method as a Python object
-        ContainerObject call(const std::optional<std::string> &module_name,
-                             const std::string &method_name,
-                             const SimpleObject &args_tuple,
-                             const SimpleObject &kwargs_dict);
+        ContainerObject call(
+            const std::optional<std::string> &module_name,
+            const std::string &method_name,
+            const SimpleObject &args_tuple,
+            const SimpleObject &kwargs_dict);
 
     private:
         ContainerObject &get_container(
@@ -87,4 +90,4 @@ namespace core::python
     };
 
     extern std::unique_ptr<Runtime> runtime;
-}  // namespace core::python
+}  // namespace cc::python

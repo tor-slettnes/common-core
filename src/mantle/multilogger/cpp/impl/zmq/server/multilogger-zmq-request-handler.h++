@@ -14,13 +14,13 @@
 
 #include <memory>
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
-    class RequestHandler : public core::zmq::ProtoBufRequestHandler,
+    class RequestHandler : public cc::zmq::ProtoBufRequestHandler,
                            public core::types::enable_create_shared<RequestHandler>
     {
         using This = RequestHandler;
-        using Super = core::zmq::ProtoBufRequestHandler;
+        using Super = cc::zmq::ProtoBufRequestHandler;
 
     protected:
         RequestHandler(const std::shared_ptr<API> &api,
@@ -64,4 +64,4 @@ namespace multilogger::zmq
         std::shared_ptr<API> provider;
     };
 
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

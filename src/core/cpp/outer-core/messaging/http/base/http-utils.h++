@@ -10,12 +10,12 @@
 #include <string>
 #include <unordered_map>
 
-namespace core::http
+namespace cc::http
 {
     using URL = std::string;
     using ResponseCode = long;
     using Header = std::unordered_multimap<std::string, std::string>;
-    using Query = types::TaggedValueList;
+    using Query = core::types::TaggedValueList;
 
     bool decompose_header(const std::string &text, Header *header);
     bool successful_response(ResponseCode code);
@@ -45,4 +45,4 @@ namespace core::http
     std::string join_urls(const std::string &base, const std::string &rel);
     std::string url_encode(const std::string &decoded);
     std::string url_decode(const std::string &encoded);
-}  // namespace core::http
+}  // namespace cc::http

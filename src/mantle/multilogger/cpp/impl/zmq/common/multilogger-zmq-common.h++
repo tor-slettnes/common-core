@@ -7,7 +7,7 @@
 
 #pragma once
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     constexpr auto SUBMIT_CHANNEL = "Multilogger Submitter";
     constexpr auto MONITOR_CHANNEL = "Multilogger Monitor";
@@ -26,4 +26,4 @@ namespace multilogger::zmq
     constexpr auto METHOD_LIST_MESSAGE_FIELDS = "list_message_fields";
     constexpr auto METHOD_LIST_ERROR_FIELDS = "list_error_fields";
 
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

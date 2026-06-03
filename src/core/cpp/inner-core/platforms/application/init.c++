@@ -14,7 +14,7 @@
 #include <csignal>
 #include <cstdlib>
 
-namespace core::application
+namespace cc::core::application
 {
     void emit_shutdown_signal()
     {
@@ -69,4 +69,4 @@ namespace core::application
         logging::dispatcher.deinitialize();
         core::platform::unregister_providers();
     }
-}  // namespace core::application
+}  // namespace cc::core::application

@@ -11,7 +11,7 @@
 
 #include <cstring>
 
-namespace core::zmq
+namespace cc::zmq
 {
     Subscriber::Subscriber(const std::string &address,
                            const std::string &channel_name,
@@ -205,4 +205,4 @@ namespace core::zmq
         }
     }
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

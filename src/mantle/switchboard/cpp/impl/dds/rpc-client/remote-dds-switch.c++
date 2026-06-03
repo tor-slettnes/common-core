@@ -13,7 +13,7 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     std::shared_ptr<Client> RemoteSwitch::client() const
     {
@@ -161,4 +161,4 @@ namespace switchboard::dds
         req.clear_existing(clear_existing);
         return this->client()->set_attributes(req);
     }
-}  // namespace switchboard::dds
+}  // namespace cc::platform::switchboard::dds

@@ -9,9 +9,9 @@
 #include "protobuf-multilogger-types.h++"
 #include "protobuf-inline.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
-    ClientReader::ClientReader(const std::weak_ptr<core::zmq::Subscriber> &subscriber)
+    ClientReader::ClientReader(const std::weak_ptr<cc::zmq::Subscriber> &subscriber)
         : HandlerBase({}, subscriber),
           QueueBase()
     {
@@ -27,4 +27,4 @@ namespace multilogger::zmq
     {
         this->put(cc::protobuf::decode_loggable(msg));
     }
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

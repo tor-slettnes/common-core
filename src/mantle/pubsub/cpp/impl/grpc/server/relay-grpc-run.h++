@@ -9,9 +9,9 @@
 #include <memory>
 #include <string>
 
-namespace pubsub::grpc
+namespace cc::platform::pubsub::grpc
 {
     void run_grpc_service(
         const std::string &listen_address = {});
 
-}  // namespace pubsub::grpc
+}  // namespace cc::platform::pubsub::grpc

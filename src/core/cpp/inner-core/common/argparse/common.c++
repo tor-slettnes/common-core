@@ -16,7 +16,7 @@
 
 #include <functional>
 
-namespace core::argparse
+namespace cc::core::argparse
 {
     //--------------------------------------------------------------------------
     // Constants
@@ -283,4 +283,4 @@ namespace core::argparse
         return {};
     }
 
-}  // namespace core::argparse
+}  // namespace cc::core::argparse

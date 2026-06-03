@@ -9,16 +9,16 @@
 #include "zmq-subscriber.h++"
 #include "types/create-shared.h++"
 
-namespace pubsub::zmq
+namespace cc::platform::pubsub::zmq
 {
-    class Handler : public core::zmq::MessageHandler,
+    class Handler : public cc::zmq::MessageHandler,
                     public core::types::enable_create_shared<Handler>
     {
         using This = Handler;
-        using Super = core::zmq::MessageHandler;
+        using Super = cc::zmq::MessageHandler;
 
     protected:
         Handler();
-        void handle(const core::zmq::MessageParts &parts) override;
+        void handle(const cc::zmq::MessageParts &parts) override;
     };
-}  // namespace pubsub::zmq
+}  // namespace cc::platform::pubsub::zmq

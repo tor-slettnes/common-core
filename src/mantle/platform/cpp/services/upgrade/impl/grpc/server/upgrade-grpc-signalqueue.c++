@@ -10,40 +10,40 @@
 #include "protobuf-upgrade-types.h++"
 #include "protobuf-inline.h++"
 
-namespace upgrade::grpc
+namespace cc::platform::upgrade::grpc
 {
     void SignalQueue::initialize()
     {
-        using ::cc::platform::upgrade::protobuf::Signal;
+        using protobuf::Signal;
 
         this->connect<ScanProgress::ptr>(
-            Signal::kScanProgress,
-            upgrade::signal_scan_progress,
-            [=](ScanProgress::ptr ref, Signal *msg) {
+            protobuf::Signal::kScanProgress,
+            signal_scan_progress,
+            [=](ScanProgress::ptr ref, protobuf::Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 cc::protobuf::encode_shared(ref, msg->mutable_scan_progress());
             });
 
         this->connect<PackageInfo::ptr>(
-            Signal::kUpgradeAvailable,
-            upgrade::signal_upgrade_available,
-            [=](PackageInfo::ptr ref, Signal *msg) {
+            protobuf::Signal::kUpgradeAvailable,
+            signal_upgrade_available,
+            [=](PackageInfo::ptr ref, protobuf::Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 cc::protobuf::encode_shared(ref, msg->mutable_upgrade_available());
             });
 
         this->connect<PackageInfo::ptr>(
-            Signal::kUpgradePending,
-            upgrade::signal_upgrade_pending,
-            [=](PackageInfo::ptr ref, Signal *msg) {
+            protobuf::Signal::kUpgradePending,
+            signal_upgrade_pending,
+            [=](PackageInfo::ptr ref, protobuf::Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 cc::protobuf::encode_shared(ref, msg->mutable_upgrade_pending());
             });
 
         this->connect<UpgradeProgress::ptr>(
-            Signal::kUpgradeProgress,
-            upgrade::signal_upgrade_progress,
-            [=](UpgradeProgress::ptr ref, Signal *msg) {
+            protobuf::Signal::kUpgradeProgress,
+            signal_upgrade_progress,
+            [=](UpgradeProgress::ptr ref, protobuf::Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 cc::protobuf::encode_shared(ref, msg->mutable_upgrade_progress());
             });
@@ -53,10 +53,10 @@ namespace upgrade::grpc
 
     void SignalQueue::deinitialize()
     {
-        this->disconnect(upgrade::signal_upgrade_progress);
-        this->disconnect(upgrade::signal_upgrade_pending);
-        this->disconnect(upgrade::signal_upgrade_available);
-        this->disconnect(upgrade::signal_scan_progress);
+        this->disconnect(signal_upgrade_progress);
+        this->disconnect(signal_upgrade_pending);
+        this->disconnect(signal_upgrade_available);
+        this->disconnect(signal_scan_progress);
         Super::deinitialize();
     }
-}  // namespace upgrade::grpc
+}  // namespace cc::platform::upgrade::grpc

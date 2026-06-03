@@ -14,7 +14,7 @@
 #include <optional>
 #include <thread>
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
     define_log_scope("multilogger");
 
@@ -72,4 +72,4 @@ namespace multilogger
 
     extern core::signal::DataSignal<core::types::Loggable::ptr> signal_log_item;
 
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger

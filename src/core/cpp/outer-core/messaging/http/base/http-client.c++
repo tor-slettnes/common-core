@@ -16,7 +16,7 @@
 
 #include <regex>
 
-namespace core::http
+namespace cc::http
 {
     HTTPClient::HTTPClient(const std::string &base_url,
                            bool verify_cert)
@@ -450,7 +450,7 @@ namespace core::http
 
         if (code != CURLE_OK)
         {
-            throw exception::FailedPrecondition(
+            throw core::exception::FailedPrecondition(
                 curl_easy_strerror(code),
                 {{"url", url},
                  {"curl_code", code}});
@@ -473,7 +473,7 @@ namespace core::http
         if (fail_on_error && !successful_response(response))
         {
             throwf_args(
-                exception::FailedPostcondition,
+                core::exception::FailedPostcondition,
                 ("Server returned response code %s", response),
                 {
                     {"url", url},
@@ -494,11 +494,11 @@ namespace core::http
                                         const std::string &received_content_type,
                                         const std::string &expected_content_type) const
     {
-        std::string content_type = str::tolower(received_content_type);
-        if (!str::startswith(content_type + ";",
-                             str::tolower(expected_content_type) + ";"))
+        std::string content_type = core::str::tolower(received_content_type);
+        if (!core::str::startswith(content_type + ";",
+                             core::str::tolower(expected_content_type) + ";"))
         {
-            throw exception::FailedPostcondition(
+            throw core::exception::FailedPostcondition(
                 "Content type mismatch",
                 {
                     {"url", this->url(location)},
@@ -594,4 +594,4 @@ namespace core::http
         }
     }
 
-}  // namespace core::http
+}  // namespace cc::http

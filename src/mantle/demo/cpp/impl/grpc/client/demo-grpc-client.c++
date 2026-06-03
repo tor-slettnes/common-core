@@ -12,7 +12,7 @@
 #include "protobuf-message.h++"
 #include "protobuf-inline.h++"
 
-namespace demo::grpc
+namespace cc::demo::grpc
 {
     void ClientImpl::initialize()
     {
@@ -77,4 +77,4 @@ namespace demo::grpc
         ClientImplBase::stop_watching();
     }
 
-}  // namespace demo::grpc
+}  // namespace cc::demo::grpc

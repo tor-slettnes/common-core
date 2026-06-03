@@ -13,17 +13,17 @@
 #include "logging/sinks/messagesink.h++"
 #include "types/create-shared.h++"
 
-namespace core::dds
+namespace cc::dds
 {
     //--------------------------------------------------------------------------
     // DDSLogger
 
-    class DDSLogger : public logging::MessageSink,
+    class DDSLogger : public core::logging::MessageSink,
                       public Publisher,
                       public core::types::enable_create_shared<DDSLogger>
     {
         using This = DDSLogger;
-        using Super = logging::MessageSink;
+        using Super = core::logging::MessageSink;
 
     protected:
         DDSLogger(const std::string &sink_id,
@@ -33,7 +33,7 @@ namespace core::dds
     protected:
         void open() override;
         void close() override;
-        bool handle_message(const logging::Message::ptr &message) override;
+        bool handle_message(const core::logging::Message::ptr &message) override;
 
     private:
         DataWriterPtr<CC::Status::LogMessage> log_writer;
@@ -42,10 +42,10 @@ namespace core::dds
     //--------------------------------------------------------------------------
     // Add factory option to enable sink
 
-    inline static logging::SinkFactory dds_factory(
+    inline static core::logging::SinkFactory dds_factory(
         "dds",
         "Enable logging over DDS [Default: %default]",
-        [](const logging::SinkID &sink_id) -> logging::Sink::ptr {
+        [](const core::logging::SinkID &sink_id) -> core::logging::Sink::ptr {
             return DDSLogger::create_shared(sink_id);
         });
-}  // namespace core::dds
+}  // namespace cc::dds

@@ -8,7 +8,7 @@
 #include "options.h++"
 #include "platform/path.h++"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     Options::Options(const std::string &implementation)
         : core::argparse::CommandOptions(),
@@ -30,7 +30,6 @@ namespace switchboard
             &this->verbose,
             false);
 
-
         this->add_commands();
     }
 
@@ -45,5 +44,6 @@ namespace switchboard
         this->report_status_and_exit(this->provider->available());
     }
 
-    std::unique_ptr<Options> options;
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard
+
+std::unique_ptr<cc::platform::switchboard::Options> options;

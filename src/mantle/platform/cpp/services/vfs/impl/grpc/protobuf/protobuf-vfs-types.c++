@@ -19,8 +19,8 @@ namespace cc::protobuf
     //==========================================================================
     // Operation Flags
 
-    void encode(const ::vfs::OperationFlags &flags,
-                ::cc::platform::vfs::protobuf::PathRequest *msg)
+    void encode(const platform::vfs::OperationFlags &flags,
+                platform::vfs::protobuf::PathRequest *msg)
     {
         msg->set_force(flags.force);
         msg->set_dereference(flags.dereference);
@@ -31,8 +31,8 @@ namespace cc::protobuf
         msg->set_inside_target(flags.inside_target);
     }
 
-    void decode(const ::cc::platform::vfs::protobuf::PathRequest &msg,
-                ::vfs::OperationFlags *flags)
+    void decode(const platform::vfs::protobuf::PathRequest &msg,
+                platform::vfs::OperationFlags *flags)
     {
         flags->force = msg.force();
         flags->dereference = msg.dereference();
@@ -47,20 +47,20 @@ namespace cc::protobuf
     // PathType
 
     static std::unordered_map<fs::file_type,
-                              ::cc::platform::vfs::protobuf::PathType>
+                              platform::vfs::protobuf::PathType>
         type_map = {
-            {fs::file_type::none, ::cc::platform::vfs::protobuf::TYPE_NONE},
-            {fs::file_type::not_found, ::cc::platform::vfs::protobuf::TYPE_NONE},
-            {fs::file_type::regular, ::cc::platform::vfs::protobuf::TYPE_FILE},
-            {fs::file_type::directory, ::cc::platform::vfs::protobuf::TYPE_DIRECTORY},
-            {fs::file_type::symlink, ::cc::platform::vfs::protobuf::TYPE_SYMLINK},
-            {fs::file_type::character, ::cc::platform::vfs::protobuf::TYPE_CHARDEV},
-            {fs::file_type::block, ::cc::platform::vfs::protobuf::TYPE_BLOCKDEV},
-            {fs::file_type::fifo, ::cc::platform::vfs::protobuf::TYPE_PIPE},
-            {fs::file_type::socket, ::cc::platform::vfs::protobuf::TYPE_SOCKET}};
+            {fs::file_type::none, platform::vfs::protobuf::TYPE_NONE},
+            {fs::file_type::not_found, platform::vfs::protobuf::TYPE_NONE},
+            {fs::file_type::regular, platform::vfs::protobuf::TYPE_FILE},
+            {fs::file_type::directory, platform::vfs::protobuf::TYPE_DIRECTORY},
+            {fs::file_type::symlink, platform::vfs::protobuf::TYPE_SYMLINK},
+            {fs::file_type::character, platform::vfs::protobuf::TYPE_CHARDEV},
+            {fs::file_type::block, platform::vfs::protobuf::TYPE_BLOCKDEV},
+            {fs::file_type::fifo, platform::vfs::protobuf::TYPE_PIPE},
+            {fs::file_type::socket, platform::vfs::protobuf::TYPE_SOCKET}};
 
     void encode(fs::file_type type,
-                ::cc::platform::vfs::protobuf::PathType *prototype)
+                platform::vfs::protobuf::PathType *prototype)
     {
         try
         {
@@ -68,11 +68,11 @@ namespace cc::protobuf
         }
         catch (const std::out_of_range &)
         {
-            *prototype = ::cc::platform::vfs::protobuf::TYPE_NONE;
+            *prototype = platform::vfs::protobuf::TYPE_NONE;
         }
     }
 
-    void decode(::cc::platform::vfs::protobuf::PathType prototype,
+    void decode(platform::vfs::protobuf::PathType prototype,
                 fs::file_type *type)
     {
         *type = fs::file_type::none;
@@ -89,8 +89,8 @@ namespace cc::protobuf
     //==========================================================================
     // ContextSpec
 
-    void encode(const ::vfs::Context &spec,
-                ::cc::platform::vfs::protobuf::ContextSpec *msg)
+    void encode(const platform::vfs::Context &spec,
+                platform::vfs::protobuf::ContextSpec *msg)
     {
         msg->set_name(spec.name);
         msg->set_root(spec.root.string());
@@ -99,8 +99,8 @@ namespace cc::protobuf
         msg->set_title(spec.title);
     }
 
-    void decode(const ::cc::platform::vfs::protobuf::ContextSpec &msg,
-                ::vfs::Context *ref)
+    void decode(const platform::vfs::protobuf::ContextSpec &msg,
+                platform::vfs::Context *ref)
     {
         ref->name = msg.name();
         ref->root = msg.root();
@@ -112,8 +112,8 @@ namespace cc::protobuf
     //==========================================================================
     // ContextMap
 
-    void encode(const ::vfs::ContextMap &map,
-                ::cc::platform::vfs::protobuf::ContextMap *msg)
+    void encode(const platform::vfs::ContextMap &map,
+                platform::vfs::protobuf::ContextMap *msg)
     {
         auto *encoded = msg->mutable_map();
         for (const auto &[id, data] : map)
@@ -125,15 +125,15 @@ namespace cc::protobuf
     //==========================================================================
     // Path
 
-    void encode(const ::vfs::Path &vpath,
-                ::cc::platform::vfs::protobuf::Path *msg)
+    void encode(const platform::vfs::Path &vpath,
+                platform::vfs::protobuf::Path *msg)
     {
         msg->set_context(vpath.context);
         msg->set_relpath(vpath.relpath);
     }
 
-    void decode(const ::cc::platform::vfs::protobuf::Path &msg,
-                ::vfs::Path *vpath)
+    void decode(const platform::vfs::protobuf::Path &msg,
+                platform::vfs::Path *vpath)
     {
         vpath->context = msg.context();
         vpath->relpath = msg.relpath();
@@ -142,35 +142,35 @@ namespace cc::protobuf
     //==========================================================================
     // PathRequest
 
-    void encode(const ::vfs::Path &vpath,
-                const ::vfs::OperationFlags &flags,
-                ::cc::platform::vfs::protobuf::PathRequest *msg)
+    void encode(const platform::vfs::Path &vpath,
+                const platform::vfs::OperationFlags &flags,
+                platform::vfs::protobuf::PathRequest *msg)
     {
         encode(vpath, msg->mutable_path());
         encode(flags, msg);
     }
 
-    void encode(const ::vfs::Paths &sources,
-                const ::vfs::Path &target,
-                const ::vfs::OperationFlags &flags,
-                ::cc::platform::vfs::protobuf::PathRequest *msg)
+    void encode(const platform::vfs::Paths &sources,
+                const platform::vfs::Path &target,
+                const platform::vfs::OperationFlags &flags,
+                platform::vfs::protobuf::PathRequest *msg)
     {
         encode_vector(sources, msg->mutable_sources());
         encode(target, flags, msg);
     }
 
-    void decode(const ::cc::platform::vfs::protobuf::PathRequest &msg,
-                ::vfs::Path *vpath,
-                ::vfs::OperationFlags *flags)
+    void decode(const platform::vfs::protobuf::PathRequest &msg,
+                platform::vfs::Path *vpath,
+                platform::vfs::OperationFlags *flags)
     {
         decode(msg.path(), vpath);
         decode(msg, flags);
     }
 
-    void decode(const ::cc::platform::vfs::protobuf::PathRequest &msg,
-                ::vfs::Paths *sources,
-                ::vfs::Path *target,
-                ::vfs::OperationFlags *flags)
+    void decode(const platform::vfs::protobuf::PathRequest &msg,
+                platform::vfs::Paths *sources,
+                platform::vfs::Path *target,
+                platform::vfs::OperationFlags *flags)
     {
         decode_to_vector(msg.sources(), sources);
         decode(msg, target, flags);
@@ -179,17 +179,17 @@ namespace cc::protobuf
     //==========================================================================
     // LocateRequest
 
-    void encode(const ::vfs::Path &root,
+    void encode(const platform::vfs::Path &root,
                 const core::types::PathList &filename_masks,
                 const core::types::TaggedValueList &attribute_filters,
-                const ::vfs::OperationFlags &flags,
-                ::cc::platform::vfs::protobuf::LocateRequest *msg)
+                const platform::vfs::OperationFlags &flags,
+                platform::vfs::protobuf::LocateRequest *msg)
     {
         encode(root, msg->mutable_root());
 
-        auto encoded_masks =  msg->mutable_filename_masks();
+        auto encoded_masks = msg->mutable_filename_masks();
         encoded_masks->Reserve(filename_masks.size());
-        for (const fs::path &mask: filename_masks)
+        for (const fs::path &mask : filename_masks)
         {
             encoded_masks->Add(mask.string());
         }
@@ -200,11 +200,11 @@ namespace cc::protobuf
         msg->set_ignore_case(flags.ignore_case);
     }
 
-    void decode(const ::cc::platform::vfs::protobuf::LocateRequest &msg,
-                ::vfs::Path *root,
+    void decode(const platform::vfs::protobuf::LocateRequest &msg,
+                platform::vfs::Path *root,
                 core::types::PathList *filename_masks,
                 core::types::TaggedValueList *attribute_filters,
-                ::vfs::OperationFlags *flags)
+                platform::vfs::OperationFlags *flags)
     {
         decode(msg.root(), root);
 
@@ -220,16 +220,16 @@ namespace cc::protobuf
     //==========================================================================
     // AttributeRequest
 
-    void encode(const ::vfs::Path &vpath,
+    void encode(const platform::vfs::Path &vpath,
                 const core::types::KeyValueMap &attributes,
-                ::cc::platform::vfs::protobuf::AttributeRequest *msg)
+                platform::vfs::protobuf::AttributeRequest *msg)
     {
         encode(vpath, msg->mutable_path());
         encode(attributes, msg->mutable_attributes());
     }
 
-    void decode(const ::cc::platform::vfs::protobuf::AttributeRequest &msg,
-                ::vfs::Path *vpath,
+    void decode(const platform::vfs::protobuf::AttributeRequest &msg,
+                platform::vfs::Path *vpath,
                 core::types::KeyValueMap *attributes)
     {
         decode(msg.path(), vpath);
@@ -239,16 +239,16 @@ namespace cc::protobuf
     //==========================================================================
     // VolumeInfo
 
-    void encode(const ::vfs::VolumeInfo &stats,
-                ::cc::platform::vfs::protobuf::VolumeInfo *msg)
+    void encode(const platform::vfs::VolumeInfo &stats,
+                platform::vfs::protobuf::VolumeInfo *msg)
     {
         msg->set_capacity(stats.capacity);
         msg->set_free(stats.free);
         msg->set_available(stats.available);
     }
 
-    void decode(const ::cc::platform::vfs::protobuf::VolumeInfo &msg,
-                ::vfs::VolumeInfo *stats)
+    void decode(const platform::vfs::protobuf::VolumeInfo &msg,
+                platform::vfs::VolumeInfo *stats)
     {
         stats->capacity = msg.capacity();
         stats->free = msg.free();
@@ -258,10 +258,10 @@ namespace cc::protobuf
     //==========================================================================
     // FileInfo
 
-    void encode(const ::vfs::FileInfo &stats,
-                ::cc::platform::vfs::protobuf::FileInfo *msg)
+    void encode(const platform::vfs::FileInfo &stats,
+                platform::vfs::protobuf::FileInfo *msg)
     {
-        msg->set_type(encoded<::cc::platform::vfs::protobuf::PathType>(stats.type));
+        msg->set_type(encoded<platform::vfs::protobuf::PathType>(stats.type));
         msg->set_size(stats.size);
         msg->set_mode(stats.mode);
         msg->set_readable(stats.readable);
@@ -278,15 +278,15 @@ namespace cc::protobuf
     }
 
     void encode(const std::string &name,
-                const ::vfs::FileInfo &stats,
-                ::cc::platform::vfs::protobuf::FileInfo *msg)
+                const platform::vfs::FileInfo &stats,
+                platform::vfs::protobuf::FileInfo *msg)
     {
         msg->set_name(name);
         encode(stats, msg);
     }
 
-    void decode(const ::cc::platform::vfs::protobuf::FileInfo &msg,
-                ::vfs::FileInfo *stats)
+    void decode(const platform::vfs::protobuf::FileInfo &msg,
+                platform::vfs::FileInfo *stats)
     {
         stats->type = decoded<fs::file_type>(msg.type());
         stats->size = msg.size();
@@ -307,8 +307,8 @@ namespace cc::protobuf
     //==========================================================================
     // Directory
 
-    void encode(const ::vfs::Directory &dir,
-                ::cc::platform::vfs::protobuf::Directory *msg)
+    void encode(const platform::vfs::Directory &dir,
+                platform::vfs::protobuf::Directory *msg)
     {
         auto *encoded = msg->mutable_map();
         for (const auto &[filename, stats] : dir)
@@ -320,8 +320,8 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const ::cc::platform::vfs::protobuf::Directory &msg,
-                ::vfs::Directory *dir)
+    void decode(const platform::vfs::protobuf::Directory &msg,
+                platform::vfs::Directory *dir)
     {
         for (const auto &[filename, stats] : msg.map())
         {

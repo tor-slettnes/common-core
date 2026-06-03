@@ -8,7 +8,7 @@
 #pragma once
 #include "types/bytevector.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     template <class ProtoT>
     class ProtoBufMessageBase
@@ -35,4 +35,4 @@ namespace core::zmq
         std::string type_name_;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

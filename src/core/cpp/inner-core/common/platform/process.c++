@@ -16,7 +16,7 @@
 #include <future>
 #include <utility>
 
-namespace core::platform
+namespace cc::core::platform
 {
     // std::ostream &operator<<(std::ostream &stream, const Invocation &invocation)
     // {
@@ -366,4 +366,4 @@ namespace core::platform
     /// Global instance, populated with the "best" provider for this system.
     ProviderProxy<ProcessProvider> process("process");
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

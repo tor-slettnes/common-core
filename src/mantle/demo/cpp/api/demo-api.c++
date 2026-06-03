@@ -11,7 +11,7 @@
 // Shared modules
 #include "string/format.h++"
 
-namespace demo
+namespace cc::demo
 {
     //==========================================================================
     /// @class API
@@ -50,4 +50,4 @@ namespace demo
     {
         return this->birth_;
     }
-}  // namespace demo
+}  // namespace cc::demo

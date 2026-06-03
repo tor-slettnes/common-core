@@ -8,7 +8,7 @@
 #pragma once
 #include "platform/user.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     class PosixUserProvider : public UserProvider
     {
@@ -23,4 +23,4 @@ namespace core::platform
         GroupName get_groupname(GID gid) const override;
     };
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

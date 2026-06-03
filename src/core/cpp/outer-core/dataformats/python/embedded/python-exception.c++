@@ -9,19 +9,19 @@
 #include "python-containerobject.h++"
 #include "platform/path.h++"
 
-namespace core::python
+namespace cc::python
 {
     // Exception::Exception(PyObject *exc, bool borrowed)
     //     : ContainerObject(exc, borrowed),
     //       Super(
-    //           status::Error(
+    //           core::status::Error(
     //               ContainerObject::to_string(),  // text
-    //               status::Domain::APPLICATION,   // domain
-    //               platform::path->exec_name(),   // origin
+    //               core::status::Domain::APPLICATION,   // domain
+    //               core::platform::path->exec_name(),   // origin
     //               0,                             // code
     //               this->type_name(),             // symbol
-    //               status::Level::ERROR,         // level
-    //               status::Flow::CANCELLED,       // flow
+    //               core::status::Level::ERROR,         // level
+    //               core::status::Flow::CANCELLED,       // flow
     //               {}                             // timepoint
     //               // ContainerObject(exc, true).attributes_as_kvmap()))
     //               ))
@@ -30,17 +30,17 @@ namespace core::python
 
     Exception::Exception(const std::string &text,
                          const std::string &symbol,
-                         const types::KeyValueMap &attributes)
+                         const core::types::KeyValueMap &attributes)
         : Super(
-              status::Error(
-                  text,                         // text
-                  status::Domain::APPLICATION,  // domain
-                  platform::path->exec_name(),  // origin
-                  0,                            // code
-                  symbol,                       // symbol
-                  status::Level::ERROR,        // level
-                  {},                           // timepoint
-                  attributes))                  // attributes
+              core::status::Error(
+                  text,                               // text
+                  core::status::Domain::APPLICATION,  // domain
+                  core::platform::path->exec_name(),  // origin
+                  0,                                  // code
+                  symbol,                             // symbol
+                  core::status::Level::ERROR,         // level
+                  {},                                 // timepoint
+                  attributes))                        // attributes
     {
     }
 
@@ -54,9 +54,9 @@ namespace core::python
         return text;
     }
 
-    types::ValueList Exception::args() const noexcept
+    core::types::ValueList Exception::args() const noexcept
     {
         return this->attribute("args").as_valuelist();
     }
 
-}  // namespace core::python
+}  // namespace cc::python

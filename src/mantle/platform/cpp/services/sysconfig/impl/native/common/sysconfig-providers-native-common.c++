@@ -11,7 +11,7 @@
 #include "sysconfig-native-product.h++"
 #include "sysconfig-native-process.h++"
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     void register_common_providers()
     {
@@ -28,4 +28,4 @@ namespace sysconfig::native
         host.unregisterProvider<HostConfigProvider>();
         time.unregisterProvider<TimeConfigProvider>();
     }
-}  // namespace sysconfig::native
+}  // namespace cc::platform::sysconfig::native

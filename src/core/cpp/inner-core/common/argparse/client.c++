@@ -7,7 +7,7 @@
 
 #include "client.h++"
 
-namespace core::argparse
+namespace cc::core::argparse
 {
     //==========================================================================
     // ClientOptions methods
@@ -36,4 +36,4 @@ namespace core::argparse
             30);
     }
 
-}  // namespace core::argparse
+}  // namespace cc::core::argparse

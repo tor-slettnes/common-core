@@ -8,7 +8,7 @@
 #include "grpc-clientbase.h++"
 #include "logging/logging.h++"
 
-namespace core::grpc
+namespace cc::grpc
 {
     ClientBase::ClientBase(
         const std::string &full_service_name,
@@ -90,7 +90,7 @@ namespace core::grpc
         this->wait_for_ready = wait_for_ready;
     }
 
-    void ClientBase::set_request_timeout(std::optional<dt::Duration> timeout)
+    void ClientBase::set_request_timeout(std::optional<core::dt::Duration> timeout)
     {
         this->request_timeout = timeout;
     }
@@ -107,12 +107,12 @@ namespace core::grpc
         }
     }
 
-    bool ClientBase::wait_for_connected(const dt::Duration &timeout) const
+    bool ClientBase::wait_for_connected(const core::dt::Duration &timeout) const
     {
-        return this->wait_for_connected(dt::Clock::now() + timeout);
+        return this->wait_for_connected(core::dt::Clock::now() + timeout);
     }
 
-    bool ClientBase::wait_for_connected(const dt::TimePoint &deadline) const
+    bool ClientBase::wait_for_connected(const core::dt::TimePoint &deadline) const
     {
         grpc_connectivity_state state = this->channel->GetState(true);
 
@@ -124,4 +124,4 @@ namespace core::grpc
         return (state == GRPC_CHANNEL_READY);
     }
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

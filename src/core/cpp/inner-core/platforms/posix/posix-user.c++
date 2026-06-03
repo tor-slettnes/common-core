@@ -10,7 +10,7 @@
 #include <pwd.h>
 #include <grp.h>
 
-namespace core::platform
+namespace cc::core::platform
 {
     PosixUserProvider::PosixUserProvider(const std::string &provider_name)
         : Super(provider_name)
@@ -29,4 +29,4 @@ namespace core::platform
         return grp ? grp->gr_name : "";
     }
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

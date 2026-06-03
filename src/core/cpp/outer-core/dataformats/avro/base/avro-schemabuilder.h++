@@ -10,7 +10,7 @@
 
 #include <avro.h>
 
-namespace avro
+namespace cc::avro
 {
     constexpr auto TypeName_String = "string";
     constexpr auto TypeName_Bytes = "bytes";
@@ -236,4 +236,4 @@ namespace avro
         VariantListSchema(const ContextRef &context);
     };
 
-}  // namespace avro
+}  // namespace cc::avro

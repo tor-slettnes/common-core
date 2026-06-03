@@ -8,7 +8,7 @@
 #pragma once
 #include "argparse/server.h++"
 
-namespace demo
+namespace cc::demo
 {
     // @brief Command-line options for demo service
     ///
@@ -32,5 +32,6 @@ namespace demo
         bool enable_zmq;
     };
 
-    extern std::unique_ptr<Options> options;
-}  // namespace demo
+}  // namespace cc::demo
+
+extern std::unique_ptr<cc::demo::Options> options;

@@ -11,7 +11,7 @@
 #include "platform/symbols.h++"
 #include "parsers/json/writer.h++"
 
-namespace pubsub::zmq
+namespace cc::platform::pubsub::zmq
 {
     void SignalWriter::initialize()
     {
@@ -52,4 +52,4 @@ namespace pubsub::zmq
         }
     }
 
-}  // namespace pubsub::zmq
+}  // namespace cc::platform::pubsub::zmq

@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <string>
 
-namespace core::str
+namespace cc::core::str
 {
     void checkstream(const std::istream &is,
                      const std::string_view &s,
@@ -85,4 +85,4 @@ namespace core::str
         return value ? "true" : "false";
     }
 
-}  // namespace core::str
+}  // namespace cc::core::str

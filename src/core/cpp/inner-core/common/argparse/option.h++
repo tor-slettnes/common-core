@@ -15,7 +15,7 @@
 #include <list>
 #include <variant>
 
-namespace core::argparse
+namespace cc::core::argparse
 {
     /// A (min,max) pair indicating number of times the option must/can be repeated.
     /// Zero means no lower/upper limit.
@@ -224,4 +224,4 @@ namespace core::argparse
         // std::function<T(const std::string &s, std::exception_ptr *eptr)> typeconvert;
     };
 
-}  // namespace core::argparse
+}  // namespace cc::core::argparse

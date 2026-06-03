@@ -13,7 +13,7 @@
 #include <string>
 #include <map>
 
-namespace core::types
+namespace cc::core::types
 {
     template <class KeyType,
               class MapType = std::map<KeyType, std::string>>
@@ -208,4 +208,4 @@ namespace core::types
             return prefix + str::join(this->symbols(), separator) + suffix;
         }
     };
-}  // namespace core::types
+}  // namespace cc::core::types

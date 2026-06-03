@@ -10,7 +10,7 @@
 
 #include <system_error>
 
-namespace core::glib
+namespace cc::glib
 {
     //==========================================================================
     // Error_Category
@@ -27,7 +27,7 @@ namespace core::glib
 
     std::string Error_Category::message(int condition) const
     {
-        return str::format("%s::%d", this->classname_, condition);
+        return core::str::format("%s::%d", this->classname_, condition);
     }
 
     const Error_Category glib_error_category("Glib::Error");
@@ -58,7 +58,7 @@ namespace core::glib
                        const std::string &preamble,
                        core::status::Level level,
                        core::logging::Scope::ptr scope,
-                       const dt::TimePoint &tp,
+                       const core::dt::TimePoint &tp,
                        const std::filesystem::path &path,
                        const int &lineno,
                        const std::string &function)
@@ -97,7 +97,7 @@ namespace core::glib
             msg->dispatch();
         }
     }
-}  // namespace core::glib
+}  // namespace cc::glib
 
 namespace Glib
 {

@@ -8,7 +8,7 @@
 #include "test-demo-fixture.h++"
 #include "demo-native.h++"
 
-namespace demo
+namespace cc::demo
 {
     class DemoNativeTest : public DemoTest
     {
@@ -44,4 +44,4 @@ namespace demo
         this->test_encode_decode_timedata();
     }
 
-}  // namespace demo
+}  // namespace cc::demo

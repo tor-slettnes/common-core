@@ -11,7 +11,7 @@
 #include "settings/settingsstore.h++"
 #include "types/filesystem.h++"
 
-namespace vfs::local
+namespace cc::platform::vfs::local
 {
 
     //==========================================================================
@@ -54,4 +54,4 @@ namespace vfs::local
         fs::file_type filetype;
         fs::path filepath;
     };
-}  // namespace vfs::local
+}  // namespace cc::platform::vfs::local

@@ -12,7 +12,7 @@
 #include "string/misc.h++"
 //#include "errnos.h"
 
-namespace core::grpc
+namespace cc::grpc
 {
     RequestHandlerBase::RequestHandlerBase(const std::string &full_service_name)
         : Base("service", full_service_name)
@@ -58,7 +58,7 @@ namespace core::grpc
         {
             Status status(::grpc::StatusCode::UNKNOWN,
                           "Unknown exception",
-                          status::Domain::APPLICATION,
+                          core::status::Domain::APPLICATION,
                           this->servicename());
 
             this->log_status(status, operation, path, lineno, function);
@@ -101,9 +101,9 @@ namespace core::grpc
                                         const std::string &function)
     {
         auto msg = custom_log_message(
-            status::Level::NOTICE,
+            core::status::Level::NOTICE,
             log_scope,
-            dt::Clock::now(),
+            core::dt::Clock::now(),
             path,
             lineno,
             function);
@@ -133,4 +133,4 @@ namespace core::grpc
         return ss.str();
     }
 
-} // namespace core::grpc
+} // namespace cc::grpc

@@ -7,7 +7,7 @@
 
 #include "relay-subscriber.h++"
 
-namespace pubsub
+namespace cc::platform::pubsub
 {
     //--------------------------------------------------------------------------
     // Abstract Base
@@ -45,4 +45,4 @@ namespace pubsub
         }
     }
 
-}  // namespace pubsub
+}  // namespace cc::platform::pubsub

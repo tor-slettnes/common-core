@@ -18,7 +18,7 @@
 #include <gtest/gtest.h>
 #include <fstream>
 
-namespace avro
+namespace cc::avro
 {
     TEST(AvroTest, SimpleStringValue)
     {
@@ -245,4 +245,4 @@ namespace avro
     }
 
 
-}  // namespace avro
+}  // namespace cc::avro

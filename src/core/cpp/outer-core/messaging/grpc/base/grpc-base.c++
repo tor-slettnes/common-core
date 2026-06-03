@@ -16,14 +16,14 @@
 
 #include <memory>
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     // Base
 
     Base::Base(const std::string &endpoint_type,
                const std::string &full_service_name)
-        : Super("gRPC", endpoint_type, str::stem(full_service_name, ".")),
+        : Super("gRPC", endpoint_type, core::str::stem(full_service_name, ".")),
           full_service_name_(full_service_name)
     {
     }
@@ -31,7 +31,7 @@ namespace core::grpc
     std::string Base::servicename(bool full) const
     {
         return full ? this->full_service_name_
-                    : str::stem(this->full_service_name_, ".");
+                    : core::str::stem(this->full_service_name_, ".");
     }
 
     std::string Base::dnssd_type() const
@@ -107,4 +107,4 @@ namespace core::grpc
         }
     }
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

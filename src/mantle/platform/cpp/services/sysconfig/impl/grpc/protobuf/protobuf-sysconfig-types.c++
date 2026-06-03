@@ -16,8 +16,8 @@ namespace cc::protobuf
     //==========================================================================
     // HostInfo
 
-    void encode(const sysconfig::HostInfo &native,
-                ::cc::platform::sysconfig::protobuf::HostInfo *proto) noexcept
+    void encode(const platform::sysconfig::HostInfo &native,
+                platform::sysconfig::protobuf::HostInfo *proto) noexcept
     {
         proto->set_hostname(native.hostname);
         proto->set_os_name(native.os_name);
@@ -33,8 +33,8 @@ namespace cc::protobuf
         proto->set_machine_uid(native.machine_uid);
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::HostInfo &proto,
-                sysconfig::HostInfo *native) noexcept
+    void decode(const platform::sysconfig::protobuf::HostInfo &proto,
+                platform::sysconfig::HostInfo *native) noexcept
     {
         native->hostname = proto.hostname();
         native->os_name = proto.os_name();
@@ -54,8 +54,8 @@ namespace cc::protobuf
     //==========================================================================
     // ProductInfo
 
-    void encode(const sysconfig::ProductInfo &native,
-                ::cc::platform::sysconfig::protobuf::ProductInfo *proto) noexcept
+    void encode(const platform::sysconfig::ProductInfo &native,
+                platform::sysconfig::protobuf::ProductInfo *proto) noexcept
     {
         proto->set_product_name(native.product_name);
         proto->set_product_description(native.product_description);
@@ -66,8 +66,8 @@ namespace cc::protobuf
         encode(native.subsystem_info, proto->mutable_subsystem_info());
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::ProductInfo &proto,
-                sysconfig::ProductInfo *native) noexcept
+    void decode(const platform::sysconfig::protobuf::ProductInfo &proto,
+                platform::sysconfig::ProductInfo *native) noexcept
     {
         native->product_name = proto.product_name();
         native->product_description = proto.product_description();
@@ -81,14 +81,14 @@ namespace cc::protobuf
     //==========================================================================
     // SubsystemInfo
 
-    void encode(const std::vector<sysconfig::ProductInfo> &native,
-                ::cc::platform::sysconfig::protobuf::SubsystemInfo *proto) noexcept
+    void encode(const std::vector<platform::sysconfig::ProductInfo> &native,
+                platform::sysconfig::protobuf::SubsystemInfo *proto) noexcept
     {
         encode_vector(native, proto->mutable_subsystems());
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::SubsystemInfo &proto,
-                std::vector<sysconfig::ProductInfo> *native) noexcept
+    void decode(const platform::sysconfig::protobuf::SubsystemInfo &proto,
+                std::vector<platform::sysconfig::ProductInfo> *native) noexcept
     {
         decode_to_vector(proto.subsystems(), native);
     }
@@ -96,7 +96,7 @@ namespace cc::protobuf
     //==========================================================================
     // Version
 
-    void encode(const sysconfig::Version &native,
+    void encode(const platform::sysconfig::Version &native,
                 cc::protobuf::version::Version *proto) noexcept
     {
         proto->set_major(native.major);
@@ -107,7 +107,7 @@ namespace cc::protobuf
     }
 
     void decode(const cc::protobuf::version::Version &proto,
-                sysconfig::Version *native) noexcept
+                platform::sysconfig::Version *native) noexcept
     {
         native->major = proto.major();
         native->minor = proto.minor();
@@ -119,7 +119,7 @@ namespace cc::protobuf
     //==========================================================================
     // ComponentVersions
 
-    void encode(const sysconfig::ComponentVersions &native,
+    void encode(const platform::sysconfig::ComponentVersions &native,
                 cc::protobuf::version::ComponentVersions *proto) noexcept
     {
         google::protobuf::Map<std::string, cc::protobuf::version::Version> *cv = proto->mutable_components();
@@ -131,7 +131,7 @@ namespace cc::protobuf
     }
 
     void decode(const cc::protobuf::version::ComponentVersions &proto,
-                sysconfig::ComponentVersions *native) noexcept
+                platform::sysconfig::ComponentVersions *native) noexcept
     {
         for (const auto &[component, version] : proto.components())
         {
@@ -142,14 +142,14 @@ namespace cc::protobuf
     //==========================================================================
     // TimeZoneCanonicalName
 
-    void encode(const sysconfig::TimeZoneCanonicalName &native,
-                ::cc::platform::sysconfig::protobuf::TimeZoneCanonicalName *proto) noexcept
+    void encode(const platform::sysconfig::TimeZoneCanonicalName &native,
+                platform::sysconfig::protobuf::TimeZoneCanonicalName *proto) noexcept
     {
         proto->set_name(native);
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::TimeZoneCanonicalName &proto,
-                sysconfig::TimeZoneCanonicalName *native) noexcept
+    void decode(const platform::sysconfig::protobuf::TimeZoneCanonicalName &proto,
+                platform::sysconfig::TimeZoneCanonicalName *native) noexcept
     {
         *native = proto.name();
     }
@@ -157,13 +157,13 @@ namespace cc::protobuf
     //==========================================================================
     // TimeZoneCanonicalSpec
 
-    void encode(const sysconfig::TimeZoneCanonicalSpec &native,
-                ::cc::platform::sysconfig::protobuf::TimeZoneCanonicalSpec *proto) noexcept
+    void encode(const platform::sysconfig::TimeZoneCanonicalSpec &native,
+                platform::sysconfig::protobuf::TimeZoneCanonicalSpec *proto) noexcept
     {
         proto->set_name(native.name);
         proto->set_area(native.area);
 
-        encode_vector<::cc::platform::sysconfig::protobuf::TimeZoneLocation>(
+        encode_vector<platform::sysconfig::protobuf::TimeZoneLocation>(
             native.locations,
             proto->mutable_locations());
 
@@ -171,12 +171,12 @@ namespace cc::protobuf
         proto->set_longitude(native.longitude);
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::TimeZoneCanonicalSpec &proto,
-                sysconfig::TimeZoneCanonicalSpec *native) noexcept
+    void decode(const platform::sysconfig::protobuf::TimeZoneCanonicalSpec &proto,
+                platform::sysconfig::TimeZoneCanonicalSpec *native) noexcept
     {
         native->name = proto.name();
         native->area = proto.area();
-        decode_to_vector<sysconfig::TimeZoneLocation>(
+        decode_to_vector<platform::sysconfig::TimeZoneLocation>(
             proto.locations(),
             &native->locations);
         native->latitude = proto.latitude();
@@ -186,15 +186,15 @@ namespace cc::protobuf
     //==========================================================================
     // TimeLocationFilter
 
-    void encode(const sysconfig::TimeZoneLocationFilter &native,
-                ::cc::platform::sysconfig::protobuf::TimeZoneLocationFilter *proto) noexcept
+    void encode(const platform::sysconfig::TimeZoneLocationFilter &native,
+                platform::sysconfig::protobuf::TimeZoneLocationFilter *proto) noexcept
     {
         encode(native.area, proto->mutable_area());
         encode(native.country, proto->mutable_country());
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::TimeZoneLocationFilter &proto,
-                sysconfig::TimeZoneLocationFilter *native) noexcept
+    void decode(const platform::sysconfig::protobuf::TimeZoneLocationFilter &proto,
+                platform::sysconfig::TimeZoneLocationFilter *native) noexcept
     {
         decode(proto.area(), &native->area);
         decode(proto.country(), &native->country);
@@ -203,14 +203,14 @@ namespace cc::protobuf
     //==========================================================================
     // TimeZoneArea
 
-    void encode(const sysconfig::TimeZoneArea &native,
-                ::cc::platform::sysconfig::protobuf::TimeZoneArea *proto) noexcept
+    void encode(const platform::sysconfig::TimeZoneArea &native,
+                platform::sysconfig::protobuf::TimeZoneArea *proto) noexcept
     {
         proto->set_name(native);
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::TimeZoneArea &proto,
-                sysconfig::TimeZoneArea *native) noexcept
+    void decode(const platform::sysconfig::protobuf::TimeZoneArea &proto,
+                platform::sysconfig::TimeZoneArea *native) noexcept
     {
         *native = proto.name();
     }
@@ -218,15 +218,15 @@ namespace cc::protobuf
     //==========================================================================
     // TimeZoneCountry
 
-    void encode(const sysconfig::TimeZoneCountry &native,
-                ::cc::platform::sysconfig::protobuf::TimeZoneCountry *proto) noexcept
+    void encode(const platform::sysconfig::TimeZoneCountry &native,
+                platform::sysconfig::protobuf::TimeZoneCountry *proto) noexcept
     {
         proto->set_code(native.code);
         proto->set_name(native.name);
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::TimeZoneCountry &proto,
-                sysconfig::TimeZoneCountry *native) noexcept
+    void decode(const platform::sysconfig::protobuf::TimeZoneCountry &proto,
+                platform::sysconfig::TimeZoneCountry *native) noexcept
     {
         native->code = proto.code();
         native->name = proto.name();
@@ -235,15 +235,15 @@ namespace cc::protobuf
     //==========================================================================
     // TimeZoneLocation
 
-    void encode(const sysconfig::TimeZoneLocation &native,
-                ::cc::platform::sysconfig::protobuf::TimeZoneLocation *proto) noexcept
+    void encode(const platform::sysconfig::TimeZoneLocation &native,
+                platform::sysconfig::protobuf::TimeZoneLocation *proto) noexcept
     {
         encode(native.country, proto->mutable_country());
         proto->set_region(native.region);
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::TimeZoneLocation &proto,
-                sysconfig::TimeZoneLocation *native) noexcept
+    void decode(const platform::sysconfig::protobuf::TimeZoneLocation &proto,
+                platform::sysconfig::TimeZoneLocation *native) noexcept
     {
         decode(proto.country(), &native->country);
         native->region = proto.region();
@@ -253,7 +253,7 @@ namespace cc::protobuf
     // TimeZoneInfo
 
     void encode(const core::dt::TimeZoneInfo &native,
-                ::cc::platform::sysconfig::protobuf::TimeZoneInfo *proto) noexcept
+                platform::sysconfig::protobuf::TimeZoneInfo *proto) noexcept
     {
         proto->set_shortname(native.shortname);
         encode(native.offset, proto->mutable_offset());
@@ -261,7 +261,7 @@ namespace cc::protobuf
         proto->set_dst(native.dst);
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::TimeZoneInfo &proto,
+    void decode(const platform::sysconfig::protobuf::TimeZoneInfo &proto,
                 core::dt::TimeZoneInfo *native) noexcept
     {
         native->shortname = proto.shortname();
@@ -273,16 +273,16 @@ namespace cc::protobuf
     //==========================================================================
     // TimeZoneInfoRequest
 
-    void encode(const sysconfig::TimeZoneCanonicalName &canonical_zone,
+    void encode(const platform::sysconfig::TimeZoneCanonicalName &canonical_zone,
                 const core::dt::TimePoint &timepoint,
-                ::cc::platform::sysconfig::protobuf::TimeZoneInfoRequest *proto) noexcept
+                platform::sysconfig::protobuf::TimeZoneInfoRequest *proto) noexcept
     {
         proto->set_canonical_zone(canonical_zone);
         encode(timepoint, proto->mutable_time());
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::TimeZoneInfoRequest &proto,
-                sysconfig::TimeZoneCanonicalName *canonical_zone,
+    void decode(const platform::sysconfig::protobuf::TimeZoneInfoRequest &proto,
+                platform::sysconfig::TimeZoneCanonicalName *canonical_zone,
                 core::dt::TimePoint *timepoint) noexcept
     {
         *canonical_zone = proto.canonical_zone();
@@ -292,28 +292,32 @@ namespace cc::protobuf
     //==========================================================================
     // Time Synchronization
 
-    void encode(sysconfig::TimeSync native,
-                ::cc::platform::sysconfig::protobuf::TimeSync *proto) noexcept
+    void encode(platform::sysconfig::TimeSync native,
+                platform::sysconfig::protobuf::TimeSync *proto) noexcept
     {
-        *proto = static_cast<::cc::platform::sysconfig::protobuf::TimeSync>(
-            native - sysconfig::TSYNC_NONE + ::cc::platform::sysconfig::protobuf::TSYNC_NONE);
+        *proto = static_cast<platform::sysconfig::protobuf::TimeSync>(
+            native -
+            platform::sysconfig::TSYNC_NONE +
+            platform::sysconfig::protobuf::TSYNC_NONE);
     }
 
-    void decode(::cc::platform::sysconfig::protobuf::TimeSync proto,
-                sysconfig::TimeSync *native) noexcept
+    void decode(platform::sysconfig::protobuf::TimeSync proto,
+                platform::sysconfig::TimeSync *native) noexcept
     {
-        *native = static_cast<sysconfig::TimeSync>(
-            proto - ::cc::platform::sysconfig::protobuf::TSYNC_NONE + sysconfig::TSYNC_NONE);
+        *native = static_cast<platform::sysconfig::TimeSync>(
+            proto -
+            platform::sysconfig::protobuf::TSYNC_NONE +
+            platform::sysconfig::TSYNC_NONE);
     }
 
     //==========================================================================
     // TimeConfig
 
-    void encode(const sysconfig::TimeConfig &native,
-                ::cc::platform::sysconfig::protobuf::TimeConfig *proto) noexcept
+    void encode(const platform::sysconfig::TimeConfig &native,
+                platform::sysconfig::protobuf::TimeConfig *proto) noexcept
     {
         proto->set_synchronization(
-            encoded<::cc::platform::sysconfig::protobuf::TimeSync>(native.synchronization));
+            encoded<platform::sysconfig::protobuf::TimeSync>(native.synchronization));
 
         for (const std::string &name : native.servers)
         {
@@ -321,8 +325,8 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::TimeConfig &proto,
-                sysconfig::TimeConfig *native) noexcept
+    void decode(const platform::sysconfig::protobuf::TimeConfig &proto,
+                platform::sysconfig::TimeConfig *native) noexcept
     {
         decode(proto.synchronization(), &native->synchronization);
         for (const std::string &name : proto.servers())
@@ -336,14 +340,14 @@ namespace cc::protobuf
 
     void encode(const core::platform::Invocation &invocation,
                 const std::string &input,
-                ::cc::platform::sysconfig::protobuf::CommandInvocation *proto) noexcept
+                platform::sysconfig::protobuf::CommandInvocation *proto) noexcept
     {
         assign_repeated(invocation.argv, proto->mutable_argv());
         proto->set_working_directory(invocation.cwd);
         proto->set_stdin(input);
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::CommandInvocation &proto,
+    void decode(const platform::sysconfig::protobuf::CommandInvocation &proto,
                 core::platform::Invocation *invocation,
                 std::string *input) noexcept
     {
@@ -359,12 +363,12 @@ namespace cc::protobuf
     // CommandInvocationResponse
 
     void encode(const core::platform::PID &native,
-                ::cc::platform::sysconfig::protobuf::CommandInvocationResponse *proto) noexcept
+                platform::sysconfig::protobuf::CommandInvocationResponse *proto) noexcept
     {
         proto->set_pid(native);
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::CommandInvocationResponse &proto,
+    void decode(const platform::sysconfig::protobuf::CommandInvocationResponse &proto,
                 core::platform::PID *native) noexcept
     {
         *native = proto.pid();
@@ -375,13 +379,13 @@ namespace cc::protobuf
 
     void encode(const core::platform::PID &pid,
                 const std::string &input,
-                ::cc::platform::sysconfig::protobuf::CommandContinuation *proto) noexcept
+                platform::sysconfig::protobuf::CommandContinuation *proto) noexcept
     {
         proto->set_pid(pid);
         proto->set_stdin(input);
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::CommandContinuation &proto,
+    void decode(const platform::sysconfig::protobuf::CommandContinuation &proto,
                 core::platform::PID *pid,
                 std::string *input) noexcept
     {
@@ -400,7 +404,7 @@ namespace cc::protobuf
     // CommandResponse
 
     void encode(const core::platform::InvocationResult &native,
-                ::cc::platform::sysconfig::protobuf::CommandResponse *proto) noexcept
+                platform::sysconfig::protobuf::CommandResponse *proto) noexcept
     {
         if (native.stdout)
         {
@@ -430,12 +434,12 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const ::cc::platform::sysconfig::protobuf::CommandResponse &proto,
+    void decode(const platform::sysconfig::protobuf::CommandResponse &proto,
                 core::platform::InvocationResult *native) noexcept
     {
         native->stdout->write(proto.stdout().data(), proto.stdout().size());
         native->stderr->write(proto.stderr().data(), proto.stderr().size());
-        native->status = std::make_shared<sysconfig::PortableExitStatus>(
+        native->status = std::make_shared<platform::sysconfig::PortableExitStatus>(
             proto.success(),
             proto.exit_code(),
             proto.exit_signal(),

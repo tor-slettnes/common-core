@@ -11,141 +11,137 @@
 #include "translate-idl-variant.h++"
 #include "translate-idl-eventtypes.h++"
 
-namespace idl
+namespace cc::idl
 {
     // CC::Switchboard::ExceptionHandling
-    void encode(switchboard::ExceptionHandling native,
+    void encode(cc::platform::switchboard::ExceptionHandling native,
                 CC::Switchboard::ExceptionHandling *idl);
 
     void decode(CC::Switchboard::ExceptionHandling idl,
-                switchboard::ExceptionHandling *native);
+                cc::platform::switchboard::ExceptionHandling *native);
 
     // CC::Switchboard::InterceptorPhase
-    void encode(switchboard::InterceptorPhase native,
+    void encode(cc::platform::switchboard::InterceptorPhase native,
                 CC::Switchboard::InterceptorPhase *idl);
 
     void decode(CC::Switchboard::InterceptorPhase idl,
-                switchboard::InterceptorPhase *native);
+                cc::platform::switchboard::InterceptorPhase *native);
 
     // CC::Switchboard::InvocationStyle
-    void encode(switchboard::InvocationStyle native,
+    void encode(cc::platform::switchboard::InvocationStyle native,
                 CC::Switchboard::InvocationStyle *idl);
 
     void decode(CC::Switchboard::InvocationStyle idl,
-                switchboard::InvocationStyle *native);
+                cc::platform::switchboard::InvocationStyle *native);
 
     // CC::Switchboard::CascadeStyle
-    void encode(switchboard::CascadeStyle native,
+    void encode(cc::platform::switchboard::CascadeStyle native,
                 CC::Switchboard::CascadeStyle *idl);
 
     void decode(CC::Switchboard::CascadeStyle idl,
-                switchboard::CascadeStyle *native);
+                cc::platform::switchboard::CascadeStyle *native);
 
     // CC::Switchboard::State
-    void encode(switchboard::State native,
+    void encode(cc::platform::switchboard::State native,
                 CC::Switchboard::State *idl);
 
     void decode(CC::Switchboard::State idl,
-                switchboard::State *native);
-
+                cc::platform::switchboard::State *native);
 
     // CC::Switchboard::AliasList
-    void encode(switchboard::SwitchAliases native,
+    void encode(cc::platform::switchboard::SwitchAliases native,
                 CC::Switchboard::NameList *idl);
 
     void decode(CC::Switchboard::NameList idl,
-                switchboard::SwitchAliases *native);
-
+                cc::platform::switchboard::SwitchAliases *native);
 
     // CC::Switchboard::SwitchSelection
-    void encode(const switchboard::SwitchSelection &native,
+    void encode(const cc::platform::switchboard::SwitchSelection &native,
                 CC::Switchboard::SwitchSelection *idl);
 
     void decode(const CC::Switchboard::SwitchSelection &idl,
-                switchboard::SwitchSelection *native);
-
+                cc::platform::switchboard::SwitchSelection *native);
 
     // CC::Switchboard::Localization
-    void encode(const switchboard::LanguageCode &language_code,
-                const switchboard::Localization &native,
+    void encode(const cc::platform::switchboard::LanguageCode &language_code,
+                const cc::platform::switchboard::Localization &native,
                 CC::Switchboard::Localization *idl);
 
     void decode(const CC::Switchboard::Localization &idl,
-                switchboard::LanguageCode *language_code,
-                switchboard::Localization *localization);
+                cc::platform::switchboard::LanguageCode *language_code,
+                cc::platform::switchboard::Localization *localization);
 
     // CC::Switchboard::LocalizationList
-    void encode(const switchboard::LocalizationMap &native,
+    void encode(const cc::platform::switchboard::LocalizationMap &native,
                 CC::Switchboard::LocalizationList *idl);
 
     void decode(const CC::Switchboard::LocalizationList &idl,
-                switchboard::LocalizationMap *native);
+                cc::platform::switchboard::LocalizationMap *native);
 
     // CC::Switchboard::DependencyPolarity
-    void encode(const switchboard::DependencyPolarity &native,
+    void encode(const cc::platform::switchboard::DependencyPolarity &native,
                 CC::Switchboard::DependencyPolarity *idl);
 
     void decode(const CC::Switchboard::DependencyPolarity &idl,
-                switchboard::DependencyPolarity *native);
+                cc::platform::switchboard::DependencyPolarity *native);
 
     // CC::Switchboard::Dependency
-    void encode(const switchboard::DependencyRef &native,
+    void encode(const cc::platform::switchboard::DependencyRef &native,
                 CC::Switchboard::Dependency *idl);
 
     void decode(const CC::Switchboard::Dependency &idl,
-                const switchboard::ProviderRef &provider,
-                switchboard::DependencyRef *native);
+                const cc::platform::switchboard::ProviderRef &provider,
+                cc::platform::switchboard::DependencyRef *native);
 
     // CC::Switchboard::DependencyList
-    void encode(const switchboard::DependencyMap &native,
+    void encode(const cc::platform::switchboard::DependencyMap &native,
                 CC::Switchboard::DependencyList *idl);
 
     void decode(const CC::Switchboard::DependencyList &idl,
-                const switchboard::ProviderRef &provider,
-                switchboard::DependencyMap *native);
+                const cc::platform::switchboard::ProviderRef &provider,
+                cc::platform::switchboard::DependencyMap *native);
 
     // CC::Switchboard::Interceptor
-    void encode(const switchboard::InterceptorRef &native,
+    void encode(const cc::platform::switchboard::InterceptorRef &native,
                 CC::Switchboard::Interceptor *idl);
 
     void decode(const CC::Switchboard::Interceptor &idl,
-                const std::optional<switchboard::InterceptorOwner> &owner,
-                const switchboard::Invocation &invocation,
-                switchboard::InterceptorRef *native);
+                const std::optional<cc::platform::switchboard::InterceptorOwner> &owner,
+                const cc::platform::switchboard::Invocation &invocation,
+                cc::platform::switchboard::InterceptorRef *native);
 
     // CC::Switchboard::InterceptorList
-    void encode(const switchboard::InterceptorMap &native,
+    void encode(const cc::platform::switchboard::InterceptorMap &native,
                 CC::Switchboard::InterceptorList *idl);
 
     void decode(const CC::Switchboard::InterceptorList &idl,
-                switchboard::InterceptorMap *native);
+                cc::platform::switchboard::InterceptorMap *native);
 
     // CC::Switchboard::Specification
-    void encode(const switchboard::SwitchName &name,
-                const switchboard::Specification &native,
+    void encode(const cc::platform::switchboard::SwitchName &name,
+                const cc::platform::switchboard::Specification &native,
                 CC::Switchboard::Specification *idl);
 
     void decode(const CC::Switchboard::Specification &idl,
-                const switchboard::ProviderRef &provider,
-                switchboard::SwitchName *name,
-                switchboard::Specification *native);
+                const cc::platform::switchboard::ProviderRef &provider,
+                cc::platform::switchboard::SwitchName *name,
+                cc::platform::switchboard::Specification *native);
 
     // CC::Switchboard::Status
-    void encode(const switchboard::SwitchName &name,
-                const switchboard::Status &status,
+    void encode(const cc::platform::switchboard::SwitchName &name,
+                const cc::platform::switchboard::Status &status,
                 CC::Switchboard::Status *idl);
 
     void decode(const CC::Switchboard::Status &idl,
-                switchboard::SwitchName *name,
-                switchboard::Status *status);
-
+                cc::platform::switchboard::SwitchName *name,
+                cc::platform::switchboard::Status *status);
 
     // CC::Switchboard::Switch
-    void encode(const switchboard::Switch &sw,
+    void encode(const cc::platform::switchboard::Switch &sw,
                 CC::Switchboard::Switch *idl);
 
     // CC::Switchboard::SwitchList
-    void encode(const switchboard::SwitchMap &native,
+    void encode(const cc::platform::switchboard::SwitchMap &native,
                 CC::Switchboard::SwitchList *idl);
 
-}  // namespace idl
+}  // namespace cc::idl

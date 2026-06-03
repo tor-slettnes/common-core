@@ -19,7 +19,7 @@
 #include <fstream>
 #include <unistd.h>
 
-namespace core::argparse
+namespace cc::core::argparse
 {
     //==========================================================================
     // ServerOptions methods
@@ -119,4 +119,4 @@ namespace core::argparse
         return pidstream;
     }
 
-}  // namespace core::argparse
+}  // namespace cc::core::argparse

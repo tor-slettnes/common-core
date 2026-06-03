@@ -12,7 +12,7 @@
 #include "status/exceptions.h++"
 #include "settings/settings.h++"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     constexpr auto SETTING_SWITCH_CONFIG_FILES = "switch config files";
 
@@ -289,4 +289,4 @@ namespace switchboard
         return tvlist.as_kvmap();
     }
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

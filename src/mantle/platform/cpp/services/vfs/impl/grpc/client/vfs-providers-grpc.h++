@@ -8,10 +8,10 @@
 #pragma once
 #include <string>
 
-namespace vfs::grpc
+namespace cc::platform::vfs::grpc
 {
     void register_providers(const std::string &host,
                             bool wait_for_ready = true,
                             bool start_watching = true);
     void unregister_providers();
-}  // namespace vfs::grpc
+}  // namespace cc::platform::vfs::grpc

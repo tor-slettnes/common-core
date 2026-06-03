@@ -7,7 +7,7 @@
 
 #include "python-simpleobject.h++"
 
-namespace core::python
+namespace cc::python
 {
     SimpleObject::SimpleObject(PyObject *cobj, bool borrowed)
         : cobj(cobj)
@@ -83,7 +83,7 @@ namespace core::python
 #endif
     }
 
-    // types::ValueType SimpleObject::value_type() const
+    // core::types::ValueType SimpleObject::value_type() const
     // {
     //     if (this->cobj)
     //     {
@@ -95,10 +95,10 @@ namespace core::python
     //         {
     //         }
     //     }
-    //     return types::ValueType::NONE;
+    //     return core::types::ValueType::NONE;
     // }
 
-    types::Value SimpleObject::as_value() const
+    core::types::Value SimpleObject::as_value() const
     {
         if (!this->cobj)
         {
@@ -176,11 +176,11 @@ namespace core::python
         }
     }
 
-    std::optional<types::largest_uint> SimpleObject::as_uint() const
+    std::optional<core::types::largest_uint> SimpleObject::as_uint() const
     {
         if (this->cobj && PyLong_Check(this->cobj))
         {
-            types::largest_uint value = PyLong_AsUnsignedLongLong(this->cobj);
+            core::types::largest_uint value = PyLong_AsUnsignedLongLong(this->cobj);
             if (!PyErr_Occurred())
             {
                 return value;
@@ -189,12 +189,12 @@ namespace core::python
         return {};
     }
 
-    std::optional<types::largest_sint> SimpleObject::as_sint() const
+    std::optional<core::types::largest_sint> SimpleObject::as_sint() const
     {
         if (this->cobj && PyLong_Check(this->cobj))
         {
             int overflow = 0;
-            types::largest_sint value = PyLong_AsLongLongAndOverflow(this->cobj, &overflow);
+            core::types::largest_sint value = PyLong_AsLongLongAndOverflow(this->cobj, &overflow);
             if (!PyErr_Occurred())
             {
                 return value;
@@ -215,11 +215,11 @@ namespace core::python
         }
     }
 
-    std::optional<types::complex> SimpleObject::as_complex() const
+    std::optional<core::types::complex> SimpleObject::as_complex() const
     {
         if (this->cobj && PyComplex_Check(this->cobj))
         {
-            return types::complex(PyComplex_RealAsDouble(this->cobj),
+            return core::types::complex(PyComplex_RealAsDouble(this->cobj),
                                   PyComplex_ImagAsDouble(this->cobj));
         }
         else
@@ -241,7 +241,7 @@ namespace core::python
         return {};
     }
 
-    std::optional<types::ByteVector> SimpleObject::as_bytevector() const
+    std::optional<core::types::ByteVector> SimpleObject::as_bytevector() const
     {
         char *bytes = nullptr;
         Py_ssize_t size = 0;
@@ -259,7 +259,7 @@ namespace core::python
 
         if (bytes)
         {
-            return types::ByteVector(bytes, bytes + size);
+            return core::types::ByteVector(bytes, bytes + size);
         }
         else
         {
@@ -267,11 +267,11 @@ namespace core::python
         }
     }
 
-    std::optional<types::ValueList> SimpleObject::as_valuelist() const
+    std::optional<core::types::ValueList> SimpleObject::as_valuelist() const
     {
         if (this->cobj && PyList_Check(this->cobj))
         {
-            types::ValueList values;
+            core::types::ValueList values;
             Py_ssize_t size = PyList_Size(this->cobj);
 
             for (int c = 0; c < size; c++)
@@ -286,11 +286,11 @@ namespace core::python
         }
     }
 
-    std::optional<types::TaggedValueList> SimpleObject::as_tvlist() const
+    std::optional<core::types::TaggedValueList> SimpleObject::as_tvlist() const
     {
         if (this->cobj && PyList_Check(this->cobj))
         {
-            types::TaggedValueList tvlist;
+            core::types::TaggedValueList tvlist;
             Py_ssize_t size = PyList_Size(this->cobj);
 
             for (int c = 0; c < size; c++)
@@ -298,7 +298,7 @@ namespace core::python
                 PyObject *item = PyList_GetItem(this->cobj, c);
                 if (PyTuple_Check(item) && (PyTuple_Size(item) == 2))
                 {
-                    types::Tag tag;
+                    core::types::Tag tag;
                     PyObject *tag_obj = PyTuple_GetItem(item, 0);
                     if (PyUnicode_Check(tag_obj))
                     {
@@ -314,7 +314,7 @@ namespace core::python
                     }
 
                     PyObject *value_obj = PyTuple_GetItem(item, 1);
-                    types::Value value = SimpleObject(value_obj, true).as_value();
+                    core::types::Value value = SimpleObject(value_obj, true).as_value();
 
                     tvlist.emplace_back(tag, value);
                 }
@@ -331,18 +331,18 @@ namespace core::python
         }
     }
 
-    std::optional<types::KeyValueMap> SimpleObject::as_kvmap() const
+    std::optional<core::types::KeyValueMap> SimpleObject::as_kvmap() const
     {
         if (this->cobj && PyDict_Check(this->cobj))
         {
-            types::KeyValueMap kvmap;
+            core::types::KeyValueMap kvmap;
             PyObject *key_obj, *value_obj;
             Py_ssize_t pos = 0;
             while (PyDict_Next(this->cobj, &pos, &key_obj, &value_obj))
             {
                 if (auto key = SimpleObject(key_obj, true).as_string())
                 {
-                    types::Value value = SimpleObject(value_obj, true).as_value();
+                    core::types::Value value = SimpleObject(value_obj, true).as_value();
                     kvmap.insert_or_assign(*key, value);
                 }
             }
@@ -359,14 +359,14 @@ namespace core::python
         return PyUnicode_DecodeUTF8(string.data(), string.size(), nullptr);
     }
 
-    PyObject *SimpleObject::pybytes_from_bytes(const types::ByteVector &bytes)
+    PyObject *SimpleObject::pybytes_from_bytes(const core::types::ByteVector &bytes)
     {
         return PyBytes_FromStringAndSize(
             reinterpret_cast<const char *>(bytes.data()),
             bytes.size());
     }
 
-    PyObject *SimpleObject::pytuple_from_values(const types::ValueList &values)
+    PyObject *SimpleObject::pytuple_from_values(const core::types::ValueList &values)
     {
         PyObject *tuple = PyTuple_New(values.size());
         for (uint c = 0; c < values.size(); c++)
@@ -387,7 +387,7 @@ namespace core::python
         return tuple;
     }
 
-    PyObject *SimpleObject::pylist_from_values(const types::ValueList &values)
+    PyObject *SimpleObject::pylist_from_values(const core::types::ValueList &values)
     {
         PyObject *list = PyList_New(values.size());
         for (uint c = 0; c < values.size(); c++)
@@ -398,7 +398,7 @@ namespace core::python
         return list;
     }
 
-    PyObject *SimpleObject::pylist_from_tagged_values(const types::TaggedValueList &tvlist)
+    PyObject *SimpleObject::pylist_from_tagged_values(const core::types::TaggedValueList &tvlist)
     {
         PyObject *list = PyList_New(tvlist.size());
         for (uint c = 0; c < tvlist.size(); c++)
@@ -415,7 +415,7 @@ namespace core::python
         return list;
     }
 
-    PyObject *SimpleObject::pydict_from_kvmap(const types::KeyValueMap &kvmap)
+    PyObject *SimpleObject::pydict_from_kvmap(const core::types::KeyValueMap &kvmap)
     {
         PyObject *dict = PyDict_New();
         for (const auto &[key, value] : kvmap)
@@ -439,43 +439,43 @@ namespace core::python
     }
 
 
-    PyObject *SimpleObject::pyobj_from_value(const types::Value &value)
+    PyObject *SimpleObject::pyobj_from_value(const core::types::Value &value)
     {
         switch (value.type())
         {
-        case types::ValueType::BOOL:
+        case core::types::ValueType::BOOL:
             return PyBool_FromLong(value.as_bool());
 
-        case types::ValueType::CHAR:
+        case core::types::ValueType::CHAR:
             return SimpleObject::pystring_from_string(value.as_string());
 
-        case types::ValueType::UINT:
+        case core::types::ValueType::UINT:
             return PyLong_FromUnsignedLongLong(value.as_uint());
 
-        case types::ValueType::SINT:
+        case core::types::ValueType::SINT:
             return PyLong_FromLongLong(value.as_sint());
 
-        case types::ValueType::REAL:
-        case types::ValueType::TIMEPOINT:
-        case types::ValueType::DURATION:
+        case core::types::ValueType::REAL:
+        case core::types::ValueType::TIMEPOINT:
+        case core::types::ValueType::DURATION:
             return PyFloat_FromDouble(value.as_real());
 
-        case types::ValueType::COMPLEX:
+        case core::types::ValueType::COMPLEX:
             return PyComplex_FromDoubles(value.as_real(), value.as_imag());
 
-        case types::ValueType::STRING:
+        case core::types::ValueType::STRING:
             return SimpleObject::pystring_from_string(value.get<std::string>());
 
-        case types::ValueType::BYTEVECTOR:
-            return SimpleObject::pybytes_from_bytes(value.get<types::ByteVector>());
+        case core::types::ValueType::BYTEVECTOR:
+            return SimpleObject::pybytes_from_bytes(value.get<core::types::ByteVector>());
 
-        case types::ValueType::VALUELIST:
+        case core::types::ValueType::VALUELIST:
             return SimpleObject::pylist_from_values(value.get_valuelist());
 
-        case types::ValueType::KVMAP:
+        case core::types::ValueType::KVMAP:
             return SimpleObject::pydict_from_kvmap(value.get_kvmap());
 
-        case types::ValueType::TVLIST:
+        case core::types::ValueType::TVLIST:
             return SimpleObject::pylist_from_tagged_values(value.get_tvlist());
 
         default:
@@ -503,22 +503,22 @@ namespace core::python
         return stream;
     }
 
-    // std::unordered_map<PyTypeObject *, types::ValueType> SimpleObject::type_map = {
-    //     {&PyBool_Type, types::ValueType::BOOL},
-    //     {&PyLong_Type, types::ValueType::SINT},
-    //     {&PyFloat_Type, types::ValueType::REAL},
-    //     {&PyComplex_Type, types::ValueType::COMPLEX},
-    //     {&PyUnicode_Type, types::ValueType::STRING},
-    //     {&PyBytes_Type, types::ValueType::BYTEVECTOR},
-    //     {&PyByteArray_Type, types::ValueType::BYTEVECTOR},
-    //     {&PyList_Type, types::ValueType::VALUELIST},
-    //     {&PyTuple_Type, types::ValueType::VALUELIST},
-    //     {&PyDict_Type, types::ValueType::KVMAP},
+    // std::unordered_map<PyTypeObject *, core::types::ValueType> SimpleObject::type_map = {
+    //     {&PyBool_Type, core::types::ValueType::BOOL},
+    //     {&PyLong_Type, core::types::ValueType::SINT},
+    //     {&PyFloat_Type, core::types::ValueType::REAL},
+    //     {&PyComplex_Type, core::types::ValueType::COMPLEX},
+    //     {&PyUnicode_Type, core::types::ValueType::STRING},
+    //     {&PyBytes_Type, core::types::ValueType::BYTEVECTOR},
+    //     {&PyByteArray_Type, core::types::ValueType::BYTEVECTOR},
+    //     {&PyList_Type, core::types::ValueType::VALUELIST},
+    //     {&PyTuple_Type, core::types::ValueType::VALUELIST},
+    //     {&PyDict_Type, core::types::ValueType::KVMAP},
     // };
 
-}  // namespace core::python
+}  // namespace cc::python
 
 std::ostream &operator<<(std::ostream &stream, PyObject *obj)
 {
-    return core::python::SimpleObject::write_to_stream(stream, obj, false);
+    return cc::python::SimpleObject::write_to_stream(stream, obj, false);
 }

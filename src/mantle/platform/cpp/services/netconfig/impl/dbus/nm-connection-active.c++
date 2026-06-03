@@ -10,13 +10,13 @@
 #include "netconfig.h++"
 #include "status/exceptions.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     ActiveConnection::ActiveConnection(
-        core::dbus::ProxyContainer *container,
-        const core::dbus::ConnectionPtr &connection,
-        const core::dbus::ServiceName &servicename,
-        const core::dbus::ObjectPath &objectpath)
+        cc::dbus::ProxyContainer *container,
+        const cc::dbus::ConnectionPtr &connection,
+        const cc::dbus::ServiceName &servicename,
+        const cc::dbus::ObjectPath &objectpath)
         : MappedDataWrapper<ActiveConnectionData>(
               container,
               connection,
@@ -99,20 +99,20 @@ namespace netconfig::dbus
     void ActiveConnection::on_signal_state_changed(
         const Glib::VariantContainerBase &parameters)
     {
-        core::glib::variant_cast(parameters, 0, &this->state);
-        core::glib::variant_cast(parameters, 1, &this->state_reason);
+        cc::glib::variant_cast(parameters, 0, &this->state);
+        cc::glib::variant_cast(parameters, 1, &this->state_reason);
         this->emit_change(core::signal::MAP_UPDATE);
     }
 
     void ActiveConnection::on_property_type(const Glib::VariantBase &change)
     {
-        auto typestring = core::glib::variant_cast<std::string>(change);
+        auto typestring = cc::glib::variant_cast<std::string>(change);
         this->type = connection_type_map.from_string(typestring, CONN_TYPE_UNKNOWN);
     }
 
     void ActiveConnection::on_property_ip4config(const Glib::VariantBase &change)
     {
-        auto path = core::glib::variant_cast<core::dbus::ObjectPath>(change);
+        auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(change);
         if (this->valid_path(path))
         {
             auto ref = this->container->add<IP4Config>(path);
@@ -122,7 +122,7 @@ namespace netconfig::dbus
 
     void ActiveConnection::on_property_ip6config(const Glib::VariantBase &change)
     {
-        auto path = core::glib::variant_cast<core::dbus::ObjectPath>(change);
+        auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(change);
         if (this->valid_path(path))
         {
             auto ref = this->container->add<IP6Config>(path);
@@ -131,7 +131,7 @@ namespace netconfig::dbus
     }
 
     bool ActiveConnection::update_ip4config(
-        const core::dbus::ProxyWrapper *source,
+        const cc::dbus::ProxyWrapper *source,
         core::signal::MappingAction action)
     {
         if (const auto *datasource = dynamic_cast<const IP4Config *>(source))
@@ -143,7 +143,7 @@ namespace netconfig::dbus
     }
 
     bool ActiveConnection::update_ip6config(
-        const core::dbus::ProxyWrapper *source,
+        const cc::dbus::ProxyWrapper *source,
         core::signal::MappingAction action)
     {
         if (const auto *datasource = dynamic_cast<const IP6Config *>(source))
@@ -153,4 +153,4 @@ namespace netconfig::dbus
         }
         return true;  // Stay subscribed to updates
     }
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

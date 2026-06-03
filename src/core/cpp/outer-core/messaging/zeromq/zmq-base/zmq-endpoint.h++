@@ -21,7 +21,7 @@
 #include <optional>
 #include <mutex>
 
-namespace core::zmq
+namespace cc::zmq
 {
     define_log_scope("zmq");
 
@@ -104,17 +104,17 @@ namespace core::zmq
 
     public:
         void send(
-            const types::ByteVector &bytes,
+            const core::types::ByteVector &bytes,
             SendFlags flags = 0) const;
 
-        std::shared_ptr<types::ByteVector> receive(
+        std::shared_ptr<core::types::ByteVector> receive(
             RecvFlags flags = 0) const;
 
-        std::vector<types::ByteVector> receive_parts(
+        std::vector<core::types::ByteVector> receive_parts(
             RecvFlags flags = 0) const;
 
         std::size_t receive(
-            std::vector<types::ByteVector> *parts,
+            std::vector<core::types::ByteVector> *parts,
             RecvFlags flags = 0) const;
 
     protected:
@@ -186,4 +186,4 @@ namespace core::zmq
         std::string deinit_signal_handle_;
     };
 
-}  // Namespace core::zmq
+}  // Namespace cc::zmq

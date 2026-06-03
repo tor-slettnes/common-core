@@ -11,7 +11,7 @@
 #include <websocketpp/config/asio.hpp>
 //#include <websocketpp/config/minimal_server.hpp>
 
-namespace core::ws
+namespace cc::ws
 {
     class Server: public Endpoint
     {
@@ -43,4 +43,4 @@ namespace core::ws
         std::thread receive_thread_;
     };
 
-}  // namespace core::ws
+}  // namespace cc::ws

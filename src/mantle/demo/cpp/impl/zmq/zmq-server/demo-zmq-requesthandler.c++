@@ -9,7 +9,7 @@
 #include "protobuf-demo-types.h++"
 #include "protobuf-inline.h++"
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
     RequestHandler::RequestHandler(const std::shared_ptr<API> &provider,
                                    const std::string &interface_name)
@@ -55,4 +55,4 @@ namespace demo::zmq
         this->provider->stop_ticking();
     }
 
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

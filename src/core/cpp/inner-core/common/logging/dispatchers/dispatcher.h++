@@ -14,7 +14,7 @@
 #include <set>
 #include <mutex>
 
-namespace core::logging
+namespace cc::core::logging
 {
     using SinkMap = types::ValueMap<SinkID, Sink::ptr>;
 
@@ -50,4 +50,4 @@ namespace core::logging
     };
 
     extern Dispatcher dispatcher;
-}  // namespace core::logging
+}  // namespace cc::core::logging

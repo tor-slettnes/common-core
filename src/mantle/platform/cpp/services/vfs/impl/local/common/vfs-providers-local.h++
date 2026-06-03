@@ -7,8 +7,8 @@
 
 #pragma once
 
-namespace vfs::local
+namespace cc::platform::vfs::local
 {
     void register_providers();
     void unregister_providers();
-}  // namespace vfs::local
+}  // namespace cc::platform::vfs::local

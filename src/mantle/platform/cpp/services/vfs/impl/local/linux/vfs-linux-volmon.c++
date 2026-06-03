@@ -14,7 +14,7 @@
 #include <chrono>
 #include <memory>
 
-namespace vfs::local::volume
+namespace cc::platform::vfs::local::volume
 {
     constexpr auto PROP_TYPE = "ID_PART_ENTRY_TYPE";
     constexpr auto PROP_SERIAL = "ID_SERIAL";
@@ -420,4 +420,4 @@ namespace vfs::local::volume
         }
         return {};
     }
-}  // namespace vfs::local::volume
+}  // namespace cc::platform::vfs::local::volume

@@ -9,7 +9,7 @@
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
 
-namespace core::parsers
+namespace cc::core::parsers
 {
     BaseWriter::BaseWriter(const std::string &name)
         : name(name)
@@ -48,4 +48,4 @@ namespace core::parsers
         this->write_stream(fstream, value, pretty);
     }
 
-}  // namespace core::json
+}  // namespace cc::core::json

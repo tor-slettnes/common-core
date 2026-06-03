@@ -12,7 +12,7 @@
 // Shared modules
 #include "chrono/date-time.h++"
 
-namespace demo
+namespace cc::demo
 {
     //==========================================================================
     /// @class API
@@ -79,4 +79,4 @@ namespace demo
         std::string implementation_;
         core::dt::TimePoint birth_;
     };
-}  // namespace demo
+}  // namespace cc::demo

@@ -12,7 +12,7 @@
 #include <memory>
 #include <string>
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
     void run_zmq_service(
         std::shared_ptr<demo::API> api_provider,

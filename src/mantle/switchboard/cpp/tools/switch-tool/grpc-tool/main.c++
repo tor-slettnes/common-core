@@ -13,16 +13,16 @@
 
 int main(int argc, char** argv)
 {
-    core::application::initialize(argc, argv);
+    cc::core::application::initialize(argc, argv);
     try
     {
-        switchboard::options = std::make_unique<switchboard::Options>("gRPC");
-        switchboard::options->apply(argc, argv);
+        ::options = std::make_unique<cc::platform::switchboard::Options>("gRPC");
+        ::options->apply(argc, argv);
 
         // Create a Switchboard proxy, which makes RPC calls to the real switchboard service.
         logf_trace("Creating Switchboard Proxy");
-        auto proxy = switchboard::grpc::Proxy::create_shared(
-            switchboard::options->host);
+        auto proxy = cc::platform::switchboard::grpc::Proxy::create_shared(
+            ::options->host);
 
         logf_trace("Initializing switchboard proxy");
         proxy->initialize();
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
         proxy->wait_ready();
 
         logf_trace("Handling command");
-        bool success = switchboard::options->handle_command(proxy);
+        bool success = ::options->handle_command(proxy);
 
         logf_debug("Shutting down proxy");
         proxy->deinitialize();

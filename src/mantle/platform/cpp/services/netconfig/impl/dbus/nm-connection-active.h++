@@ -8,7 +8,7 @@
 #pragma once
 #include "nm-wrappers.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     //==========================================================================
     /// Network Manager Active Connection
@@ -20,10 +20,10 @@ namespace netconfig::dbus
 
     public:
         ActiveConnection(
-            core::dbus::ProxyContainer* container,
-            const core::dbus::ConnectionPtr& connection,
-            const core::dbus::ServiceName& servicename,
-            const core::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer* container,
+            const cc::dbus::ConnectionPtr& connection,
+            const cc::dbus::ServiceName& servicename,
+            const cc::dbus::ObjectPath& objectpath);
 
         static std::shared_ptr<ActiveConnection> get_by_key(
             const Key& key,
@@ -41,8 +41,8 @@ namespace netconfig::dbus
         void on_property_ip4config(const Glib::VariantBase& change);
         void on_property_ip6config(const Glib::VariantBase& change);
 
-        bool update_ip4config(const core::dbus::ProxyWrapper* source, core::signal::MappingAction action);
-        bool update_ip6config(const core::dbus::ProxyWrapper* source, core::signal::MappingAction action);
+        bool update_ip4config(const cc::dbus::ProxyWrapper* source, core::signal::MappingAction action);
+        bool update_ip6config(const cc::dbus::ProxyWrapper* source, core::signal::MappingAction action);
     };
 
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

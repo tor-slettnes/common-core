@@ -14,7 +14,7 @@
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
 
-namespace switchboard::grpc
+namespace cc::platform::switchboard::grpc
 {
     //--------------------------------------------------------------------------
     // gRPC servicer methods
@@ -733,7 +733,7 @@ namespace switchboard::grpc
         if (future_result.valid())
         {
             switchboard::protobuf::InterceptorResult result = future_result.get();
-            core::grpc::Status status(result.error());
+            cc::grpc::Status status(result.error());
             status.throw_if_error();
         }
     }
@@ -795,4 +795,4 @@ namespace switchboard::grpc
         return interceptor_name + "@" + session_id;
     }
 
-}  // namespace switchboard::grpc
+}  // namespace cc::platform::switchboard::grpc

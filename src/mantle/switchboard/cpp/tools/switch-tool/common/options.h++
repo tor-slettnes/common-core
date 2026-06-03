@@ -9,7 +9,7 @@
 #include "argparse/command.h++"
 #include "switchboard.h++"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     class Options : public core::argparse::CommandOptions
     {
@@ -99,5 +99,6 @@ namespace switchboard
         bool verbose;
     };
 
-    extern std::unique_ptr<Options> options;
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard
+
+extern std::unique_ptr<cc::platform::switchboard::Options> options;

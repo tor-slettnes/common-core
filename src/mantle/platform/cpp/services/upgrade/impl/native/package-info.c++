@@ -9,7 +9,7 @@
 #include "settings/settingsstore.h++"
 #include "status/exceptions.h++"
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     constexpr auto SETTING_PRODUCT = "product";
     constexpr auto SETTING_PRODUCT_MATCH = "product match";
@@ -216,4 +216,4 @@ namespace upgrade::native
 
         return false;
     }
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

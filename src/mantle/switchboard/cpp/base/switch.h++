@@ -12,7 +12,7 @@
 #include "types/listable.h++"
 #include <memory>
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     //==========================================================================
     // @class Switch
@@ -491,4 +491,4 @@ namespace switchboard
         StatusRef status_ref;
     };
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

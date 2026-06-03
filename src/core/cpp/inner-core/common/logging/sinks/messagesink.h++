@@ -12,7 +12,7 @@
 
 #include <string>
 
-namespace core::logging
+namespace cc::core::logging
 {
     //--------------------------------------------------------------------------
     /// @class MessageSink
@@ -70,4 +70,4 @@ namespace core::logging
         static std::optional<bool> all_include_context_;
         static std::optional<bool> all_include_source_;
     };
-}  // namespace core::logging
+}  // namespace cc::core::logging

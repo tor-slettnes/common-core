@@ -16,7 +16,7 @@
 
 #include <iostream>
 
-namespace vfs
+namespace cc::platform::vfs
 {
     define_log_scope("vfs");
 
@@ -94,16 +94,16 @@ namespace vfs
     using UniqueReader = std::unique_ptr<std::istream>;
     using UniqueWriter = std::unique_ptr<std::ostream>;
 
-} // namespace vfs
+} // namespace cc::platform::vfs
 
 namespace std
 {
     /// Hashing support for vfs::Path, to allow instances to be used in unordered
     /// associative containers (like `std::unordered_map<vfs::Path, ...>`).
     template <>
-    struct hash<vfs::Path>
+    struct hash<cc::platform::vfs::Path>
     {
-        inline std::size_t operator()(const vfs::Path &vpath) const
+        inline std::size_t operator()(const cc::platform::vfs::Path &vpath) const
         {
             return std::hash<std::string>()(vpath.context) ^
                    std::hash<std::string>()(vpath.relpath);
@@ -111,12 +111,12 @@ namespace std
     };
 
     /// Sorting support for vfs::Path, to allow instances to be used in ordered
-    /// associative containers (like `std::map<vfs::Path, ...>`).
+    /// associative containers (like `std::map<cc::platform::vfs::Path, ...>`).
     template <>
-    struct less<vfs::Path>
+    struct less<cc::platform::vfs::Path>
     {
-        inline bool operator()(const vfs::Path &lhs,
-                               const vfs::Path &rhs) const
+        inline bool operator()(const cc::platform::vfs::Path &lhs,
+                               const cc::platform::vfs::Path &rhs) const
         {
             if (lhs.context != rhs.context)
             {
@@ -132,8 +132,8 @@ namespace std
 
 namespace std::filesystem
 {
-    core::types::TaggedValueList &operator<<(
-        core::types::TaggedValueList &tvlist,
+    cc::core::types::TaggedValueList &operator<<(
+        cc::core::types::TaggedValueList &tvlist,
         const space_info &volinfo);
 
     std::ostream &operator<<(

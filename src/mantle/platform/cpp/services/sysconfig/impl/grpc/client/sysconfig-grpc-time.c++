@@ -11,7 +11,7 @@
 #include "protobuf-inline.h++"
 #include "platform/symbols.h++"
 
-namespace sysconfig::grpc
+namespace cc::platform::sysconfig::grpc
 {
     TimeConfigProvider::TimeConfigProvider(const std::shared_ptr<Client> &client)
         : Super(TYPE_NAME_FULL(This)),
@@ -23,15 +23,15 @@ namespace sysconfig::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            ::cc::platform::sysconfig::protobuf::Signal::kTime,
-            [&](const ::cc::platform::sysconfig::protobuf::Signal &signal) {
+            platform::sysconfig::protobuf::Signal::kTime,
+            [&](const platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_time.emit(
                     cc::protobuf::decoded<core::dt::TimePoint>(signal.time()));
             });
 
         this->client->add_handler(
-            ::cc::platform::sysconfig::protobuf::Signal::kTimeConfig,
-            [&](const ::cc::platform::sysconfig::protobuf::Signal &signal) {
+            platform::sysconfig::protobuf::Signal::kTimeConfig,
+            [&](const platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_timeconfig.emit(
                     cc::protobuf::decoded<TimeConfig>(signal.time_config()));
             });
@@ -55,7 +55,7 @@ namespace sysconfig::grpc
     {
         this->client->call_check(
             &Client::Stub::SetTimeConfig,
-            cc::protobuf::encoded<::cc::platform::sysconfig::protobuf::TimeConfig>(config));
+            cc::protobuf::encoded<platform::sysconfig::protobuf::TimeConfig>(config));
     }
 
     TimeConfig TimeConfigProvider::get_time_config() const
@@ -65,4 +65,4 @@ namespace sysconfig::grpc
                 &Client::Stub::GetTimeConfig));
     }
 
-}  // namespace sysconfig::grpc
+}  // namespace cc::platform::sysconfig::grpc

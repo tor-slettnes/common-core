@@ -14,7 +14,7 @@
 
 #include <functional>
 
-namespace core::db
+namespace cc::db
 {
     SQLite3::SQLite3()
         : connection_(nullptr)
@@ -573,4 +573,4 @@ namespace core::db
         {core::types::ValueType::TIMEPOINT, "DATETIME"},
     };
 
-}  // namespace core::db
+}  // namespace cc::db

@@ -17,10 +17,10 @@
 
 std::string operator""_u(const char *str, std::size_t len)
 {
-    return core::str::to_unicode_text(std::string(str, len));
+    return cc::core::str::to_unicode_text(std::string(str, len));
 }
 
-namespace core::str
+namespace cc::core::str
 {
 
     void toupper(std::string *s, const std::locale &loc)
@@ -764,4 +764,4 @@ namespace core::str
             });
     }
 
-}  // namespace core::str
+}  // namespace cc::core::str

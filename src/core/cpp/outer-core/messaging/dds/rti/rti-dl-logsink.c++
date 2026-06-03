@@ -7,7 +7,7 @@
 
 #include "rti-dl-logsink.h++"
 
-namespace core::dds
+namespace cc::dds
 {
     RTIDistributedLogger::RTIDistributedLogger(
         const std::string &sink_id,
@@ -69,7 +69,7 @@ namespace core::dds
         return false;
     }
 
-    const types::ValueMap<status::Level, DDS_Long> RTIDistributedLogger::levelmap = {
+    const core::types::ValueMap<core::status::Level, DDS_Long> RTIDistributedLogger::levelmap = {
         {core::status::Level::TRACE, 800},
         {core::status::Level::DEBUG, 700},
         {core::status::Level::INFO, 600},
@@ -80,4 +80,4 @@ namespace core::dds
         {core::status::Level::FATAL, 100},
     };
 
-}  // namespace core::dds
+}  // namespace cc::dds

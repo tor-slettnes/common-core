@@ -10,11 +10,11 @@
 #include "protobuf-inline.h++"
 #include "status/exceptions.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     MessageWriter::MessageWriter(
         const std::shared_ptr<API> &provider,
-        const std::shared_ptr<core::zmq::Publisher> &publisher)
+        const std::shared_ptr<cc::zmq::Publisher> &publisher)
         : Super(publisher),
           provider(provider),
           keep_writing(false),
@@ -85,4 +85,4 @@ namespace multilogger::zmq
         }
     }
 
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

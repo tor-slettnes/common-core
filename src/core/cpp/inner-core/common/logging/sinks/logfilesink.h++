@@ -15,7 +15,7 @@
 
 #include <fstream>
 
-namespace core::logging
+namespace cc::core::logging
 {
     class LogFileSink : public AsyncWrapper<MessageSink>,
                         public RotatingPath,
@@ -50,4 +50,4 @@ namespace core::logging
             return LogFileSink::create_shared(sink_id);
         });
 
-}  // namespace core::logging
+}  // namespace cc::core::logging

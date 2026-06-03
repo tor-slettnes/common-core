@@ -12,9 +12,9 @@
 #include <memory>
 #include <string>
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     void run_service(
-        std::shared_ptr<multilogger::API> api_provider,
+        std::shared_ptr<API> api_provider,
         const std::string &bind_address = {});
 }

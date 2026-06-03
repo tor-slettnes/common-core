@@ -17,7 +17,7 @@
 #include <fstream>
 #include <iostream>
 
-namespace core
+namespace cc::core
 {
     constexpr auto JSON_SUFFIX = ".json";
     constexpr auto YAML_SUFFIX = ".yaml";
@@ -337,4 +337,4 @@ namespace core
         return {JSON_SUFFIX, YAML_SUFFIX};
     }
 
-}  // namespace core
+}  // namespace cc::core

@@ -15,7 +15,7 @@
 
 #include <sstream>
 
-namespace core::types
+namespace cc::core::types
 {
     Value::Value()
         : ValueBase(nullvalue)
@@ -1403,4 +1403,4 @@ namespace core::types
 
     const ValueBase emptyvalue;
 
-}  // namespace core::types
+}  // namespace cc::core::types

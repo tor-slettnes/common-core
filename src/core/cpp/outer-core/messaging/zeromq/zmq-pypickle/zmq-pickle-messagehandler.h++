@@ -10,7 +10,7 @@
 #include "zmq-subscriber.h++"
 #include "python-containerobject.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     class PyPickleMessageHandler : public MessageHandler
     {
@@ -21,7 +21,7 @@ namespace core::zmq
                                const std::optional<Filter> &filter = {});
 
     private:
-        void handle(const types::ByteVector &bytes) override;
+        void handle(const core::types::ByteVector &bytes) override;
 
     protected:
         // Subclasses should either of the following two methods to handle
@@ -29,7 +29,7 @@ namespace core::zmq
         // decoded as a variant value.
 
         virtual void handle_message(const python::ContainerObject &object);
-        virtual void handle_message(const types::Value &value) {}
+        virtual void handle_message(const core::types::Value &value) {}
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

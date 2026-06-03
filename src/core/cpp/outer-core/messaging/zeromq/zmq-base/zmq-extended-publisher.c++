@@ -7,7 +7,7 @@
 
 #include "zmq-extended-publisher.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     ExtendedPublisher::ExtendedPublisher(
         const std::string &address,
@@ -16,4 +16,4 @@ namespace core::zmq
     {
     }
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

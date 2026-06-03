@@ -22,22 +22,22 @@
 #include <unordered_map>
 #include <set>
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     //==========================================================================
     // NetworkManager proxy container.instance
 
-    extern core::dbus::ProxyContainer container;
+    extern cc::dbus::ProxyContainer container;
 
     //==========================================================================
     /// @class DataWrapper<T>
     /// @brief DBus Proxy wrapper with abstraction for data storage
 
     template <class DataType>
-    class DataWrapper : public core::dbus::ProxyWrapper, public DataType
+    class DataWrapper : public cc::dbus::ProxyWrapper, public DataType
     {
     public:
-        using core::dbus::ProxyWrapper::ProxyWrapper;
+        using cc::dbus::ProxyWrapper::ProxyWrapper;
     };
 
     //==========================================================================
@@ -105,4 +105,4 @@ namespace netconfig::dbus
         return map;
     }
 
-} // namespace netconfig::dbus
+} // namespace cc::platform::netconfig::dbus

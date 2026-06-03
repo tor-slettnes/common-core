@@ -7,7 +7,7 @@
 
 #include "variant-list.h++"
 
-namespace core::types
+namespace cc::core::types
 {
     const Value &ValueList::front(const Value &fallback) const noexcept
     {
@@ -197,4 +197,4 @@ namespace core::types
     }
 
 
-}  // namespace core::types
+}  // namespace cc::core::types

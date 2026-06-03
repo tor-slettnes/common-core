@@ -27,31 +27,31 @@ int main(int argc, char** argv)
     try
     {
         // Initialize paths, load settings, set up shutdown signal handlers
-        core::application::initialize_daemon(argc, argv, "relay");
+        cc::core::application::initialize_daemon(argc, argv, "relay");
 
-        pubsub::options = std::make_unique<pubsub::Options>();
-        pubsub::options->apply(argc, argv);
+        ::options = std::make_unique<cc::platform::pubsub::Options>();
+        ::options->apply(argc, argv);
 
         std::list<std::thread> server_threads;
 
 #ifdef USE_ZMQ
-        if (pubsub::options->enable_zmq)
+        if (::options->enable_zmq)
         {
             logf_debug("Spawning ZMQ listeners");
-            server_threads.push_back(core::thread::supervised_thread(
-                pubsub::zmq::run_zmq_listeners,
-                pubsub::options->zmq_producer_interface,
-                pubsub::options->zmq_consumer_interface));
+            server_threads.push_back(cc::core::thread::supervised_thread(
+                cc::platform::pubsub::zmq::run_zmq_listeners,
+                ::options->zmq_producer_interface,
+                ::options->zmq_consumer_interface));
         }
 #endif
 
 #ifdef USE_GRPC
-        if (pubsub::options->enable_grpc)
+        if (::options->enable_grpc)
         {
             logf_debug("Spawning gRPC server");
-            server_threads.push_back(core::thread::supervised_thread(
-                pubsub::grpc::run_grpc_service,
-                pubsub::options->bind_address));
+            server_threads.push_back(cc::core::thread::supervised_thread(
+                cc::platform::pubsub::grpc::run_grpc_service,
+                ::options->bind_address));
         }
 #endif
 

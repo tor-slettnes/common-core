@@ -7,7 +7,7 @@
 
 #include "loggable.h++"
 
-namespace core::types
+namespace cc::core::types
 {
     Loggable::Loggable(const dt::TimePoint &tp,
                        const types::KeyValueMap &attributes)
@@ -128,4 +128,4 @@ namespace core::types
         stream << this->class_name() << this->as_tvlist();
     }
 
-}  // namespace core::types
+}  // namespace cc::core::types

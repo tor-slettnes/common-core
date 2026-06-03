@@ -13,7 +13,7 @@
 #include <thread>
 #include <optional>
 
-namespace core::logging
+namespace cc::core::logging
 {
     constexpr const auto SETTING_QUEUE_SIZE = "queue size";
     constexpr const auto DEFAULT_QUEUE_SIZE = 0;
@@ -136,4 +136,4 @@ namespace core::logging
         std::shared_ptr<LoggableQueue> queue_;
         std::size_t queue_size_ = 0;
     };
-}  // namespace core::logging
+}  // namespace cc::core::logging

@@ -8,8 +8,8 @@
 #pragma once
 #include "libyaml/yaml-reader.h++"
 
-namespace core::yaml
+namespace cc::core::yaml
 {
     using Reader = YamlReader;
     extern Reader reader;
-}  // namespace core::yaml
+}  // namespace cc::core::yaml

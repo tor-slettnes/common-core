@@ -67,16 +67,16 @@
 /// @endcode
 
 #define define_log_scope(...)                             \
-    inline static ::core::logging::Scope::ptr log_scope = \
-        ::core::logging::Scope::create(__VA_ARGS__)
+    inline static ::cc::core::logging::Scope::ptr log_scope = \
+        ::cc::core::logging::Scope::create(__VA_ARGS__)
 
 #define use_log_scope(other) \
-    inline static ::core::logging::Scope::ptr log_scope = other
+    inline static ::cc::core::logging::Scope::ptr log_scope = other
 
 #define use_shared_scope() \
-    use_log_scope(::core::log_scope)
+    use_log_scope(::cc::core::log_scope)
 
-namespace core::logging
+namespace cc::core::logging
 {
 
     //==========================================================================
@@ -123,12 +123,12 @@ namespace core::logging
 
     /// Log scopes. These may be defined per namespace, class, function...
     inline types::ValueMap<std::string, Scope::ptr> scopes;
-} // namespace core::logging
+} // namespace cc::core::logging
 
-namespace core
+namespace cc::core
 {
     define_log_scope("shared", status::Level::NOTICE);
 }
 
 /// Global log scope.  Inherit default threshold.
-define_log_scope("global", core::status::Level::NONE);
+define_log_scope("global", cc::core::status::Level::NONE);

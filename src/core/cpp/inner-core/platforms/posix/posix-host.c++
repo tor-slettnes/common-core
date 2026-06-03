@@ -14,7 +14,7 @@
 
 #define HOST_NAME_MAX 64
 
-namespace core::platform
+namespace cc::core::platform
 {
     std::string PosixHostProvider::get_host_name() const
     {
@@ -56,4 +56,4 @@ namespace core::platform
     {
         core::platform::process->invoke_check({"/sbin/reboot"});
     }
-}  // namespace core::platform
+}  // namespace cc::core::platform

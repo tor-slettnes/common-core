@@ -14,13 +14,13 @@
 
 #include <memory>
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
-    class RequestHandler : public core::zmq::ProtoBufRequestHandler,
+    class RequestHandler : public cc::zmq::ProtoBufRequestHandler,
                            public core::types::enable_create_shared<RequestHandler>
     {
         using This = RequestHandler;
-        using Super = core::zmq::ProtoBufRequestHandler;
+        using Super = cc::zmq::ProtoBufRequestHandler;
 
     protected:
         RequestHandler(const std::shared_ptr<API> &provider,
@@ -48,4 +48,4 @@ namespace demo::zmq
         std::shared_ptr<API> provider;
     };
 
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

@@ -12,7 +12,7 @@
 #include "platform/init.h++"
 #include "logging/logging.h++"
 
-namespace pubsub::zmq
+namespace cc::platform::pubsub::zmq
 {
     constexpr auto SHUTDOWN_SIGNAL_HANDLE = "relay-zmq-listeners";
 
@@ -24,13 +24,13 @@ namespace pubsub::zmq
         auto subscriber = Subscriber::create_shared(
             producer_interface,
             PRODUCER_CHANNEL,
-            core::zmq::Endpoint::Role::HOST);
+            cc::zmq::Endpoint::Role::HOST);
 
         // Instantiate Publisher to relay asynchronous events over ZeroMQ
         auto publisher = Publisher::create_shared(
             consumer_interface,
             CONSUMER_CHANNEL,
-            core::zmq::Endpoint::Role::HOST);
+            cc::zmq::Endpoint::Role::HOST);
 
         publisher->initialize();
         logf_notice("%s is ready on %s", *publisher, publisher->address());

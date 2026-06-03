@@ -14,7 +14,7 @@
 
 #include <memory>
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     Proxy::Proxy(int domain_id, const core::dt::Duration &ready_timeout)
         : Provider(TYPE_NAME_FULL(This)),
@@ -234,4 +234,4 @@ namespace switchboard::dds
             switchboard::signal_status.clear(switch_name);
         }
     }
-}  // namespace switchboard::dds
+}  // namespace cc::platform::switchboard::dds

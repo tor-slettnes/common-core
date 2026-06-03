@@ -9,7 +9,7 @@
 #include <map>
 #include <memory>
 
-namespace core::types
+namespace cc::core::types
 {
     template <class K, class V, class MapType = std::map<K, std::shared_ptr<V>>>
     class shared_ptr_map : public MapType
@@ -42,4 +42,4 @@ namespace core::types
             }
         }
     };
-}  // namespace core::types
+}  // namespace cc::core::types

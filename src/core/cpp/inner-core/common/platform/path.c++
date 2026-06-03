@@ -15,7 +15,7 @@
 #define LOGDIR_VAR     "LOGDIR"
 
 /// Default filesystem paths.
-namespace core::platform
+namespace cc::core::platform
 {
     //--------------------------------------------------------------------------
     // FileStats
@@ -410,11 +410,11 @@ namespace core::platform
     /// Global instance, populated with the "best" provider for this system.
     ProviderProxy<PathProvider> path("path");
 
-};  // namespace core::platform
+};  // namespace cc::core::platform
 
 namespace std::filesystem
 {
-    static core::types::SymbolMap<file_type> typenames = {
+    static cc::core::types::SymbolMap<file_type> typenames = {
         {file_type::none, "none"},
         {file_type::not_found, "not_found"},
         {file_type::regular, "regular"},

@@ -22,13 +22,13 @@ int main(int argc, char** argv)
 {
     try
     {
-        core::application::initialize_daemon(argc, argv, "switchboard");
+        cc::core::application::initialize_daemon(argc, argv, "switchboard");
 
-        switchboard::options = std::make_unique<switchboard::Options>();
-        switchboard::options->apply(argc, argv);
+        ::options = std::make_unique<cc::platform::switchboard::Options>();
+        ::options->apply(argc, argv);
 
         // Prepare switchboard request handler
-        auto switchboard_provider = switchboard::Central::create_shared();
+        auto switchboard_provider = cc::platform::switchboard::Central::create_shared();
         logf_debug("Initializing Switchboard provider: %s",
                    switchboard_provider->implementation());
         switchboard_provider->initialize();
@@ -36,27 +36,27 @@ int main(int argc, char** argv)
         std::list<std::thread> server_threads;
 
 #ifdef USE_GRPC
-        if (switchboard::options->enable_grpc)
+        if (::options->enable_grpc)
         {
             logf_debug("Starting gRPC server");
             server_threads.push_back(
-                core::thread::supervised_thread(
-                    switchboard::grpc::run_grpc_service,
+                cc::core::thread::supervised_thread(
+                    cc::platform::switchboard::grpc::run_grpc_service,
                     switchboard_provider,
-                    switchboard::options->bind_address));
+                    ::options->bind_address));
         }
 #endif
 
 #ifdef USE_DDS
-        if (switchboard::options->enable_dds)
+        if (::options->enable_dds)
         {
             logf_debug("Starting DDS server");
             server_threads.push_back(
-                core::thread::supervised_thread(
-                    switchboard::dds::run_dds_service,
+                cc::core::thread::supervised_thread(
+                    cc::platform::switchboard::dds::run_dds_service,
                     switchboard_provider,
-                    switchboard::options->identity,
-                    switchboard::options->domain_id));
+                    ::options->identity,
+                    ::options->domain_id));
         }
 #endif
 

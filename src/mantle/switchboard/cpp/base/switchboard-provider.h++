@@ -11,7 +11,7 @@
 
 #include <memory>
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     //==========================================================================
     // Provider
@@ -270,4 +270,4 @@ namespace switchboard
 
     extern std::shared_ptr<Provider> provider;
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

@@ -11,7 +11,7 @@
 
 #include "zlib.h"
 
-namespace core::io
+namespace cc::core::io
 {
     constexpr unsigned int GZIP_BUFFER_SIZE = 65536;
 
@@ -33,4 +33,4 @@ namespace core::io
         gzFile gzfile;
     };
 
-} // namespace core::io
+} // namespace cc::core::io

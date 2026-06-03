@@ -9,7 +9,7 @@
 #include "platform/path.h++"
 #include "string/format.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     LinuxProcessProvider::LinuxProcessProvider(const std::string &name)
         : PosixProcessProvider(name)
@@ -22,4 +22,4 @@ namespace core::platform
             core::str::format("/proc/%s/comm", pid));
     }
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

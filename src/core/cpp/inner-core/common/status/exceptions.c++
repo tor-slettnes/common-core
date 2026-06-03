@@ -13,7 +13,7 @@
 #include <exception>
 #include <string.h>
 
-namespace core::exception
+namespace cc::core::exception
 {
     //==========================================================================
     // Cancelled
@@ -531,14 +531,14 @@ namespace core::exception
             return {};
         }
     }
-}  // namespace core::exception
+}  // namespace cc::core::exception
 
 namespace std
 {
     /// Define output stream operator "<<" on std::exception and derivatives.
     std::ostream &operator<<(std::ostream &stream, const exception &e)
     {
-        if (auto *ep = dynamic_cast<const core::status::Error *>(&e))
+        if (auto *ep = dynamic_cast<const cc::core::status::Error *>(&e))
         {
             ep->to_stream(stream);
         }
@@ -557,7 +557,7 @@ namespace std
             {
                 std::rethrow_exception(eptr);
             }
-            catch (const core::status::Error &event)
+            catch (const cc::core::status::Error &event)
             {
                 event.to_stream(stream);
             }

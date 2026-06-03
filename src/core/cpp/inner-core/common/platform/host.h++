@@ -9,7 +9,7 @@
 #include "provider.h++"
 #include "settings/settingsstore.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     /// @brief Abstract provider for host related functions
     class HostProvider : public Provider
@@ -39,4 +39,4 @@ namespace core::platform
     };
 
     extern ProviderProxy<HostProvider> host;
-}  // namespace core::platform
+}  // namespace cc::core::platform

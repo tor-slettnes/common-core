@@ -12,7 +12,7 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     ProtoBufRequestHandler::ProtoBufRequestHandler(const std::string &interface_name)
         : interface_name_(interface_name)
@@ -79,7 +79,7 @@ namespace core::zmq
 
             error = std::make_shared<ProtoBufError>(
                 cc::protobuf::request_reply::STATUS_CANCELLED,
-                exception::NotFound(
+                core::exception::NotFound(
                     "Method not found",
                     this->full_method_name(request.method_name())));
         }
@@ -96,4 +96,4 @@ namespace core::zmq
     {
         this->handler_map.clear();
     }
-}  // namespace core::zmq
+}  // namespace cc::zmq

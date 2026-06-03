@@ -16,13 +16,13 @@
 #define SETTING_WIFI_BAND    "wifi band"
 #define DEFAULT_WIFI_BAND    "any"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     Manager::Manager(
-        core::dbus::ProxyContainer* container,
-        const core::dbus::ConnectionPtr& connection,
-        const core::dbus::ServiceName& servicename,
-        const core::dbus::ObjectPath& objectpath)
+        cc::dbus::ProxyContainer* container,
+        const cc::dbus::ConnectionPtr& connection,
+        const cc::dbus::ServiceName& servicename,
+        const cc::dbus::ObjectPath& objectpath)
         : DataWrapper<GlobalData>(
               container,
               connection,
@@ -42,7 +42,7 @@ namespace netconfig::dbus
                   {"ActiveConnections", SLOT(Manager::on_property_active_connections)},
               }),
           properties_proxy(
-              std::make_shared<core::dbus::PropertiesProxy>(
+              std::make_shared<cc::dbus::PropertiesProxy>(
                   container,
                   connection,
                   servicename,
@@ -66,7 +66,7 @@ namespace netconfig::dbus
     void Manager::initialize()
     {
         Super::initialize();
-        auto paths = this->get_cached_property<core::dbus::ObjectPaths>("Devices");
+        auto paths = this->get_cached_property<cc::dbus::ObjectPaths>("Devices");
         this->container->synchronize<Device>(paths);
     }
 
@@ -78,26 +78,26 @@ namespace netconfig::dbus
 
     void Manager::on_signal_state_changed(const Glib::VariantContainerBase& parameters)
     {
-        auto state = core::glib::variant_cast<uint>(parameters, 0);
+        auto state = cc::glib::variant_cast<uint>(parameters, 0);
         logf_trace("NetworkManager state change: %0x", state);
     }
 
     void Manager::on_property_devices(const Glib::VariantBase& change)
     {
-        auto devices = core::glib::variant_cast<core::dbus::ObjectPaths>(change);
+        auto devices = cc::glib::variant_cast<cc::dbus::ObjectPaths>(change);
         this->container->synchronize<Device>(devices);
     }
 
     void Manager::on_property_active_connections(const Glib::VariantBase& change)
     {
-        auto active_connections = core::glib::variant_cast<core::dbus::ObjectPaths>(change);
+        auto active_connections = cc::glib::variant_cast<cc::dbus::ObjectPaths>(change);
         logf_trace("NetworkManager active connections: %s", active_connections);
         this->container->synchronize<ActiveConnection>(active_connections);
     }
 
     void Manager::on_property_wireless_enabled(const Glib::VariantBase& change)
     {
-        this->wireless_enabled = core::glib::variant_cast<bool>(change);
+        this->wireless_enabled = cc::glib::variant_cast<bool>(change);
         if (this->wireless_enabled && !this->wireless_allowed)
         {
             this->set_wireless_enabled(false);
@@ -191,8 +191,8 @@ namespace netconfig::dbus
 
         auto inputs = Glib::VariantContainerBase::create_tuple({
             settings,
-            core::dbus::ObjectPathVariant::create(device_path),
-            core::dbus::ObjectPathVariant::create(specific_path),
+            cc::dbus::ObjectPathVariant::create(device_path),
+            cc::dbus::ObjectPathVariant::create(specific_path),
         });
 
         this->call_sync("AddAndActivateConnection", inputs);
@@ -201,15 +201,15 @@ namespace netconfig::dbus
     void Manager::activate_connection(const Key& key)
     {
         auto conn = Connection::get_by_key(key, true);
-        core::dbus::ObjectPath devpath = conn->find_suitable_device();
-        core::dbus::ObjectPath specificpath("/");
+        cc::dbus::ObjectPath devpath = conn->find_suitable_device();
+        cc::dbus::ObjectPath specificpath("/");
 
         logf_info("Activating connection: %s", conn->identifier());
 
         auto inputs = Glib::VariantContainerBase::create_tuple({
-            core::dbus::ObjectPathVariant::create(conn->objectpath),
-            core::dbus::ObjectPathVariant::create(devpath),
-            core::dbus::ObjectPathVariant::create(specificpath),
+            cc::dbus::ObjectPathVariant::create(conn->objectpath),
+            cc::dbus::ObjectPathVariant::create(devpath),
+            cc::dbus::ObjectPathVariant::create(specificpath),
         });
 
         this->call_sync("ActivateConnection", inputs);
@@ -220,7 +220,7 @@ namespace netconfig::dbus
         if (auto ac = ActiveConnection::get_by_key(key, false))
         {
             auto inputs = Glib::VariantContainerBase::create_tuple({
-                core::dbus::ObjectPathVariant::create(ac->objectpath),
+                cc::dbus::ObjectPathVariant::create(ac->objectpath),
             });
 
             this->call_sync("DeactivateConnection", inputs);
@@ -255,4 +255,4 @@ namespace netconfig::dbus
         }
     }
 
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

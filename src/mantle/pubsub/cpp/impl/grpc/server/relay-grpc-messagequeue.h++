@@ -13,17 +13,17 @@
 
 #include <unordered_set>
 
-namespace pubsub::grpc
+namespace cc::platform::pubsub::grpc
 {
     //==========================================================================
     /// @class MessageQueue
     /// @brief Connect local signals to a single client over gRPC
 
     class MessageQueue
-        : public core::grpc::ServerStreamer<cc::platform::pubsub::protobuf::Publication>
+        : public cc::grpc::ServerStreamer<cc::platform::pubsub::protobuf::Publication>
     {
         using This = MessageQueue;
-        using Super = core::grpc::ServerStreamer<cc::platform::pubsub::protobuf::Publication>;
+        using Super = cc::grpc::ServerStreamer<cc::platform::pubsub::protobuf::Publication>;
 
     public:
         MessageQueue(
@@ -45,4 +45,4 @@ namespace pubsub::grpc
         std::unordered_set<std::string> topics_;
 
     };
-}  // namespace pubsub::grpc
+}  // namespace cc::platform::pubsub::grpc

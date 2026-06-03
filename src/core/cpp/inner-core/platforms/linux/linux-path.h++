@@ -8,7 +8,7 @@
 #pragma once
 #include "posix-path.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     class LinuxPathProvider : public PosixPathProvider
     {
@@ -25,4 +25,4 @@ namespace core::platform
         fs::path exec_path_;
     };
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

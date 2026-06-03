@@ -18,7 +18,7 @@
 #include <thread>
 #include <algorithm>
 
-namespace core::types
+namespace cc::core::types
 {
     //==========================================================================
     /// @class BlockingQueueBase
@@ -366,4 +366,4 @@ namespace core::types
         std::chrono::system_clock::duration closewatch;
     };
 
-} // namespace core::types
+} // namespace cc::core::types

@@ -16,18 +16,18 @@
 
 //#include "switchboard-interface.h++" // generated from `switchboard-service.idl`
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     //==========================================================================
     // @class Publisher
     // @brief Publish updates to Switchboard clients
 
-    class Publisher : public core::dds::Publisher,
+    class Publisher : public cc::dds::Publisher,
                       public core::types::enable_create_shared<Publisher>
     {
         // Convencience alias
         using This = Publisher;
-        using Super = core::dds::Publisher;
+        using Super = cc::dds::Publisher;
 
     protected:
         Publisher(const std::string &name, int domain_id);
@@ -49,4 +49,4 @@ namespace switchboard::dds
         DataWriterPtr<CC::Switchboard::Specification> spec_writer;
         DataWriterPtr<CC::Switchboard::Status> status_writer;
     };
-}  // namespace switchboard::dds
+}  // namespace cc::platform::switchboard::dds

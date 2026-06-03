@@ -9,7 +9,7 @@
 #include "tokenparser.h++"
 #include "parsers/common/basereader.h++"
 
-namespace core::json
+namespace cc::core::json
 {
     class CustomReader : public parsers::BaseReader
     {
@@ -33,4 +33,4 @@ namespace core::json
             TokenParser *parser,
             const TokenParser::TokenMask &endtokens = TokenParser::TI_NONE);
     };
-}  // namespace core::json
+}  // namespace cc::core::json

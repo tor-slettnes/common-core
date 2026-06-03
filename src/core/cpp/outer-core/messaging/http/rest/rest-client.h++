@@ -10,7 +10,7 @@
 #include "rest-base.h++"
 #include "chrono/date-time.h++"
 
-namespace core::http
+namespace cc::http
 {
     /// @brief
     ///     HTTP client that sends and receives JSON responses.
@@ -51,15 +51,15 @@ namespace core::http
         ///     HTTP response code received from the server
         /// @return
         ///     Decoded JSON response from server.
-        /// @exception exception::FailedPrecondition
+        /// @exception core::exception::FailedPrecondition
         ///     Failed to contact server
-        /// @exception exception::FailedPostCondition
+        /// @exception core::exception::FailedPostCondition
         ///     Server returned an unexpected MIME type or an unsuccessful
         ///     HTTP status code.  The latter is supressed if
         ///    `fail_on_error` is `false`.
 
-        types::Value get_json(const std::string &path,
-                              const types::TaggedValueList &query,
+        core::types::Value get_json(const std::string &path,
+                              const core::types::TaggedValueList &query,
                               bool fail_on_error,
                               uint max_attempts,
                               const core::dt::Duration &retry_interval = 5s,
@@ -78,15 +78,15 @@ namespace core::http
         ///     HTTP response code received from the server
         /// @return
         ///     Decoded JSON response from server.
-        /// @exception exception::FailedPrecondition
+        /// @exception core::exception::FailedPrecondition
         ///     Failed to contact server
-        /// @exception exception::FailedPostCondition
+        /// @exception core::exception::FailedPostCondition
         ///     Server returned an unexpected MIME type or an unsuccessful
         ///     HTTP status code.  The latter is supressed if
         ///    `fail_on_error` is `false`.
 
-        types::Value get_json(const std::string &path,
-                              const types::TaggedValueList &query = {},
+        core::types::Value get_json(const std::string &path,
+                              const core::types::TaggedValueList &query = {},
                               bool fail_on_error = true,
                               ResponseCode *response_code = nullptr) const;
 
@@ -105,16 +105,16 @@ namespace core::http
         ///     HTTP response code received from the server
         /// @return
         ///     Decoded JSON response from server.
-        /// @exception exception::FailedPrecondition
+        /// @exception core::exception::FailedPrecondition
         ///     Failed to contact server
-        /// @exception exception::FailedPostCondition
+        /// @exception core::exception::FailedPostCondition
         ///     Server returned an unexpected MIME type or an unsuccessful
         ///     HTTP status code.  The latter is supressed if
         ///    `fail_on_error` is `false`.
 
-        types::Value put_json(const std::string &path,
-                              const types::TaggedValueList &query,
-                              const types::KeyValueMap &data,
+        core::types::Value put_json(const std::string &path,
+                              const core::types::TaggedValueList &query,
+                              const core::types::KeyValueMap &data,
                               bool fail_on_error = true,
                               ResponseCode *response_code = nullptr) const;
 
@@ -131,34 +131,34 @@ namespace core::http
         ///     HTTP response code received from the server
         /// @return
         ///     Decoded JSON response from server.
-        /// @exception exception::FailedPrecondition
+        /// @exception core::exception::FailedPrecondition
         ///     Failed to contact server
-        /// @exception exception::FailedPostCondition
+        /// @exception core::exception::FailedPostCondition
         ///     Server returned an unexpected MIME type or an unsuccessful
         ///     HTTP status code.  The latter is supressed if
         ///    `fail_on_error` is `false`.
 
-        types::Value put_json(const std::string &path,
-                              const types::KeyValueMap &data,
+        core::types::Value put_json(const std::string &path,
+                              const core::types::KeyValueMap &data,
                               bool fail_on_error = true,
                               ResponseCode *response_code = nullptr) const;
 
-        types::Value post_json(const std::string &path,
+        core::types::Value post_json(const std::string &path,
                                const std::string &json,
                                bool fail_on_error = true,
                                ResponseCode *response_code = nullptr) const;
 
-        types::Value post_json(const std::string &path,
-                               const types::Value &data,
+        core::types::Value post_json(const std::string &path,
+                               const core::types::Value &data,
                                bool fail_on_error = true,
                                ResponseCode *response_code = nullptr) const;
 
-        types::Value del_json(const std::string &path,
-                              const types::TaggedValueList &query = {},
+        core::types::Value del_json(const std::string &path,
+                              const core::types::TaggedValueList &query = {},
                               bool fail_on_error = true,
                               ResponseCode *response_code = nullptr) const;
 
     private:
         const std::string content_type;
     };
-} // namespace core::http
+} // namespace cc::http

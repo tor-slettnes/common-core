@@ -12,7 +12,7 @@
 #include <thread>
 #include <memory>
 
-namespace core::zmq
+namespace cc::zmq
 {
     class Publisher : public Endpoint
     {
@@ -32,12 +32,12 @@ namespace core::zmq
     public:
         void initialize() override;
 
-        void publish(const std::optional<types::ByteVector> &header,
-                     const types::ByteVector &bytes);
+        void publish(const std::optional<core::types::ByteVector> &header,
+                     const core::types::ByteVector &bytes);
 
     private:
         steady_clock::time_point warmup_deadline;
         steady_clock::duration warmup_delay;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

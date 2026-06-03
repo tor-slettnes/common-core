@@ -12,7 +12,7 @@
 // Shared modules
 #include "thread/signaltemplate.h++"
 
-namespace demo
+namespace cc::demo
 {
     // Connectable signals use to send/receive demo data updates.
 
@@ -70,4 +70,4 @@ namespace demo
     /// place as this signal is emitted, with `mapping_action` being either
     /// `MAP_ADDITION`, `MAP_UPDATE`, or `MAP_REMOVAL`.
     extern core::signal::MappingSignal<Greeting> signal_greeting;
-}  // namespace demo
+}  // namespace cc::demo

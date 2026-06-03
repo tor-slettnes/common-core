@@ -12,7 +12,7 @@
 #include "types/create-shared.h++"
 #include "platform/process.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     //==========================================================================
     /// @class MessageBuilder
@@ -114,4 +114,4 @@ namespace core::logging
 
 
     using MessagePtr = std::shared_ptr<MessageBuilder>;
-}  // namespace core::logging
+}  // namespace cc::core::logging

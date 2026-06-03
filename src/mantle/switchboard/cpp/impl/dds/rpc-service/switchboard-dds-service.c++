@@ -7,7 +7,7 @@
 
 #include "switchboard-dds-service.h++"
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     Service::Service(const ::dds::rpc::Server &server,
                      int domain_id,
@@ -30,4 +30,4 @@ namespace switchboard::dds
         Super::deinitialize();
         switchboard::stop_event_capture();
     }
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

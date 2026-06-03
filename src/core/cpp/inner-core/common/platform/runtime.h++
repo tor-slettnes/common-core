@@ -9,7 +9,7 @@
 #include "provider.h++"
 #include "types/valuemap.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     enum StdFileNo
     {
@@ -53,4 +53,4 @@ namespace core::platform
     };
 
     extern ProviderProxy<RunTimeProvider> runtime;
-}  // namespace core::platform
+}  // namespace cc::core::platform

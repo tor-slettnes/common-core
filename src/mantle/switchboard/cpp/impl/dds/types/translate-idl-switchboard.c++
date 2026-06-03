@@ -8,88 +8,88 @@
 #include "translate-idl-switchboard.h++"
 #include "translate-idl-inline.h++"
 
-namespace idl
+namespace cc::idl
 {
     // CC::Switchboard::ExceptionHandling
-    void encode(switchboard::ExceptionHandling native,
+    void encode(cc::platform::switchboard::ExceptionHandling native,
                 CC::Switchboard::ExceptionHandling *idl)
     {
         *idl = static_cast<CC::Switchboard::ExceptionHandling>(native);
     }
 
     void decode(CC::Switchboard::ExceptionHandling idl,
-                switchboard::ExceptionHandling *native)
+                cc::platform::switchboard::ExceptionHandling *native)
     {
-        *native = static_cast<switchboard::ExceptionHandling>(idl);
+        *native = static_cast<cc::platform::switchboard::ExceptionHandling>(idl);
     }
 
     // CC::Switchboard::InterceptorPhase
-    void encode(switchboard::InterceptorPhase native,
+    void encode(cc::platform::switchboard::InterceptorPhase native,
                 CC::Switchboard::InterceptorPhase *idl)
     {
         *idl = static_cast<CC::Switchboard::InterceptorPhase>(native);
     }
 
     void decode(CC::Switchboard::InterceptorPhase idl,
-                switchboard::InterceptorPhase *native)
+                cc::platform::switchboard::InterceptorPhase *native)
     {
-        *native = static_cast<switchboard::InterceptorPhase>(idl);
+        *native = static_cast<cc::platform::switchboard::InterceptorPhase>(idl);
     }
 
     // CC::Switchboard::InvocationStyle
-    void encode(switchboard::InvocationStyle native,
+    void encode(cc::platform::switchboard::InvocationStyle native,
                 CC::Switchboard::InvocationStyle *idl)
     {
         *idl = static_cast<CC::Switchboard::InvocationStyle>(native);
     }
 
     void decode(CC::Switchboard::InvocationStyle idl,
-                switchboard::InvocationStyle *native)
+                cc::platform::switchboard::InvocationStyle *native)
     {
-        *native = static_cast<switchboard::InvocationStyle>(idl);
+        *native = static_cast<cc::platform::switchboard::InvocationStyle>(idl);
     }
 
     // CC::Switchboard::CascadeStyle
-    void encode(switchboard::CascadeStyle native,
+    void encode(cc::platform::switchboard::CascadeStyle native,
                 CC::Switchboard::CascadeStyle *idl)
     {
         *idl = static_cast<CC::Switchboard::CascadeStyle>(native);
     }
 
     void decode(CC::Switchboard::CascadeStyle idl,
-                switchboard::CascadeStyle *native)
+                cc::platform::switchboard::CascadeStyle *native)
     {
-        *native = static_cast<switchboard::CascadeStyle>(idl);
+        *native = static_cast<cc::platform::switchboard::CascadeStyle>(idl);
     }
 
     // CC::Switchboard::State
-    void encode(switchboard::State native,
+    void encode(cc::platform::switchboard::State native,
                 CC::Switchboard::State *idl)
     {
         *idl = static_cast<CC::Switchboard::State>(native);
     }
 
     void decode(CC::Switchboard::State idl,
-                switchboard::State *native)
+                cc::platform::switchboard::State *native)
     {
-        *native = static_cast<switchboard::State>(idl);
+        *native = static_cast<cc::platform::switchboard::State>(idl);
     }
 
     // CC::Switchboard::AliasList
-    void encode(switchboard::SwitchAliases native,
+    void encode(cc::platform::switchboard::SwitchAliases native,
                 CC::Switchboard::NameList *idl)
     {
         idl->insert(idl->end(), native.begin(), native.end());
     }
 
     void decode(CC::Switchboard::NameList idl,
-                switchboard::SwitchAliases *native)
+                cc::platform::switchboard::SwitchAliases *native)
     {
         native->insert(idl.begin(), idl.end());
     }
 
     // CC::Switchboard::SwitchSelection
-    void encode(const switchboard::SwitchSelection &native,
+    void encode(const cc::platform::switchboard::SwitchSelection &native,
                 CC::Switchboard::SwitchSelection *idl)
     {
         idl->patterns(native.patterns);
@@ -98,7 +98,7 @@ namespace idl
     }
 
     void decode(const CC::Switchboard::SwitchSelection &idl,
-                switchboard::SwitchSelection *native)
+                cc::platform::switchboard::SwitchSelection *native)
     {
         native->patterns = idl.patterns();
         native->is_regex = idl.is_regex();
@@ -106,8 +106,8 @@ namespace idl
     }
 
     // CC::Switchboard::Localization
-    void encode(const switchboard::LanguageCode &language_code,
-                const switchboard::Localization &native,
+    void encode(const cc::platform::switchboard::LanguageCode &language_code,
+                const cc::platform::switchboard::Localization &native,
                 CC::Switchboard::Localization *idl)
     {
         idl->language_code(language_code);
@@ -126,8 +126,8 @@ namespace idl
     }
 
     void decode(const CC::Switchboard::Localization &idl,
-                switchboard::LanguageCode *language_code,
-                switchboard::Localization *localization)
+                cc::platform::switchboard::LanguageCode *language_code,
+                cc::platform::switchboard::Localization *localization)
     {
         if (language_code)
         {
@@ -140,14 +140,14 @@ namespace idl
             localization->deactivate_text = idl.deactivate_text();
             for (const CC::Switchboard::StateText &item : idl.state_texts())
             {
-                auto state = decoded<switchboard::State>(item.switch_state());
+                auto state = decoded<cc::platform::switchboard::State>(item.switch_state());
                 localization->state_texts[state] = item.text();
             }
         }
     }
 
     // CC::Switchboard::LocalizationList
-    void encode(const switchboard::LocalizationMap &native,
+    void encode(const cc::platform::switchboard::LocalizationMap &native,
                 CC::Switchboard::LocalizationList *idl)
     {
         idl->list().resize(native.size());
@@ -159,7 +159,7 @@ namespace idl
     }
 
     void decode(const CC::Switchboard::LocalizationList &idl,
-                switchboard::LocalizationMap *native)
+                cc::platform::switchboard::LocalizationMap *native)
     {
         for (const auto &desc : idl.list())
         {
@@ -168,20 +168,20 @@ namespace idl
     }
 
     // CC::Switchboard::DependencyPolarity
-    void encode(const switchboard::DependencyPolarity &native,
+    void encode(const cc::platform::switchboard::DependencyPolarity &native,
                 CC::Switchboard::DependencyPolarity *idl)
     {
         *idl = static_cast<CC::Switchboard::DependencyPolarity>(native);
     }
 
     void decode(const CC::Switchboard::DependencyPolarity &idl,
-                switchboard::DependencyPolarity *native)
+                cc::platform::switchboard::DependencyPolarity *native)
     {
-        *native = static_cast<switchboard::DependencyPolarity>(idl);
+        *native = static_cast<cc::platform::switchboard::DependencyPolarity>(idl);
     }
 
     // CC::Switchboard::Dependency
-    void encode(const switchboard::DependencyRef &native,
+    void encode(const cc::platform::switchboard::DependencyRef &native,
                 CC::Switchboard::Dependency *idl)
     {
         idl->predecessor(native->predecessor_name());
@@ -192,20 +192,20 @@ namespace idl
     }
 
     void decode(const CC::Switchboard::Dependency &idl,
-                const switchboard::ProviderRef &provider,
-                switchboard::DependencyRef *native)
+                const cc::platform::switchboard::ProviderRef &provider,
+                cc::platform::switchboard::DependencyRef *native)
     {
-        *native = switchboard::Dependency::create_shared(
+        *native = cc::platform::switchboard::Dependency::create_shared(
             provider,
             idl.predecessor(),
             idl.trigger_states(),
-            decoded<switchboard::DependencyPolarity>(idl.polarity()),
+            decoded<cc::platform::switchboard::DependencyPolarity>(idl.polarity()),
             idl.hard(),
             idl.sufficient());
     }
 
     // CC::Switchboard::DependencyList
-    void encode(const switchboard::DependencyMap &native,
+    void encode(const cc::platform::switchboard::DependencyMap &native,
                 CC::Switchboard::DependencyList *idl)
     {
         idl->list().resize(native.size());
@@ -217,8 +217,8 @@ namespace idl
     }
 
     void decode(const CC::Switchboard::DependencyList &idl,
-                const switchboard::ProviderRef &provider,
-                switchboard::DependencyMap *native)
+                const cc::platform::switchboard::ProviderRef &provider,
+                cc::platform::switchboard::DependencyMap *native)
     {
         for (const CC::Switchboard::Dependency &dep : idl.list())
         {
@@ -227,7 +227,7 @@ namespace idl
     }
 
     // CC::Switchboard::Interceptor
-    void encode(const switchboard::InterceptorRef &native,
+    void encode(const cc::platform::switchboard::InterceptorRef &native,
                 CC::Switchboard::Interceptor *idl)
     {
         idl->name(native->name());
@@ -241,24 +241,24 @@ namespace idl
     }
 
     void decode(const CC::Switchboard::Interceptor &idl,
-                const std::optional<switchboard::InterceptorOwner> &owner,
-                const switchboard::Invocation &invocation,
-                switchboard::InterceptorRef *native)
+                const std::optional<cc::platform::switchboard::InterceptorOwner> &owner,
+                const cc::platform::switchboard::Invocation &invocation,
+                cc::platform::switchboard::InterceptorRef *native)
     {
-        *native = switchboard::Interceptor::create_shared(
+        *native = cc::platform::switchboard::Interceptor::create_shared(
             idl.name(),
             owner.value_or(idl.owner()),
             invocation,
             idl.state_transitions(),
-            decoded<switchboard::InterceptorPhase>(idl.phase()),
+            decoded<cc::platform::switchboard::InterceptorPhase>(idl.phase()),
             idl.asynchronous(),
             idl.rerun(),
-            decoded<switchboard::ExceptionHandling>(idl.on_cancel()),
-            decoded<switchboard::ExceptionHandling>(idl.on_error()));
+            decoded<cc::platform::switchboard::ExceptionHandling>(idl.on_cancel()),
+            decoded<cc::platform::switchboard::ExceptionHandling>(idl.on_error()));
     }
 
     // CC::Switchboard::InterceptorList
-    void encode(const switchboard::InterceptorMap &native,
+    void encode(const cc::platform::switchboard::InterceptorMap &native,
                 CC::Switchboard::InterceptorList *idl)
     {
         idl->list().resize(native.size());
@@ -270,7 +270,7 @@ namespace idl
     }
 
     void decode(const CC::Switchboard::InterceptorList &idl,
-                switchboard::InterceptorMap *native)
+                cc::platform::switchboard::InterceptorMap *native)
     {
         for (const CC::Switchboard::Interceptor &icept : idl.list())
         {
@@ -283,8 +283,8 @@ namespace idl
     }
 
     // CC::Switchboard::Specification
-    void encode(const switchboard::SwitchName &name,
-                const switchboard::Specification &native,
+    void encode(const cc::platform::switchboard::SwitchName &name,
+                const cc::platform::switchboard::Specification &native,
                 CC::Switchboard::Specification *idl)
     {
         idl->switch_name(name);
@@ -296,9 +296,9 @@ namespace idl
     }
 
     void decode(const CC::Switchboard::Specification &idl,
-                const switchboard::ProviderRef &provider,
-                switchboard::SwitchName *name,
-                switchboard::Specification *native)
+                const cc::platform::switchboard::ProviderRef &provider,
+                cc::platform::switchboard::SwitchName *name,
+                cc::platform::switchboard::Specification *native)
     {
         if (name)
         {
@@ -317,8 +317,8 @@ namespace idl
     }
 
     // CC::Switchboard::Status
-    void encode(const switchboard::SwitchName &name,
-                const switchboard::Status &status,
+    void encode(const cc::platform::switchboard::SwitchName &name,
+                const cc::platform::switchboard::Status &status,
                 CC::Switchboard::Status *idl)
     {
         idl->switch_name(name);
@@ -338,8 +338,8 @@ namespace idl
     }
 
     void decode(const CC::Switchboard::Status &idl,
-                switchboard::SwitchName *name,
-                switchboard::Status *status)
+                cc::platform::switchboard::SwitchName *name,
+                cc::platform::switchboard::Status *status)
     {
         if (name)
         {
@@ -362,7 +362,7 @@ namespace idl
     }
 
     // CC::Switchboard::Switch
-    void encode(const switchboard::Switch &sw,
+    void encode(const cc::platform::switchboard::Switch &sw,
                 CC::Switchboard::Switch *idl)
     {
         encode(sw.name(), *sw.spec(), &idl->spec());
@@ -370,7 +370,7 @@ namespace idl
     }
 
     // CC::Switchboard::SwitchList
-    void encode(const switchboard::SwitchMap &native,
+    void encode(const cc::platform::switchboard::SwitchMap &native,
                 CC::Switchboard::SwitchList *idl)
     {
         idl->list().resize(native.size());
@@ -381,4 +381,4 @@ namespace idl
             encode(*sw, &encoded);
         }
     }
-}  // namespace idl
+}  // namespace cc::idl

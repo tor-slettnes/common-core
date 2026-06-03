@@ -12,7 +12,7 @@
 #include "platform/symbols.h++"
 #include "platform/init.h++"
 
-namespace core::python
+namespace cc::python
 {
     void Runtime::global_init()
     {
@@ -49,30 +49,33 @@ namespace core::python
         }
     }
 
-    types::Value Runtime::call(const std::optional<std::string> &module_name,
-                               const std::string &method_name,
-                               const types::ValueList &args,
-                               const types::KeyValueMap &kwargs)
+    core::types::Value Runtime::call(
+        const std::optional<std::string> &module_name,
+        const std::string &method_name,
+        const core::types::ValueList &args,
+        const core::types::KeyValueMap &kwargs)
     {
         SimpleObject py_args(SimpleObject::pytuple_from_values(args));
         SimpleObject py_kwargs(SimpleObject::pydict_from_kvmap(kwargs));
         return this->call(module_name, method_name, py_args, py_kwargs).as_value();
     }
 
-    ContainerObject Runtime::call(const std::optional<std::string> &module_name,
-                                  const std::string &method_name,
-                                  const SimpleObject::Vector &args,
-                                  const SimpleObject::Map &kwargs)
+    ContainerObject Runtime::call(
+        const std::optional<std::string> &module_name,
+        const std::string &method_name,
+        const SimpleObject::Vector &args,
+        const SimpleObject::Map &kwargs)
     {
         SimpleObject py_args(SimpleObject::pytuple_from_objects(args));
         SimpleObject py_kwargs(SimpleObject::pydict_from_objects(kwargs));
         return this->call(module_name, method_name, py_args, py_kwargs);
     }
 
-    ContainerObject Runtime::call(const std::optional<std::string> &module_name,
-                                  const std::string &method_name,
-                                  const SimpleObject &args,
-                                  const SimpleObject &kwargs)
+    ContainerObject Runtime::call(
+        const std::optional<std::string> &module_name,
+        const std::string &method_name,
+        const SimpleObject &args,
+        const SimpleObject &kwargs)
     {
         ContainerObject &container = this->get_container(module_name);
         if (auto method = container.find_qualified_symbol(method_name))
@@ -92,7 +95,7 @@ namespace core::python
             }
             else
             {
-                throw exception::FailedPrecondition(
+                throw core::exception::FailedPrecondition(
                     "Python object is not callable",
                     {
                         {"symbol", method.name()},
@@ -102,7 +105,7 @@ namespace core::python
         }
         else
         {
-            throwf_args(exception::NotFound,
+            throwf_args(core::exception::NotFound,
                         ("Symbol not found: %s", method_name),
                         method_name);
         }
@@ -136,4 +139,4 @@ namespace core::python
     static core::platform::InitTask py_init("Python init", Runtime::global_init);
     static core::platform::ExitTask py_cleanup("Python cleanup", Runtime::global_cleanup);
 
-}  // namespace core::python
+}  // namespace cc::python

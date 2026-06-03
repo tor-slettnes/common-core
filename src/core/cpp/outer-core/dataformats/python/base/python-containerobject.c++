@@ -9,7 +9,7 @@
 #include "status/exceptions.h++"
 #include "string/misc.h++"
 
-namespace core::python
+namespace cc::python
 {
     std::string ContainerObject::name() const
     {
@@ -66,9 +66,9 @@ namespace core::python
         return map;
     }
 
-    types::KeyValueMap ContainerObject::attributes_as_kvmap() const
+    core::types::KeyValueMap ContainerObject::attributes_as_kvmap() const
     {
-        types::KeyValueMap kvmap;
+        core::types::KeyValueMap kvmap;
         for (const auto &[key, obj] : this->attributes_as_objects())
         {
             if (obj.borrow())
@@ -84,7 +84,7 @@ namespace core::python
         // We do this recursively, because `typeof(this)` may in fact be a
         // subclass with an overridden `getattr()` method.
 
-        std::vector<std::string> parts = str::split(qualified_name, ".", 1);
+        std::vector<std::string> parts = core::str::split(qualified_name, ".", 1);
         if (parts.size() > 0)
         {
             if (ContainerObject obj = this->getattr(parts.front()))
@@ -103,4 +103,4 @@ namespace core::python
         return nullptr;
     }
 
-}  // namespace core::python
+}  // namespace cc::python

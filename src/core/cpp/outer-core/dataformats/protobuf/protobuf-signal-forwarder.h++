@@ -69,9 +69,10 @@ namespace cc::protobuf
             return present ? signal::MAP_UPDATE : signal::MAP_REMOVAL;
         }
 
-        static signal::MappingAction mapping_action(core::signal::MappingAction action)
+        static protobuf::signal::MappingAction mapping_action(
+            core::signal::MappingAction action)
         {
-            return static_cast<signal::MappingAction>(action);
+            return static_cast<protobuf::signal::MappingAction>(action);
         }
 
         /// @brief

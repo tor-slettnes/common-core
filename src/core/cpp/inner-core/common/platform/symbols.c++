@@ -11,7 +11,7 @@
 #include <string.h>
 
 /// Default filesystem paths.
-namespace core::platform
+namespace cc::core::platform
 {
     std::string SymbolsProvider::errno_name(int num) const noexcept
     {
@@ -25,4 +25,4 @@ namespace core::platform
 
     ProviderProxy<SymbolsProvider> symbols("symbols");
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

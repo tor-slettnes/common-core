@@ -7,7 +7,7 @@
 
 #include "multilogger-api.h++"
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
     API::API()
         : keep_listening_(false)
@@ -62,4 +62,4 @@ namespace multilogger
 
     core::signal::DataSignal<core::types::Loggable::ptr> signal_log_item("signal_log_item");
 
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger

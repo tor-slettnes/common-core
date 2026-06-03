@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <type_traits>
 
-namespace avro
+namespace cc::avro
 {
     BaseValue::BaseValue(const avro_value_t &avro_value)
     {
@@ -149,4 +149,4 @@ namespace avro
         return avro::get_value(this->value, enums_as_strings);
     }
 
-}  // namespace avro
+}  // namespace cc::avro

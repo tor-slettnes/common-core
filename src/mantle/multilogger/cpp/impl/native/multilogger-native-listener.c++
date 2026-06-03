@@ -10,7 +10,7 @@
 #include "logging/dispatchers/dispatcher.h++"
 #include "logging/message/message.h++"
 
-namespace multilogger::native
+namespace cc::platform::multilogger::native
 {
     QueueListener::QueueListener(
         const SinkID &sink_id,
@@ -82,4 +82,4 @@ namespace multilogger::native
                (this->applications.empty() || this->applications.count(application));
     }
 
-}  // namespace multilogger::native
+}  // namespace cc::platform::multilogger::native

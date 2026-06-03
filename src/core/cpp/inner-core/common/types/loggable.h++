@@ -12,7 +12,7 @@
 
 #include <memory>
 
-namespace core::types
+namespace cc::core::types
 {
     //==========================================================================
     /// @class Loggable
@@ -79,4 +79,4 @@ namespace core::types
         types::KeyValueMap attributes_;
     };
 
-}  // namespace core::types
+}  // namespace cc::core::types

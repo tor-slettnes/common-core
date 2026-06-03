@@ -10,7 +10,7 @@
 #include "status/exceptions.h++"
 #include "platform/path.h++"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     constexpr auto SETTINGS_SECTION_SWITCHES = "switches";
 
@@ -247,4 +247,4 @@ namespace switchboard
     }
 
     std::shared_ptr<Provider> provider;
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

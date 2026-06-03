@@ -11,7 +11,7 @@
 #include "switchboard.h++"
 #include "types/create-shared.h++"
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     using Client = CC::Switchboard::SwitchboardClient;
 
@@ -81,4 +81,4 @@ namespace switchboard::dds
             const core::types::KeyValueMap &attributes,
             bool clear_existing) override;
     };
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

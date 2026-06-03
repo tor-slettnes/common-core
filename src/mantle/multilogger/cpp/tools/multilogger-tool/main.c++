@@ -12,8 +12,8 @@
 
 int main(int argc, char** argv)
 {
-    core::application::initialize(argc, argv);
-    multilogger::options = std::make_unique<multilogger::Options>();
-    multilogger::options->apply(argc, argv);
-    return multilogger::options->handle_command();
+    cc::core::application::initialize(argc, argv);
+    ::options = std::make_unique<cc::platform::multilogger::Options>();
+    ::options->apply(argc, argv);
+    return ::options->handle_command();
 }

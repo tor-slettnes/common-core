@@ -16,10 +16,10 @@
 
 #define SLOT(method)  sigc::mem_fun(this, &method)
 #define DATASLOT(ptr) [&](const Glib::VariantBase& v) { \
-    core::glib::variant_cast(v, ptr);                   \
+    cc::glib::variant_cast(v, ptr);                   \
 }
 
-namespace core::dbus
+namespace cc::dbus
 {
     define_log_scope("dbus");
     using ConnectionPtr = Glib::RefPtr<Gio::DBus::Connection>;
@@ -37,4 +37,4 @@ namespace core::dbus
     class ProxyContainer;
     class ProxyWrapper;
     class PropertiesProxyWrapper;
-}  // namespace core::dbus
+}  // namespace cc::dbus

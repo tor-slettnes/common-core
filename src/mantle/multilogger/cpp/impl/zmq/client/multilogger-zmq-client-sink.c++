@@ -9,10 +9,10 @@
 #include "multilogger-zmq-common.h++"
 #include "protobuf-multilogger-types.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     ClientSink::ClientSink(const std::string &sink_id,
-                           const std::shared_ptr<core::zmq::Publisher> &publisher)
+                           const std::shared_ptr<cc::zmq::Publisher> &publisher)
         : Super(sink_id),
           host_(DEFAULT_HOST),
           external_publisher_(bool(publisher)),
@@ -49,10 +49,10 @@ namespace multilogger::zmq
         Super::open();
         if (!this->publisher_)
         {
-            this->publisher_ = std::make_shared<core::zmq::Publisher>(
+            this->publisher_ = std::make_shared<cc::zmq::Publisher>(
                 this->host(),
                 SUBMIT_CHANNEL,
-                core::zmq::Endpoint::Role::SATELLITE);
+                cc::zmq::Endpoint::Role::SATELLITE);
             this->publisher_->initialize();
         }
 
@@ -92,4 +92,4 @@ namespace multilogger::zmq
             return false;
         }
     }
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

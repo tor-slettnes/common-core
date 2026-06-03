@@ -10,7 +10,7 @@
 #include "types/streamable.h++"
 #include "types/create-shared.h++"
 
-namespace core::types
+namespace cc::core::types
 {
     class TaggedValueList : public std::vector<TaggedValue>,
                             public Streamable,
@@ -215,4 +215,4 @@ namespace core::types
         return tvlist;
     }
 
-}  // namespace core::types
+}  // namespace cc::core::types

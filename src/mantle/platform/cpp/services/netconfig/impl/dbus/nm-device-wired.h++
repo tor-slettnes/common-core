@@ -8,7 +8,7 @@
 #pragma once
 #include "nm-wrappers.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     //==========================================================================
     /// Network Manager wired device
@@ -22,10 +22,10 @@ namespace netconfig::dbus
 
     public:
         WiredDevice(
-            core::dbus::ProxyContainer* container,
-            const core::dbus::ConnectionPtr& connection,
-            const core::dbus::ServiceName& servicename,
-            const core::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer* container,
+            const cc::dbus::ConnectionPtr& connection,
+            const cc::dbus::ServiceName& servicename,
+            const cc::dbus::ObjectPath& objectpath);
         void emit_change(core::signal::MappingAction action) override;
 
         static std::shared_ptr<WiredDevice> first();
@@ -38,4 +38,4 @@ namespace netconfig::dbus
             const Glib::VariantBase& change);
     };
 
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

@@ -11,7 +11,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
 
-namespace avro
+namespace cc::avro
 {
     class ProtoBufValue : public CompoundValue
     {
@@ -67,4 +67,4 @@ namespace avro
             avro_value_t *avro_value,
             const google::protobuf::EnumValueDescriptor *enum_value);
     };
-}  // namespace avro
+}  // namespace cc::avro

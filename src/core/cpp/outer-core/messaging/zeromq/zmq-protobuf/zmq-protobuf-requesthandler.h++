@@ -12,7 +12,7 @@
 
 #include "cc/protobuf/request_reply/request_reply.pb.h"
 
-namespace core::zmq
+namespace cc::zmq
 {
     class ProtoBufRequestHandler
     {
@@ -59,8 +59,8 @@ namespace core::zmq
             std::function<void(const cc::protobuf::request_reply::Parameter &request,
                                cc::protobuf::request_reply::Parameter *reply)>;
         using MethodHandlerMap =
-            types::ValueMap<std::string, MethodHandler>;
+            core::types::ValueMap<std::string, MethodHandler>;
 
         MethodHandlerMap handler_map;
     };
-}  // namespace core::zmq
+}  // namespace cc::zmq

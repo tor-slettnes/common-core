@@ -12,7 +12,7 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     RequestHandler::RequestHandler(
         const std::shared_ptr<Provider> &provider)
@@ -271,4 +271,4 @@ namespace switchboard::dds
         return statuslist;
     }
 
-}  // namespace switchboard::dds
+}  // namespace cc::platform::switchboard::dds

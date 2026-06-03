@@ -11,7 +11,7 @@
 #include "dds-subscriber.h++"
 #include "types/create-shared.h++"
 
-namespace demo::dds
+namespace cc::demo::dds
 {
     //==========================================================================
     /// @class Subscriber
@@ -20,11 +20,11 @@ namespace demo::dds
     /// Received messages are re-emitted locally via
     /// @sa demo::signal_time and @sa demo::signal_greeting.
 
-    class Subscriber : public core::dds::Subscriber,
+    class Subscriber : public cc::dds::Subscriber,
                        public core::types::enable_create_shared<Subscriber>
     {
         using This = Subscriber;
-        using Super = core::dds::Subscriber;
+        using Super = cc::dds::Subscriber;
 
     protected:
         Subscriber(const std::string &channel_name, int domain_id);
@@ -43,4 +43,4 @@ namespace demo::dds
         DataReaderPtr<CC::Demo::Greeting> greeting_reader;
     };
 
-}  // namespace demo::dds
+}  // namespace cc::demo::dds

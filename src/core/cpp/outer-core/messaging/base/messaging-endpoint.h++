@@ -14,14 +14,14 @@
 
 #include <string>
 
-namespace core::messaging
+namespace cc::messaging
 {
     define_log_scope("messaging");
 
     //==========================================================================
     // @class Endpoint
 
-    class Endpoint : public types::Streamable
+    class Endpoint : public core::types::Streamable
     {
     protected:
         // Keys to look up settings in grpc-endpoints-*.json
@@ -56,9 +56,10 @@ namespace core::messaging
 
         std::vector<std::string> all_channel_names() const;
 
-        std::shared_ptr<SettingsStore> settings() const;
-        types::Value setting(const std::string &key,
-                             const types::Value &fallback = {}) const;
+        std::shared_ptr<core::SettingsStore> settings() const;
+        core::types::Value setting(
+            const std::string &key,
+            const core::types::Value &fallback = {}) const;
 
         std::optional<fs::path> settings_file(
             const std::string &flavor) const;
@@ -70,7 +71,7 @@ namespace core::messaging
         std::string messaging_flavor_;
         std::string endpoint_type_;
         std::string channel_name_;
-        std::shared_ptr<SettingsStore> settings_;
+        std::shared_ptr<core::SettingsStore> settings_;
         bool initialized_;
     };
-}  // namespace core::messaging
+}  // namespace cc::messaging

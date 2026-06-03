@@ -10,7 +10,7 @@
 
 #include <gtest/gtest.h>
 
-namespace demo
+namespace cc::demo
 {
     class DemoTest : public testing::Test
     {
@@ -31,4 +31,4 @@ namespace demo
         demo::Greeting test_greeting;
     };
 
-}  // namespace demo
+}  // namespace cc::demo

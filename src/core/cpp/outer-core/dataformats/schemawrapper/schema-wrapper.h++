@@ -11,7 +11,7 @@
 
 #include <optional>
 
-namespace core::sr
+namespace cc::sr
 {
     using SchemaID = std::uint32_t;
     using SchemaName = std::string;
@@ -42,4 +42,4 @@ namespace core::sr
         std::size_t wrapped_size(const core::types::ByteVector &original) const;
         std::size_t wrapped_size(const UnwrappedPayload &unwrapped) const;
     };
-}  // namespace core::sr
+}  // namespace cc::sr

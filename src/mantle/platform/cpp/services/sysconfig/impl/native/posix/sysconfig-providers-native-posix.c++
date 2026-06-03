@@ -10,7 +10,7 @@
 #include "sysconfig-posix-timezone.h++"
 #include "sysconfig-posix-time.h++"
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     void register_posix_providers()
     {
@@ -23,4 +23,4 @@ namespace sysconfig::native
         timezone.unregisterProvider<PosixTimeConfigProvider>();
         time.unregisterProvider<PosixTimeZoneProvider>();
     }
-}  // namespace sysconfig::native
+}  // namespace cc::platform::sysconfig::native

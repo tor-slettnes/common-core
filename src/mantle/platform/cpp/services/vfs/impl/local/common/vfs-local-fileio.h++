@@ -9,7 +9,7 @@
 #include "vfs-location.h++"
 #include <fstream>
 
-namespace vfs::local
+namespace cc::platform::vfs::local
 {
     //==========================================================================
     // FileReader
@@ -36,4 +36,4 @@ namespace vfs::local
     private:
         Location loc;
     };
-}  // namespace vfs::local
+}  // namespace cc::platform::vfs::local

@@ -14,18 +14,18 @@
 #include "types/create-shared.h++"
 #include "thread/signaltemplate.h++"
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
     //==========================================================================
     // @class Publisher
     // @brief Publish locally-emitted demo signals over ZeroMQ
 
-    class Publisher : public core::zmq::Publisher,
+    class Publisher : public cc::zmq::Publisher,
                       public core::types::enable_create_shared_from_this<Publisher>
     {
         // Convencience alias
         using This = Publisher;
-        using Super = core::zmq::Publisher;
+        using Super = cc::zmq::Publisher;
 
     protected:
         Publisher(const std::string &bind_address = "",
@@ -38,4 +38,4 @@ namespace demo::zmq
     private:
         std::shared_ptr<SignalWriter> signal_writer;
     };
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

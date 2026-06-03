@@ -10,7 +10,7 @@
 #include "status/event.h++"
 #include "status/level.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     std::ostream &operator<<(std::ostream &stream, const ColumnSpec &spec)
     {
@@ -212,4 +212,4 @@ namespace core::logging
         }
     }
 
-}  // namespace core::logging
+}  // namespace cc::core::logging

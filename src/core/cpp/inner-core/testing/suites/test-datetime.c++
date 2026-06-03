@@ -9,11 +9,11 @@
 
 #include <gtest/gtest.h>
 
-namespace core::str
+namespace cc::core::str
 {
     TEST(DateTimeTest, LastAlignedInterval)
     {
         dt::TimePoint tp = dt::Clock::now();
     }
 
-}  // namespace core::str
+}  // namespace cc::core::str

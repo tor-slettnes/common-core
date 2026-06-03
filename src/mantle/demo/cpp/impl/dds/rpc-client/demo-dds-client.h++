@@ -18,7 +18,7 @@
 // 3rd party modules
 #include <dds/domain/DomainParticipant.hpp>
 
-namespace demo::dds
+namespace cc::demo::dds
 {
     //==========================================================================
     // @class ClientImpl
@@ -26,7 +26,7 @@ namespace demo::dds
 
     class ClientImpl
         : public API,
-          public core::dds::ClientWrapper<CC::Demo::DemoServiceClient>,
+          public cc::dds::ClientWrapper<CC::Demo::DemoServiceClient>,
           public core::types::enable_create_shared<ClientImpl>
     {
         // Convencience alias
@@ -50,4 +50,4 @@ namespace demo::dds
     private:
         std::shared_ptr<Subscriber> subscriber;
     };
-}  // namespace demo::dds
+}  // namespace cc::demo::dds

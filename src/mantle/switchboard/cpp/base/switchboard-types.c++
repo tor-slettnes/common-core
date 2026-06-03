@@ -9,7 +9,7 @@
 #include "status/exceptions.h++"
 #include "string/convert.h++"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     //==========================================================================
     // Switch states
@@ -381,4 +381,4 @@ namespace switchboard
         }
     }
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

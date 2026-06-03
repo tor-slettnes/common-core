@@ -8,7 +8,7 @@
 #pragma once
 #include "argparse/server.h++"
 
-namespace pubsub
+namespace cc::platform::pubsub
 {
     class Options : public core::argparse::ServerOptions
     {
@@ -28,5 +28,6 @@ namespace pubsub
         std::string zmq_consumer_interface;
     };
 
-    extern std::unique_ptr<Options> options;
-}  // namespace pubsub
+}  // namespace cc::platform::pubsub
+
+extern std::unique_ptr<cc::platform::pubsub::Options> options;

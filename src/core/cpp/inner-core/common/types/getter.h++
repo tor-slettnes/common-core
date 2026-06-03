@@ -8,7 +8,7 @@
 #pragma once
 #include <optional>
 
-namespace core::types
+namespace cc::core::types
 {
     template <class T>
     class Getter
@@ -24,4 +24,4 @@ namespace core::types
             return this->get().value_or(fallback);
         }
     };
-}  // namespace core::types
+}  // namespace cc::core::types

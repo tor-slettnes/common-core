@@ -7,7 +7,7 @@
 
 #include "kafka-producer-avro.h++"
 
-namespace core::kafka
+namespace cc::kafka
 {
     AvroProducer::AvroProducer(const std::string &profile_name,
                                const core::types::KeyValueMap settings)
@@ -32,4 +32,4 @@ namespace core::kafka
             cb_data);
     }
 
-}  // namespace core::kafka
+}  // namespace cc::kafka

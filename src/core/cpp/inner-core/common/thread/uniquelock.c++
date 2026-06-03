@@ -7,7 +7,7 @@
 
 #include "uniquelock.h++"
 
-namespace core::types
+namespace cc::core::types
 {
     UniqueLock::UniqueLock()
         : lck(this->mtx, std::defer_lock)
@@ -49,4 +49,4 @@ namespace core::types
         }
     }
 
-}  // namespace core::types
+}  // namespace cc::core::types

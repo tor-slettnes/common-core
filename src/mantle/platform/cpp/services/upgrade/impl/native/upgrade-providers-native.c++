@@ -8,7 +8,7 @@
 #include "upgrade-providers-native.h++"
 #include "upgrade-native-provider.h++"
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     void register_providers()
     {
@@ -19,4 +19,4 @@ namespace upgrade::native
     {
         upgrade.unregisterProvider<NativeProvider>();
     }
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

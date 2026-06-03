@@ -12,7 +12,7 @@
 #include <system_error>
 #include <optional>
 
-namespace core::glib
+namespace cc::glib
 {
     define_log_scope("glib");
 
@@ -55,12 +55,12 @@ namespace core::glib
                        const std::string& preamble = {},
                        core::status::Level level = core::status::Level::NOTICE,
                        core::logging::Scope::ptr scope = log_scope,
-                       const dt::TimePoint& tp = dt::Clock::now(),
+                       const core::dt::TimePoint& tp = core::dt::Clock::now(),
                        const std::filesystem::path& path = __builtin_FILE(),
                        const int& lineno = __builtin_LINE(),
                        const std::string& function = __builtin_FUNCTION());
 
-}  // namespace core::glib
+}  // namespace cc::glib
 
 /// Output stream support for Glib VariantBase, for use in log output.
 namespace Glib

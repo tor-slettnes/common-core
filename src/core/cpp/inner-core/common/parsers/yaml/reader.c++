@@ -7,7 +7,7 @@
 
 #include "reader.h++"
 
-namespace core::yaml
+namespace cc::core::yaml
 {
     Reader reader;
-}  // namespace core::yaml
+}  // namespace cc::core::yaml

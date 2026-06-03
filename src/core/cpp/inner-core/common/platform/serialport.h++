@@ -10,7 +10,7 @@
 #include <string>
 #include <memory>
 
-namespace core::platform
+namespace cc::core::platform
 {
     //==========================================================================
     /// @class SerialPort
@@ -64,4 +64,4 @@ namespace core::platform
     /// Global instance, populated with the "best" provider for this system.
     extern ProviderProxy<SerialPortProvider> serialport;
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

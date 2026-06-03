@@ -9,7 +9,7 @@
 #include "sysconfig-timezone.h++"
 #include "sysconfig-grpc-client.h++"
 
-namespace sysconfig::grpc
+namespace cc::platform::sysconfig::grpc
 {
     class TimeZoneProvider : public TimeZoneInterface
     {
@@ -52,4 +52,4 @@ namespace sysconfig::grpc
     private:
         std::shared_ptr<Client> client;
     };
-}  // namespace sysconfig::grpc
+}  // namespace cc::platform::sysconfig::grpc

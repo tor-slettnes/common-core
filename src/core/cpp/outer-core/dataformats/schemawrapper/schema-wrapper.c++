@@ -9,7 +9,7 @@
 #include <string.h>     // memcpy
 #include <arpa/inet.h>  // htonl
 
-namespace core::sr
+namespace cc::sr
 {
     core::types::ByteVector SchemaWrapper::wrap(
         const core::types::ByteVector &payload,
@@ -66,4 +66,4 @@ namespace core::sr
         return this->envelope_size() + unwrapped.payload.size();
     }
 
-}  // namespace core::sr
+}  // namespace cc::sr

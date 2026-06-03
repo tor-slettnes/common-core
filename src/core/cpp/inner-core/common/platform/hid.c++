@@ -10,7 +10,7 @@
 
 #include <map>
 
-namespace core::platform
+namespace cc::core::platform
 {
     //==========================================================================
     // Bus Type
@@ -120,4 +120,4 @@ namespace core::platform
 
     ProviderProxy<HIDProvider> hid("HID");
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

@@ -12,7 +12,7 @@
 #include "variant-tvlist.h++"
 #include "variant-kvmap.h++"
 
-namespace core::types
+namespace cc::core::types
 {
     //--------------------------------------------------------------------------
     /// @brief
@@ -36,4 +36,4 @@ namespace core::types
         virtual void to_tvlist(TaggedValueList *tvlist) const = 0;
     };
 
-}  // namespace core::types
+}  // namespace cc::core::types

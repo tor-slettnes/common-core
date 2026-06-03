@@ -12,7 +12,7 @@
 #include "logging/sinks/factory.h++"
 #include "types/create-shared.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     const std::string SETTING_HOST = "host";
     const std::string DEFAULT_HOST = "localhost";
@@ -30,7 +30,7 @@ namespace multilogger::zmq
 
     protected:
         ClientSink(const std::string &sink_id,
-                   const std::shared_ptr<core::zmq::Publisher> &publisher = {});
+                   const std::shared_ptr<cc::zmq::Publisher> &publisher = {});
 
     protected:
         void load_settings(const core::types::KeyValueMap &settings) override;
@@ -48,7 +48,7 @@ namespace multilogger::zmq
     private:
         std::string host_;
         bool external_publisher_;
-        std::shared_ptr<core::zmq::Publisher> publisher_;
+        std::shared_ptr<cc::zmq::Publisher> publisher_;
         std::shared_ptr<ClientWriter> writer_;
     };
 
@@ -62,4 +62,4 @@ namespace multilogger::zmq
             return ClientSink::create_shared(sink_id);
         });
 
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

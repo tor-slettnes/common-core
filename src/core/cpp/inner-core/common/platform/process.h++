@@ -16,7 +16,7 @@
 #include <stdexcept>
 #include <array>
 
-namespace core::platform
+namespace cc::core::platform
 {
     constexpr uint CHUNKSIZE = 4096;
 
@@ -498,4 +498,4 @@ namespace core::platform
     /// Global instance, populated with the "best" provider for this system.
     extern ProviderProxy<ProcessProvider> process;
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

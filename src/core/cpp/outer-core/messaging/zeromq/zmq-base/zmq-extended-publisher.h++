@@ -8,7 +8,7 @@
 #pragma once
 #include "zmq-endpoint.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     class ExtendedPublisher : public Endpoint
     {
@@ -24,4 +24,4 @@ namespace core::zmq
                           Role role = Role::HOST);
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

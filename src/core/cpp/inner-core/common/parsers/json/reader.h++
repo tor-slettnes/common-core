@@ -12,7 +12,7 @@
 #include "rapidjson/reader.h++"
 #endif
 
-namespace core::json
+namespace cc::core::json
 {
     using Reader = CustomReader;
 
@@ -24,4 +24,4 @@ namespace core::json
 
     extern Reader reader;
     extern FastReader fast_reader;
-}  // namespace core::json
+}  // namespace cc::core::json

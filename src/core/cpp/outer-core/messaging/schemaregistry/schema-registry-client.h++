@@ -9,7 +9,7 @@
 #include "rest-client.h++"
 #include "types/value.h++"
 
-namespace core::sr
+namespace cc::sr
 {
     using SchemaID = std::uint32_t;
     using SchemaName = std::string;
@@ -28,11 +28,11 @@ namespace core::sr
     // SchemaRegistryClient
 
     class SchemaRegistryClient
-        : public core::http::RESTClient,
+        : public cc::http::RESTClient,
           public core::types::enable_create_shared<SchemaRegistryClient>
     {
         using This = SchemaRegistryClient;
-        using Super = core::http::RESTClient;
+        using Super = cc::http::RESTClient;
 
     public:
         using SchemaID = std::uint32_t;
@@ -65,4 +65,4 @@ namespace core::sr
         core::types::Value extract_schema(
             const core::types::Value &response) const;
     };
-}  // namespace core::sr
+}  // namespace cc::sr

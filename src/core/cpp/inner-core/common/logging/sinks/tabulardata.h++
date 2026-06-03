@@ -17,7 +17,7 @@
 #include <vector>
 #include <ostream>
 
-namespace core::logging
+namespace cc::core::logging
 {
     const std::string SETTING_COLUMNS = "columns";
     const std::string SETTING_LEVEL_MAP = "level map";
@@ -93,4 +93,4 @@ namespace core::logging
         LevelMap level_map_;
         ColumnSpecs columns_;
     };
-}  // namespace core::logging
+}  // namespace cc::core::logging

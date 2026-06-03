@@ -15,7 +15,7 @@
 #include "zmq-publisher.h++"
 #include "types/create-shared.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     //==========================================================================
     // @class ClientImpl
@@ -23,7 +23,7 @@ namespace multilogger::zmq
 
     class ClientImpl
         : public API,
-          public core::zmq::ProtoBufClient,
+          public cc::zmq::ProtoBufClient,
           public core::types::enable_create_shared<ClientImpl>
     {
         using This = ClientImpl;
@@ -50,14 +50,14 @@ namespace multilogger::zmq
         std::shared_ptr<LogSource> listen(
             const ListenerSpec &spec) override;
 
-        std::shared_ptr<core::zmq::Subscriber> subscriber();
-        std::shared_ptr<core::zmq::Publisher> publisher();
+        std::shared_ptr<cc::zmq::Subscriber> subscriber();
+        std::shared_ptr<cc::zmq::Publisher> publisher();
         std::shared_ptr<ClientWriter> writer();
 
     private:
         std::string host_;
-        std::shared_ptr<core::zmq::Subscriber> subscriber_;
-        std::shared_ptr<core::zmq::Publisher> publisher_;
+        std::shared_ptr<cc::zmq::Subscriber> subscriber_;
+        std::shared_ptr<cc::zmq::Publisher> publisher_;
         std::shared_ptr<ClientWriter> writer_;
     };
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

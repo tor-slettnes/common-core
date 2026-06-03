@@ -13,7 +13,7 @@
 #include "platform/init.h++"
 #include "logging/logging.h++"
 
-namespace core
+namespace cc::core
 {
 
     //==========================================================================
@@ -459,4 +459,4 @@ namespace core
     // Global instance
 
     Scheduler scheduler;
-}  // namespace core
+}  // namespace cc::core

@@ -11,7 +11,7 @@
 
 #include <functional>
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     using namespace std::placeholders;
 
@@ -46,4 +46,4 @@ namespace switchboard::dds
 
     core::signal::MappingSignal<CC::Switchboard::Specification> signal_dds_spec("signal_dds_spec");
     core::signal::MappingSignal<CC::Switchboard::Status> signal_dds_status("signal_dds_status");
-}  // namespace switchboard::dds
+}  // namespace cc::platform::switchboard::dds

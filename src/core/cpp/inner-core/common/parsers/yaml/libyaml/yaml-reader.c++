@@ -8,7 +8,7 @@
 #include "yaml-reader.h++"
 #include "yaml-parser.h++"
 
-namespace core::yaml
+namespace cc::core::yaml
 {
     YamlReader::YamlReader()
         : Super("YamlReader")
@@ -29,4 +29,4 @@ namespace core::yaml
     {
         return YamlParser().parse_stream(stream);
     }
-}  // namespace core::yaml
+}  // namespace cc::core::yaml

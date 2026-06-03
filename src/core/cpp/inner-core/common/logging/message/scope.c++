@@ -7,7 +7,7 @@
 
 #include "scope.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     //==========================================================================
     // Scope
@@ -62,4 +62,4 @@ namespace core::logging
     status::Level Scope::default_threshold = status::Level::DEBUG;
     std::optional<status::Level> Scope::universal_threshold = {};
 
-} // namespace core::logging
+} // namespace cc::core::logging

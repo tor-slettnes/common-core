@@ -18,7 +18,7 @@
 #include <mutex>
 #include <chrono>
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     class NativeProvider : public ProviderInterface
     {
@@ -76,4 +76,4 @@ namespace upgrade::native
         core::types::UniqueLock install_lock;
         NativePackageInfo::ptr installed_package_info;
     };
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

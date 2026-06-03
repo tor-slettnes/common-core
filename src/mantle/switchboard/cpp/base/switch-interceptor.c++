@@ -13,7 +13,7 @@
 
 #include <functional>
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     //==========================================================================
     // Interceptor Phase
@@ -170,4 +170,4 @@ namespace switchboard
         thread.detach();
         return future_result;
     }
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

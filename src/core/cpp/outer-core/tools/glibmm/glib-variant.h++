@@ -13,7 +13,7 @@
 
 #define URI_PREFIX_FILE "file://"s
 
-namespace core::glib
+namespace cc::glib
 {
     using VariantMap = std::map<std::string, Glib::VariantBase>;
     using VariantMaps = std::vector<VariantMap>;
@@ -185,7 +185,7 @@ namespace core::glib
             insert_value(map, key, it->second);
         }
     }
-}  // namespace core::glib
+}  // namespace cc::glib
 
 /// Output stream support for Glib VariantBase, for use in log output.
 namespace Glib

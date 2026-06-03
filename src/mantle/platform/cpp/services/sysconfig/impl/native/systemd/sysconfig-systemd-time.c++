@@ -12,7 +12,7 @@
 #include "types/filesystem.h++"
 #include "status/exceptions.h++"
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     constexpr auto TIMEDATECTL_PATH = "/usr/bin/timedatectl";
     constexpr auto TIMEDATECTL_SHOW = "show";
@@ -101,4 +101,4 @@ namespace sysconfig::native
         return core::platform::process->get_process_name_by_pid(1) == "systemd";
     }
 
-}  // namespace sysconfig::native
+}  // namespace cc::platform::sysconfig::native

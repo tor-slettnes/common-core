@@ -12,7 +12,7 @@
 #include <optional>
 #include <string>
 
-namespace core::zmq
+namespace cc::zmq
 {
     class Requester : public Endpoint
     {
@@ -25,10 +25,10 @@ namespace core::zmq
                   Role role = Role::SATELLITE);
 
     public:
-        std::shared_ptr<types::ByteVector> send_receive(
-            const types::ByteVector &request,
+        std::shared_ptr<core::types::ByteVector> send_receive(
+            const core::types::ByteVector &request,
             SendFlags send_flags = 0,
             RecvFlags recv_flags = 0);
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

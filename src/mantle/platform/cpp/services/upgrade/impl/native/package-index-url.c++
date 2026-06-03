@@ -10,7 +10,7 @@
 #include "http-client.h++"
 #include "parsers/json/reader.h++"
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     URLPackageIndex::URLPackageIndex(const URL &url)
         : url(url)
@@ -20,7 +20,7 @@ namespace upgrade::native
     PackageSource URLPackageIndex::package_source(const std::string &package_name) const
     {
         std::string base_url = this->url.substr(0, this->url.rfind("/")) + "/";
-        return {core::http::join_urls(base_url, package_name)};
+        return {cc::http::join_urls(base_url, package_name)};
     }
 
     PackageCatalogue URLPackageIndex::scan()
@@ -29,7 +29,7 @@ namespace upgrade::native
 
         logf_debug("Package scan at URL: %s", this->url);
 
-        core::http::HTTPClient http(this->url);
+        cc::http::HTTPClient http(this->url);
         std::stringstream ss = http.get({});
         core::types::Value response = core::json::reader.read_stream(ss);
 
@@ -49,4 +49,4 @@ namespace upgrade::native
         return packages;
     }
 
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

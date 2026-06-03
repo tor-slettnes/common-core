@@ -8,7 +8,7 @@
 #pragma once
 #include "nm-wrappers.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     //==========================================================================
     /// Network Manager IP Configuration (Base for IPv4 and IPv6)
@@ -38,10 +38,10 @@ namespace netconfig::dbus
 
     public:
         IP4Config(
-            core::dbus::ProxyContainer* container,
-            const core::dbus::ConnectionPtr& connection,
-            const core::dbus::ServiceName& servicename,
-            const core::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer* container,
+            const cc::dbus::ConnectionPtr& connection,
+            const cc::dbus::ServiceName& servicename,
+            const cc::dbus::ObjectPath& objectpath);
 
     protected:
         void on_property_dns(
@@ -58,14 +58,14 @@ namespace netconfig::dbus
 
     public:
         IP6Config(
-            core::dbus::ProxyContainer* container,
-            const core::dbus::ConnectionPtr& connection,
-            const core::dbus::ServiceName& servicename,
-            const core::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer* container,
+            const cc::dbus::ConnectionPtr& connection,
+            const cc::dbus::ServiceName& servicename,
+            const cc::dbus::ObjectPath& objectpath);
 
     protected:
         void on_property_dns(
             const Glib::VariantBase& change);
     };
 
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

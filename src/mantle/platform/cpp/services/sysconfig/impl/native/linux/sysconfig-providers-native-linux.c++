@@ -7,7 +7,7 @@
 
 #include "sysconfig-providers-native-linux.h++"
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     void register_linux_providers()
     {
@@ -16,4 +16,4 @@ namespace sysconfig::native
     void unregister_linux_providers()
     {
     }
-}  // namespace sysconfig::native
+}  // namespace cc::platform::sysconfig::native

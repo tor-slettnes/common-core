@@ -13,7 +13,7 @@
 #include <rti/request/Requester.hpp>
 //#include <dds/core/Duration.hpp>
 
-namespace core::dds
+namespace cc::dds
 {
     template <class RequestType, class ResponseType>
     class Requester : public Endpoint,
@@ -81,4 +81,4 @@ namespace core::dds
         core::dt::Duration default_timeout_;
     };
 
-}  // namespace core::dds
+}  // namespace cc::dds

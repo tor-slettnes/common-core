@@ -14,21 +14,21 @@
 #include "cc/platform/vfs/grpc/vfs_service.grpc.pb.h"
 
 
-namespace vfs
+namespace cc::platform::vfs
 {
     using namespace cc::platform::vfs;
 }
 
 
-namespace vfs::grpc
+namespace cc::platform::vfs::grpc
 {
     class RequestHandler
-        : public core::grpc::SignalRequestHandler<cc::platform::vfs::grpc::VirtualFileSystem>,
+        : public cc::grpc::SignalRequestHandler<cc::platform::vfs::grpc::VirtualFileSystem>,
           public core::types::enable_create_shared<RequestHandler>
     {
         // Convencience aliases
         using This = RequestHandler;
-        using Super = core::grpc::SignalRequestHandler<cc::platform::vfs::grpc::VirtualFileSystem>;
+        using Super = cc::grpc::SignalRequestHandler<cc::platform::vfs::grpc::VirtualFileSystem>;
 
     protected:
         RequestHandler();
@@ -107,7 +107,7 @@ namespace vfs::grpc
         ::grpc::Status GetAttributes(
             ::grpc::ServerContext* context,
             const vfs::protobuf::Path* request,
-            ::cc::protobuf::variant::KeyValueMap* response) override;
+            cc::protobuf::variant::KeyValueMap* response) override;
 
         ::grpc::Status SetAttributes(
             ::grpc::ServerContext* context,
@@ -121,10 +121,10 @@ namespace vfs::grpc
 
         ::grpc::Status Watch(
             ::grpc::ServerContext* context,
-            const ::cc::protobuf::signal::Filter* filter,
+            const cc::protobuf::signal::Filter* filter,
             ::grpc::ServerWriter<vfs::protobuf::Signal>* writer) override;
 
     protected:
         std::shared_ptr<vfs::ProviderInterface> provider;
     };
-}  // namespace vfs::grpc
+}  // namespace cc::platform::vfs::grpc

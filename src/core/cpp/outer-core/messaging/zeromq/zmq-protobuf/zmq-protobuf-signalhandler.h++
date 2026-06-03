@@ -10,7 +10,7 @@
 #include "protobuf-signal-receiver.h++"
 #include "logging/logging.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     template <class SignalT>
     class ProtoBufSignalHandler : public ProtoBufMessageHandler<SignalT>,
@@ -41,4 +41,4 @@ namespace core::zmq
         }
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

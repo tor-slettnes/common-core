@@ -15,7 +15,7 @@
 #include <cerrno>
 #include <system_error>
 
-namespace core::yaml
+namespace cc::core::yaml
 {
     YamlParser::YamlParser()
     {
@@ -285,4 +285,4 @@ namespace core::yaml
                              this->parser.buffer.pointer);
     }
 
-}  // namespace core::yaml
+}  // namespace cc::core::yaml

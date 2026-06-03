@@ -12,7 +12,7 @@
 
 #include <type_traits>
 
-namespace core::types
+namespace cc::core::types
 {
     //==========================================================================
     /// @class Value
@@ -297,6 +297,6 @@ namespace core::types
 
     extern const ValueBase emptyvalue;
 
-}  // namespace core::types
+}  // namespace cc::core::types
 
 #include "variant-value.i++"

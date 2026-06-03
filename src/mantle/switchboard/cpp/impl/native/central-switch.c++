@@ -10,7 +10,7 @@
 #include "switch-interceptor.h++"
 #include "status/exceptions.h++"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
 
     bool CentralSwitch::add_dependency(const DependencyRef &dependency,
@@ -864,4 +864,4 @@ namespace switchboard
         }
     }
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

@@ -11,7 +11,7 @@
 #include <regex>
 #include <sstream>  // std::stringstream
 
-namespace core::argparse
+namespace cc::core::argparse
 {
     //==========================================================================
     // BaseOption methods
@@ -121,4 +121,4 @@ namespace core::argparse
         return opts;
     }
 
-}  // namespace core::argparse
+}  // namespace cc::core::argparse

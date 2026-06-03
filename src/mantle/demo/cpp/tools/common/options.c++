@@ -8,7 +8,7 @@
 #include "options.h++"
 #include "demo-provider.h++"
 
-namespace demo
+namespace cc::demo
 {
     Options::Options(const std::string &implementation)
         : Super(),
@@ -109,5 +109,6 @@ namespace demo
         demo::signal_greeting.disconnect(this->identity);
     }
 
-    std::unique_ptr<Options> options;
-}  // namespace demo
+}  // namespace cc::demo
+
+std::unique_ptr<cc::demo::Options> options;

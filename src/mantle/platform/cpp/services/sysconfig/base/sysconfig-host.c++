@@ -7,7 +7,7 @@
 
 #include "sysconfig-host.h++"
 
-namespace sysconfig
+namespace cc::platform::sysconfig
 {
     core::types::TaggedValueList &operator<<(
         core::types::TaggedValueList &tvlist,
@@ -45,4 +45,4 @@ namespace sysconfig
     // Signals
 
     core::signal::DataSignal<HostInfo> signal_hostinfo("hostinfo", true);
-}  // namespace sysconfig
+}  // namespace cc::platform::sysconfig

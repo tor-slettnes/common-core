@@ -7,7 +7,7 @@
 
 #include "binaryevent.h++"
 
-namespace core::types
+namespace cc::core::types
 {
     //==========================================================================
     // BinaryEvent
@@ -58,4 +58,4 @@ namespace core::types
         return this->value_;
     }
 
-}  // namespace core::types
+}  // namespace cc::core::types

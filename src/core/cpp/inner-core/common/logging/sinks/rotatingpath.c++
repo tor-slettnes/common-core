@@ -18,7 +18,7 @@
 #include <fstream>
 #include <future>
 
-namespace core::logging
+namespace cc::core::logging
 {
     constexpr auto COMPRESSION_SUFFIX = ".gz";
 
@@ -325,4 +325,4 @@ namespace core::logging
 
     fs::path RotatingPath::default_root_folder;
 
-}  // namespace core::logging
+}  // namespace cc::core::logging

@@ -14,7 +14,7 @@
 #include <memory>
 // #include <stdexcept>
 
-namespace avro
+namespace cc::avro
 {
 
     class BaseValue : public core::types::Streamable
@@ -72,4 +72,4 @@ namespace avro
     protected:
         avro_value_t value;
     };
-}  // namespace avro
+}  // namespace cc::avro

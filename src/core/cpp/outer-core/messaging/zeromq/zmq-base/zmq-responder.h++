@@ -10,7 +10,7 @@
 #include "types/bytevector.h++"
 #include <thread>
 
-namespace core::zmq
+namespace cc::zmq
 {
     class Responder : public Endpoint
     {
@@ -30,12 +30,12 @@ namespace core::zmq
         void run();
 
     protected:
-        virtual void process_binary_request(const types::ByteVector &packed_request,
-                                            types::ByteVector *packed_reply) = 0;
+        virtual void process_binary_request(const core::types::ByteVector &packed_request,
+                                            core::types::ByteVector *packed_reply) = 0;
 
     private:
         bool keep_listening;
         std::thread listen_thread;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

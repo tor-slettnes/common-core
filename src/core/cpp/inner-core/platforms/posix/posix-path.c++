@@ -19,7 +19,7 @@
 
 #include <cstring>
 
-namespace core::platform
+namespace cc::core::platform
 {
     FileStats PosixPathProvider::get_stats(
         const fs::path &path,
@@ -227,4 +227,4 @@ namespace core::platform
         return linktarget;
     }
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

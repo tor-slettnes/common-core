@@ -9,7 +9,7 @@
 
 #include <string>
 
-namespace core::status
+namespace cc::core::status
 {
     const LevelMap level_names = {
         {Level::NONE, "NONE"},
@@ -36,4 +36,4 @@ namespace core::status
         return level_names.from_stream(stream, &lvl);
     }
 
-}  // namespace core::status
+}  // namespace cc::core::status

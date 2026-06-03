@@ -9,7 +9,7 @@
 
 #include <regex>
 
-namespace core::ws
+namespace cc::ws
 {
     Endpoint::Endpoint(
         const std::string &address,
@@ -70,4 +70,4 @@ namespace core::ws
             *port = 0;
         }
     }
-}  // namespace core::ws
+}  // namespace cc::ws

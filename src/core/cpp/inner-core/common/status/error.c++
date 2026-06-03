@@ -9,7 +9,7 @@
 #include "exceptions.h++"
 #include <algorithm>
 
-namespace core::status
+namespace cc::core::status
 {
     //==========================================================================
     /// @class Error
@@ -253,4 +253,4 @@ namespace core::status
         return std::make_exception_ptr<exception::UnknownError>(*this);
     }
 
-}  // namespace core::status
+}  // namespace cc::core::status

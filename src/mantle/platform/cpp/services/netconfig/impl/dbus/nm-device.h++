@@ -10,7 +10,7 @@
 #include "nm-device-wired.h++"
 #include "nm-device-wireless.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     //==========================================================================
     /// Network Manager device
@@ -25,10 +25,10 @@ namespace netconfig::dbus
 
     public:
         Device(
-            core::dbus::ProxyContainer* container,
-            const core::dbus::ConnectionPtr& connection,
-            const core::dbus::ServiceName& servicename,
-            const core::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer* container,
+            const cc::dbus::ConnectionPtr& connection,
+            const cc::dbus::ServiceName& servicename,
+            const cc::dbus::ObjectPath& objectpath);
 
     protected:
         void initialize() override;
@@ -42,23 +42,23 @@ namespace netconfig::dbus
         void on_property_active_connection(const Glib::VariantBase& change);
 
         bool update_ip4config(
-            const core::dbus::ProxyWrapper* source,
+            const cc::dbus::ProxyWrapper* source,
             core::signal::MappingAction action);
 
         bool update_ip6config(
-            const core::dbus::ProxyWrapper* source,
+            const cc::dbus::ProxyWrapper* source,
             core::signal::MappingAction action);
 
         bool update_active_connection(
-            const core::dbus::ProxyWrapper* source,
+            const cc::dbus::ProxyWrapper* source,
             core::signal::MappingAction action);
 
         bool add_specific_data(
-            const core::dbus::ProxyWrapper* source,
+            const cc::dbus::ProxyWrapper* source,
             core::signal::MappingAction action);
 
         void update_specific_data(
-            const core::dbus::ProxyWrapper* source,
+            const cc::dbus::ProxyWrapper* source,
             core::signal::MappingAction action);
 
     public:
@@ -74,4 +74,4 @@ namespace netconfig::dbus
         void disconnect();
     };
 
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

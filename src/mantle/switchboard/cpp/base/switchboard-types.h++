@@ -18,7 +18,7 @@
 #include <variant>
 #include <regex>
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     define_log_scope("switch");
 
@@ -265,4 +265,4 @@ namespace switchboard
        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

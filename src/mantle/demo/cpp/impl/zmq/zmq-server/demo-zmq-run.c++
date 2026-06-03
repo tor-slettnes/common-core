@@ -10,7 +10,7 @@
 #include "demo-zmq-server.h++"
 #include "status/exceptions.h++"
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
     constexpr auto SHUTDOWN_SIGNAL_HANDLE = "demo-zmq-service";
 
@@ -57,4 +57,4 @@ namespace demo::zmq
         zmq_publisher->deinitialize();
     }
 
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

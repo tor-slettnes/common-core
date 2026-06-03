@@ -14,7 +14,7 @@
 
 #include <optional>
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
     using core::types::Loggable;
     using core::logging::SinkID;
@@ -54,4 +54,4 @@ namespace multilogger
 
     std::ostream &operator<<(std::ostream &stream, const ListenerSpec &spec);
 
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger

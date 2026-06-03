@@ -10,7 +10,7 @@
 #include "sysconfig-providers-native-posix.h++"
 #include "sysconfig-providers-native-common.h++"
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     void register_providers()
     {
@@ -27,4 +27,4 @@ namespace sysconfig::native
         unregister_linux_providers();
         unregister_systemd_providers();
     }
-}  // namespace sysconfig::native
+}  // namespace cc::platform::sysconfig::native

@@ -9,7 +9,7 @@
 #include "switch.h++"
 #include "thread/signaltemplate.h++"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     //==========================================================================
     // Telemetry
@@ -23,4 +23,4 @@ namespace switchboard
     extern core::signal::MappingSignal<Specification> signal_spec;
     extern core::signal::MappingSignal<Status> signal_status;
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

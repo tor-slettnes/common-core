@@ -8,7 +8,7 @@
 #pragma once
 #include "relay-types.h++"
 
-namespace pubsub
+namespace cc::platform::pubsub
 {
     //--------------------------------------------------------------------------
     // Abstract Interface
@@ -33,4 +33,4 @@ namespace pubsub
         virtual void stop_reader() {}
     };
 
-}  // namespace pubsub
+}  // namespace cc::platform::pubsub

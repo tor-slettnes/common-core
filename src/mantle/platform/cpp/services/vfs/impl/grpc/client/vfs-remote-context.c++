@@ -8,7 +8,7 @@
 #include "vfs-remote-context.h++"
 #include "vfs-grpc-client.h++"
 
-namespace vfs
+namespace cc::platform::vfs
 {
     RemoteContext::RemoteContext(
         const std::weak_ptr<ProviderInterface> &provider)
@@ -32,4 +32,4 @@ namespace vfs
             provider->close_context(this->name);
         }
     }
-}  // namespace vfs
+}  // namespace cc::platform::vfs

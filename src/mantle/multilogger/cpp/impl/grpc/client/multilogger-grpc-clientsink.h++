@@ -11,7 +11,7 @@
 #include "logging/sinks/factory.h++"
 #include "types/create-shared.h++"
 
-namespace multilogger::grpc
+namespace cc::platform::multilogger::grpc
 {
     class ClientSink
         : public core::logging::AsyncWrapper<core::logging::Sink>,
@@ -49,4 +49,4 @@ namespace multilogger::grpc
         {
             return ClientSink::create_shared(sink_id);
         });
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger

@@ -20,7 +20,7 @@
 #include <set>
 
 /// Default filesystem paths.
-namespace core::platform
+namespace cc::core::platform
 {
     //--------------------------------------------------------------------------
     // FileStats
@@ -361,7 +361,7 @@ namespace core::platform
 
     /// Global instance, populated with the "best" provider for this system.
     extern ProviderProxy<PathProvider> path;
-}  // namespace core::platform
+}  // namespace cc::core::platform
 
 namespace std::filesystem
 {

@@ -8,7 +8,7 @@
 #include "zmq-publisher.h++"
 #include "logging/logging.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     Publisher::Publisher(const std::string &address,
                          const std::string &channel_name,
@@ -25,8 +25,8 @@ namespace core::zmq
         this->warmup_deadline = steady_clock::now() + this->warmup_delay;
     }
 
-    void Publisher::publish(const std::optional<types::ByteVector> &header,
-                            const types::ByteVector &bytes)
+    void Publisher::publish(const std::optional<core::types::ByteVector> &header,
+                            const core::types::ByteVector &bytes)
     {
         if (header)
         {
@@ -45,4 +45,4 @@ namespace core::zmq
         this->send(bytes);
     }
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

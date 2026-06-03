@@ -12,7 +12,7 @@
 #include "cc/platform/pubsub/grpc/relay_service.grpc.pb.h"
 #include "cc/protobuf/status/status.pb.h"
 
-namespace pubsub::grpc
+namespace cc::platform::pubsub::grpc
 {
     //--------------------------------------------------------------------------
     // Reader
@@ -21,8 +21,8 @@ namespace pubsub::grpc
                    public core::types::enable_create_shared<Reader>
     {
     protected:
-        Reader(const std::unique_ptr<::cc::platform::pubsub::grpc::Relay::Stub>& stub,
-               const ::cc::platform::pubsub::protobuf::Filters &filters);
+        Reader(const std::unique_ptr<platform::pubsub::grpc::Relay::Stub>& stub,
+               const platform::pubsub::protobuf::Filters &filters);
 
     public:
         ~Reader();
@@ -33,6 +33,6 @@ namespace pubsub::grpc
 
     private:
         ::grpc::ClientContext context;
-        std::unique_ptr<::grpc::ClientReader<::cc::platform::pubsub::protobuf::Publication>> reader;
+        std::unique_ptr<::grpc::ClientReader<platform::pubsub::protobuf::Publication>> reader;
     };
-}  // namespace pubsub::grpc
+}  // namespace cc::platform::pubsub::grpc

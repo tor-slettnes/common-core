@@ -23,7 +23,7 @@
 
 #include <cstring>  // std::memset()
 
-namespace vfs::local
+namespace cc::platform::vfs::local
 {
     LocalProvider::LocalProvider(
         const std::string &name,
@@ -549,4 +549,4 @@ namespace vfs::local
     {
         AttributeStore(localpath, type_hint).clear_attributes();
     }
-}  // namespace vfs::local
+}  // namespace cc::platform::vfs::local

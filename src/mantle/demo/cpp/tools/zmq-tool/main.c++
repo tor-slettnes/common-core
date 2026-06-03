@@ -15,33 +15,33 @@
 
 int main(int argc, char** argv)
 {
-    core::application::initialize(argc, argv);
+    cc::core::application::initialize(argc, argv);
 
-    demo::options = std::make_unique<demo::Options>("ZeroMQ");
-    demo::options->apply(argc, argv);
+    ::options = std::make_unique<cc::demo::Options>("ZeroMQ");
+    ::options->apply(argc, argv);
 
-    auto subscriber = demo::zmq::Subscriber::create_shared(
-        demo::options->host);
+    auto subscriber = cc::demo::zmq::Subscriber::create_shared(
+        ::options->host);
 
-    demo::provider = demo::zmq::ClientImpl::create_shared(
-        demo::options->identity,
-        demo::options->host);
+    cc::demo::provider = cc::demo::zmq::ClientImpl::create_shared(
+        ::options->identity,
+        ::options->host);
 
     logf_debug("Initializing ZeroMQ demo subscriber");
     subscriber->initialize();
     subscriber->start_listening();
 
     logf_debug("Initializing ZeroMQ demo provider");
-    demo::provider->initialize();
+    cc::demo::provider->initialize();
 
-    bool success = demo::options->handle_command();
+    bool success = ::options->handle_command();
 
     // // Invoke shutdown triggers
     // logf_debug("Emitting shutdown signal");
     // core::platform::signal_shutdown.emit();
 
     logf_debug("Deinitializing ZeroMQ demo provider");
-    demo::provider->deinitialize();
+    cc::demo::provider->deinitialize();
 
     logf_debug("Deinitializing ZeroMQ demo subscriber");
     subscriber->stop_listening();
@@ -49,10 +49,9 @@ int main(int argc, char** argv)
 
     // Invoke shutdown triggers
     logf_debug("Emitting shutdown signal");
-    core::platform::signal_shutdown.emit();
+    cc::core::platform::signal_shutdown.emit();
 
     logf_debug("Deinitialized ZeroMQ demo");
-
 
     return success ? 0 : -1;
 }

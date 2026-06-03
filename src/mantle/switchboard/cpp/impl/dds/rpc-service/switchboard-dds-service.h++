@@ -10,16 +10,16 @@
 #include "switchboard-dds-publisher.h++"
 #include "dds-service.h++"
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     //==========================================================================
     // @class Service
     // @brief Handle requests from Switchboard clients
 
-    class Service : public core::dds::Service<CC::Switchboard::SwitchboardService>
+    class Service : public cc::dds::Service<CC::Switchboard::SwitchboardService>
     {
         using This = Service;
-        using Super = core::dds::Service<CC::Switchboard::SwitchboardService>;
+        using Super = cc::dds::Service<CC::Switchboard::SwitchboardService>;
 
     public:
         Service(const ::dds::rpc::Server &server,
@@ -30,4 +30,4 @@ namespace switchboard::dds
         void deinitialize() override;
     };
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

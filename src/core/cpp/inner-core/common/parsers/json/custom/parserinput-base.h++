@@ -9,7 +9,7 @@
 #include <string_view>
 #include <memory>
 
-namespace core::parsers
+namespace cc::core::parsers
 {
     class Input
     {
@@ -25,4 +25,4 @@ namespace core::parsers
         virtual void init_token(char c) = 0;
         virtual void append_to_token(char c) = 0;
     };
-}  // namespace core::parser
+}  // namespace cc::core::parser

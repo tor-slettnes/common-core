@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-namespace core::logging
+namespace cc::core::logging
 {
     const std::string SETTING_CONTRACT_ID = "contract_id";
     const std::string SETTING_THRESHOLD = "threshold";
@@ -136,4 +136,4 @@ namespace core::logging
         }
     }
 
-}  // namespace core::logging
+}  // namespace cc::core::logging

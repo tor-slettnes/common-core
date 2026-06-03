@@ -7,7 +7,7 @@
 
 #include "implementations.h++"
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
     core::types::SymbolMap<Implementation> implementation_names =
         {
@@ -30,4 +30,4 @@ namespace multilogger
             true);                 // flag_unknown
     }
 
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger

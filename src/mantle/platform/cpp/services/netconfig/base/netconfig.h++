@@ -10,7 +10,7 @@
 #include "netconfig-signals.h++"
 #include "platform/provider.h++"
 
-namespace netconfig
+namespace cc::platform::netconfig
 {
     //======================================================================
     /// Abstract base for network providers
@@ -89,4 +89,4 @@ namespace netconfig
     };
 
     extern core::platform::ProviderProxy<ProviderInterface> network;
-}  // namespace netconfig
+}  // namespace cc::platform::netconfig

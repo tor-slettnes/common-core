@@ -9,7 +9,7 @@
 #include "protobuf-upgrade-types.h++"
 #include "protobuf-inline.h++"
 
-namespace upgrade::grpc
+namespace cc::platform::upgrade::grpc
 {
     ClientProvider::ClientProvider(const std::shared_ptr<Client> &client)
         : Super("grpc"),
@@ -28,7 +28,7 @@ namespace upgrade::grpc
         return cc::protobuf::decoded<PackageCatalogue>(
             this->client->call_check(
                 &Client::Stub::Scan,
-                cc::protobuf::encoded<::cc::platform::upgrade::protobuf::PackageSource>(source)));
+                cc::protobuf::encoded<platform::upgrade::protobuf::PackageSource>(source)));
     }
 
     PackageSources ClientProvider::list_sources() const
@@ -43,7 +43,7 @@ namespace upgrade::grpc
         return cc::protobuf::decoded<PackageCatalogue>(
             this->client->call_check(
                 &Client::Stub::ListAvailable,
-                cc::protobuf::encoded<::cc::platform::upgrade::protobuf::PackageSource>(source)));
+                cc::protobuf::encoded<platform::upgrade::protobuf::PackageSource>(source)));
     }
 
     PackageInfo::ptr ClientProvider::best_available(
@@ -52,13 +52,13 @@ namespace upgrade::grpc
         return cc::protobuf::decoded_shared<PackageInfo>(
             this->client->call_check(
                 &Client::Stub::BestAvailable,
-                cc::protobuf::encoded<::cc::platform::upgrade::protobuf::PackageSource>(source)));
+                cc::protobuf::encoded<platform::upgrade::protobuf::PackageSource>(source)));
     }
 
     PackageInfo::ptr ClientProvider::install(
         const PackageSource &source)
     {
-        ::cc::platform::upgrade::protobuf::InstallRequest request;
+        platform::upgrade::protobuf::InstallRequest request;
         cc::protobuf::encode(source, request.mutable_source());
 
         return cc::protobuf::decoded_shared<PackageInfo>(
@@ -70,4 +70,4 @@ namespace upgrade::grpc
         this->client->call_check(&Client::Stub::Finalize);
     }
 
-}  // namespace upgrade::grpc
+}  // namespace cc::platform::upgrade::grpc

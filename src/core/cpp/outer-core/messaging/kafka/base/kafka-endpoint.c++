@@ -9,7 +9,7 @@
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
 
-namespace core::kafka
+namespace cc::kafka
 {
     Endpoint::Endpoint(const std::string &endpoint_type,
                        const std::string &profile_name,
@@ -104,7 +104,7 @@ namespace core::kafka
         }
         else
         {
-            throw exception::Unavailable(error_string);
+            throw core::exception::Unavailable(error_string);
         }
     }
 
@@ -131,7 +131,7 @@ namespace core::kafka
     {
         if (code != RdKafka::ERR_NO_ERROR)
         {
-            throwf_args(exception::RuntimeError,
+            throwf_args(core::exception::RuntimeError,
                         ("Kafka error %d: %s", code, RdKafka::err2str(code)),
                         attributes);
         }
@@ -149,7 +149,7 @@ namespace core::kafka
                 error->str());
 
             delete error;
-            throw exception::RuntimeError(message, attributes);
+            throw core::exception::RuntimeError(message, attributes);
         }
     }
 
@@ -182,4 +182,4 @@ namespace core::kafka
         }
     }
 
-}  // namespace core::kafka
+}  // namespace cc::kafka

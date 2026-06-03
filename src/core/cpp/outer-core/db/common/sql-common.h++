@@ -9,7 +9,7 @@
 #include "types/value.h++"
 #include "thread/blockingqueue.h++"
 
-namespace core::db
+namespace cc::db
 {
     class SQL
     {
@@ -43,4 +43,4 @@ namespace core::db
     public:
         static const ColumnNames ALL_COLUMNS;
     };
-}  // namespace core::db
+}  // namespace cc::db

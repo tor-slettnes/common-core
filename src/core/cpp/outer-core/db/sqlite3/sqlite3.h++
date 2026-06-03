@@ -13,7 +13,7 @@
 
 #include "sqlite3.h"
 
-namespace core::db
+namespace cc::db
 {
     class SQLite3 : public SQL
     {
@@ -128,11 +128,11 @@ namespace core::db
 
     public:
         // static core::types::ValueMap<std::string, core::types::ValueType> SQLite3::column_type_mapping;
-        static types::SymbolMap<core::types::ValueType> column_type_names;
+        static core::types::SymbolMap<core::types::ValueType> column_type_names;
 
     private:
         ::sqlite3 *connection_;
         fs::path db_file_;
         std::mutex db_lock_;
     };
-}  // namespace core::db
+}  // namespace cc::db

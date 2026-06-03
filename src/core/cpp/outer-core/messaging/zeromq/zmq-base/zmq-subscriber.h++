@@ -13,7 +13,7 @@
 #include <set>
 #include <mutex>
 
-namespace core::zmq
+namespace cc::zmq
 {
     class Subscriber : public Endpoint
     {
@@ -56,4 +56,4 @@ namespace core::zmq
         bool keep_receiving;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

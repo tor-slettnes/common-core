@@ -9,7 +9,7 @@
 #include "vfs-context.h++"
 #include "thread/signaltemplate.h++"
 
-namespace vfs
+namespace cc::platform::vfs
 {
     //==========================================================================
     // Signals
@@ -20,4 +20,4 @@ namespace vfs
 
     // Emitted whenever a context changes status, e.g., is opened or closed.
     extern core::signal::MappingSignal<Context::ptr> signal_context_in_use;
-}  // namespace vfs
+}  // namespace cc::platform::vfs

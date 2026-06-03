@@ -8,7 +8,7 @@
 #include "message.h++"
 #include "platform/process.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     //==========================================================================
     // Message
@@ -241,4 +241,4 @@ namespace core::logging
         }
     }
 
-}  // namespace core::logging
+}  // namespace cc::core::logging

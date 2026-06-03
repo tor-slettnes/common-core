@@ -16,23 +16,23 @@
 #include <future>
 #include <tuple>
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     using namespace cc::platform::switchboard;
 }
 
-namespace switchboard::grpc
+namespace cc::platform::switchboard::grpc
 {
     //==========================================================================
     /// @class RequestHandler
     /// @brief Process requests from Switchboard clients.
 
     class RequestHandler
-        : public core::grpc::SignalRequestHandler<cc::platform::switchboard::grpc::Switchboard>,
+        : public cc::grpc::SignalRequestHandler<cc::platform::switchboard::grpc::Switchboard>,
           public core::types::enable_create_shared<RequestHandler>
     {
         using This = RequestHandler;
-        using Super = core::grpc::SignalRequestHandler<cc::platform::switchboard::grpc::Switchboard>;
+        using Super = cc::grpc::SignalRequestHandler<cc::platform::switchboard::grpc::Switchboard>;
 
         using InterceptorWriter = ::grpc::ServerWriter<
             switchboard::protobuf::InterceptorInvocation>;
@@ -236,4 +236,4 @@ namespace switchboard::grpc
         std::mutex interceptor_sessions_mutex;
         InterceptorSessionsMap interceptor_sessions;
     };
-}  // namespace switchboard::grpc
+}  // namespace cc::platform::switchboard::grpc

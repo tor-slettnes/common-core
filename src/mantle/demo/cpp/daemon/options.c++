@@ -11,7 +11,7 @@
 #include "dds-logsink.h++"
 #endif
 
-namespace demo
+namespace cc::demo
 {
     Options::Options()
         : Super(),
@@ -51,5 +51,6 @@ namespace demo
 #endif
     }
 
-    std::unique_ptr<Options> options;
-}  // namespace demo
+}  // namespace cc::demo
+
+std::unique_ptr<cc::demo::Options> options;

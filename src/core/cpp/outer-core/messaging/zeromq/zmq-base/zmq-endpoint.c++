@@ -11,7 +11,7 @@
 #include "platform/init.h++"
 #include "status/exceptions.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     Endpoint::Endpoint(const std::string &address,
                        const std::string &endpoint_type,
@@ -315,7 +315,7 @@ namespace core::zmq
         }
     }
 
-    void Endpoint::send(const types::ByteVector &bytes, SendFlags flags) const
+    void Endpoint::send(const core::types::ByteVector &bytes, SendFlags flags) const
     {
         // using SendFunction = int (*)(void *socket, const void *buf, size_t len, int flags);
         // SendFunction send = (flags & ZMQ_DONTWAIT) ? ::zmq_send : ::zmq_send_const;
@@ -328,15 +328,15 @@ namespace core::zmq
             flags));         // flags
     }
 
-    std::shared_ptr<types::ByteVector> Endpoint::receive(RecvFlags flags) const
+    std::shared_ptr<core::types::ByteVector> Endpoint::receive(RecvFlags flags) const
     {
-        std::vector<types::ByteVector> parts;
+        std::vector<core::types::ByteVector> parts;
         if (std::size_t size = this->receive(&parts, flags))
         {
-            auto bytes = std::make_shared<types::ByteVector>();
+            auto bytes = std::make_shared<core::types::ByteVector>();
             bytes->reserve(size);
 
-            for (const types::ByteVector &part : parts)
+            for (const core::types::ByteVector &part : parts)
             {
                 bytes->insert(bytes->end(), part.begin(), part.end());
             }
@@ -348,14 +348,14 @@ namespace core::zmq
         }
     }
 
-    std::vector<types::ByteVector> Endpoint::receive_parts(RecvFlags flags) const
+    std::vector<core::types::ByteVector> Endpoint::receive_parts(RecvFlags flags) const
     {
-        std::vector<types::ByteVector> parts;
+        std::vector<core::types::ByteVector> parts;
         this->receive(&parts, flags);
         return parts;
     }
 
-    std::size_t Endpoint::receive(std::vector<types::ByteVector> *parts, RecvFlags flags) const
+    std::size_t Endpoint::receive(std::vector<core::types::ByteVector> *parts, RecvFlags flags) const
     {
         zmq_msg_t msg;
         std::vector<std::string> counts;
@@ -379,7 +379,7 @@ namespace core::zmq
 
         logf_trace("%s received %s = %d bytes",
                    *this,
-                   str::join(counts, "+"),
+                   core::str::join(counts, "+"),
                    total);
 
         return total;
@@ -463,4 +463,4 @@ namespace core::zmq
 
     Context *Endpoint::context_ = nullptr;
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

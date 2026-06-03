@@ -8,7 +8,7 @@
 #pragma once
 #include "argparse/server.h++"
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
     class Options : public core::argparse::ServerOptions
     {
@@ -24,5 +24,6 @@ namespace multilogger
         bool enable_zmq;
     };
 
-    extern std::unique_ptr<Options> options;
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger
+
+extern std::unique_ptr<cc::platform::multilogger::Options> options;

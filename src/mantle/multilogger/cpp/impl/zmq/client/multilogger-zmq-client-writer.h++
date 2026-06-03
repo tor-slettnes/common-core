@@ -11,27 +11,27 @@
 #include "zmq-protobuf-messagewriter.h++"
 #include "types/create-shared.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     //==========================================================================
     // @class ClientWriter
     // @brief Send messages to Multilogger service over ZMQ
 
     class ClientWriter
-        : public core::zmq::ProtoBufMessageWriter<cc::platform::multilogger::protobuf::Loggable>,
+        : public cc::zmq::ProtoBufMessageWriter<cc::platform::multilogger::protobuf::Loggable>,
           public core::types::enable_create_shared_from_this<ClientWriter>
     {
         using This  = ClientWriter;
-        using Super = core::zmq::ProtoBufMessageWriter<cc::platform::multilogger::protobuf::Loggable>;
+        using Super = cc::zmq::ProtoBufMessageWriter<cc::platform::multilogger::protobuf::Loggable>;
 
     protected:
-        ClientWriter(const std::shared_ptr<core::zmq::Publisher> &publisher);
+        ClientWriter(const std::shared_ptr<cc::zmq::Publisher> &publisher);
 
     public:
         void write(const core::types::Loggable::ptr &loggable);
 
     private:
-        std::shared_ptr<core::zmq::Publisher> publisher;
+        std::shared_ptr<cc::zmq::Publisher> publisher;
     };
 }
 

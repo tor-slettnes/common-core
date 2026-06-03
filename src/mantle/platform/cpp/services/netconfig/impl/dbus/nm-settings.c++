@@ -10,13 +10,13 @@
 #include "sysconfig-host.h++"
 #include "status/exceptions.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     Settings::Settings(
-        core::dbus::ProxyContainer *container,
-        const core::dbus::ConnectionPtr &connection,
-        const core::dbus::ServiceName &servicename,
-        const core::dbus::ObjectPath &objectpath)
+        cc::dbus::ProxyContainer *container,
+        const cc::dbus::ConnectionPtr &connection,
+        const cc::dbus::ServiceName &servicename,
+        const cc::dbus::ObjectPath &objectpath)
         : DataWrapper<SystemData>(
               container,
               connection,
@@ -36,7 +36,7 @@ namespace netconfig::dbus
     void Settings::initialize_properties()
     {
         Super::initialize_properties();
-        auto connections = this->get_cached_property<core::dbus::ObjectPaths>("Connections");
+        auto connections = this->get_cached_property<cc::dbus::ObjectPaths>("Connections");
         this->container->synchronize<Connection>(connections);
     }
 
@@ -110,7 +110,7 @@ namespace netconfig::dbus
     void Settings::on_signal_connection_added(
         const Glib::VariantContainerBase &parameters)
     {
-        auto path = core::glib::variant_cast<core::dbus::ObjectPath>(parameters, 0);
+        auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(parameters, 0);
         logf_debug("Added connection %r", path);
         auto conn = this->container->add<Connection>(path);
     }
@@ -118,16 +118,16 @@ namespace netconfig::dbus
     void Settings::on_signal_connection_removed(
         const Glib::VariantContainerBase &parameters)
     {
-        auto path = core::glib::variant_cast<core::dbus::ObjectPath>(parameters, 0);
+        auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(parameters, 0);
         logf_debug("Removed connection %r", path);
         auto conn = this->container->remove(path);
     }
 
     void Settings::on_property_hostname(const Glib::VariantBase &change)
     {
-        auto hostname = core::glib::variant_cast<std::string>(change);
+        auto hostname = cc::glib::variant_cast<std::string>(change);
         logf_debug("signal_hostname: %s", hostname);
         sysconfig::signal_hostinfo.emit(sysconfig::host->get_host_info());
     }
 
-} // namespace netconfig::dbus
+} // namespace cc::platform::netconfig::dbus

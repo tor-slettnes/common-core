@@ -8,7 +8,7 @@
 #pragma once
 #include "types/loggable.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     class Data : public types::Loggable
     {
@@ -46,4 +46,4 @@ namespace core::logging
         ContractID contract_id_;
     };
 
-}  // namespace core::logging
+}  // namespace cc::core::logging

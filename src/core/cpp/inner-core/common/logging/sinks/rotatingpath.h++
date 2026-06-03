@@ -14,7 +14,7 @@
 #include <thread>
 #include <memory>
 
-namespace core::logging
+namespace cc::core::logging
 {
     const std::string SETTING_NAME_TEMPLATE = "name template";
     const std::string SETTING_LOCAL_TIME = "local time";
@@ -102,4 +102,4 @@ namespace core::logging
         dt::TimePoint current_rotation_;
         fs::path current_path_;
     };
-}  // namespace core::logging
+}  // namespace cc::core::logging

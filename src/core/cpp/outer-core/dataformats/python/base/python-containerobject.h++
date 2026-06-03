@@ -8,7 +8,7 @@
 #pragma once
 #include "python-simpleobject.h++"
 
-namespace core::python
+namespace cc::python
 {
     //==========================================================================
     /// @brief
@@ -30,8 +30,8 @@ namespace core::python
         virtual ContainerObject getattr(const std::string& name) const;
 
         virtual Map attributes_as_objects() const;
-        virtual types::KeyValueMap attributes_as_kvmap() const;
+        virtual core::types::KeyValueMap attributes_as_kvmap() const;
 
         ContainerObject find_qualified_symbol(const std::string& qualified_name) const;
     };
-}  // namespace core::python
+}  // namespace cc::python

@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-namespace core::platform
+namespace cc::core::platform
 {
     class PosixPathProvider : public PathProvider
     {
@@ -58,4 +58,4 @@ namespace core::platform
         fs::file_type path_type(mode_t mode) const;
     };
 
-} // namespace core::platform
+} // namespace cc::core::platform

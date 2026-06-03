@@ -14,7 +14,7 @@
 
 #include <thread>
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class ClientReceiver
@@ -143,4 +143,4 @@ namespace core::grpc
         }
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

@@ -9,7 +9,7 @@
 #include "upgrade-base.h++"
 #include "upgrade-grpc-client.h++"
 
-namespace upgrade::grpc
+namespace cc::platform::upgrade::grpc
 {
     class ClientProvider : public ProviderInterface
     {
@@ -32,4 +32,4 @@ namespace upgrade::grpc
     private:
         std::shared_ptr<Client> client;
     };
-}  // namespace upgrade::grpc
+}  // namespace cc::platform::upgrade::grpc

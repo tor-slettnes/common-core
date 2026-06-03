@@ -7,7 +7,7 @@
 
 #include "netconfig.h++"
 
-namespace netconfig
+namespace cc::platform::netconfig
 {
     //==========================================================================
     // Provider class
@@ -249,4 +249,4 @@ namespace netconfig
 
     core::platform::ProviderProxy<ProviderInterface> network("network");
 
-}  // namespace netconfig
+}  // namespace cc::platform::netconfig

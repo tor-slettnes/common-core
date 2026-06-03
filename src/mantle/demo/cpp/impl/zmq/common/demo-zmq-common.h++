@@ -8,7 +8,7 @@
 #pragma once
 #include "demo-api.h++"
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
     // Name for looking up settings for "command" and "message" channels
     constexpr auto MESSAGE_CHANNEL = "Demo Message";
@@ -22,4 +22,4 @@ namespace demo::zmq
     constexpr auto METHOD_GET_CURRENT_TIME = "get_current_time";
     constexpr auto METHOD_START_TICKING = "start_ticking";
     constexpr auto METHOD_STOP_TICKING = "stop_ticking";
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

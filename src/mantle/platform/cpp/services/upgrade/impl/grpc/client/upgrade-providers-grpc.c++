@@ -9,7 +9,7 @@
 #include "upgrade-grpc-client.h++"
 #include "upgrade-grpc-provider.h++"
 
-namespace upgrade::grpc
+namespace cc::platform::upgrade::grpc
 {
     void register_providers(const std::string &host,
                             bool wait_for_ready,
@@ -29,4 +29,4 @@ namespace upgrade::grpc
     {
         upgrade.unregisterProvider<ClientProvider>();
     }
-}  // namespace upgrade::grpc
+}  // namespace cc::platform::upgrade::grpc

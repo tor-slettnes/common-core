@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <tuple>
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     //==========================================================================
     // NativeProcessProvider
@@ -41,4 +41,4 @@ namespace sysconfig::native
     private:
         std::unordered_map<PID, FDSet> process_map;
     };
-}  // namespace sysconfig::native
+}  // namespace cc::platform::sysconfig::native

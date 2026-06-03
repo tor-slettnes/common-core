@@ -12,8 +12,8 @@
 
 int main(int argc, char **argv)
 {
-    core::application::initialize(argc, argv);
-    auto options = std::make_unique<pubsub::grpc::Options>();
+    cc::core::application::initialize(argc, argv);
+    auto options = std::make_unique<cc::platform::pubsub::grpc::Options>();
     options->apply(argc, argv);
 
     try

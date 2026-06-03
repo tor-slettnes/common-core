@@ -9,7 +9,7 @@
 #include "string/misc.h++"
 #include <sstream>
 
-namespace core::db
+namespace cc::db
 {
     std::string SQL::select_query(
         const std::vector<std::string> &columns,
@@ -58,4 +58,4 @@ namespace core::db
 
     const SQL::ColumnNames SQL::ALL_COLUMNS = {"*"};
 
-}  // namespace core::db
+}  // namespace cc::db

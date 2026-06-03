@@ -7,7 +7,7 @@
 
 #include "event.h++"
 
-namespace core::status
+namespace cc::core::status
 {
     Event::Event()
         : level_(Level::NONE)
@@ -133,4 +133,4 @@ namespace core::status
             return Super::get_field_as_value(field_name);
         }
     }
-}  // namespace core::status
+}  // namespace cc::core::status

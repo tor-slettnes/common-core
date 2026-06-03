@@ -8,7 +8,7 @@
 #include "host.h++"
 #include "buildinfo.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     std::string HostProvider::get_system_name() const
     {
@@ -41,4 +41,4 @@ namespace core::platform
     }
 
     ProviderProxy<HostProvider> host("host");
-}  // namespace core::platform
+}  // namespace cc::core::platform

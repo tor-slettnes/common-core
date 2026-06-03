@@ -14,7 +14,7 @@
 
 #include <stdexcept>
 
-namespace core::exception
+namespace cc::core::exception
 {
     //==========================================================================
     /// @class CustomException
@@ -400,7 +400,7 @@ namespace core::exception
     status::Error::ptr map_to_error(const std::exception &e) noexcept;
     status::Error::ptr map_to_error(std::exception_ptr eptr) noexcept;
 
-};  // namespace core::exception
+};  // namespace cc::core::exception
 
 namespace std
 {

@@ -8,7 +8,7 @@
 #include "thread/signaltemplate.h++"
 #include "platform/init.h++"
 
-namespace core::application
+namespace cc::core::application
 {
     void initialize(
         int argc,
@@ -23,4 +23,4 @@ namespace core::application
 
     void emit_shutdown_signal();
     void deinitialize();
-}  // namespace core::application
+}  // namespace cc::core::application

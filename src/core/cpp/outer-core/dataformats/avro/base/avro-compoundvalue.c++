@@ -14,7 +14,7 @@
 #include "logging/logging.h++"
 #include <iostream>
 
-namespace avro
+namespace cc::avro
 {
     CompoundValue::CompoundValue(avro_schema_t schema, bool take_schema)
         : Super(),
@@ -71,4 +71,4 @@ namespace avro
         avro::set_from_serialized(&this->value, bytes);
     }
 
-}  // namespace avro
+}  // namespace cc::avro

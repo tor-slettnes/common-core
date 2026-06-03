@@ -9,7 +9,7 @@
 #include "relay-types.h++"
 #include "thread/blockingqueue.h++"
 
-namespace pubsub
+namespace cc::platform::pubsub
 {
     //--------------------------------------------------------------------------
     // Abstract Publisher Interface
@@ -41,4 +41,4 @@ namespace pubsub
         core::types::BlockingQueue<MessageItem> writer_queue_;
     };
 
-}  // namespace pubsub
+}  // namespace cc::platform::pubsub

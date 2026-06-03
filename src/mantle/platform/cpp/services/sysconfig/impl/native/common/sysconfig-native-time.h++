@@ -8,7 +8,7 @@
 #pragma once
 #include "sysconfig-time.h++"
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     class TimeConfigProvider : public TimeConfigInterface
     {
@@ -33,4 +33,4 @@ namespace sysconfig::native
     private:
         void emit_time_config() const;
     };
-}  // namespace sysconfig::native
+}  // namespace cc::platform::sysconfig::native

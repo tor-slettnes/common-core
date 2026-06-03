@@ -12,7 +12,7 @@
 #include <iostream>
 #include <string_view>
 
-namespace core::parsers
+namespace cc::core::parsers
 {
     class BaseReader
     {
@@ -30,4 +30,4 @@ namespace core::parsers
     public:
         const std::string name;
     };
-}  // namespace core::parsers
+}  // namespace cc::core::parsers

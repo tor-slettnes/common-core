@@ -10,7 +10,7 @@
 #include "protobuf-vfs-types.h++"
 #include "protobuf-inline.h++"
 
-namespace vfs::grpc
+namespace cc::platform::vfs::grpc
 {
     void SignalQueue::initialize()
     {
@@ -37,4 +37,4 @@ namespace vfs::grpc
         this->disconnect(vfs::signal_context);
         Super::deinitialize();
     }
-}  // namespace vfs::grpc
+}  // namespace cc::platform::vfs::grpc

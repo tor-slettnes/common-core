@@ -9,7 +9,7 @@
 #include "status/exceptions.h++"
 #include "platform/path.h++"
 
-namespace vfs
+namespace cc::platform::vfs
 {
     //==========================================================================
     // ContextProxy
@@ -179,4 +179,4 @@ namespace vfs
                           this->modify);
     }
 
-}  // namespace vfs
+}  // namespace cc::platform::vfs

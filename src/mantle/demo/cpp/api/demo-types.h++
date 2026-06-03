@@ -17,7 +17,7 @@
 #include <ctime>
 #include <functional>
 
-namespace demo
+namespace cc::demo
 {
     // Classes defined below.
     class Greeting;
@@ -92,4 +92,4 @@ namespace demo
         std::tm utctime;
     };
 
-}  // namespace demo
+}  // namespace cc::demo

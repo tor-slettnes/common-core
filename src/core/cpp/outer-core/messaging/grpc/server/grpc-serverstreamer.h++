@@ -14,17 +14,17 @@
 #include <grpcpp/impl/codegen/sync_stream.h>
 #include <grpcpp/impl/codegen/server_context.h>
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class ServerStreamer
     /// @brief Mix-in class to stream stream from queue to client
 
     template <class MessageT>
-    class ServerStreamer : public types::BlockingQueue<MessageT>
+    class ServerStreamer : public core::types::BlockingQueue<MessageT>
     {
         using This = ServerStreamer<MessageT>;
-        using Super = types::BlockingQueue<MessageT>;
+        using Super = core::types::BlockingQueue<MessageT>;
 
     public:
         template <class... Args>
@@ -91,4 +91,4 @@ namespace core::grpc
         core::signal::DataSignal<MessageT> *signal;
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

@@ -11,7 +11,7 @@
 
 #include "grpc-signalqueue.h++"
 
-namespace demo::grpc
+namespace cc::demo::grpc
 {
     //==========================================================================
     /// @class SignalQueue
@@ -24,15 +24,15 @@ namespace demo::grpc
     /// own protobuf Signal() message and then appends the result to this queue,
     /// from which they are then streamed back to the client.
     ///
-    /// See `core::grpc::SignalQueue<T>` for additional info.
+    /// See `cc::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<cc::demo::protobuf::Signal>
+    class SignalQueue : public cc::grpc::SignalQueue<cc::demo::protobuf::Signal>
     {
-        using Super = core::grpc::SignalQueue<cc::demo::protobuf::Signal>;
+        using Super = cc::grpc::SignalQueue<cc::demo::protobuf::Signal>;
 
     public:
         using Super::Super;
         void initialize() override;
         void deinitialize() override;
     };
-}  // namespace demo::grpc
+}  // namespace cc::demo::grpc

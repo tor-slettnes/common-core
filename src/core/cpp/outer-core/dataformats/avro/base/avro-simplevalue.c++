@@ -9,7 +9,7 @@
 #include "avro-valuemethods.h++"
 #include "avro-status.h++"
 
-namespace avro
+namespace cc::avro
 {
     SimpleValue::SimpleValue()
         : BaseValue()
@@ -122,4 +122,4 @@ namespace avro
         return avro::get_fixed(this->value);
     }
 
-}  // namespace avro
+}  // namespace cc::avro

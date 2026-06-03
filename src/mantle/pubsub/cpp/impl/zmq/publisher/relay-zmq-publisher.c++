@@ -9,25 +9,25 @@
 #include "relay-types.h++"
 #include "parsers/json/writer.h++"
 
-namespace pubsub::zmq
+namespace cc::platform::pubsub::zmq
 {
     Publisher::Publisher(const std::string &bind_address,
                          const std::string &channel_name,
                          Role role)
-        : core::zmq::Publisher(bind_address, channel_name, role)
+        : cc::zmq::Publisher(bind_address, channel_name, role)
     {
     }
 
     void Publisher::initialize()
     {
-        core::zmq::Publisher::initialize();
+        cc::zmq::Publisher::initialize();
         pubsub::Publisher::initialize();
     }
 
     void Publisher::deinitialize()
     {
         pubsub::Publisher::deinitialize();
-        core::zmq::Publisher::deinitialize();
+        cc::zmq::Publisher::deinitialize();
     }
 
     void Publisher::start_writer()
@@ -50,10 +50,10 @@ namespace pubsub::zmq
     bool Publisher::write(const std::string &topic,
                           const core::types::Value &payload)
     {
-        core::zmq::Publisher::publish(
+        cc::zmq::Publisher::publish(
             core::types::ByteVector::from_string(topic),
             core::json::fast_writer.encoded(payload));
         return true;
     }
 
-}  // namespace pubsub::zmq
+}  // namespace cc::platform::pubsub::zmq

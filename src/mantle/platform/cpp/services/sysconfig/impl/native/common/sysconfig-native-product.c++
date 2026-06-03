@@ -8,7 +8,7 @@
 #include "sysconfig-native-product.h++"
 #include "platform/symbols.h++"
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     constexpr auto RELEASE_SETTINGS_FILE = "release.json";
     constexpr auto RELEASE_SETTING_PRODUCT = "product";
@@ -100,4 +100,4 @@ namespace sysconfig::native
         signal_productinfo.emit(this->get_product_info());
     }
 
-}  // namespace sysconfig::native
+}  // namespace cc::platform::sysconfig::native

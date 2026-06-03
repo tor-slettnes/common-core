@@ -8,7 +8,7 @@
 #include "reader.h++"
 #include "io/cutils.h++"
 
-namespace core::io
+namespace cc::core::io
 {
     //--------------------------------------------------------------------------
     // GZipOutputBuffer
@@ -50,4 +50,4 @@ namespace core::io
         this->rdbuf(&this->input_buffer);
     }
 
-} // namespace core::io
+} // namespace cc::core::io

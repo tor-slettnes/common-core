@@ -10,7 +10,7 @@
 #include "variant-tvlist.h++"
 #include "string/misc.h++"
 
-namespace core::types
+namespace cc::core::types
 {
     const Value &KeyValueMap::get(
         const std::string &key,
@@ -372,4 +372,4 @@ namespace core::types
         stream << "}";
     }
 
-}  // namespace core::types
+}  // namespace cc::core::types

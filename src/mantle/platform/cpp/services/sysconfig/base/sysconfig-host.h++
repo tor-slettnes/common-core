@@ -11,7 +11,7 @@
 #include "types/listable.h++"
 #include "thread/signaltemplate.h++"
 
-namespace sysconfig
+namespace cc::platform::sysconfig
 {
     //==========================================================================
     // HostInfo
@@ -71,4 +71,4 @@ namespace sysconfig
     //==========================================================================
     // Signals
     extern core::signal::DataSignal<HostInfo> signal_hostinfo;
-}  // namespace sysconfig
+}  // namespace cc::platform::sysconfig

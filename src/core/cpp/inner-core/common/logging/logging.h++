@@ -81,8 +81,8 @@
 // file needs to be included.
 
 #define custom_log_message(level, scope, timepoint, path, lineno, function) \
-    core::logging::MessageBuilder::create_shared(                           \
-        &core::logging::dispatcher,                                         \
+    cc::core::logging::MessageBuilder::create_shared(                       \
+        &cc::core::logging::dispatcher,                                     \
         level,                                                              \
         scope,                                                              \
         timepoint,                                                          \
@@ -91,25 +91,25 @@
         function)
 
 #define standard_log_message(level) \
-    custom_log_message(            \
-        level,                     \
-        log_scope,                 \
-        core::dt::Clock::now(),    \
-        __builtin_FILE(),          \
-        __builtin_LINE(),          \
+    custom_log_message(             \
+        level,                      \
+        log_scope,                  \
+        cc::core::dt::Clock::now(), \
+        __builtin_FILE(),           \
+        __builtin_LINE(),           \
         __builtin_FUNCTION())
 
 #define log_message(level, ...) \
     standard_log_message(level)->add(__VA_ARGS__).dispatch()
 
-#define log_trace(...)    log_message(core::status::Level::TRACE, __VA_ARGS__)
-#define log_debug(...)    log_message(core::status::Level::DEBUG, __VA_ARGS__)
-#define log_info(...)     log_message(core::status::Level::INFO, __VA_ARGS__)
-#define log_notice(...)   log_message(core::status::Level::NOTICE, __VA_ARGS__)
-#define log_warning(...)  log_message(core::status::Level::WARNING, __VA_ARGS__)
-#define log_error(...)    log_message(core::status::Level::ERROR, __VA_ARGS__)
-#define log_critical(...) log_message(core::status::Level::CRITICAL, __VA_ARGS__)
-#define log_fatal(...)    log_message(core::status::Level::FATAL, __VA_ARGS__)
+#define log_trace(...)    log_message(cc::core::status::Level::TRACE, __VA_ARGS__)
+#define log_debug(...)    log_message(cc::core::status::Level::DEBUG, __VA_ARGS__)
+#define log_info(...)     log_message(cc::core::status::Level::INFO, __VA_ARGS__)
+#define log_notice(...)   log_message(cc::core::status::Level::NOTICE, __VA_ARGS__)
+#define log_warning(...)  log_message(cc::core::status::Level::WARNING, __VA_ARGS__)
+#define log_error(...)    log_message(cc::core::status::Level::ERROR, __VA_ARGS__)
+#define log_critical(...) log_message(cc::core::status::Level::CRITICAL, __VA_ARGS__)
+#define log_fatal(...)    log_message(cc::core::status::Level::FATAL, __VA_ARGS__)
 
 /// Construct messages from an format template and corresponding arguments.
 /// Arguments must be supported by the "<<" output stream operator.  See
@@ -118,23 +118,25 @@
 #define logf_message(level, ...) \
     standard_log_message(level)->format(__VA_ARGS__).dispatch()
 
-#define logf_trace(...)    logf_message(core::status::Level::TRACE, __VA_ARGS__)
-#define logf_debug(...)    logf_message(core::status::Level::DEBUG, __VA_ARGS__)
-#define logf_info(...)     logf_message(core::status::Level::INFO, __VA_ARGS__)
-#define logf_notice(...)   logf_message(core::status::Level::NOTICE, __VA_ARGS__)
-#define logf_warning(...)  logf_message(core::status::Level::WARNING, __VA_ARGS__)
-#define logf_error(...)    logf_message(core::status::Level::ERROR, __VA_ARGS__)
-#define logf_critical(...) logf_message(core::status::Level::CRITICAL, __VA_ARGS__)
-#define logf_fatal(...)    logf_message(core::status::Level::FATAL, __VA_ARGS__)
+#define logf_trace(...)    logf_message(cc::core::status::Level::TRACE, __VA_ARGS__)
+#define logf_debug(...)    logf_message(cc::core::status::Level::DEBUG, __VA_ARGS__)
+#define logf_info(...)     logf_message(cc::core::status::Level::INFO, __VA_ARGS__)
+#define logf_notice(...)   logf_message(cc::core::status::Level::NOTICE, __VA_ARGS__)
+#define logf_warning(...)  logf_message(cc::core::status::Level::WARNING, __VA_ARGS__)
+#define logf_error(...)    logf_message(cc::core::status::Level::ERROR, __VA_ARGS__)
+#define logf_critical(...) logf_message(cc::core::status::Level::CRITICAL, __VA_ARGS__)
+#define logf_fatal(...)    logf_message(cc::core::status::Level::FATAL, __VA_ARGS__)
 
 #ifndef NDEBUG
 /// Evaluate a condition, exit with a fatal error if it fails.
-#define assertf(cond, ...)                                                                \
-    if (!(cond))                                                                          \
-    {                                                                                     \
-        std::cerr << "Assertion failed: " << core::str::format(__VA_ARGS__) << std::endl; \
-        logf_fatal("Assertion failed: "s + __VA_ARGS__);                                  \
-        std::abort();                                                                     \
+#define assertf(cond, ...)                               \
+    if (!(cond))                                         \
+    {                                                    \
+        std::cerr << "Assertion failed: "                \
+                  << cc::core::str::format(__VA_ARGS__)  \
+                  << std::endl;                          \
+        logf_fatal("Assertion failed: "s + __VA_ARGS__); \
+        std::abort();                                    \
     }
 #else
 #define assertf(cond, ...)

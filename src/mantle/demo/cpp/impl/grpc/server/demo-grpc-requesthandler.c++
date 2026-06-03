@@ -12,7 +12,7 @@
 #include "protobuf-inline.h++"
 #include "status/exceptions.h++"
 
-namespace demo::grpc
+namespace cc::demo::grpc
 {
     RequestHandler::RequestHandler(const std::shared_ptr<API>& api_provider)
         : Super(),
@@ -23,7 +23,7 @@ namespace demo::grpc
 
     ::grpc::Status RequestHandler::SayHello(
         ::grpc::ServerContext* context,
-        const ::cc::demo::protobuf::Greeting* request,
+        const demo::protobuf::Greeting* request,
         ::google::protobuf::Empty* response)
     {
         // We received a greeting from a client.  We decode and pass this on to
@@ -47,7 +47,7 @@ namespace demo::grpc
     ::grpc::Status RequestHandler::GetCurrentTime(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::demo::protobuf::TimeData* response)
+        demo::protobuf::TimeData* response)
     {
         try
         {
@@ -100,4 +100,4 @@ namespace demo::grpc
         return this->stream_signals<cc::demo::protobuf::Signal, SignalQueue>(context, request, writer);
     }
 
-}  // namespace demo::grpc
+}  // namespace cc::demo::grpc

@@ -11,7 +11,7 @@
 // Shared modules
 #include "types/value.h++"
 
-namespace demo
+namespace cc::demo
 {
     //==========================================================================
     /// @class Greeting
@@ -106,4 +106,4 @@ namespace demo
         tvlist->append("utc", core::str::format("%Z", this->utctime));
     }
 
-}  // namespace demo
+}  // namespace cc::demo

@@ -7,7 +7,7 @@
 
 #include "vfs-base.h++"
 
-namespace vfs
+namespace cc::platform::vfs
 {
     //==========================================================================
     // Provider
@@ -97,4 +97,4 @@ namespace vfs
     // Provider instance
 
     core::platform::ProviderProxy<ProviderInterface> vfs("VFS");
-}  // namespace vfs
+}  // namespace cc::platform::vfs

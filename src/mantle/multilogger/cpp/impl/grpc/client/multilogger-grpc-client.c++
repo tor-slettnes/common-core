@@ -10,7 +10,7 @@
 #include "protobuf-multilogger-types.h++"
 #include "protobuf-inline.h++"
 
-namespace multilogger::grpc
+namespace cc::platform::multilogger::grpc
 {
     void ClientImpl::submit(const core::types::Loggable::ptr &item)
     {
@@ -126,4 +126,4 @@ namespace multilogger::grpc
         }
     }
 
-}  // namespace multilogger::grpc
+}  // namespace cc::platform::multilogger::grpc

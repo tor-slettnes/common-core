@@ -12,7 +12,7 @@
 #include "protobuf-inline.h++"
 #include "platform/symbols.h++"
 
-namespace switchboard::grpc
+namespace cc::platform::switchboard::grpc
 {
     Proxy::Proxy(
         const std::string &host,
@@ -212,4 +212,4 @@ namespace switchboard::grpc
         }
     }
 
-};  // namespace switchboard::grpc
+};  // namespace cc::platform::switchboard::grpc

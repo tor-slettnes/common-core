@@ -10,7 +10,7 @@
 #include "string/convert.h++"
 #include "chrono/date-time.h++"
 
-namespace demo
+namespace cc::demo
 {
     void Options::say_hello()
     {
@@ -59,4 +59,4 @@ namespace demo
                           mapping_key,
                           greeting);
     }
-}  // namespace demo
+}  // namespace cc::demo

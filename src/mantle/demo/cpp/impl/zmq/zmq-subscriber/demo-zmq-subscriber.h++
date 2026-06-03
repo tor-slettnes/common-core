@@ -11,7 +11,7 @@
 #include "zmq-subscriber.h++"
 #include "types/create-shared.h++"
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
     //==========================================================================
     /// @class Subscriber
@@ -20,11 +20,11 @@ namespace demo::zmq
     /// Received messages are re-emitted locally via
     /// @sa demo::signal_time and @sa demo::signal_greeting.
 
-    class Subscriber : public core::zmq::Subscriber,
+    class Subscriber : public cc::zmq::Subscriber,
                        public core::types::enable_create_shared<Subscriber>
     {
         using This = Subscriber;
-        using Super = core::zmq::Subscriber;
+        using Super = cc::zmq::Subscriber;
 
     protected:
         Subscriber(const std::string &host_address = "",
@@ -35,4 +35,4 @@ namespace demo::zmq
 
     };
 
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

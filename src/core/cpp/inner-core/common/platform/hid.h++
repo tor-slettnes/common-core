@@ -14,7 +14,7 @@
 
 #include <tuple>
 
-namespace core::platform
+namespace cc::core::platform
 {
     //==========================================================================
     // HID Bus Type
@@ -127,4 +127,4 @@ namespace core::platform
 
     extern ProviderProxy<HIDProvider> hid;
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

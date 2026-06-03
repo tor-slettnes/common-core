@@ -10,7 +10,7 @@
 #include "demo-zmq-signalhandler.h++"
 #include "protobuf-demo-types.h++"
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
     Subscriber::Subscriber(const std::string &host_address,
                            const std::string &channel_name)
@@ -24,4 +24,4 @@ namespace demo::zmq
         this->add_handler(SignalHandler::create_shared(), true);
     }
 
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

@@ -7,7 +7,7 @@
 
 #include "dns-sd.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     ProviderProxy<ServiceDiscoveryProvider> dns_sd("DNS Service Discovery");
-}  // namespace core::platform
+}  // namespace cc::core::platform

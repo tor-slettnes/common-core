@@ -7,7 +7,7 @@
 
 #include "multilogger-grpc-clientsink.h++"
 
-namespace multilogger::grpc
+namespace cc::platform::multilogger::grpc
 {
     const std::string SETTING_HOST = "host";
     const std::string DEFAULT_HOST = "localhost";
@@ -75,4 +75,4 @@ namespace multilogger::grpc
         }
     }
 
-}  // namespace multilogger::grpc
+}  // namespace cc::platform::multilogger::grpc

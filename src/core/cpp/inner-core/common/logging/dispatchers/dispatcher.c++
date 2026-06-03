@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-namespace core::logging
+namespace cc::core::logging
 {
     void Dispatcher::initialize()
     {
@@ -105,4 +105,4 @@ namespace core::logging
     }
 
     Dispatcher dispatcher;
-}  // namespace core::logging
+}  // namespace cc::core::logging

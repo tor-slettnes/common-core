@@ -10,7 +10,7 @@
 
 #include <memory>
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     void run_dds_service(
         std::shared_ptr<switchboard::Provider> api_provider,

@@ -12,7 +12,7 @@
 
 #include <glibmm/stringutils.h>
 
-namespace core::dbus
+namespace cc::dbus
 {
     ProxyContainer::ProxyContainer(Gio::DBus::BusType bus,
                                    const ServiceName& servicename)
@@ -176,7 +176,7 @@ namespace core::dbus
 
             if (auto ref = this->get(path, interface_name))
             {
-                std::string text = str::format(
+                std::string text = core::str::format(
                     "DBus signal %s, path=%r, interfacename=%r, sender=%r: %s",
                     signal_name,
                     path,
@@ -191,9 +191,9 @@ namespace core::dbus
                 }
                 catch (...)
                 {
-                    core::glib::log_exception(std::current_exception(), text);
+                    cc::glib::log_exception(std::current_exception(), text);
                 }
             }
         }
     }
-}  // namespace core::dbus
+}  // namespace cc::dbus

@@ -17,19 +17,19 @@
 
 #include <nm-dbus-interface.h>
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     class Manager : public DataWrapper<GlobalData>
     {
         using Class = Manager;
-        using Super = core::dbus::ProxyWrapper;
+        using Super = cc::dbus::ProxyWrapper;
 
     public:
         Manager(
-            core::dbus::ProxyContainer* container,
-            const core::dbus::ConnectionPtr& connection,
-            const core::dbus::ServiceName& servicename,
-            const core::dbus::ObjectPath& objectpath = NM_DBUS_PATH);
+            cc::dbus::ProxyContainer* container,
+            const cc::dbus::ConnectionPtr& connection,
+            const cc::dbus::ServiceName& servicename,
+            const cc::dbus::ObjectPath& objectpath = NM_DBUS_PATH);
 
     protected:
         void initialize() override;
@@ -64,7 +64,7 @@ namespace netconfig::dbus
         void on_property_active_connections(const Glib::VariantBase& change);
 
     private:
-        std::shared_ptr<core::dbus::PropertiesProxy> properties_proxy;
+        std::shared_ptr<cc::dbus::PropertiesProxy> properties_proxy;
         core::SettingsStore settings;
     };
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

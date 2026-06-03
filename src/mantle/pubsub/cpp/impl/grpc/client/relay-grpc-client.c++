@@ -10,7 +10,7 @@
 #include "protobuf-message.h++"
 #include "protobuf-inline.h++"
 
-namespace pubsub::grpc
+namespace cc::platform::pubsub::grpc
 {
     void Client::initialize()
     {
@@ -99,4 +99,4 @@ namespace pubsub::grpc
                 message_data->second);
         }
     }
-}  // namespace pubsub::grpc
+}  // namespace cc::platform::pubsub::grpc

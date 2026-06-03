@@ -14,7 +14,7 @@
 #include <charconv>
 #include <string>
 
-namespace core::json
+namespace cc::core::json
 {
     const int eof = std::char_traits<char>::eof();
 
@@ -373,4 +373,4 @@ namespace core::json
         {"true",  {TI_BOOL, types::Value(true)} },
     };
 
-} // namespace core::json
+} // namespace cc::core::json

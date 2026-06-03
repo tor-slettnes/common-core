@@ -12,14 +12,14 @@
 #include "chrono/date-time.h++"
 #include "string/misc.h++"
 
-namespace switchboard::grpc
+namespace cc::platform::switchboard::grpc
 {
     void run_grpc_service(
         std::shared_ptr<switchboard::Provider> api_provider,
         const std::string &listen_address)
     {
         log_info("Creating gRPC server builder");
-        core::grpc::ServerBuilder builder(listen_address);
+        cc::grpc::ServerBuilder builder(listen_address);
 
         log_info("Creating Switchboard gRPC request handler");
         auto request_handler = RequestHandler::create_shared(api_provider);
@@ -43,4 +43,4 @@ namespace switchboard::grpc
         core::platform::signal_shutdown.disconnect(signal_handle);
         server.reset();
     }
-}  // namespace switchboard::grpc
+}  // namespace cc::platform::switchboard::grpc

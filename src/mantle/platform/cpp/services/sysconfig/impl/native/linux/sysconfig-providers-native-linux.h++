@@ -7,8 +7,8 @@
 
 #pragma once
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     void register_linux_providers();
     void unregister_linux_providers();
-}  // namespace sysconfig::native
+}  // namespace cc::platform::sysconfig::native

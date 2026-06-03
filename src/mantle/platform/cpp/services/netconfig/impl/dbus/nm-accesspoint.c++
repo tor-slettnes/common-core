@@ -11,13 +11,13 @@
 #include "netconfig.h++"
 #include "status/exceptions.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     AccessPoint::AccessPoint(
-        core::dbus::ProxyContainer *container,
-        const core::dbus::ConnectionPtr &connection,
-        const core::dbus::ServiceName &servicename,
-        const core::dbus::ObjectPath &objectpath)
+        cc::dbus::ProxyContainer *container,
+        const cc::dbus::ConnectionPtr &connection,
+        const cc::dbus::ServiceName &servicename,
+        const cc::dbus::ObjectPath &objectpath)
         : MappedDataWrapper<AccessPointData>(
               container,
               connection,
@@ -85,7 +85,7 @@ namespace netconfig::dbus
     void AccessPoint::on_property_lastseen(
         const Glib::VariantBase &change)
     {
-        int seconds = core::glib::variant_cast<int>(change);
+        int seconds = cc::glib::variant_cast<int>(change);
         std::chrono::duration uptime = core::steady::Clock::now().time_since_epoch();
         this->lastSeen = core::dt::Clock::now() - uptime + std::chrono::seconds(seconds);
     }
@@ -124,4 +124,4 @@ namespace netconfig::dbus
         }
     }
 
-} // namespace netconfig::dbus
+} // namespace cc::platform::netconfig::dbus

@@ -12,7 +12,7 @@
 #include "protobuf-inline.h++"
 #include "logging/logging.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     ProtoBufClient::ProtoBufClient(const std::string &address,
                                    const std::string &channel_name,
@@ -123,7 +123,7 @@ namespace core::zmq
             default:
                 ProtoBufError(
                     status.code(),
-                    cc::protobuf::decoded<status::Error>(status.details()))
+                    cc::protobuf::decoded<core::status::Error>(status.details()))
                     .throw_if_error();
                 break;
             }
@@ -138,8 +138,8 @@ namespace core::zmq
     //==========================================================================
     // Invoke method  with variant request/reply parameters
 
-    types::Value ProtoBufClient::call(const std::string &method_name,
-                                      const types::Value &request,
+    core::types::Value ProtoBufClient::call(const std::string &method_name,
+                                      const core::types::Value &request,
                                       SendFlags send_flags,
                                       RecvFlags recv_flags) const
     {
@@ -152,7 +152,7 @@ namespace core::zmq
         cc::protobuf::request_reply::Parameter reply_params;
         if (this->read_result(&reply_params, recv_flags))
         {
-            auto response = cc::protobuf::decoded<types::Value>(
+            auto response = cc::protobuf::decoded<core::types::Value>(
                 reply_params.variant_value());
 
             logf_trace("Received RPC response: %s() -> %s",
@@ -178,7 +178,7 @@ namespace core::zmq
         this->send_invocation(method_name, request_param, send_flags);
     }
 
-    bool ProtoBufClient::read_protobuf_result(types::ByteVector *bytes,
+    bool ProtoBufClient::read_protobuf_result(core::types::ByteVector *bytes,
                                               RecvFlags recv_flags) const
     {
         cc::protobuf::request_reply::Parameter response_param;
@@ -205,4 +205,4 @@ namespace core::zmq
     }
 
     uint ProtoBufClient::last_client_id = 0;
-}  // namespace core::zmq
+}  // namespace cc::zmq

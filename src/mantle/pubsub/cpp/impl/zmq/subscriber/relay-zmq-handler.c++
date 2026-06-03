@@ -11,14 +11,14 @@
 #include "logging/logging.h++"
 #include "platform/symbols.h++"
 
-namespace pubsub::zmq
+namespace cc::platform::pubsub::zmq
 {
     Handler::Handler()
         : Super(TYPE_NAME_FULL(This))
     {
     }
 
-    void Handler::handle(const core::zmq::MessageParts &parts)
+    void Handler::handle(const cc::zmq::MessageParts &parts)
     {
         if (parts.size() >= 2)
         {
@@ -34,4 +34,4 @@ namespace pubsub::zmq
                         parts);
         }
     }
-}  // namespace pubsub::zmq
+}  // namespace cc::platform::pubsub::zmq

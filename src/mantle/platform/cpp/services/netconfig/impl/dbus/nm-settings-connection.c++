@@ -11,13 +11,13 @@
 #include "types/value.h++"
 #include "status/exceptions.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     Connection::Connection(
-        core::dbus::ProxyContainer *container,
-        const core::dbus::ConnectionPtr &connection,
-        const core::dbus::ServiceName &servicename,
-        const core::dbus::ObjectPath &objectpath)
+        cc::dbus::ProxyContainer *container,
+        const cc::dbus::ConnectionPtr &connection,
+        const cc::dbus::ServiceName &servicename,
+        const cc::dbus::ObjectPath &objectpath)
         : MappedDataWrapper<ConnectionData>(
               container,
               connection,
@@ -94,7 +94,7 @@ namespace netconfig::dbus
         {
             if (response.get_n_children() > 0)
             {
-                core::glib::SettingsContainer container;
+                cc::glib::SettingsContainer container;
                 response.get_child(container, 0);
                 connection::extract_settings(container, this);
             }
@@ -150,9 +150,9 @@ namespace netconfig::dbus
         }
     }
 
-    core::dbus::ObjectPath Connection::find_suitable_device()
+    cc::dbus::ObjectPath Connection::find_suitable_device()
     {
-        core::dbus::ProxyWrapper::ptr ref;
+        cc::dbus::ProxyWrapper::ptr ref;
         if (this->interface.size() > 0)
         {
             ref = lookup<Device>(this->interface, true);
@@ -199,4 +199,4 @@ namespace netconfig::dbus
             }
         }
     }
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

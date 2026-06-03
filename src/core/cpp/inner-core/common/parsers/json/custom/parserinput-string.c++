@@ -7,7 +7,7 @@
 
 #include "parserinput-string.h++"
 
-namespace core::parsers
+namespace cc::core::parsers
 {
     StringInput::StringInput(const std::string_view &string)
         : string_(string),
@@ -61,4 +61,4 @@ namespace core::parsers
     {
     }
 
-}  // namespace core::json
+}  // namespace cc::core::json

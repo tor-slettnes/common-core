@@ -9,7 +9,7 @@
 #include "settings/settings.h++"
 #include "multilogger-grpc-clientsink.h++"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     Options::Options()
         : Super(),
@@ -40,5 +40,6 @@ namespace switchboard
 #endif
     }
 
-    std::unique_ptr<Options> options;
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard
+
+std::unique_ptr<cc::platform::switchboard::Options> options;

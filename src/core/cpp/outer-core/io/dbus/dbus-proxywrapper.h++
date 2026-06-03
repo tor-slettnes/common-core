@@ -17,7 +17,7 @@
 #include <type_traits>
 #include <iostream>
 
-namespace core::dbus
+namespace cc::dbus
 {
     class ProxyWrapper : public std::enable_shared_from_this<ProxyWrapper>
     {
@@ -121,7 +121,7 @@ namespace core::dbus
 
             if (prop)
             {
-                return core::glib::variant_cast<T>(prop, value);
+                return cc::glib::variant_cast<T>(prop, value);
             }
             else
             {
@@ -162,4 +162,4 @@ namespace core::dbus
         std::map<ObjectPath, UpdateRequest> subscribers;
     };  // namespace dbus
 
-}  // namespace core::dbus
+}  // namespace cc::dbus

@@ -12,7 +12,7 @@
 
 #include <fstream>
 
-namespace core::json
+namespace cc::core::json
 {
     RapidReader::RapidReader()
         : Super("RapidReader")
@@ -171,4 +171,4 @@ namespace core::json
         return kvmap;
     }
 
-}  // namespace core::json
+}  // namespace cc::core::json

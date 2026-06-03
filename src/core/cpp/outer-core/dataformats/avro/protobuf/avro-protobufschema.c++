@@ -11,7 +11,7 @@
 #include "protobuf-enum.h++"
 #include "logging/logging.h++"
 
-namespace avro
+namespace cc::avro
 {
     //--------------------------------------------------------------------------
     // ProtoBufSchema
@@ -251,4 +251,4 @@ namespace avro
         return schema_map.at(descriptor);
     }
 
-}  // namespace avro
+}  // namespace cc::avro

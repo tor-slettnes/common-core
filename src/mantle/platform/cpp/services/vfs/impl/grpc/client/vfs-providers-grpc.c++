@@ -9,7 +9,7 @@
 #include "vfs-grpc-provider.h++"
 #include "vfs-grpc-client.h++"
 
-namespace vfs::grpc
+namespace cc::platform::vfs::grpc
 {
     void register_providers(const std::string &host,
                             bool wait_for_ready,
@@ -30,4 +30,4 @@ namespace vfs::grpc
     {
         vfs.unregisterProvider<ClientProvider>();
     }
-}  // namespace vfs::grpc
+}  // namespace cc::platform::vfs::grpc

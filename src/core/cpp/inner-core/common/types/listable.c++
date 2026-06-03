@@ -7,7 +7,7 @@
 
 #include "listable.h++"
 
-namespace core::types
+namespace cc::core::types
 {
     Value &operator<<(Value &value, const Listable &obj)
     {
@@ -69,4 +69,4 @@ namespace core::types
         return this->as_tvlist().values();
     }
 
-}  // namespace core::types
+}  // namespace cc::core::types

@@ -8,7 +8,7 @@
 #include "package-index.h++"
 #include "upgrade-signals.h++"
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     std::vector<PackageInfo::ptr> PackageIndex::get_available() const
     {
@@ -30,4 +30,4 @@ namespace upgrade::native
         }
         signal_scan_progress.emit(progress);
     }
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

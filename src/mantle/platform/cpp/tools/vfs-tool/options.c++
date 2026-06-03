@@ -11,115 +11,118 @@
 #include "platform/path.h++"
 #include "buildinfo.h++"
 
-Options::Options()
-    : Super(),
-      signal_handle(core::platform::path->exec_name()),
-      local(false)
+namespace cc::platform::vfs
 {
-    this->describe("VFS configuration via gRPC service.");
-}
-
-void Options::add_options()
-{
-    Super::add_options();
-
-    this->add_flag({"--local"},
-                   "Use built-in functions, do not connect to platform service",
-                   &this->local);
-
-    this->add_commands();
-}
-
-void Options::initialize()
-{
-    logf_debug("Creating VFS client");
-    if (this->local)
+    Options::Options()
+        : Super(),
+          signal_handle(core::platform::path->exec_name()),
+          local(false)
     {
-        vfs::local::register_providers();
-    }
-    else
-    {
-        vfs::grpc::register_providers(this->host);
-    }
-    core::platform::signal_shutdown.connect(
-        this->signal_handle,
-        std::bind(&Options::deinitialize, this));
-}
-
-void Options::deinitialize()
-{
-    core::platform::signal_shutdown.disconnect(this->signal_handle);
-    logf_debug("Shutting down VFS configuration client");
-    if (this->local)
-    {
-        vfs::local::unregister_providers();
-    }
-    else
-    {
-        vfs::grpc::unregister_providers();
-    }
-}
-
-void Options::on_monitor_start()
-{
-    FlagMap flags;
-    bool &except = flags["except"];
-    bool &show_context = flags["context"];
-    bool &show_context_in_use = flags["context_in_use"];
-    this->get_flags(&flags, false);
-
-    if (!show_context && !show_context_in_use)
-    {
-        except = true;
+        this->describe("VFS configuration via gRPC service.");
     }
 
-    using namespace std::placeholders;
-
-    if (show_context != except)
+    void Options::add_options()
     {
-        vfs::signal_context.connect(
+        Super::add_options();
+
+        this->add_flag({"--local"},
+                       "Use built-in functions, do not connect to platform service",
+                       &this->local);
+
+        this->add_commands();
+    }
+
+    void Options::initialize()
+    {
+        logf_debug("Creating VFS client");
+        if (this->local)
+        {
+            local::register_providers();
+        }
+        else
+        {
+            grpc::register_providers(this->host);
+        }
+        core::platform::signal_shutdown.connect(
             this->signal_handle,
-            std::bind(&Options::on_context, this, _1, _2, _3));
+            std::bind(&Options::deinitialize, this));
     }
 
-    if (show_context_in_use != except)
+    void Options::deinitialize()
     {
-        vfs::signal_context_in_use.connect(
-            this->signal_handle,
-            std::bind(&Options::on_context_in_use, this, _1, _2, _3));
+        core::platform::signal_shutdown.disconnect(this->signal_handle);
+        logf_debug("Shutting down VFS configuration client");
+        if (this->local)
+        {
+            local::unregister_providers();
+        }
+        else
+        {
+            grpc::unregister_providers();
+        }
     }
-}
 
-void Options::on_monitor_end()
-{
-    vfs::signal_context_in_use.disconnect(this->signal_handle);
-    vfs::signal_context.disconnect(this->signal_handle);
-}
+    void Options::on_monitor_start()
+    {
+        FlagMap flags;
+        bool &except = flags["except"];
+        bool &show_context = flags["context"];
+        bool &show_context_in_use = flags["context_in_use"];
+        this->get_flags(&flags, false);
 
-void Options::on_context(
-    core::signal::MappingAction action,
-    const std::string &key,
-    const vfs::Context::ptr &cxt)
-{
-    core::str::format(std::cout,
-                      "[%.0s] signal_context(%s, %s, %s)\n",
-                      core::dt::Clock::now(),
-                      action,
-                      key,
-                      cxt);
-}
+        if (!show_context && !show_context_in_use)
+        {
+            except = true;
+        }
 
-void Options::on_context_in_use(
-    core::signal::MappingAction action,
-    const std::string &key,
-    const vfs::Context::ptr &cxt)
-{
-    core::str::format(std::cout,
-                      "[%.0s] signal_context_in_use(%s, %s, %s)\n",
-                      core::dt::Clock::now(),
-                      action,
-                      key,
-                      cxt);
-}
+        using namespace std::placeholders;
 
-std::unique_ptr<Options> options;
+        if (show_context != except)
+        {
+            signal_context.connect(
+                this->signal_handle,
+                std::bind(&Options::on_context, this, _1, _2, _3));
+        }
+
+        if (show_context_in_use != except)
+        {
+            signal_context_in_use.connect(
+                this->signal_handle,
+                std::bind(&Options::on_context_in_use, this, _1, _2, _3));
+        }
+    }
+
+    void Options::on_monitor_end()
+    {
+        signal_context_in_use.disconnect(this->signal_handle);
+        signal_context.disconnect(this->signal_handle);
+    }
+
+    void Options::on_context(
+        core::signal::MappingAction action,
+        const std::string &key,
+        const Context::ptr &cxt)
+    {
+        core::str::format(std::cout,
+                          "[%.0s] signal_context(%s, %s, %s)\n",
+                          core::dt::Clock::now(),
+                          action,
+                          key,
+                          cxt);
+    }
+
+    void Options::on_context_in_use(
+        core::signal::MappingAction action,
+        const std::string &key,
+        const Context::ptr &cxt)
+    {
+        core::str::format(std::cout,
+                          "[%.0s] signal_context_in_use(%s, %s, %s)\n",
+                          core::dt::Clock::now(),
+                          action,
+                          key,
+                          cxt);
+    }
+}  // namespace cc::platform::vfs
+
+std::unique_ptr<cc::platform::vfs::Options> options;

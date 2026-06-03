@@ -20,7 +20,7 @@
 #include <map>
 #include <mutex>
 
-namespace core::signal
+namespace cc::core::signal
 {
     //==========================================================================
     // Types
@@ -890,4 +890,4 @@ namespace core::signal
     // I/O stream support
 
     std::ostream &operator<<(std::ostream &stream, MappingAction action);
-}  // namespace core::signal
+}  // namespace cc::core::signal

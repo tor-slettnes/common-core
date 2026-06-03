@@ -11,7 +11,7 @@
 #include "platform/runtime.h++"
 #include "platform/init.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     //--------------------------------------------------------------------------
     /// @class SinkFactory
@@ -204,4 +204,4 @@ namespace core::logging
     platform::InitTask populate_task(
         "PopulateSinkRegistry",
         std::bind(&SinkRegistry::populate, &sink_registry));
-}  // namespace core::logging
+}  // namespace cc::core::logging

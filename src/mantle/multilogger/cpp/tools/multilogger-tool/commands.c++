@@ -8,7 +8,7 @@
 #include "options.h++"
 #include "logging/logging.h++"
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
 
     void Options::add_commands()
@@ -91,7 +91,7 @@ namespace multilogger
     void Options::add_sink()
     {
         std::string sink_id = this->get_arg("sink_id");
-        auto sink_type = core::str::convert_to<multilogger::SinkType>(this->get_arg("sink_type"));
+        auto sink_type = core::str::convert_to<SinkType>(this->get_arg("sink_type"));
         auto min_level = core::str::convert_optional_to<core::status::Level>(
             this->next_arg(),
             core::status::Level::DEBUG);
@@ -122,7 +122,7 @@ namespace multilogger
 
     void Options::get_all_sinks()
     {
-        for (const multilogger::SinkSpec &spec : this->provider->get_all_sink_specs())
+        for (const SinkSpec &spec : this->provider->get_all_sink_specs())
         {
             std::cout << spec << std::endl;
         }
@@ -130,7 +130,7 @@ namespace multilogger
 
     void Options::list_sinks()
     {
-        for (const multilogger::SinkID &sink_id : this->provider->list_sinks())
+        for (const SinkID &sink_id : this->provider->list_sinks())
         {
             std::cout << sink_id << std::endl;
         }
@@ -145,4 +145,4 @@ namespace multilogger
     {
         std::cout << this->provider->list_error_fields() << std::endl;
     }
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger

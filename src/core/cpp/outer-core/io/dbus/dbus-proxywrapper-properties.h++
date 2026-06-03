@@ -8,7 +8,7 @@
 #pragma once
 #include "dbus-proxywrapper.h++"
 
-namespace core::dbus
+namespace cc::dbus
 {
     class PropertiesProxy : public ProxyWrapper
     {
@@ -26,4 +26,4 @@ namespace core::dbus
     protected:
         dbus::InterfaceName real_interface;
     };
-}  // namespace core::dbus
+}  // namespace cc::dbus

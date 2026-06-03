@@ -15,7 +15,7 @@
 #include <avahi-common/error.h>
 #include <avahi-common/timeval.h>
 
-namespace core::platform
+namespace cc::core::platform
 {
     /// @brief Abstract provider for service discovery related functions
     class AvahiServiceDiscoveryProvider : public ServiceDiscoveryProvider
@@ -80,4 +80,4 @@ namespace core::platform
         int client_error;
         AvahiClient *client;
     };
-}  // namespace core::platform
+}  // namespace cc::core::platform

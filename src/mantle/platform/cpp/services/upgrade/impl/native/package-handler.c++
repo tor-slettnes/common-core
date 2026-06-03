@@ -16,7 +16,7 @@
 #include <functional>
 #include <fstream>
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     PackageHandler::PackageHandler(const core::SettingsStore::ptr &settings)
         : settings(settings)
@@ -353,4 +353,4 @@ namespace upgrade::native
 
         signal_upgrade_progress.emit(progress);
     }
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

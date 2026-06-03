@@ -10,7 +10,7 @@
 
 #include <thread>
 
-namespace core::kafka
+namespace cc::kafka
 {
     class Producer : public Endpoint
     {
@@ -45,7 +45,7 @@ namespace core::kafka
 
         void produce(
             const std::string &topic,
-            const types::Bytes &payload,
+            const core::types::Bytes &payload,
             const std::optional<core::dt::TimePoint> &timepoint = {},
             const std::optional<std::string_view> &key = {},
             const HeaderMap &headers = {},
@@ -62,4 +62,4 @@ namespace core::kafka
         std::optional<std::string> producer_key_;
         DeliveryReportCapture dr_capture_;
     };
-}  // namespace core::kafka
+}  // namespace cc::kafka

@@ -10,7 +10,7 @@
 #include "dbus-proxywrapper.h++"
 #include "platform/symbols.h++"
 
-namespace core::dbus
+namespace cc::dbus
 {
     class ProxyContainer
     {
@@ -187,4 +187,4 @@ namespace core::dbus
         std::unordered_set<ProxyWrapper::ptr> pending_init;
         sigc::signal<void> signal_ready;
     };
-}  // namespace core::dbus
+}  // namespace cc::dbus

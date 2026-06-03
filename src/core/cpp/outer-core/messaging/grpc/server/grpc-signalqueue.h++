@@ -15,7 +15,7 @@
 #include "thread/blockingqueue.h++"
 #include "platform/init.h++"
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class SignalQueue<SignalT>
@@ -51,7 +51,7 @@ namespace core::grpc
 
     template <class ProtoT>
     class SignalQueue : public cc::protobuf::SignalForwarder<ProtoT>,
-                        public types::BlockingQueue<ProtoT>
+                        public core::types::BlockingQueue<ProtoT>
     {
     protected:
         using SignalFilter = cc::protobuf::signal::Filter;
@@ -61,14 +61,14 @@ namespace core::grpc
 
         template <class T, class K = std::string>
         using MappingEncoder = std::function<
-            void(signal::MappingAction, K, T, ProtoT *)>;
+            void(core::signal::MappingAction, K, T, ProtoT *)>;
 
     public:
         SignalQueue(const std::string &id,
                     const SignalFilter &filter,
                     uint maxsize = 0)
             : cc::protobuf::SignalForwarder<ProtoT>(),
-              types::BlockingQueue<ProtoT>(maxsize),
+              core::types::BlockingQueue<ProtoT>(maxsize),
               id(id),
               filter_polarity(filter.polarity()),
               filter_indices(filter.indices().begin(), filter.indices().end())
@@ -93,7 +93,7 @@ namespace core::grpc
 
         template <class SignalT>
         void connect(uint signal_index,
-                     signal::DataSignal<SignalT> &signal,
+                     core::signal::DataSignal<SignalT> &signal,
                      const Encoder<SignalT> &encoder)
         {
             if (this->is_included(signal_index))
@@ -120,7 +120,7 @@ namespace core::grpc
 
         template <class SignalT>
         void connect(uint signal_index,
-                     signal::SharedDataSignal<SignalT> &signal,
+                     core::signal::SharedDataSignal<SignalT> &signal,
                      const Encoder<SignalT> &encoder)
         {
             if (this->is_included(signal_index))
@@ -153,14 +153,14 @@ namespace core::grpc
 
         template <class SignalT>
         void connect(uint signal_index,
-                     signal::MappingSignal<SignalT> &signal,
+                     core::signal::MappingSignal<SignalT> &signal,
                      const MappingEncoder<SignalT> &encoder)
         {
             if (this->is_included(signal_index))
             {
                 signal.connect(
                     this->id,                          // handle
-                    [=](signal::MappingAction action,  // |
+                    [=](core::signal::MappingAction action,  // |
                         const std::string &key,        // | slot
                         const SignalT &value)          // |
                     {
@@ -185,14 +185,14 @@ namespace core::grpc
 
         template <class SignalT>
         void connect(uint signal_index,
-                     signal::MappingSignal<SignalT> &signal,
+                     core::signal::MappingSignal<SignalT> &signal,
                      const Encoder<SignalT> &encoder)
         {
             if (this->is_included(signal_index))
             {
                 signal.connect(
                     this->id,                          // handle
-                    [=](signal::MappingAction action,  // |
+                    [=](core::signal::MappingAction action,  // |
                         const std::string &key,        // | slot
                         const SignalT &value)          // |
                     {
@@ -237,4 +237,4 @@ namespace core::grpc
         bool filter_polarity;
         std::unordered_set<uint> filter_indices;
     };
-}  // namespace core::grpc
+}  // namespace cc::grpc

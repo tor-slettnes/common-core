@@ -12,23 +12,23 @@
 #include "thread/blockingqueue.h++"
 #include "types/create-shared.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     //==========================================================================
     // @class ClientReader
     // @brief Handle log events received over ZMQ
 
     class ClientReader
-        : public core::zmq::ProtoBufMessageHandler<cc::platform::multilogger::protobuf::Loggable>,
+        : public cc::zmq::ProtoBufMessageHandler<cc::platform::multilogger::protobuf::Loggable>,
           public core::types::BlockingQueue<core::types::Loggable::ptr>,
           public core::types::enable_create_shared<ClientReader>
     {
         using This = ClientReader;
-        using HandlerBase = core::zmq::ProtoBufMessageHandler<cc::platform::multilogger::protobuf::Loggable>;
+        using HandlerBase = cc::zmq::ProtoBufMessageHandler<cc::platform::multilogger::protobuf::Loggable>;
         using QueueBase = core::types::BlockingQueue<core::types::Loggable::ptr>;
 
     protected:
-        ClientReader(const std::weak_ptr<core::zmq::Subscriber> &subscriber);
+        ClientReader(const std::weak_ptr<cc::zmq::Subscriber> &subscriber);
 
     public:
         void deinitialize() override;
@@ -36,4 +36,4 @@ namespace multilogger::zmq
     public:
         void handle_message(const cc::platform::multilogger::protobuf::Loggable &msg) override;
     };
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

@@ -8,10 +8,10 @@
 #pragma once
 #include <string>
 
-namespace upgrade::grpc
+namespace cc::platform::upgrade::grpc
 {
     void register_providers(const std::string &host,
                             bool wait_for_ready = true,
                             bool start_watching = true);
     void unregister_providers();
-}  // namespace upgrade::grpc
+}  // namespace cc::platform::upgrade::grpc

@@ -10,7 +10,7 @@
 #include "platform/process.h++"
 #include "types/value.h++"
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     //==========================================================================
     // Package Information
@@ -63,4 +63,4 @@ namespace upgrade::native
         std::optional<bool> is_applicable_;
     };
 
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

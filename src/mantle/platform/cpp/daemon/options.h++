@@ -8,17 +8,20 @@
 #pragma once
 #include "argparse/server.h++"
 
-class Options : public core::argparse::ServerOptions
+namespace cc::platform
 {
-    using Super = core::argparse::ServerOptions;
+    class Options : public core::argparse::ServerOptions
+    {
+        using Super = core::argparse::ServerOptions;
 
-public:
-    Options();
+    public:
+        Options();
 
-    void add_options() override;
+        void add_options() override;
 
-public:
-    std::string host;
-};
+    public:
+        std::string host;
+    };
+}  // namespace cc::platform
 
-extern std::unique_ptr<Options> options;
+extern std::unique_ptr<cc::platform::Options> options;

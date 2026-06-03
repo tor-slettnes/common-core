@@ -12,7 +12,7 @@
 #include "logging/logging.h++"
 
 
-namespace multilogger::grpc
+namespace cc::platform::multilogger::grpc
 {
     constexpr auto SHUTDOWN_SIGNAL_HANDLE = "multilogger-grpc-service";
 
@@ -21,13 +21,13 @@ namespace multilogger::grpc
         const std::string &listen_address)
     {
         log_debug("Creating gRPC server builder");
-        core::grpc::ServerBuilder builder(listen_address);
+        cc::grpc::ServerBuilder builder(listen_address);
 
         if (multilogger_provider)
         {
-            log_debug("Creating gRPC request handler: multilogger::API");
+            log_debug("Creating gRPC request handler: cc::platform::multilogger::API");
             builder.add_service(
-                multilogger::grpc::RequestHandler::create_shared(multilogger_provider),
+                RequestHandler::create_shared(multilogger_provider),
                 listen_address.empty());  // add_listener
         }
 
@@ -44,10 +44,12 @@ namespace multilogger::grpc
                 log_info("Multilogger gRPC service is down");
             });
 
-        log_notice("Multilogger gRPC server is ready on ", core::str::join(builder.listener_ports()));
+        log_notice("Multilogger gRPC server is ready on ",
+                   core::str::join(builder.listener_ports()));
+
         server->Wait();
 
         core::platform::signal_shutdown.disconnect(SHUTDOWN_SIGNAL_HANDLE);
         server.reset();
     }
-}  // namespace multilogger::grpc
+}  // namespace cc::platform::multilogger::grpc

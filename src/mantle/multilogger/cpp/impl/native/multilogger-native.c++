@@ -17,7 +17,7 @@
 #include "status/error.h++"
 #include "settings/settings.h++"
 
-namespace multilogger::native
+namespace cc::platform::multilogger::native
 {
     void Logger::submit(
         const core::types::Loggable::ptr &item)
@@ -189,4 +189,4 @@ namespace multilogger::native
 
         return spec;
     }
-}  // namespace multilogger::native
+}  // namespace cc::platform::multilogger::native

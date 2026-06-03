@@ -13,9 +13,9 @@
 
 #include "types/create-shared.h++"
 
-namespace demo::grpc
+namespace cc::demo::grpc
 {
-    using ClientImplBase = core::grpc::SignalClient<cc::demo::grpc::Demo,
+    using ClientImplBase = cc::grpc::SignalClient<cc::demo::grpc::Demo,
                                                     cc::demo::protobuf::Signal>;
 
     class ClientImpl : public demo::API,
@@ -48,4 +48,4 @@ namespace demo::grpc
         void start_watching() override;
         void stop_watching() override;
     };
-}  // namespace demo::grpc
+}  // namespace cc::demo::grpc

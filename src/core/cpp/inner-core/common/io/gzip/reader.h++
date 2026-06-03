@@ -10,7 +10,7 @@
 
 #include <istream>
 
-namespace core::io
+namespace cc::core::io
 {
     constexpr unsigned int READ_BUFFER_SIZE = 8192;
 
@@ -44,4 +44,4 @@ namespace core::io
         GZipInputBuffer input_buffer;
     };
 
-} // namespace core::io
+} // namespace cc::core::io

@@ -16,35 +16,35 @@ namespace cc::protobuf
     //==========================================================================
     // State
 
-    void encode(switchboard::State native,
-                cc::platform::switchboard::protobuf::State *proto)
+    void encode(platform::switchboard::State native,
+                platform::switchboard::protobuf::State *proto)
 
     {
-        *proto = static_cast<cc::platform::switchboard::protobuf::State>(native);
+        *proto = static_cast<platform::switchboard::protobuf::State>(native);
     }
 
-    void decode(cc::platform::switchboard::protobuf::State proto,
-                switchboard::State *native)
+    void decode(platform::switchboard::protobuf::State proto,
+                platform::switchboard::State *native)
     {
-        *native = static_cast<switchboard::State>(proto);
+        *native = static_cast<platform::switchboard::State>(proto);
     }
 
     //==========================================================================
     // State set
 
-    void encode(const std::set<switchboard::State> &states,
+    void encode(const std::set<platform::switchboard::State> &states,
                 google::protobuf::RepeatedField<int> *items)
     {
         items->Clear();
         items->Reserve(states.size());
-        for (switchboard::State state : states)
+        for (platform::switchboard::State state : states)
         {
             items->Add(state);
         }
     }
 
     void decode(const google::protobuf::RepeatedField<int> &items,
-                std::set<switchboard::State> *states)
+                std::set<platform::switchboard::State> *states)
     {
         states->clear();
         for (int state : items)
@@ -53,7 +53,7 @@ namespace cc::protobuf
             {
                 if ((state & mask) != 0x00)
                 {
-                    states->insert(static_cast<switchboard::State>(mask));
+                    states->insert(static_cast<platform::switchboard::State>(mask));
                 }
             }
         }
@@ -62,12 +62,12 @@ namespace cc::protobuf
     //==========================================================================
     // SwitchIdentifier
 
-    void encode(const std::string &name, cc::platform::switchboard::protobuf::SwitchIdentifier *msg)
+    void encode(const std::string &name, platform::switchboard::protobuf::SwitchIdentifier *msg)
     {
         msg->set_switch_name(name);
     }
 
-    void decode(const cc::platform::switchboard::protobuf::SwitchIdentifier &msg, std::string *name)
+    void decode(const platform::switchboard::protobuf::SwitchIdentifier &msg, std::string *name)
     {
         *name = msg.switch_name();
     }
@@ -76,7 +76,7 @@ namespace cc::protobuf
     // SwitchIdentifiers
 
     void encode(const std::vector<std::string> &names,
-                cc::platform::switchboard::protobuf::SwitchIdentifiers *msg)
+                platform::switchboard::protobuf::SwitchIdentifiers *msg)
     {
         msg->mutable_switch_names()->Reserve(names.size());
         for (const std::string &name : names)
@@ -85,7 +85,7 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const cc::platform::switchboard::protobuf::SwitchIdentifiers &msg,
+    void decode(const platform::switchboard::protobuf::SwitchIdentifiers &msg,
                 std::vector<std::string> *names)
     {
         assign_to_vector(msg.switch_names(), names);
@@ -94,8 +94,8 @@ namespace cc::protobuf
     //==========================================================================
     // SwitchSet
 
-    void encode(const switchboard::SwitchSet &set,
-                cc::platform::switchboard::protobuf::SwitchIdentifiers *msg)
+    void encode(const platform::switchboard::SwitchSet &set,
+                platform::switchboard::protobuf::SwitchIdentifiers *msg)
     {
         msg->mutable_switch_names()->Reserve(set.size());
         for (const auto &sw : set)
@@ -107,16 +107,16 @@ namespace cc::protobuf
     //==========================================================================
     // SwitchSelection
 
-    void encode(const switchboard::SwitchSelection &patterns,
-                cc::platform::switchboard::protobuf::SwitchSelection *msg)
+    void encode(const platform::switchboard::SwitchSelection &patterns,
+                platform::switchboard::protobuf::SwitchSelection *msg)
     {
         assign_repeated(patterns.patterns, msg->mutable_patterns());
         msg->set_is_regex(patterns.is_regex);
         msg->set_with_ancestors(patterns.with_ancestors);
     }
 
-    void decode(const cc::platform::switchboard::protobuf::SwitchSelection &msg,
-                switchboard::SwitchSelection *patterns)
+    void decode(const platform::switchboard::protobuf::SwitchSelection &msg,
+                platform::switchboard::SwitchSelection *patterns)
     {
         assign_to_vector(msg.patterns(), &patterns->patterns);
         patterns->is_regex = msg.is_regex();
@@ -126,8 +126,8 @@ namespace cc::protobuf
     //==========================================================================
     // Specification
 
-    void encode(const switchboard::Specification &spec,
-                cc::platform::switchboard::protobuf::Specification *msg)
+    void encode(const platform::switchboard::Specification &spec,
+                platform::switchboard::protobuf::Specification *msg)
     {
         msg->set_is_primary(spec.primary);
         encode(spec.aliases, msg->mutable_aliases());
@@ -136,9 +136,9 @@ namespace cc::protobuf
         encode(spec.interceptors, msg->mutable_interceptors());
     }
 
-    void decode(const cc::platform::switchboard::protobuf::Specification &msg,
-                const switchboard::ProviderRef &provider,
-                switchboard::Specification *spec)
+    void decode(const platform::switchboard::protobuf::Specification &msg,
+                const platform::switchboard::ProviderRef &provider,
+                platform::switchboard::Specification *spec)
     {
         if (msg.has_is_primary())
         {
@@ -154,11 +154,11 @@ namespace cc::protobuf
     //==========================================================================
     // Status
 
-    void encode(const switchboard::Status &status,
-                cc::platform::switchboard::protobuf::Status *msg)
+    void encode(const platform::switchboard::Status &status,
+                platform::switchboard::protobuf::Status *msg)
     {
-        msg->set_current_state(encoded<cc::platform::switchboard::protobuf::State>(status.current_state));
-        msg->set_settled_state(encoded<cc::platform::switchboard::protobuf::State>(status.settled_state));
+        msg->set_current_state(encoded<platform::switchboard::protobuf::State>(status.current_state));
+        msg->set_settled_state(encoded<platform::switchboard::protobuf::State>(status.settled_state));
         msg->set_active(status.active);
         msg->set_pending(status.pending);
 
@@ -173,11 +173,11 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const cc::platform::switchboard::protobuf::Status &msg,
-                switchboard::Status *status)
+    void decode(const platform::switchboard::protobuf::Status &msg,
+                platform::switchboard::Status *status)
     {
-        status->current_state = decoded<switchboard::State>(msg.current_state());
-        status->settled_state = decoded<switchboard::State>(msg.settled_state());
+        status->current_state = decoded<platform::switchboard::State>(msg.current_state());
+        status->settled_state = decoded<platform::switchboard::State>(msg.settled_state());
         status->active = msg.active();
         status->pending = msg.pending();
         if (msg.has_error())
@@ -194,8 +194,8 @@ namespace cc::protobuf
     //==========================================================================
     // StatusMap
 
-    void encode(const switchboard::StatusMap &statusmap,
-                cc::platform::switchboard::protobuf::StatusMap *msg)
+    void encode(const platform::switchboard::StatusMap &statusmap,
+                platform::switchboard::protobuf::StatusMap *msg)
     {
         msg->clear_map();
         auto *map = msg->mutable_map();
@@ -205,8 +205,8 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const cc::platform::switchboard::protobuf::StatusMap &msg,
-                switchboard::StatusMap *statusmap)
+    void decode(const platform::switchboard::protobuf::StatusMap &msg,
+                platform::switchboard::StatusMap *statusmap)
     {
         statusmap->clear();
         for (const auto &[id, protostatus] : msg.map())
@@ -218,8 +218,8 @@ namespace cc::protobuf
     //==========================================================================
     // ErrorMap
 
-    void encode(const switchboard::ErrorMap &errormap,
-                cc::platform::switchboard::protobuf::ErrorMap *msg)
+    void encode(const platform::switchboard::ErrorMap &errormap,
+                platform::switchboard::protobuf::ErrorMap *msg)
     {
         msg->clear_map();
         auto *map = msg->mutable_map();
@@ -232,19 +232,19 @@ namespace cc::protobuf
     //==========================================================================
     // Aliases
 
-    void encode(const std::set<switchboard::SwitchName> &aliases,
+    void encode(const std::set<platform::switchboard::SwitchName> &aliases,
                 google::protobuf::RepeatedPtrField<std::string> *items)
     {
         items->Clear();
         items->Reserve(aliases.size());
-        for (const switchboard::SwitchName &alias : aliases)
+        for (const platform::switchboard::SwitchName &alias : aliases)
         {
             items->Add()->assign(alias);
         }
     }
 
     void decode(const google::protobuf::RepeatedPtrField<std::string> &items,
-                std::set<switchboard::SwitchName> *aliases)
+                std::set<platform::switchboard::SwitchName> *aliases)
     {
         aliases->clear();
         aliases->insert(items.begin(), items.end());
@@ -253,8 +253,8 @@ namespace cc::protobuf
     //==========================================================================
     // Localization
 
-    void encode(const switchboard::Localization &localization,
-                cc::platform::switchboard::protobuf::Localization *msg)
+    void encode(const platform::switchboard::Localization &localization,
+                platform::switchboard::protobuf::Localization *msg)
     {
         msg->set_description(localization.description);
         msg->set_activate_text(localization.activate_text);
@@ -267,8 +267,8 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const cc::platform::switchboard::protobuf::Localization &msg,
-                switchboard::Localization *localization)
+    void decode(const platform::switchboard::protobuf::Localization &msg,
+                platform::switchboard::Localization *localization)
     {
         localization->description = msg.description();
         localization->activate_text = msg.activate_text();
@@ -277,7 +277,7 @@ namespace cc::protobuf
         for (const auto &[state, text] : msg.state_texts())
         {
             localization->state_texts.insert_or_assign(
-                static_cast<switchboard::State>(state),
+                static_cast<platform::switchboard::State>(state),
                 text);
         }
     }
@@ -285,8 +285,8 @@ namespace cc::protobuf
     //==========================================================================
     // LocalizationMap
 
-    void encode(const switchboard::LocalizationMap &map,
-                cc::platform::switchboard::protobuf::LocalizationMap *msg)
+    void encode(const platform::switchboard::LocalizationMap &map,
+                platform::switchboard::protobuf::LocalizationMap *msg)
     {
         auto &protomap = *msg->mutable_map();
         for (const auto &[language_code, localization] : map)
@@ -295,8 +295,8 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const cc::platform::switchboard::protobuf::LocalizationMap &msg,
-                switchboard::LocalizationMap *map)
+    void decode(const platform::switchboard::protobuf::LocalizationMap &msg,
+                platform::switchboard::LocalizationMap *map)
     {
         map->clear();
         for (const auto &[language, localization] : msg.map())
@@ -308,43 +308,43 @@ namespace cc::protobuf
     //==========================================================================
     // DependencyPolarity
 
-    void encode(switchboard::DependencyPolarity native,
-                cc::platform::switchboard::protobuf::DependencyPolarity *proto)
+    void encode(platform::switchboard::DependencyPolarity native,
+                platform::switchboard::protobuf::DependencyPolarity *proto)
     {
-        *proto = static_cast<cc::platform::switchboard::protobuf::DependencyPolarity>(native);
+        *proto = static_cast<platform::switchboard::protobuf::DependencyPolarity>(native);
     }
 
-    void decode(cc::platform::switchboard::protobuf::DependencyPolarity proto,
-                switchboard::DependencyPolarity *native)
+    void decode(platform::switchboard::protobuf::DependencyPolarity proto,
+                platform::switchboard::DependencyPolarity *native)
     {
-        *native = static_cast<switchboard::DependencyPolarity>(proto);
+        *native = static_cast<platform::switchboard::DependencyPolarity>(proto);
     }
 
     //==========================================================================
     // Dependency
 
-    void encode(const switchboard::DependencyRef &native,
-                cc::platform::switchboard::protobuf::Dependency *proto)
+    void encode(const platform::switchboard::DependencyRef &native,
+                platform::switchboard::protobuf::Dependency *proto)
     {
         encode(native->trigger_states(), proto->mutable_trigger_states());
         proto->set_polarity(
-            encoded<cc::platform::switchboard::protobuf::DependencyPolarity>(
+            encoded<platform::switchboard::protobuf::DependencyPolarity>(
                 native->polarity()));
 
         proto->set_hard(native->hard());
         proto->set_sufficient(native->sufficient());
     }
 
-    void decode(const cc::platform::switchboard::protobuf::Dependency &proto,
-                const switchboard::ProviderRef &provider,
-                const switchboard::SwitchName &predecessor_name,
-                switchboard::DependencyRef *native)
+    void decode(const platform::switchboard::protobuf::Dependency &proto,
+                const platform::switchboard::ProviderRef &provider,
+                const platform::switchboard::SwitchName &predecessor_name,
+                platform::switchboard::DependencyRef *native)
     {
-        *native = switchboard::Dependency::create_shared(
+        *native = platform::switchboard::Dependency::create_shared(
             provider,
             predecessor_name,
-            decoded<switchboard::StateSet>(proto.trigger_states()),
-            decoded<switchboard::DependencyPolarity>(proto.polarity()),
+            decoded<platform::switchboard::StateSet>(proto.trigger_states()),
+            decoded<platform::switchboard::DependencyPolarity>(proto.polarity()),
             proto.hard(),
             proto.sufficient());
     }
@@ -352,8 +352,8 @@ namespace cc::protobuf
     //==========================================================================
     // DependencyMap
 
-    void encode(const switchboard::DependencyMap &map,
-                cc::platform::switchboard::protobuf::DependencyMap *msg)
+    void encode(const platform::switchboard::DependencyMap &map,
+                platform::switchboard::protobuf::DependencyMap *msg)
     {
         auto &encoded_map = *msg->mutable_map();
         for (const auto &[name, dep] : map)
@@ -362,9 +362,9 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const cc::platform::switchboard::protobuf::DependencyMap &msg,
-                const switchboard::ProviderRef &provider,
-                switchboard::DependencyMap *map)
+    void decode(const platform::switchboard::protobuf::DependencyMap &msg,
+                const platform::switchboard::ProviderRef &provider,
+                platform::switchboard::DependencyMap *map)
     {
         for (const auto &[predecessor_name, spec] : msg.map())
         {
@@ -375,8 +375,8 @@ namespace cc::protobuf
     //==========================================================================
     // DependencyStatus
 
-    void encode(const switchboard::DependencyStatus &native,
-                cc::platform::switchboard::protobuf::DependencyStatus *proto)
+    void encode(const platform::switchboard::DependencyStatus &native,
+                platform::switchboard::protobuf::DependencyStatus *proto)
     {
         encode(native.dependency, proto->mutable_dependency());
 
@@ -396,10 +396,10 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const cc::platform::switchboard::protobuf::DependencyStatus &proto,
-                const switchboard::ProviderRef &provider,
-                const switchboard::SwitchName &predecessor_name,
-                switchboard::DependencyStatus *native)
+    void decode(const platform::switchboard::protobuf::DependencyStatus &proto,
+                const platform::switchboard::ProviderRef &provider,
+                const platform::switchboard::SwitchName &predecessor_name,
+                platform::switchboard::DependencyStatus *native)
     {
         decode(proto.dependency(), provider, predecessor_name, &native->dependency);
 
@@ -422,8 +422,8 @@ namespace cc::protobuf
     //==========================================================================
     // DependencyStatusMap
 
-    void encode(const switchboard::DependencyStatusMap &native,
-                cc::platform::switchboard::protobuf::DependencyStatusMap *proto)
+    void encode(const platform::switchboard::DependencyStatusMap &native,
+                platform::switchboard::protobuf::DependencyStatusMap *proto)
     {
         auto &protomap = *proto->mutable_map();
         for (const auto &[switch_name, dep_status] : native)
@@ -432,16 +432,16 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const cc::platform::switchboard::protobuf::DependencyStatusMap &proto,
-                const switchboard::ProviderRef &provider,
-                switchboard::DependencyStatusMap *native)
+    void decode(const platform::switchboard::protobuf::DependencyStatusMap &proto,
+                const platform::switchboard::ProviderRef &provider,
+                platform::switchboard::DependencyStatusMap *native)
     {
         native->clear();
         for (const auto &[switch_name, proto_dep_status] : proto.map())
         {
             native->insert_or_assign(
                 switch_name,
-                decoded_shared<switchboard::DependencyStatus>(
+                decoded_shared<platform::switchboard::DependencyStatus>(
                     proto_dep_status,
                     provider,
                     switch_name));
@@ -451,47 +451,47 @@ namespace cc::protobuf
     //==========================================================================
     // Interceptor
 
-    void encode(const switchboard::InterceptorRef &native,
-                cc::platform::switchboard::protobuf::InterceptorSpec *proto)
+    void encode(const platform::switchboard::InterceptorRef &native,
+                platform::switchboard::protobuf::InterceptorSpec *proto)
     {
         proto->set_owner(native->owner());
         encode(native->state_transitions(), proto->mutable_state_transitions());
         proto->set_phase(
-            encoded<cc::platform::switchboard::protobuf::InterceptorPhase>(
+            encoded<platform::switchboard::protobuf::InterceptorPhase>(
                 native->phase()));
         proto->set_asynchronous(native->asynchronous());
         proto->set_rerun(native->rerun());
         proto->set_on_cancel(
-            encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(
+            encoded<platform::switchboard::protobuf::ExceptionHandling>(
                 native->on_cancel()));
         proto->set_on_error(
-            encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(
+            encoded<platform::switchboard::protobuf::ExceptionHandling>(
                 native->on_error()));
     }
 
-    void decode(const cc::platform::switchboard::protobuf::InterceptorSpec &proto,
-                const switchboard::InterceptorName &name,
-                const switchboard::InterceptorOwner &owner,
-                const switchboard::Invocation &invocation,
-                switchboard::InterceptorRef *native)
+    void decode(const platform::switchboard::protobuf::InterceptorSpec &proto,
+                const platform::switchboard::InterceptorName &name,
+                const platform::switchboard::InterceptorOwner &owner,
+                const platform::switchboard::Invocation &invocation,
+                platform::switchboard::InterceptorRef *native)
     {
-        *native = switchboard::Interceptor::create_shared(
+        *native = platform::switchboard::Interceptor::create_shared(
             name,
             owner,
             invocation,
-            decoded<switchboard::StateSet>(proto.state_transitions()),
-            decoded<switchboard::InterceptorPhase>(proto.phase()),
+            decoded<platform::switchboard::StateSet>(proto.state_transitions()),
+            decoded<platform::switchboard::InterceptorPhase>(proto.phase()),
             proto.asynchronous(),
             proto.rerun(),
-            decoded<switchboard::ExceptionHandling>(proto.on_cancel()),
-            decoded<switchboard::ExceptionHandling>(proto.on_error()));
+            decoded<platform::switchboard::ExceptionHandling>(proto.on_cancel()),
+            decoded<platform::switchboard::ExceptionHandling>(proto.on_error()));
     }
 
     //==========================================================================
     // InterceptorMap
 
-    void encode(const switchboard::InterceptorMap &map,
-                cc::platform::switchboard::protobuf::InterceptorMap *msg)
+    void encode(const platform::switchboard::InterceptorMap &map,
+                platform::switchboard::protobuf::InterceptorMap *msg)
     {
         auto &encoded_map = *msg->mutable_map();
         for (const auto &[key, ic] : map)
@@ -500,8 +500,8 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const cc::platform::switchboard::protobuf::InterceptorMap &proto,
-                switchboard::InterceptorMap *native)
+    void decode(const platform::switchboard::protobuf::InterceptorMap &proto,
+                platform::switchboard::InterceptorMap *native)
     {
         for (const auto &[key, spec] : proto.map())
         {
@@ -516,68 +516,68 @@ namespace cc::protobuf
     //==========================================================================
     // InterceptorPhase
 
-    void encode(switchboard::InterceptorPhase native,
-                cc::platform::switchboard::protobuf::InterceptorPhase *proto)
+    void encode(platform::switchboard::InterceptorPhase native,
+                platform::switchboard::protobuf::InterceptorPhase *proto)
     {
-        *proto = static_cast<cc::platform::switchboard::protobuf::InterceptorPhase>(native);
+        *proto = static_cast<platform::switchboard::protobuf::InterceptorPhase>(native);
     }
 
-    void decode(cc::platform::switchboard::protobuf::InterceptorPhase proto,
-                switchboard::InterceptorPhase *native)
+    void decode(platform::switchboard::protobuf::InterceptorPhase proto,
+                platform::switchboard::InterceptorPhase *native)
     {
-        *native = static_cast<switchboard::InterceptorPhase>(proto);
+        *native = static_cast<platform::switchboard::InterceptorPhase>(proto);
     }
 
     //==========================================================================
     // ExceptionHandling
 
-    void encode(switchboard::ExceptionHandling native,
-                cc::platform::switchboard::protobuf::ExceptionHandling *proto)
+    void encode(platform::switchboard::ExceptionHandling native,
+                platform::switchboard::protobuf::ExceptionHandling *proto)
     {
-        *proto = static_cast<cc::platform::switchboard::protobuf::ExceptionHandling>(native);
+        *proto = static_cast<platform::switchboard::protobuf::ExceptionHandling>(native);
     }
 
-    void decode(cc::platform::switchboard::protobuf::ExceptionHandling proto,
-                switchboard::ExceptionHandling *native)
+    void decode(platform::switchboard::protobuf::ExceptionHandling proto,
+                platform::switchboard::ExceptionHandling *native)
     {
-        *native = static_cast<switchboard::ExceptionHandling>(proto);
+        *native = static_cast<platform::switchboard::ExceptionHandling>(proto);
     }
 
     //==========================================================================
     // InvocationStyle
 
-    void encode(switchboard::InvocationStyle native,
-                cc::platform::switchboard::protobuf::InvocationStyle *proto)
+    void encode(platform::switchboard::InvocationStyle native,
+                platform::switchboard::protobuf::InvocationStyle *proto)
     {
-        *proto = static_cast<cc::platform::switchboard::protobuf::InvocationStyle>(native);
+        *proto = static_cast<platform::switchboard::protobuf::InvocationStyle>(native);
     }
 
-    void decode(cc::platform::switchboard::protobuf::InvocationStyle proto,
-                switchboard::InvocationStyle *native)
+    void decode(platform::switchboard::protobuf::InvocationStyle proto,
+                platform::switchboard::InvocationStyle *native)
     {
-        *native = static_cast<switchboard::InvocationStyle>(proto);
+        *native = static_cast<platform::switchboard::InvocationStyle>(proto);
     }
 
     //==========================================================================
     // CascadeStyle
 
-    void encode(switchboard::CascadeStyle native,
-                cc::platform::switchboard::protobuf::CascadeStyle *proto)
+    void encode(platform::switchboard::CascadeStyle native,
+                platform::switchboard::protobuf::CascadeStyle *proto)
     {
-        *proto = static_cast<cc::platform::switchboard::protobuf::CascadeStyle>(native);
+        *proto = static_cast<platform::switchboard::protobuf::CascadeStyle>(native);
     }
 
-    void decode(cc::platform::switchboard::protobuf::CascadeStyle proto,
-                switchboard::CascadeStyle *native)
+    void decode(platform::switchboard::protobuf::CascadeStyle proto,
+                platform::switchboard::CascadeStyle *native)
     {
-        *native = static_cast<switchboard::CascadeStyle>(proto);
+        *native = static_cast<platform::switchboard::CascadeStyle>(proto);
     }
 
     //==========================================================================
     // SwitchInfo
 
-    void encode(const switchboard::Switch &sw,
-                cc::platform::switchboard::protobuf::SwitchInfo *msg)
+    void encode(const platform::switchboard::Switch &sw,
+                platform::switchboard::protobuf::SwitchInfo *msg)
     {
         encode(*sw.spec(), msg->mutable_spec());
         encode(*sw.status(), msg->mutable_status());
@@ -586,8 +586,8 @@ namespace cc::protobuf
     //==========================================================================
     // SwitchMap
 
-    void encode(const switchboard::SwitchMap &map,
-                cc::platform::switchboard::protobuf::SwitchMap *msg)
+    void encode(const platform::switchboard::SwitchMap &map,
+                platform::switchboard::protobuf::SwitchMap *msg)
     {
         auto &encoded_map = *msg->mutable_map();
         for (const auto &[name, sw] : map)

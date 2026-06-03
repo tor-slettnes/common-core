@@ -9,7 +9,7 @@
 #include "sysconfig-process.h++"
 #include "sysconfig-grpc-client.h++"
 
-namespace sysconfig::grpc
+namespace cc::platform::sysconfig::grpc
 {
     class ProcessProvider : public ProcessInterface
     {
@@ -36,4 +36,4 @@ namespace sysconfig::grpc
     private:
         std::shared_ptr<Client> client;
     };
-}  // namespace sysconfig::grpc
+}  // namespace cc::platform::sysconfig::grpc

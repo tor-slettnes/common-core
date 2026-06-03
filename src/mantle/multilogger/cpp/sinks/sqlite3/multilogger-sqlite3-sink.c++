@@ -10,7 +10,7 @@
 #include "status/exceptions.h++"
 #include "string/misc.h++"
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
 
     //--------------------------------------------------------------------------
@@ -130,7 +130,7 @@ namespace multilogger
 
     void SQLiteSink::create_table()
     {
-        std::vector<core::db::SQLite3::ColumnSpec> db_columns;
+        std::vector<cc::db::SQLite3::ColumnSpec> db_columns;
         db_columns.reserve(this->columns().size());
         for (const auto &log_column : this->columns())
         {
@@ -197,4 +197,4 @@ namespace multilogger
             this->pending_rows.clear();
         }
     }
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger

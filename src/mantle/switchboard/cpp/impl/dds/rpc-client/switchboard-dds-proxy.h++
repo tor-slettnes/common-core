@@ -13,7 +13,7 @@
 #include "chrono/date-time.h++"
 #include "types/create-shared.h++"
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     //==========================================================================
     /// @class Proxy
@@ -24,7 +24,7 @@ namespace switchboard::dds
     /// and any local changes are propagated back to the Central over RPC.
 
     class Proxy : public switchboard::Provider,
-                  public core::dds::ClientWrapper<CC::Switchboard::SwitchboardClient>,
+                  public cc::dds::ClientWrapper<CC::Switchboard::SwitchboardClient>,
                   public core::types::enable_create_shared<Proxy>
     {
         using This = Proxy;
@@ -95,4 +95,4 @@ namespace switchboard::dds
         core::dt::Duration ready_timeout_;
         bool synchronized_;
     };
-};  // namespace switchboard
+};  // namespace cc::platform::switchboard

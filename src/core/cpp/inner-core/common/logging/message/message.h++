@@ -12,7 +12,7 @@
 #include "types/platform.h++"  // pid_t, ssize_t
 #include "types/filesystem.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     //==========================================================================
     /// @class Message
@@ -130,4 +130,4 @@ namespace core::logging
         std::string host_;
     };
 
-}  // namespace core::logging
+}  // namespace cc::core::logging

@@ -9,7 +9,7 @@
 #include "netconfig.h++"
 #include "nm-manager.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     //======================================================================
     /// Abstract base for network providers
@@ -75,4 +75,4 @@ namespace netconfig::dbus
         std::shared_ptr<Manager> manager;
         std::shared_ptr<Settings> settings;
     };
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

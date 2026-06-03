@@ -7,10 +7,10 @@
 
 #include "nm-wrappers.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     //==========================================================================
     // NetworkManager proxy container
 
-    core::dbus::ProxyContainer container(Gio::DBus::BUS_TYPE_SYSTEM, NM_DBUS_SERVICE);
-}  // namespace netconfig::dbus
+    cc::dbus::ProxyContainer container(Gio::DBus::BUS_TYPE_SYSTEM, NM_DBUS_SERVICE);
+}  // namespace cc::platform::netconfig::dbus

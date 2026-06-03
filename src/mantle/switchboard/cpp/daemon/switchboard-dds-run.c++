@@ -10,7 +10,7 @@
 #include "switchboard-dds-publisher.h++"  // DDS publisher
 #include "switchboard-dds-service.h++"    // RPC service
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     void run_dds_service(
         std::shared_ptr<switchboard::Provider> api_provider,
@@ -18,7 +18,7 @@ namespace switchboard::dds
         int domain_id)
     {
         // A server provides the execution environment for one or more RPC services
-        auto server = core::dds::Server();
+        auto server = cc::dds::Server();
 
         // Instantiate Publisher to relay asynchronous events over DDS
         auto dds_publisher = switchboard::dds::Publisher::create_shared(identity, domain_id);
@@ -59,4 +59,4 @@ namespace switchboard::dds
 
         logf_info("Switchboard DDS service ended");
     }
-}  // namespace switchboard::dds
+}  // namespace cc::platform::switchboard::dds

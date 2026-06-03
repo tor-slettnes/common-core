@@ -8,7 +8,7 @@
 #pragma once
 #include "platform/host.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     /// @brief POSIX provider for host related functions
     class PosixHostProvider : public HostProvider
@@ -29,4 +29,4 @@ namespace core::platform
         void reboot() override;
     };
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

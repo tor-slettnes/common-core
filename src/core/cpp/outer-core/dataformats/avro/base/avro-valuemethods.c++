@@ -15,7 +15,7 @@
 // #include <algorithm>
 // #include <type_traits>
 
-namespace avro
+namespace cc::avro
 {
     avro_schema_t schema(const avro_value_t &avro_value)
     {
@@ -988,4 +988,4 @@ namespace avro
         }
         return types;
     }
-}  // namespace avro
+}  // namespace cc::avro

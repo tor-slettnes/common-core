@@ -8,13 +8,13 @@
 #include "nm-device.h++"
 #include "status/exceptions.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     WiredDevice::WiredDevice(
-        core::dbus::ProxyContainer* container,
-        const core::dbus::ConnectionPtr& connection,
-        const core::dbus::ServiceName& servicename,
-        const core::dbus::ObjectPath& objectpath)
+        cc::dbus::ProxyContainer* container,
+        const cc::dbus::ConnectionPtr& connection,
+        const cc::dbus::ServiceName& servicename,
+        const cc::dbus::ObjectPath& objectpath)
         : DataWrapper<WiredDeviceData>(
               container,
               connection,
@@ -61,7 +61,7 @@ namespace netconfig::dbus
         // assigning it there.
         if (auto device = this->container->get<Device>(this->objectpath))
         {
-            core::glib::variant_cast(change, &device->hwAddress);
+            cc::glib::variant_cast(change, &device->hwAddress);
         }
     }
 
@@ -77,4 +77,4 @@ namespace netconfig::dbus
             device->on_property_active_connection(change);
         }
     }
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

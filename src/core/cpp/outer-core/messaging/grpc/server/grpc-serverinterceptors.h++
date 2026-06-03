@@ -10,7 +10,7 @@
 
 #include <grpcpp/support/server_interceptor.h>
 
-namespace core::grpc
+namespace cc::grpc
 {
     using ::grpc::experimental::InterceptionHookPoints;
     using ::grpc::experimental::Interceptor;
@@ -37,7 +37,7 @@ namespace core::grpc
 
     class LoggingInterceptorFactory
         : public ServerInterceptorFactoryInterface,
-          public types::enable_create_unique<LoggingInterceptorFactory,
+          public core::types::enable_create_unique<LoggingInterceptorFactory,
                                              ServerInterceptorFactoryInterface>
     {
     protected:
@@ -58,11 +58,11 @@ namespace core::grpc
 
     class EHInterceptorFactory
         : public ServerInterceptorFactoryInterface,
-          public types::enable_create_unique<EHInterceptorFactory,
+          public core::types::enable_create_unique<EHInterceptorFactory,
                                              ServerInterceptorFactoryInterface>
     {
     protected:
         Interceptor* CreateServerInterceptor(ServerRpcInfo* info) override;
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

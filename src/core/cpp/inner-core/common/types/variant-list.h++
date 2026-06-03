@@ -11,7 +11,7 @@
 #include "streamable.h++"
 #include "types/create-shared.h++"
 
-namespace core::types
+namespace cc::core::types
 {
     class ValueList : public std::vector<Value>,
                       public Streamable,
@@ -139,4 +139,4 @@ namespace core::types
         return vlist;
     }
 
-}  // namespace core::types
+}  // namespace cc::core::types

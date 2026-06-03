@@ -9,7 +9,7 @@
 
 #include <cstdlib>
 
-namespace core::platform
+namespace cc::core::platform
 {
     std::optional<std::string> RunTimeProvider::getenv(const std::string &variable)
     {
@@ -41,4 +41,4 @@ namespace core::platform
     types::ValueMap<std::string, std::string> RunTimeProvider::env;
 
     ProviderProxy<RunTimeProvider> runtime("runtime environment");
-}  // namespace core::platform
+}  // namespace cc::core::platform

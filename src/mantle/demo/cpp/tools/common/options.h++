@@ -10,7 +10,7 @@
 #include "demo-api.h++"
 #include "thread/signaltemplate.h++"
 
-namespace demo
+namespace cc::demo
 {
     class Options : public core::argparse::CommandOptions
     {
@@ -42,6 +42,6 @@ namespace demo
         const std::string implementation;
     };
 
-    extern std::unique_ptr<Options> options;
+}  // namespace cc::demo
 
-}  // namespace demo
+extern std::unique_ptr<cc::demo::Options> options;

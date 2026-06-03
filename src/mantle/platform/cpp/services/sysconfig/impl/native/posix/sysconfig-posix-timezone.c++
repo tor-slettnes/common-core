@@ -10,7 +10,7 @@
 
 #include <fstream>
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     constexpr auto SETTINGS_FILE = "timezones";
     constexpr auto SETTING_AREA_NAMES = "area names";
@@ -470,4 +470,4 @@ namespace sysconfig::native
         return (3600 * deg) + (60 * min) + sec;
     }
 
-}  // namespace sysconfig::native
+}  // namespace cc::platform::sysconfig::native

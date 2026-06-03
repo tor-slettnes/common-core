@@ -9,12 +9,12 @@
 #include "grpc-signalqueue.h++"
 #include "cc/platform/switchboard/grpc/switchboard_service.grpc.pb.h"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     using namespace cc::platform::switchboard;
 }
 
-namespace switchboard::grpc
+namespace cc::platform::switchboard::grpc
 {
     //==========================================================================
     /// @class SignalQueue
@@ -27,17 +27,17 @@ namespace switchboard::grpc
     /// to our own protobuf Signal() message and then appends the result to this
     /// queue, from which they are then streamed back to the client.
     ///
-    /// See `core::grpc::SignalQueue<T>` for additional info.
+    /// See `cc::grpc::SignalQueue<T>` for additional info.
 
     class SignalQueue
-        : public core::grpc::SignalQueue<cc::platform::switchboard::protobuf::Signal>
+        : public cc::grpc::SignalQueue<cc::platform::switchboard::protobuf::Signal>
     {
         using This = SignalQueue;
-        using Super = core::grpc::SignalQueue<cc::platform::switchboard::protobuf::Signal>;
+        using Super = cc::grpc::SignalQueue<cc::platform::switchboard::protobuf::Signal>;
 
     public:
         using Super::Super;
         void initialize() override;
         void deinitialize() override;
     };
-}  // namespace switchboard::grpc
+}  // namespace cc::platform::switchboard::grpc

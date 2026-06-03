@@ -10,7 +10,7 @@
 #include "status/exceptions.h++"
 #include "string/convert.h++"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     bool operator==(const Switch &lhs, const Switch &rhs)
     {
@@ -738,4 +738,4 @@ namespace switchboard
         return false;
     }
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

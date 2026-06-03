@@ -9,7 +9,7 @@
 #include "platform/symbols.h++"
 #include "platform/init.h++"
 
-namespace core::dds
+namespace cc::dds
 {
     Server::Server(uint thread_pool_size)
         : ::dds::rpc::Server(this->server_params(thread_pool_size))
@@ -39,4 +39,4 @@ namespace core::dds
         params.extensions().thread_pool_size(thread_pool_size);
         return params;
     }
-}  // namespace core::dds
+}  // namespace cc::dds

@@ -9,7 +9,7 @@
 #include "protobuf-vfs-types.h++"
 #include "protobuf-inline.h++"
 
-namespace vfs::grpc
+namespace cc::platform::vfs::grpc
 {
     //==========================================================================
     /// @class ClientBuffer
@@ -19,12 +19,12 @@ namespace vfs::grpc
         return this->status().ok() ? 0 : -1;
     }
 
-    void ClientBuffer::set_status(const core::grpc::Status &status)
+    void ClientBuffer::set_status(const cc::grpc::Status &status)
     {
         this->status_ = status;
     }
 
-    core::grpc::Status ClientBuffer::status() const
+    cc::grpc::Status ClientBuffer::status() const
     {
         return this->status_;
     }
@@ -39,7 +39,7 @@ namespace vfs::grpc
 
     bool ClientInputBuffer::read_some(BufferType *buffer)
     {
-        ::cc::platform::vfs::protobuf::FileChunk msg;
+        platform::vfs::protobuf::FileChunk msg;
         if (this->reader->Read(&msg))
         {
             buffer->assign(msg.data());
@@ -75,7 +75,7 @@ namespace vfs::grpc
 
     bool ClientOutputBuffer::write_some(const BufferType &data)
     {
-        ::cc::platform::vfs::protobuf::FileChunk msg;
+        platform::vfs::protobuf::FileChunk msg;
         cc::protobuf::encode(this->vpath, msg.mutable_path());
         msg.set_data(data);
 
@@ -107,12 +107,12 @@ namespace vfs::grpc
           input_buffer(
               stub->ReadFile(
                   cxt.get(),
-                  cc::protobuf::encoded<::cc::platform::vfs::protobuf::Path>(vpath)))
+                  cc::protobuf::encoded<platform::vfs::protobuf::Path>(vpath)))
     {
         this->rdbuf(&this->input_buffer);
     }
 
-    core::grpc::Status ClientInputStream::status() const
+    cc::grpc::Status ClientInputStream::status() const
     {
         return this->input_buffer.status();
     }
@@ -131,9 +131,9 @@ namespace vfs::grpc
         this->rdbuf(&this->output_buffer);
     }
 
-    core::grpc::Status ClientOutputStream::status() const
+    cc::grpc::Status ClientOutputStream::status() const
     {
         return this->output_buffer.status();
     }
 
-}  // namespace vfs::grpc
+}  // namespace cc::platform::vfs::grpc

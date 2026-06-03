@@ -10,7 +10,7 @@
 #include "protobuf-upgrade-types.h++"
 #include "protobuf-inline.h++"
 
-namespace upgrade::grpc
+namespace cc::platform::upgrade::grpc
 {
     RequestHandler::RequestHandler()
         : provider(upgrade::upgrade.get_shared())
@@ -25,8 +25,8 @@ namespace upgrade::grpc
 
     ::grpc::Status RequestHandler::Scan(
         ::grpc::ServerContext *context,
-        const ::cc::platform::upgrade::protobuf::PackageSource *request,
-        ::cc::platform::upgrade::protobuf::PackageCatalogue *response)
+        const platform::upgrade::protobuf::PackageSource *request,
+        platform::upgrade::protobuf::PackageCatalogue *response)
     {
         try
         {
@@ -45,7 +45,7 @@ namespace upgrade::grpc
     ::grpc::Status RequestHandler::ListSources(
         ::grpc::ServerContext *context,
         const ::google::protobuf::Empty *request,
-        ::cc::platform::upgrade::protobuf::PackageSources *response)
+        platform::upgrade::protobuf::PackageSources *response)
     {
         try
         {
@@ -60,8 +60,8 @@ namespace upgrade::grpc
 
     ::grpc::Status RequestHandler::ListAvailable(
         ::grpc::ServerContext *context,
-        const ::cc::platform::upgrade::protobuf::PackageSource *request,
-        ::cc::platform::upgrade::protobuf::PackageCatalogue *response)
+        const platform::upgrade::protobuf::PackageSource *request,
+        platform::upgrade::protobuf::PackageCatalogue *response)
     {
         try
         {
@@ -78,8 +78,8 @@ namespace upgrade::grpc
 
     ::grpc::Status RequestHandler::BestAvailable(
         ::grpc::ServerContext *context,
-        const ::cc::platform::upgrade::protobuf::PackageSource *request,
-        ::cc::platform::upgrade::protobuf::PackageInfo *response)
+        const platform::upgrade::protobuf::PackageSource *request,
+        platform::upgrade::protobuf::PackageInfo *response)
     {
         try
         {
@@ -96,8 +96,8 @@ namespace upgrade::grpc
 
     ::grpc::Status RequestHandler::Install(
         ::grpc::ServerContext *context,
-        const ::cc::platform::upgrade::protobuf::InstallRequest *request,
-        ::cc::platform::upgrade::protobuf::PackageInfo *response)
+        const platform::upgrade::protobuf::InstallRequest *request,
+        platform::upgrade::protobuf::PackageInfo *response)
     {
         try
         {
@@ -131,12 +131,12 @@ namespace upgrade::grpc
 
     ::grpc::Status RequestHandler::Watch(
         ::grpc::ServerContext *context,
-        const ::cc::protobuf::signal::Filter *filter,
-        ::grpc::ServerWriter<::cc::platform::upgrade::protobuf::Signal> *writer)
+        const cc::protobuf::signal::Filter *filter,
+        ::grpc::ServerWriter<platform::upgrade::protobuf::Signal> *writer)
     {
         try
         {
-            return this->stream_signals<::cc::platform::upgrade::protobuf::Signal, SignalQueue>(
+            return this->stream_signals<platform::upgrade::protobuf::Signal, SignalQueue>(
                 context,
                 filter,
                 writer);
@@ -147,4 +147,4 @@ namespace upgrade::grpc
         }
     }
 
-} // namespace upgrade::grpc
+} // namespace cc::platform::upgrade::grpc

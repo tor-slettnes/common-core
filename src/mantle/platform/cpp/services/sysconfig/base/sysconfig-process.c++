@@ -11,7 +11,7 @@
 
 #include <system_error>
 
-namespace sysconfig
+namespace cc::platform::sysconfig
 {
     //==========================================================================
     // Helper methods for this module
@@ -55,4 +55,4 @@ namespace sysconfig
     }
 
     core::platform::ProviderProxy<ProcessInterface> process("process");
-}  // namespace sysconfig
+}  // namespace cc::platform::sysconfig

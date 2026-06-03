@@ -8,7 +8,7 @@
 #pragma once
 #include <vector>
 
-namespace core::types
+namespace cc::core::types
 {
     template <class T, class BaseContainer = std::vector<T>>
     class Container : public BaseContainer
@@ -58,7 +58,7 @@ namespace core::types
             return this->push_back(std::move(other));
         }
     };
-}  // namespace core::types
+}  // namespace cc::core::types
 
 namespace std
 {

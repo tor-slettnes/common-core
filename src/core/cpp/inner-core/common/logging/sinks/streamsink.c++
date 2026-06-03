@@ -15,7 +15,7 @@
 #include <ostream>
 #include <string>
 
-namespace core::logging
+namespace cc::core::logging
 {
     constexpr auto SETTING_LOG_STYLES = "log styles";
 
@@ -100,4 +100,4 @@ namespace core::logging
             }
         }
     }
-}  // namespace core::logging
+}  // namespace cc::core::logging

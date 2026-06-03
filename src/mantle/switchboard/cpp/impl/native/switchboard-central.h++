@@ -10,7 +10,7 @@
 #include "types/create-shared.h++"
 #include "settings/settingsstore.h++"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     //==========================================================================
     /// @class Central
@@ -102,4 +102,4 @@ namespace switchboard
     private:
         InterceptorFactoryMap interceptor_factory_map;
     };
-};  // namespace switchboard
+};  // namespace cc::platform::switchboard

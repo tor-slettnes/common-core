@@ -14,7 +14,7 @@
 #include "chrono/date-time.h++"
 #include "status/exceptions.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     ProtoBufError::ProtoBufError(const cc::protobuf::request_reply::StatusCode &code,
                                  const core::status::Error &error)
@@ -41,9 +41,9 @@ namespace core::zmq
         return this->status_code_;
     }
 
-    status::Domain ProtoBufError::domain() const noexcept
+    core::status::Domain ProtoBufError::domain() const noexcept
     {
-        return status::Domain::APPLICATION;
+        return core::status::Domain::APPLICATION;
     }
 
     std::string ProtoBufError::class_name() const noexcept
@@ -60,16 +60,16 @@ namespace core::zmq
             return {};
 
         case cc::protobuf::request_reply::StatusCode::STATUS_INVALID:
-            return std::make_exception_ptr<exception::InvalidArgument>(*this);
+            return std::make_exception_ptr<core::exception::InvalidArgument>(*this);
 
         case cc::protobuf::request_reply::StatusCode::STATUS_CANCELLED:
-            return std::make_exception_ptr<exception::Cancelled>(*this);
+            return std::make_exception_ptr<core::exception::Cancelled>(*this);
 
         case cc::protobuf::request_reply::StatusCode::STATUS_FAILED:
-            return std::make_exception_ptr<exception::RuntimeError>(*this);
+            return std::make_exception_ptr<core::exception::RuntimeError>(*this);
 
         default:
-            return std::make_exception_ptr<exception::UnknownError>(*this);
+            return std::make_exception_ptr<core::exception::UnknownError>(*this);
         }
     }
 
@@ -85,7 +85,7 @@ namespace core::zmq
         return fields;
     }
 
-    types::Value ProtoBufError::get_field_as_value(const std::string &field_name) const
+    core::types::Value ProtoBufError::get_field_as_value(const std::string &field_name) const
     {
         if (field_name == STATUS_FIELD_CODE)
         {
@@ -97,4 +97,4 @@ namespace core::zmq
         }
     }
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

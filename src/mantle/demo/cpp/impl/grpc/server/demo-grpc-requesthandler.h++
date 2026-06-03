@@ -13,18 +13,18 @@
 
 #include "types/create-shared.h++"
 
-namespace demo::grpc
+namespace cc::demo::grpc
 {
     //==========================================================================
     // @class RequestHandler
     // @brief Process requests from Demo clients
 
-    class RequestHandler : public core::grpc::SignalRequestHandler<cc::demo::grpc::Demo>,
+    class RequestHandler : public cc::grpc::SignalRequestHandler<cc::demo::grpc::Demo>,
                            public core::types::enable_create_shared<RequestHandler>
     {
         // Convencience aliases
         using This = RequestHandler;
-        using Super = core::grpc::SignalRequestHandler<cc::demo::grpc::Demo>;
+        using Super = cc::grpc::SignalRequestHandler<cc::demo::grpc::Demo>;
 
     protected:
         RequestHandler(const std::shared_ptr<API>& api_provider);
@@ -32,13 +32,13 @@ namespace demo::grpc
     public:
         ::grpc::Status SayHello(
             ::grpc::ServerContext* context,
-            const ::cc::demo::protobuf::Greeting* request,
+            const demo::protobuf::Greeting* request,
             ::google::protobuf::Empty* response) override;
 
         ::grpc::Status GetCurrentTime(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::demo::protobuf::TimeData* response) override;
+            demo::protobuf::TimeData* response) override;
 
         ::grpc::Status StartTicking(
             ::grpc::ServerContext* context,
@@ -58,4 +58,4 @@ namespace demo::grpc
     private:
         std::shared_ptr<API> provider;
     };
-}  // namespace demo::grpc
+}  // namespace cc::demo::grpc

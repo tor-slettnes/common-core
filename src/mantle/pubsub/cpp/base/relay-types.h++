@@ -11,7 +11,7 @@
 #include "types/value.h++"
 #include "types/getter.h++"
 
-namespace pubsub
+namespace cc::platform::pubsub
 {
     using Topic = std::string;
     using TopicSet = std::unordered_set<Topic>;
@@ -30,5 +30,5 @@ namespace pubsub
     // Log scope
     define_log_scope("relay");
 
-}  // namespace pubsub
+}  // namespace cc::platform::pubsub
 

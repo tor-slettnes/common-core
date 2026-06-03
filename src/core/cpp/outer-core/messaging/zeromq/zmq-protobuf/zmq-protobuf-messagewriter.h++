@@ -10,7 +10,7 @@
 #include "zmq-messagewriter.h++"
 #include "protobuf-message.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     template <class ProtoT>
     class ProtoBufMessageWriter : public ProtoBufMessageBase<ProtoT>,
@@ -32,4 +32,4 @@ namespace core::zmq
         }
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

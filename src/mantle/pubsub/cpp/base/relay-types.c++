@@ -7,7 +7,7 @@
 
 #include "relay-types.h++"
 
-namespace pubsub
+namespace cc::platform::pubsub
 {
     //--------------------------------------------------------------------------
     // Signals
@@ -16,4 +16,4 @@ namespace pubsub
         "signal_publication",
         false);
 
-}  // namespace pubsub
+}  // namespace cc::platform::pubsub

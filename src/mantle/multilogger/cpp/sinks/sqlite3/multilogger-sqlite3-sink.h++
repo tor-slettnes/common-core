@@ -21,7 +21,7 @@
 #include <fstream>
 #include <mutex>
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
     const std::string SETTING_BATCH_SIZE = "batch size";
     const std::size_t DEFAULT_BATCH_SIZE = 64;
@@ -76,10 +76,10 @@ namespace multilogger
         std::string table_name_;
         std::size_t batch_size_;
         core::dt::Duration batch_timeout_;
-        core::db::SQLite3 db;
+        cc::db::SQLite3 db;
         std::string placeholders;
         std::thread worker_thread_;
-        core::db::SQLite3::MultiRowData pending_rows;
+        cc::db::SQLite3::MultiRowData pending_rows;
         std::mutex rows_lock_;
     };
 
@@ -93,4 +93,4 @@ namespace multilogger
         {
             return SQLiteSink::create_shared(sink_id);
         });
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger

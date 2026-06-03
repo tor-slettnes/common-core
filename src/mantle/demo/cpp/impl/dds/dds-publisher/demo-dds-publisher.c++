@@ -11,7 +11,7 @@
 #include "translate-idl-inline.h++"
 #include "logging/logging.h++"
 
-namespace demo::dds
+namespace cc::demo::dds
 {
     Publisher::Publisher(const std::string &channel_name, int domain_id)
         : Super(channel_name, domain_id),
@@ -80,4 +80,4 @@ namespace demo::dds
         this->publish_change(this->greeting_writer, mapping_action, encoded_greeting);
     }
 
-}  // namespace demo::dds
+}  // namespace cc::demo::dds

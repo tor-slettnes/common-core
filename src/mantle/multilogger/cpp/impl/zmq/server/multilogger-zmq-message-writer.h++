@@ -11,19 +11,19 @@
 #include "zmq-protobuf-signalwriter.h++"
 #include "types/create-shared.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     class MessageWriter
-        : public core::zmq::ProtoBufSignalWriter<cc::platform::multilogger::protobuf::Loggable>,
+        : public cc::zmq::ProtoBufSignalWriter<cc::platform::multilogger::protobuf::Loggable>,
           public core::types::enable_create_shared<MessageWriter>
     {
         using This = MessageWriter;
-        using Super = core::zmq::ProtoBufSignalWriter<cc::platform::multilogger::protobuf::Loggable>;
+        using Super = cc::zmq::ProtoBufSignalWriter<cc::platform::multilogger::protobuf::Loggable>;
 
     protected:
         MessageWriter(
             const std::shared_ptr<API> &provider,
-            const std::shared_ptr<core::zmq::Publisher> &publisher);
+            const std::shared_ptr<cc::zmq::Publisher> &publisher);
 
         virtual ~MessageWriter();
 
@@ -45,4 +45,4 @@ namespace multilogger::zmq
         std::thread worker_thread;
         ListenerSpec listener_spec;
     };
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

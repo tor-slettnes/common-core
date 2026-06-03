@@ -8,7 +8,7 @@
 #pragma once
 #include "nm-wrappers.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     //==========================================================================
     /// Network Manager Settings
@@ -20,10 +20,10 @@ namespace netconfig::dbus
 
     public:
         Settings(
-            core::dbus::ProxyContainer* container,
-            const core::dbus::ConnectionPtr& connection,
-            const core::dbus::ServiceName& servicename,
-            const core::dbus::ObjectPath& objectpath = NM_DBUS_PATH_SETTINGS);
+            cc::dbus::ProxyContainer* container,
+            const cc::dbus::ConnectionPtr& connection,
+            const cc::dbus::ServiceName& servicename,
+            const cc::dbus::ObjectPath& objectpath = NM_DBUS_PATH_SETTINGS);
 
         void define_connection(const ConnectionData& connection);
         bool remove_connection(const std::string& id, bool required = false);
@@ -39,4 +39,4 @@ namespace netconfig::dbus
         void on_property_hostname(const Glib::VariantBase& change);
     };
 
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

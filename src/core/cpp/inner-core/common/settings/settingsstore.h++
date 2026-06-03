@@ -13,7 +13,7 @@
 #include <filesystem>
 #include <vector>
 
-namespace core
+namespace cc::core
 {
     /// Generic settings store to read/write configuration values from/to .json files.
     ///
@@ -237,4 +237,4 @@ namespace core
         types::PathList filenames_;
         types::PathList filepaths_;
     };
-}  // namespace core
+}  // namespace cc::core

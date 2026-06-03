@@ -8,7 +8,7 @@
 #pragma once
 #include "types/symbolmap.h++"
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
     enum class Implementation
     {

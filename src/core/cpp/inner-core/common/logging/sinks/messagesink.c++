@@ -9,7 +9,7 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     const std::string SETTING_INCLUDE_CONTEXT = "include context";
     const bool DEFAULT_INCLUDE_CONTEXT = true;
@@ -177,4 +177,4 @@ namespace core::logging
 
     std::optional<bool> MessageSink::all_include_context_;
     std::optional<bool> MessageSink::all_include_source_;
-}  // namespace core::logging
+}  // namespace cc::core::logging

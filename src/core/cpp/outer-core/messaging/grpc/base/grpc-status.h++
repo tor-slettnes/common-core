@@ -16,7 +16,7 @@
 // System headers
 #include <grpc++/grpc++.h>
 
-namespace core::grpc
+namespace cc::grpc
 {
     constexpr auto STATUS_FIELD_CODE = "status_code";
 
@@ -28,11 +28,11 @@ namespace core::grpc
     ///     with embedded Details and in turn abstract base for source-specific
     ///     exception types below.
 
-    class Status : public status::Error,
+    class Status : public core::status::Error,
                    public ::grpc::Status
     {
         using This = Status;
-        using Super = status::Error;
+        using Super = core::status::Error;
 
     public:
         /// @brief
@@ -111,13 +111,13 @@ namespace core::grpc
         ///     Additional information specific to the error
         Status(::grpc::StatusCode status_code,
                const std::string &text,
-               status::Domain domain = status::Domain::APPLICATION,
+               core::status::Domain domain = core::status::Domain::APPLICATION,
                const std::string &origin = "",
                Code code = 0,
                const Symbol &symbol = "",
-               status::Level level = status::Level::NONE,
-               const dt::TimePoint &timepoint = dt::Clock::now(),
-               const types::KeyValueMap &attributes = {});
+               core::status::Level level = core::status::Level::NONE,
+               const core::dt::TimePoint &timepoint = core::dt::Clock::now(),
+               const core::types::KeyValueMap &attributes = {});
 
         /// @brief
         ///     Determine if this Status object is fundamentally equivalent to another.
@@ -165,14 +165,14 @@ namespace core::grpc
     public:
         static std::vector<std::string> status_fields() noexcept;
         std::vector<std::string> field_names() const noexcept override;
-        types::Value get_field_as_value(const std::string &field_name) const override;
+        core::types::Value get_field_as_value(const std::string &field_name) const override;
 
     protected:
         std::string class_name() const noexcept override;
         std::exception_ptr as_application_error() const override;
 
     private:
-        static ::grpc::StatusCode code_from_error(const status::Error &event) noexcept;
+        static ::grpc::StatusCode code_from_error(const core::status::Error &event) noexcept;
         static ::grpc::StatusCode code_from_errno(int code) noexcept;
     };
-}  // namespace core::grpc
+}  // namespace cc::grpc

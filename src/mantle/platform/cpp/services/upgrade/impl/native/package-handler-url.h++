@@ -11,7 +11,7 @@
 
 #include "http-client.h++"
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     class URLPackageHandler : public PackageHandler,
                               public core::types::enable_create_shared<URLPackageHandler>
@@ -32,7 +32,7 @@ namespace upgrade::native
             const URL &url,
             const fs::path &staging_folder) const;
 
-        static core::http::HTTPClient::ReceiveFunction piper(
+        static cc::http::HTTPClient::ReceiveFunction piper(
             core::platform::FileDescriptor fd);
     };
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

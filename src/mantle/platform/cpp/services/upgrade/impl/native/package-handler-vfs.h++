@@ -9,7 +9,7 @@
 #include "package-handler.h++"
 #include "vfs-location.h++"
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     class VFSPackageHandler : public PackageHandler
     {
@@ -29,4 +29,4 @@ namespace upgrade::native
             const fs::path &filepath,
             const fs::path &staging_folder);
     };
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

@@ -11,7 +11,7 @@
 
 #include <unordered_map>
 
-namespace vfs
+namespace cc::platform::vfs
 {
     //==========================================================================
     /// @class Context
@@ -54,4 +54,4 @@ namespace vfs
 
     using ContextList = std::vector<Context::ptr>;
 
-}  // namespace vfs
+}  // namespace cc::platform::vfs

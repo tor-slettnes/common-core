@@ -7,8 +7,8 @@
 
 #pragma once
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     void register_providers();
     void unregister_providers();
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

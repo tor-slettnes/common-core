@@ -11,7 +11,7 @@
 #include "logging/logging.h++"
 #include "platform/symbols.h++"
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     Publisher::Publisher(const std::string &name, int domain_id)
         : Super(name, domain_id),
@@ -67,4 +67,4 @@ namespace switchboard::dds
         this->publish_change(this->status_writer, action, encoded_status);
     }
 
-}  // namespace switchboard::dds
+}  // namespace cc::platform::switchboard::dds

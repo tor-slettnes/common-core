@@ -9,7 +9,7 @@
 #include "event.h++"
 #include "domain.h++"
 
-namespace core::status
+namespace cc::core::status
 {
     //==========================================================================
     // Symbols provided here.
@@ -100,4 +100,4 @@ namespace core::status
         Symbol symbol_;
     };
 
-}  // namespace core::status
+}  // namespace cc::core::status

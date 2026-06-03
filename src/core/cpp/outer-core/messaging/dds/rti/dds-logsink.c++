@@ -10,7 +10,7 @@
 #include "translate-idl-inline.h++"
 #include "platform/symbols.h++"
 
-namespace core::dds
+namespace cc::dds
 {
     DDSLogger::DDSLogger(const std::string &sink_id,
                          const std::string &channel_name,
@@ -35,7 +35,7 @@ namespace core::dds
         Super::close();
     }
 
-    bool DDSLogger::handle_message(const logging::Message::ptr &message)
+    bool DDSLogger::handle_message(const core::logging::Message::ptr &message)
     {
         if (this->log_writer)
         {
@@ -48,4 +48,4 @@ namespace core::dds
             return false;
         }
     }
-}  // namespace core::dds
+}  // namespace cc::dds

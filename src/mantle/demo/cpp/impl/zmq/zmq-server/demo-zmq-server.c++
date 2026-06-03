@@ -8,7 +8,7 @@
 #include "demo-zmq-server.h++"
 #include "demo-zmq-requesthandler.h++"
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
     Server::Server(const std::shared_ptr<API> &provider,
                    const std::string &bind_address,
@@ -21,4 +21,4 @@ namespace demo::zmq
     {
     }
 
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

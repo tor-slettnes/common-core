@@ -11,10 +11,10 @@
 
 #include <memory>
 
-namespace core
+namespace cc::core
 {
     extern std::shared_ptr<core::SettingsStore> settings;
 
     void init_settings(const std::string &primary_settings_file,
                        const std::optional<std::string> &flavor = {});
-}  // namespace core
+}  // namespace cc::core

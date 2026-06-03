@@ -9,7 +9,7 @@
 #include "kafka-producer.h++"
 #include "avro-basevalue.h++"
 
-namespace core::kafka
+namespace cc::kafka
 {
     class AvroProducer : public Producer
     {
@@ -31,4 +31,4 @@ namespace core::kafka
             const HeaderMap &headers = {},
             const DeliveryReportCapture::CallbackData::ptr &cb_data = {});
     };
-}  // namespace core::kafka
+}  // namespace cc::kafka

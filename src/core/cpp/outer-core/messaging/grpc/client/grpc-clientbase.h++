@@ -11,7 +11,7 @@
 
 #include <grpcpp/impl/codegen/client_context.h>
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class ClientBase
@@ -47,7 +47,7 @@ namespace core::grpc
         ///     Set gRPC call request timeout.
         /// @param[in] request_timeout
         ///     If set, the `request_timeout` will be used as default in future gRPC requests.
-        void set_request_timeout(std::optional<dt::Duration> request_timeout);
+        void set_request_timeout(std::optional<core::dt::Duration> request_timeout);
 
         /// @brief
         ///     Indicate whether we are connected to a service.
@@ -66,7 +66,7 @@ namespace core::grpc
         ///     server. The call may block for up to this duration.
         /// @return
         ///      `true` if server is available, `false` otherwise.
-        bool wait_for_connected(const dt::Duration &timeout) const;
+        bool wait_for_connected(const core::dt::Duration &timeout) const;
 
         /// @brief Wait up to a specified duration for service to become available.
         /// @param[in] deadline
@@ -74,7 +74,7 @@ namespace core::grpc
         ///     server.  The call may block for up to this duration.
         /// @return
         ///      `true` if server is available, `false` otherwise.
-        bool wait_for_connected(const dt::TimePoint &deadline) const;
+        bool wait_for_connected(const core::dt::TimePoint &deadline) const;
 
 
         /// @brief Check the provided gRPC status code, and throw an appropriate
@@ -83,7 +83,7 @@ namespace core::grpc
         /// @param[in] status
         ///     gRPC status code to check
         ///
-        /// @throw core::grpc::ServiceError
+        /// @throw cc::grpc::ServiceError
         ///     An error response was received from the server.
         ///
         void check(const ::grpc::Status &status) const;
@@ -92,8 +92,8 @@ namespace core::grpc
     protected:
         std::string host_;
         bool wait_for_ready;
-        std::optional<dt::Duration> request_timeout;
+        std::optional<core::dt::Duration> request_timeout;
         std::shared_ptr<::grpc::ChannelInterface> channel;
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

@@ -10,7 +10,7 @@
 // #using <system.dll>
 // #using <mscorlib.dll>
 
-namespace core::platform
+namespace cc::core::platform
 {
     WindowsLogSinkProvider::WindowsLogSinkProvider(
         const std::string &application_id,
@@ -69,4 +69,4 @@ namespace core::platform
         {status::Level::FATAL, EVENTLOG_ERROR_TYPE},
     };
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

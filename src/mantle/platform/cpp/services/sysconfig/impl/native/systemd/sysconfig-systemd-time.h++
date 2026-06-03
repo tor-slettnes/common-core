@@ -8,7 +8,7 @@
 #pragma once
 #include "sysconfig-posix-time.h++"
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     class SystemdTimeConfigProvider : public PosixTimeConfigProvider
     {
@@ -33,4 +33,4 @@ namespace sysconfig::native
         bool is_systemd_init() const;
 
     };
-}  // namespace sysconfig::systemd
+}  // namespace cc::platform::sysconfig::systemd

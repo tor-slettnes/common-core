@@ -14,7 +14,7 @@
 
 #include <dds/rpc/ClientParams.hpp>
 
-namespace core::dds
+namespace cc::dds
 {
     //==========================================================================
     // DDS client Implementation template
@@ -35,14 +35,14 @@ namespace core::dds
     public:
         void initialize() override
         {
-            platform::signal_shutdown.connect(
+            core::platform::signal_shutdown.connect(
                 this->to_string(),
                 std::bind(&BaseClient::close, this));
         }
 
         void deinitialize() override
         {
-            platform::signal_shutdown.disconnect(
+            core::platform::signal_shutdown.disconnect(
                 this->to_string());
         }
 
@@ -69,7 +69,7 @@ namespace core::dds
 
     public:
         inline std::shared_ptr<Client<ClientT>> client(
-            const steady::Duration &max_wait = std::chrono::seconds(10)) const
+            const core::steady::Duration &max_wait = std::chrono::seconds(10)) const
         {
             this->client_->wait_for_service(max_wait);
             return this->client_;
@@ -79,4 +79,4 @@ namespace core::dds
         std::shared_ptr<Client<ClientT>> client_;
     };
 
-}  // namespace core::dds
+}  // namespace cc::dds

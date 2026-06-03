@@ -14,7 +14,7 @@
 
 #include <iostream>
 
-namespace core::grpc
+namespace cc::grpc
 {
     using ::grpc::experimental::InterceptionHookPoints;
     using ::grpc::experimental::Interceptor;
@@ -103,4 +103,4 @@ namespace core::grpc
         return new EHInterceptor();
     }
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

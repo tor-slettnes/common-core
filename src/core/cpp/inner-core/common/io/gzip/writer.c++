@@ -10,7 +10,7 @@
 #include "string/format.h++"
 #include "status/exception.h++"
 
-namespace core::io
+namespace cc::core::io
 {
     //--------------------------------------------------------------------------
     // GZipOutputBuffer
@@ -59,4 +59,4 @@ namespace core::io
     {
         this->rdbuf(&this->output_buffer);
     }
-} // namespace core::io
+} // namespace cc::core::io

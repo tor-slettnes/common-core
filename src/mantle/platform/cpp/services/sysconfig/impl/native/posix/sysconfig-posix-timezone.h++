@@ -17,7 +17,7 @@
 #define CCFILE    TZROOT "/zone1970.tab"
 #define CNFILE    TZROOT "/iso3166.tab"
 
-namespace sysconfig::native
+namespace cc::platform::sysconfig::native
 {
     using CountryMap = core::types::ValueMap<std::string, std::string>;
     using TimeZoneMap = core::types::ValueMap<std::string, TimeZoneCanonicalSpec>;
@@ -96,4 +96,4 @@ namespace sysconfig::native
         TimeZoneMap zone_map;
         core::SettingsStore zone_settings;
     };
-}  // namespace sysconfig::native
+}  // namespace cc::platform::sysconfig::native

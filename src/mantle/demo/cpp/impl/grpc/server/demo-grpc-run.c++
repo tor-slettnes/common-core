@@ -12,14 +12,14 @@
 #include "chrono/date-time.h++"
 #include "string/misc.h++"
 
-namespace demo::grpc
+namespace cc::demo::grpc
 {
     void run_grpc_service(
         std::shared_ptr<demo::API> api_provider,
         const std::string &listen_address)
     {
         log_info("Creating gRPC server builder");
-        core::grpc::ServerBuilder builder(listen_address);
+        cc::grpc::ServerBuilder builder(listen_address);
 
         log_info("Creating Demo gRPC request handler");
         auto request_handler = RequestHandler::create_shared(api_provider);
@@ -43,4 +43,4 @@ namespace demo::grpc
         core::platform::signal_shutdown.disconnect(signal_handle);
         server.reset();
     }
-}  // namespace demo::grpc
+}  // namespace cc::demo::grpc

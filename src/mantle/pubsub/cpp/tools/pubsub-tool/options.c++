@@ -14,7 +14,7 @@
 #include "parsers/json/writer.h++"
 #include "types/symbolmap.h++"
 
-namespace pubsub::grpc
+namespace cc::platform::pubsub::grpc
 {
     core::types::SymbolMap<Transport> transport_map =
         {
@@ -249,4 +249,4 @@ namespace pubsub::grpc
         return this->publisher_;
     }
 
-}  // namespace pubsub::grpc
+}  // namespace cc::platform::pubsub::grpc

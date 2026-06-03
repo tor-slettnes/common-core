@@ -7,7 +7,7 @@
 
 #include "data.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     Data::Data(const ContractID &contract_id,
                const dt::TimePoint &tp,
@@ -82,4 +82,4 @@ namespace core::logging
         }
     }
 
-}  // namespace core::logging
+}  // namespace cc::core::logging

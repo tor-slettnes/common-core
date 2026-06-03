@@ -9,12 +9,12 @@
 #include "cc/platform/vfs/protobuf/vfs_types.pb.h"  // generated from `vfs.proto`
 #include "grpc-signalqueue.h++"
 
-namespace vfs
+namespace cc::platform::vfs
 {
     using namespace cc::platform::vfs;
 }
 
-namespace vfs::grpc
+namespace cc::platform::vfs::grpc
 {
     //==========================================================================
     /// @class SignalQueue
@@ -27,15 +27,15 @@ namespace vfs::grpc
     /// own protobuf Signal() message and then appends the result to this queue,
     /// from which they are then streamed back to the client.
     ///
-    /// See `core::grpc::SignalQueue<T>` for additional info.
+    /// See `cc::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<vfs::protobuf::Signal>
+    class SignalQueue : public cc::grpc::SignalQueue<vfs::protobuf::Signal>
     {
-        using Super = core::grpc::SignalQueue<vfs::protobuf::Signal>;
+        using Super = cc::grpc::SignalQueue<vfs::protobuf::Signal>;
 
     public:
         using Super::Super;
         void initialize() override;
         void deinitialize() override;
     };
-}  // namespace vfs::grpc
+}  // namespace cc::platform::vfs::grpc

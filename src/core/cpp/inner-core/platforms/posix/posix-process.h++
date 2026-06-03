@@ -11,7 +11,7 @@
 
 #include <poll.h>
 
-namespace core::platform
+namespace cc::core::platform
 {
     class PosixExitStatus : public ExitStatus
     {
@@ -152,4 +152,4 @@ namespace core::platform
         static std::set<FileDescriptor> open_fds;
     };
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

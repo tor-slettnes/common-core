@@ -7,7 +7,7 @@
 
 #include "blockingqueue.h++"
 
-namespace core::types
+namespace cc::core::types
 {
     BlockingQueueBase::BlockingQueueBase(
         std::size_t maxsize,
@@ -72,4 +72,4 @@ namespace core::types
             }
         }
     }
-}  // namespace core::types
+}  // namespace cc::core::types

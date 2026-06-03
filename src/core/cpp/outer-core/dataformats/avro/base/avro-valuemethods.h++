@@ -13,7 +13,7 @@
 // #include <memory>
 // #include <stdexcept>
 
-namespace avro
+namespace cc::avro
 {
     avro_schema_t schema(const avro_value_t &value);
     avro_type_t type(const avro_value_t &value);
@@ -199,4 +199,4 @@ namespace avro
         avro_value_get_enum(&avro_value, &enumvalue);
         return static_cast<EnumType>(enumvalue);
     }
-}  // namespace avro
+}  // namespace cc::avro

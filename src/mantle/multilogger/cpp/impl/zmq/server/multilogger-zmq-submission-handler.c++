@@ -8,11 +8,11 @@
 #include "multilogger-zmq-submission-handler.h++"
 #include "protobuf-inline.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     SubmissionHandler::SubmissionHandler(
         const std::shared_ptr<API> &provider,
-        const std::weak_ptr<core::zmq::Subscriber> &subscriber)
+        const std::weak_ptr<cc::zmq::Subscriber> &subscriber)
         : Super({}, subscriber),
           provider(provider)
     {
@@ -23,4 +23,4 @@ namespace multilogger::zmq
     {
         this->provider->submit(cc::protobuf::decode_loggable(msg));
     }
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

@@ -11,7 +11,7 @@
 
 #include <fstream>
 
-namespace core::parsers
+namespace cc::core::parsers
 {
     class BaseWriter
     {
@@ -51,4 +51,4 @@ namespace core::parsers
     private:
         std::unique_ptr<std::ofstream> stream_;
     };
-}  // namespace core::json
+}  // namespace cc::core::json

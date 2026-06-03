@@ -11,7 +11,7 @@
 #include "dds-subscriber.h++"
 #include "types/create-shared.h++"
 
-namespace switchboard::dds
+namespace cc::platform::switchboard::dds
 {
     //==========================================================================
     /// @class Subscriber
@@ -20,11 +20,11 @@ namespace switchboard::dds
     /// Received messages are re-emitted locally via
     /// @sa switchboard::signal_spec and @sa switchboard::signal_status.
 
-    class Subscriber : public core::dds::Subscriber,
+    class Subscriber : public cc::dds::Subscriber,
                        public core::types::enable_create_shared<Subscriber>
     {
         using This = Subscriber;
-        using Super = core::dds::Subscriber;
+        using Super = cc::dds::Subscriber;
 
     protected:
         Subscriber(const std::string &name, int domain_id);
@@ -43,4 +43,4 @@ namespace switchboard::dds
 
     extern core::signal::MappingSignal<CC::Switchboard::Specification> signal_dds_spec;
     extern core::signal::MappingSignal<CC::Switchboard::Status> signal_dds_status;
-}  // namespace switchboard::dds
+}  // namespace cc::platform::switchboard::dds

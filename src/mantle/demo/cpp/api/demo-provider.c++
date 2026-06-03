@@ -7,7 +7,7 @@
 
 #include "demo-provider.h++"
 
-namespace demo
+namespace cc::demo
 {
     std::shared_ptr<API> provider;
 }

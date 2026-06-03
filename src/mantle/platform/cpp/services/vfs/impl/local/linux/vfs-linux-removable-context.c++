@@ -8,7 +8,7 @@
 #include "vfs-linux-removable-context.h++"
 #include "platform/process.h++"
 
-namespace vfs::local
+namespace cc::platform::vfs::local
 {
     RemovableContext::RemovableContext(
         const std::string &name,
@@ -61,4 +61,4 @@ namespace vfs::local
         logf_debug("Spawning: %s", argv);
         core::platform::process->invoke_check(argv);
     }
-}  // namespace vfs::local
+}  // namespace cc::platform::vfs::local

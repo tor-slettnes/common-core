@@ -11,7 +11,7 @@
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
 
-namespace pubsub::grpc
+namespace cc::platform::pubsub::grpc
 {
     //==========================================================================
     // @class RequestHandler
@@ -19,8 +19,8 @@ namespace pubsub::grpc
 
     ::grpc::Status RequestHandler::Subscriber(
         ::grpc::ServerContext* context,
-        const ::cc::platform::pubsub::protobuf::Filters* request,
-        ::grpc::ServerWriter<::cc::platform::pubsub::protobuf::Publication>* writer)
+        const platform::pubsub::protobuf::Filters* request,
+        ::grpc::ServerWriter<platform::pubsub::protobuf::Publication>* writer)
     {
         pubsub::TopicSet topics(
             request->topics().begin(),
@@ -44,10 +44,10 @@ namespace pubsub::grpc
 
     ::grpc::Status RequestHandler::Publisher(
         ::grpc::ServerContext* context,
-        ::grpc::ServerReader<::cc::platform::pubsub::protobuf::Publication>* reader,
+        ::grpc::ServerReader<platform::pubsub::protobuf::Publication>* reader,
         ::google::protobuf::Empty* reply)
     {
-        ::cc::platform::pubsub::protobuf::Publication publication;
+        platform::pubsub::protobuf::Publication publication;
         while (reader->Read(&publication))
         {
             pubsub::signal_publication.emit(
@@ -60,7 +60,7 @@ namespace pubsub::grpc
 
     ::grpc::Status RequestHandler::Publish(
         ::grpc::ServerContext* context,
-        const ::cc::platform::pubsub::protobuf::Publication *message,
+        const platform::pubsub::protobuf::Publication *message,
         ::google::protobuf::Empty* reply)
     {
         try
@@ -76,4 +76,4 @@ namespace pubsub::grpc
         }
     }
 
-}  // namespace pubsub::grpc
+}  // namespace cc::platform::pubsub::grpc

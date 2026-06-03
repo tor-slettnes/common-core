@@ -8,7 +8,7 @@
 #include "switch-dependency.h++"
 #include "switchboard-provider.h++"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     //==========================================================================
     // Operators
@@ -203,4 +203,4 @@ namespace switchboard
 
     const StateSet Dependency::DEFAULT_TRIGGERS = {};
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

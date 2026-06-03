@@ -36,7 +36,7 @@
 
 #define throwf_args(_EXC, ...) throw _EXC(core::str::format __VA_ARGS__)
 
-namespace core::exception
+namespace cc::core::exception
 {
     //==========================================================================
     /// @class Exception<E>
@@ -92,4 +92,4 @@ namespace core::exception
         const std::string class_name_;
     };
 
-}  // namespace core::exception
+}  // namespace cc::core::exception

@@ -13,7 +13,7 @@
 #include "platform/symbols.h++"
 #include "logging/logging.h++"
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class SignalRequestHandler<ServiceT>
@@ -46,7 +46,7 @@ namespace core::grpc
                            SignalT().GetTypeName(),
                            cxt->peer(),
                            *req);
-                SignalQueueT queue(platform::symbols->uuid(), *req);
+                SignalQueueT queue(core::platform::symbols->uuid(), *req);
                 queue.initialize();
                 // Append an empty message in the queue to signify the end of the cache.
                 queue.put(SignalT());
@@ -78,4 +78,4 @@ namespace core::grpc
         }
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

@@ -10,7 +10,7 @@
 #include "status/exceptions.h++"
 #include "platform/symbols.h++"
 
-namespace core::signal
+namespace cc::core::signal
 {
     define_log_scope("signal", status::Level::DEBUG);
 
@@ -175,4 +175,4 @@ namespace core::signal
         return stream;
     }
 
-}  // namespace core::signal
+}  // namespace cc::core::signal

@@ -11,7 +11,7 @@
 #include "protobuf-message.h++"
 #include "logging/logging.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     template <class ProtoT>
     class ProtoBufMessageHandler : public ProtoBufMessageBase<ProtoT>,
@@ -44,4 +44,4 @@ namespace core::zmq
         virtual void handle_message(const ProtoT &message) = 0;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

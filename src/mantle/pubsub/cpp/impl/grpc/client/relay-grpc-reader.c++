@@ -11,14 +11,14 @@
 
 #include "cc/platform/pubsub/grpc/relay_service.grpc.pb.h"
 
-namespace pubsub::grpc
+namespace cc::platform::pubsub::grpc
 {
     //--------------------------------------------------------------------------
     // Reader
 
     Reader::Reader(
-        const std::unique_ptr<::cc::platform::pubsub::grpc::Relay::Stub> &stub,
-        const ::cc::platform::pubsub::protobuf::Filters &filters)
+        const std::unique_ptr<platform::pubsub::grpc::Relay::Stub> &stub,
+        const platform::pubsub::protobuf::Filters &filters)
         : reader(stub->Subscriber(&this->context, filters))
     {
     }
@@ -50,4 +50,4 @@ namespace pubsub::grpc
         }
     }
 
-}  // namespace pubsub::grpc
+}  // namespace cc::platform::pubsub::grpc

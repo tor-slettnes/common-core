@@ -15,7 +15,7 @@
 // C++ STL modules
 #include <functional>
 
-namespace demo::dds
+namespace cc::demo::dds
 {
     Subscriber::Subscriber(const std::string &channel_name, int domain_id)
         : Super(channel_name, domain_id),
@@ -53,4 +53,4 @@ namespace demo::dds
                              greeting.identity(),
                              idl::decoded<Greeting>(greeting));
     }
-}  // namespace demo::dds
+}  // namespace cc::demo::dds

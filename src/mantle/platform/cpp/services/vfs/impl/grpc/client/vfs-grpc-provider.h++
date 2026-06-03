@@ -10,7 +10,7 @@
 #include "vfs-grpc-client.h++"
 #include "vfs-remote-context.h++"
 
-namespace vfs::grpc
+namespace cc::platform::vfs::grpc
 {
     class ClientProvider : public ProviderInterface,
                            public std::enable_shared_from_this<ClientProvider>
@@ -104,21 +104,21 @@ namespace vfs::grpc
         void on_context(
             core::signal::MappingAction action,
             const std::string &key,
-            const ::cc::platform::vfs::protobuf::Signal &signal) const;
+            const platform::vfs::protobuf::Signal &signal) const;
 
         void on_context_in_use(
             core::signal::MappingAction action,
             const std::string &key,
-            const ::cc::platform::vfs::protobuf::Signal &signal) const;
+            const platform::vfs::protobuf::Signal &signal) const;
 
         ContextMap context_map(
-            const ::cc::platform::vfs::protobuf::ContextMap &msg) const;
+            const platform::vfs::protobuf::ContextMap &msg) const;
 
         std::shared_ptr<RemoteContext> decoded_context(
-            const ::cc::platform::vfs::protobuf::ContextSpec &spec) const;
+            const platform::vfs::protobuf::ContextSpec &spec) const;
 
     private:
         std::shared_ptr<Client> client;
         bool use_cached;
     };
-}  // namespace vfs::grpc
+}  // namespace cc::platform::vfs::grpc

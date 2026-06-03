@@ -7,7 +7,7 @@
 
 #include "switchboard-signals.h++"
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     constexpr auto Capture_Handle = "switchboard::SignalCapture";
 
@@ -44,4 +44,4 @@ namespace switchboard
     core::signal::MappingSignal<Specification> signal_spec("signal_spec", true);
     core::signal::MappingSignal<Status> signal_status("signal_status", true);
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

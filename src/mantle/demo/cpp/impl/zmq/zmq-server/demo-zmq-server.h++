@@ -12,13 +12,13 @@
 #include "types/create-shared.h++"
 
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
-    class Server : public core::zmq::ProtoBufServer,
+    class Server : public cc::zmq::ProtoBufServer,
                    public core::types::enable_create_shared<Server>
     {
         using This = Server;
-        using Super = core::zmq::ProtoBufServer;
+        using Super = cc::zmq::ProtoBufServer;
 
     protected:
         Server(const std::shared_ptr<API> &provider,
@@ -26,4 +26,4 @@ namespace demo::zmq
                const std::string &channel_name = SERVICE_CHANNEL);
     };
 
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

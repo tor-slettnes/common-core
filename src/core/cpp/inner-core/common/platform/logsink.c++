@@ -7,7 +7,7 @@
 
 #include "logsink.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     LogSinkProvider::LogSinkProvider(const std::string &implementation,
                                      const std::string &sink_id)
@@ -17,4 +17,4 @@ namespace core::platform
     }
 
     ProviderProxy<LogSinkProvider> logsink("logsink");
-}  // namespace core::platform
+}  // namespace cc::core::platform

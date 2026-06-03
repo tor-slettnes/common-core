@@ -10,7 +10,7 @@
 #include "multilogger-api.h++"
 #include "argparse/command.h++"
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
     class Options : public core::argparse::CommandOptions
     {
@@ -56,5 +56,6 @@ namespace multilogger
         std::vector<std::string> apps;
     };
 
-    extern std::unique_ptr<Options> options;
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger
+
+extern std::unique_ptr<cc::platform::multilogger::Options> options;

@@ -11,7 +11,7 @@
 #include <iostream>
 #include <string>
 
-namespace core::parsers
+namespace cc::core::parsers
 {
     class StreamInput : public Input
     {
@@ -33,4 +33,4 @@ namespace core::parsers
         std::size_t token_position_;
         std::size_t token_size_;
     };
-}  // namespace core::parser
+}  // namespace cc::core::parser

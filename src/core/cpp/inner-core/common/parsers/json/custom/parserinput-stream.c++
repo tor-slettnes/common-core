@@ -8,7 +8,7 @@
 #include "parserinput-stream.h++"
 #include <sstream>
 
-namespace core::parsers
+namespace cc::core::parsers
 {
     StreamInput::StreamInput(std::istream &stream)
         : stream_(stream),
@@ -57,4 +57,4 @@ namespace core::parsers
         this->token_.push_back(c);
     }
 
-}  // namespace core::parser
+}  // namespace cc::core::parser

@@ -12,18 +12,18 @@
 #include "zmq-subscriber.h++"
 #include "types/create-shared.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     class SubmissionHandler
-        : public core::zmq::ProtoBufMessageHandler<cc::platform::multilogger::protobuf::Loggable>,
+        : public cc::zmq::ProtoBufMessageHandler<cc::platform::multilogger::protobuf::Loggable>,
           public core::types::enable_create_shared<SubmissionHandler>
     {
         using This = SubmissionHandler;
-        using Super = core::zmq::ProtoBufMessageHandler<cc::platform::multilogger::protobuf::Loggable>;
+        using Super = cc::zmq::ProtoBufMessageHandler<cc::platform::multilogger::protobuf::Loggable>;
 
     protected:
         SubmissionHandler(const std::shared_ptr<API> &provider,
-                          const std::weak_ptr<core::zmq::Subscriber> &subscriber);
+                          const std::weak_ptr<cc::zmq::Subscriber> &subscriber);
 
     protected:
         void handle_message(const cc::platform::multilogger::protobuf::Loggable &msg) override;

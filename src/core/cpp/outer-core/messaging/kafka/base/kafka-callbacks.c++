@@ -12,7 +12,7 @@
 
 #include <functional>
 
-namespace core::kafka
+namespace cc::kafka
 {
     auto rdkafka_log_scope =
         core::logging::Scope::create("rdkafka", core::status::Level::NOTICE);
@@ -24,7 +24,7 @@ namespace core::kafka
     {
         core::status::Level level = This::level_map.get(
             event.severity(),
-            status::Level::WARNING);
+            core::status::Level::WARNING);
 
         auto msg = custom_log_message(
             level,                   // level
@@ -123,4 +123,4 @@ namespace core::kafka
         {RdKafka::Message::MSG_STATUS_PERSISTED, "MSG_STATUS_PERSISTED"},
     };
 
-}  // namespace core::kafka
+}  // namespace cc::kafka

@@ -16,7 +16,7 @@
 #include "chrono/scheduler.h++"
 #include "types/create-shared.h++"
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     NativeProvider::NativeProvider()
         : Super(TYPE_NAME_BASE(This)),
@@ -336,4 +336,4 @@ namespace upgrade::native
         }
     }
 
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

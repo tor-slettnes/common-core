@@ -11,7 +11,7 @@
 #include "argparse/command.h++"
 #include "types/filesystem.h++"
 
-namespace pubsub::grpc
+namespace cc::platform::pubsub::grpc
 {
     enum class Transport
     {
@@ -55,4 +55,4 @@ namespace pubsub::grpc
         std::shared_ptr<pubsub::Subscriber> subscriber_;
         std::shared_ptr<pubsub::Publisher> publisher_;
     };
-}  // namespace pubsub::grpc
+}  // namespace cc::platform::pubsub::grpc

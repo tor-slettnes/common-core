@@ -14,7 +14,7 @@
 //#include "zmq-client.h++"
 #include "types/create-shared.h++"
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
     //==========================================================================
     // @class ClientImpl
@@ -22,7 +22,7 @@ namespace demo::zmq
 
     class ClientImpl
         : public API,
-          public core::zmq::ProtoBufClient,
+          public cc::zmq::ProtoBufClient,
           public core::types::enable_create_shared<ClientImpl>
     {
         // Convencience alias
@@ -45,4 +45,4 @@ namespace demo::zmq
         void stop_ticking() override;
     };
 
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

@@ -7,8 +7,8 @@
 
 #include "writer.h++"
 
-namespace core::json
+namespace cc::core::json
 {
     Writer writer;
     FastWriter fast_writer;
-}  // namespace core::json
+}  // namespace cc::core::json

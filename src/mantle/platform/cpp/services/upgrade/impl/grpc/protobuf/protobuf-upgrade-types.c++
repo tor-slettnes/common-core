@@ -17,16 +17,16 @@ namespace cc::protobuf
     //==========================================================================
     // Package Source
 
-    void encode(const ::upgrade::PackageSource &native,
-                ::cc::platform::upgrade::protobuf::PackageSource *msg)
+    void encode(const platform::upgrade::PackageSource &native,
+                platform::upgrade::protobuf::PackageSource *msg)
     {
         switch (native.location_type())
         {
-        case ::upgrade::LocationType::VFS:
+        case platform::upgrade::LocationType::VFS:
             encode(native.vfs_path(), msg->mutable_vfs_path());
             break;
 
-        case ::upgrade::LocationType::URL:
+        case platform::upgrade::LocationType::URL:
             msg->set_url(native.url());
             break;
 
@@ -35,16 +35,16 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const ::cc::platform::upgrade::protobuf::PackageSource &msg,
-                ::upgrade::PackageSource *native)
+    void decode(const platform::upgrade::protobuf::PackageSource &msg,
+                platform::upgrade::PackageSource *native)
     {
         switch (msg.location_case())
         {
-        case ::cc::platform::upgrade::protobuf::PackageSource::kVfsPath:
-            native->location = decoded<::vfs::Path>(msg.vfs_path());
+        case platform::upgrade::protobuf::PackageSource::kVfsPath:
+            native->location = decoded<platform::vfs::Path>(msg.vfs_path());
             break;
 
-        case ::cc::platform::upgrade::protobuf::PackageSource::kUrl:
+        case platform::upgrade::protobuf::PackageSource::kUrl:
             native->location = msg.url();
             break;
 
@@ -57,24 +57,24 @@ namespace cc::protobuf
     //==========================================================================
     // Package Sources
 
-    void encode(const ::upgrade::PackageSources &native,
-                ::cc::platform::upgrade::protobuf::PackageSources *msg)
+    void encode(const platform::upgrade::PackageSources &native,
+                platform::upgrade::protobuf::PackageSources *msg)
     {
         auto sources = msg->mutable_sources();
         sources->Clear();
         sources->Reserve(native.size());
-        for (const ::upgrade::PackageSource &src : native)
+        for (const platform::upgrade::PackageSource &src : native)
         {
             encode(src, sources->Add());
         }
     }
 
-    void decode(const ::cc::platform::upgrade::protobuf::PackageSources &msg,
-                ::upgrade::PackageSources *native)
+    void decode(const platform::upgrade::protobuf::PackageSources &msg,
+                platform::upgrade::PackageSources *native)
     {
         native->clear();
         native->reserve(msg.sources().size());
-        for (const ::cc::platform::upgrade::protobuf::PackageSource &src : msg.sources())
+        for (const platform::upgrade::protobuf::PackageSource &src : msg.sources())
         {
             decode(src, &native->emplace_back());
         }
@@ -83,8 +83,8 @@ namespace cc::protobuf
     //==========================================================================
     // Package Information
 
-    void encode(const ::upgrade::PackageInfo &native,
-                ::cc::platform::upgrade::protobuf::PackageInfo *msg)
+    void encode(const platform::upgrade::PackageInfo &native,
+                platform::upgrade::protobuf::PackageInfo *msg)
     {
         encode(native.source(), msg->mutable_source());
         msg->set_product_name(native.product());
@@ -94,13 +94,13 @@ namespace cc::protobuf
         msg->set_is_applicable(native.is_applicable());
     }
 
-    void decode(const ::cc::platform::upgrade::protobuf::PackageInfo &msg,
-                ::upgrade::PackageInfo *native)
+    void decode(const platform::upgrade::protobuf::PackageInfo &msg,
+                platform::upgrade::PackageInfo *native)
     {
-        *native = ::upgrade::PackageInfo(
-            decoded<::upgrade::PackageSource>(msg.source()),
+        *native = platform::upgrade::PackageInfo(
+            decoded<platform::upgrade::PackageSource>(msg.source()),
             msg.product_name(),
-            decoded<::sysconfig::Version>(msg.release_version()),
+            decoded<platform::sysconfig::Version>(msg.release_version()),
             msg.release_description(),
             msg.reboot_required(),
             msg.is_applicable());
@@ -109,24 +109,24 @@ namespace cc::protobuf
     //==========================================================================
     // Package Catalogue
 
-    void encode(const ::upgrade::PackageCatalogue &native,
-                ::cc::platform::upgrade::protobuf::PackageCatalogue *msg)
+    void encode(const platform::upgrade::PackageCatalogue &native,
+                platform::upgrade::protobuf::PackageCatalogue *msg)
     {
         auto packages = msg->mutable_packages();
         packages->Clear();
         packages->Reserve(native.size());
-        for (const ::upgrade::PackageInfo::ptr &ptr : native)
+        for (const platform::upgrade::PackageInfo::ptr &ptr : native)
         {
             encode(*ptr, packages->Add());
         }
     }
 
-    void decode(const ::cc::platform::upgrade::protobuf::PackageCatalogue &msg,
-                ::upgrade::PackageCatalogue *native)
+    void decode(const platform::upgrade::protobuf::PackageCatalogue &msg,
+                platform::upgrade::PackageCatalogue *native)
     {
         native->clear();
         native->reserve(msg.packages().size());
-        for (const ::cc::platform::upgrade::protobuf::PackageInfo &package_info : msg.packages())
+        for (const platform::upgrade::protobuf::PackageInfo &package_info : msg.packages())
         {
             decode_shared(package_info, &native->emplace_back());
         }
@@ -135,14 +135,14 @@ namespace cc::protobuf
     //==========================================================================
     // Scan Progress
 
-    void encode(const ::upgrade::ScanProgress &native,
-                ::cc::platform::upgrade::protobuf::ScanProgress *msg)
+    void encode(const platform::upgrade::ScanProgress &native,
+                platform::upgrade::protobuf::ScanProgress *msg)
     {
         encode(native.source, msg->mutable_source());
     }
 
-    void decode(const ::cc::platform::upgrade::protobuf::ScanProgress &msg,
-                ::upgrade::ScanProgress *native)
+    void decode(const platform::upgrade::protobuf::ScanProgress &msg,
+                platform::upgrade::ScanProgress *native)
     {
         decode(msg.source(), &native->source);
     }
@@ -150,10 +150,10 @@ namespace cc::protobuf
     //==========================================================================
     // Upgrade Progress
 
-    void encode(const ::upgrade::UpgradeProgress &native,
-                ::cc::platform::upgrade::protobuf::UpgradeProgress *msg)
+    void encode(const platform::upgrade::UpgradeProgress &native,
+                platform::upgrade::protobuf::UpgradeProgress *msg)
     {
-        msg->set_state(encoded<::cc::platform::upgrade::protobuf::UpgradeState>(native.state));
+        msg->set_state(encoded<platform::upgrade::protobuf::UpgradeState>(native.state));
         msg->set_task_description(native.task_description);
         encode(native.task_progress, msg->mutable_task_progress());
         encode(native.total_progress, msg->mutable_total_progress());
@@ -163,8 +163,8 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const ::cc::platform::upgrade::protobuf::UpgradeProgress &msg,
-                ::upgrade::UpgradeProgress *native)
+    void decode(const platform::upgrade::protobuf::UpgradeProgress &msg,
+                platform::upgrade::UpgradeProgress *native)
     {
         decode(msg.state(), &native->state);
         native->task_description = msg.task_description();
@@ -179,30 +179,30 @@ namespace cc::protobuf
     //==========================================================================
     // Upgrade Progress: State
 
-    void encode(const ::upgrade::UpgradeProgress::State &native,
-                ::cc::platform::upgrade::protobuf::UpgradeState *msg)
+    void encode(const platform::upgrade::UpgradeProgress::State &native,
+                platform::upgrade::protobuf::UpgradeState *msg)
     {
-        *msg = static_cast<::cc::platform::upgrade::protobuf::UpgradeState>(native);
+        *msg = static_cast<platform::upgrade::protobuf::UpgradeState>(native);
     }
 
-    void decode(const ::cc::platform::upgrade::protobuf::UpgradeState &msg,
-                ::upgrade::UpgradeProgress::State *native)
+    void decode(const platform::upgrade::protobuf::UpgradeState &msg,
+                platform::upgrade::UpgradeProgress::State *native)
     {
-        *native = static_cast<::upgrade::UpgradeProgress::State>(msg);
+        *native = static_cast<platform::upgrade::UpgradeProgress::State>(msg);
     }
 
     //==========================================================================
     // Upgrade Progress: Fraction
 
-    void encode(const ::upgrade::UpgradeProgress::Fraction &native,
-                ::cc::platform::upgrade::protobuf::UpgradeProgress::ProgressFraction *msg)
+    void encode(const platform::upgrade::UpgradeProgress::Fraction &native,
+                platform::upgrade::protobuf::UpgradeProgress::ProgressFraction *msg)
     {
         msg->set_current(native.current);
         msg->set_total(native.total);
     }
 
-    void decode(const ::cc::platform::upgrade::protobuf::UpgradeProgress::ProgressFraction &msg,
-                ::upgrade::UpgradeProgress::Fraction *native)
+    void decode(const platform::upgrade::protobuf::UpgradeProgress::ProgressFraction &msg,
+                platform::upgrade::UpgradeProgress::Fraction *native)
     {
         native->current = msg.current();
         native->total = msg.total();

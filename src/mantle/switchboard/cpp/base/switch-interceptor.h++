@@ -16,7 +16,7 @@
 #include <string>
 #include <future>
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     //==========================================================================
     // Interceptor Phase
@@ -96,4 +96,4 @@ namespace switchboard
         ExceptionHandling on_error_;
         core::status::Level log_failure_level_;
     };
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

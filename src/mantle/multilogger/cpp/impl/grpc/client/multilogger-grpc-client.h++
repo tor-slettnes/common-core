@@ -12,15 +12,15 @@
 #include "types/create-shared.h++"
 #include "logging/sinks/sink.h++"
 
-namespace multilogger::grpc
+namespace cc::platform::multilogger::grpc
 {
     class ClientImpl
         : public API,
-          public core::grpc::ClientWrapper<cc::platform::multilogger::grpc::MultiLogger>,
+          public cc::grpc::ClientWrapper<MultiLogger>,
           public core::types::enable_create_shared_from_this<ClientImpl>
     {
         using This = ClientImpl;
-        using Super = core::grpc::ClientWrapper<cc::platform::multilogger::grpc::MultiLogger>;
+        using Super = cc::grpc::ClientWrapper<MultiLogger>;
 
     protected:
         template <class... Args>
@@ -54,9 +54,9 @@ namespace multilogger::grpc
 
     private:
         bool add_local_sink;
-        std::unique_ptr<::grpc::ClientWriter<::cc::platform::multilogger::protobuf::Loggable>> writer;
+        std::unique_ptr<::grpc::ClientWriter<protobuf::Loggable>> writer;
         std::unique_ptr<::grpc::ClientContext> writer_context;
         std::unique_ptr<::google::protobuf::Empty> writer_response;
-        core::grpc::Status writer_status;
+        cc::grpc::Status writer_status;
     };
-}  // namespace multilogger::grpc
+}  // namespace cc::platform::multilogger::grpc

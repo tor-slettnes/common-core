@@ -14,7 +14,7 @@
 #include <iomanip>
 #include <sstream>
 
-namespace core::messaging
+namespace cc::messaging
 {
     //==========================================================================
     // @class Endpoint
@@ -25,7 +25,7 @@ namespace core::messaging
         : messaging_flavor_(messaging_flavor),
           endpoint_type_(endpoint_type),
           channel_name_(channel_name),
-          settings_(SettingsStore::create_shared()),
+          settings_(core::SettingsStore::create_shared()),
           initialized_(false)
     {
     }
@@ -77,7 +77,7 @@ namespace core::messaging
     {
         std::vector<std::string> names;
         names.reserve(this->settings()->size());
-        for (const auto &[candidate_name, settings]: *this->settings())
+        for (const auto &[candidate_name, settings] : *this->settings())
         {
             if (candidate_name != DEFAULT_CHANNEL)
             {
@@ -88,7 +88,7 @@ namespace core::messaging
         return names;
     }
 
-    std::shared_ptr<SettingsStore> Endpoint::settings() const
+    std::shared_ptr<core::SettingsStore> Endpoint::settings() const
     {
         if (!this->settings_->loaded())
         {
@@ -109,8 +109,9 @@ namespace core::messaging
         return this->settings_;
     }
 
-    types::Value Endpoint::setting(const std::string &key,
-                                   const types::Value &fallback) const
+    core::types::Value Endpoint::setting(
+        const std::string &key,
+        const core::types::Value &fallback) const
     {
         if (auto opt_value = this->settings()->get(this->channel_name()).try_get(key))
         {
@@ -129,7 +130,7 @@ namespace core::messaging
     {
         if (!flavor.empty())
         {
-            return str::format("%,s-endpoints-%,s",
+            return core::str::format("%,s-endpoints-%,s",
                                this->messaging_flavor(),
                                flavor);
         }
@@ -148,4 +149,4 @@ namespace core::messaging
                << std::quoted(this->channel_name());
     }
 
-}  // namespace core::messaging
+}  // namespace cc::messaging

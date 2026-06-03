@@ -13,7 +13,7 @@
 
 #include <memory>
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     //==========================================================================
     // @class Dependency
@@ -72,4 +72,4 @@ namespace switchboard
         bool sufficient_;
     };
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

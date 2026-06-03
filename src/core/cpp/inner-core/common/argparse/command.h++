@@ -8,7 +8,7 @@
 #pragma once
 #include "client.h++"
 
-namespace core::argparse
+namespace cc::core::argparse
 {
     //==========================================================================
     /// Option parser for command-line utilities with subcommands
@@ -85,4 +85,4 @@ namespace core::argparse
         std::vector<CommandDescription> command_descriptions;
     };
 
-}  // namespace core::argparse
+}  // namespace cc::core::argparse

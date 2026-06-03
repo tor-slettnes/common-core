@@ -10,7 +10,7 @@
 #include "parsers/json/writer.h++"
 #include "logging/logging.h++"
 
-namespace avro
+namespace cc::avro
 {
     // --------------------------------------------------------------------------
     // SchemaWrapper
@@ -251,4 +251,4 @@ namespace avro
     {
     }
 
-}  // namespace avro
+}  // namespace cc::avro

@@ -10,7 +10,7 @@
 #include "nm-structs.h++"
 #include "types/bytevector.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     //==========================================================================
     /// Network Manager Connection Settings
@@ -22,10 +22,10 @@ namespace netconfig::dbus
 
     public:
         Connection(
-            core::dbus::ProxyContainer* container,
-            const core::dbus::ConnectionPtr& connection,
-            const core::dbus::ServiceName& servicename,
-            const core::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer* container,
+            const cc::dbus::ConnectionPtr& connection,
+            const cc::dbus::ServiceName& servicename,
+            const cc::dbus::ObjectPath& objectpath);
 
     public:
         const core::types::ByteVector ssid() const;
@@ -46,7 +46,7 @@ namespace netconfig::dbus
         void emit_change(core::signal::MappingAction action) override;
 
     public:
-        core::dbus::ObjectPath find_suitable_device();
+        cc::dbus::ObjectPath find_suitable_device();
         void replace(const ConnectionData& connection);
         void remove();
         void remove_duplicates();
@@ -56,4 +56,4 @@ namespace netconfig::dbus
         // Glib::VariantContainerBase secrets;
     };
 
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

@@ -17,7 +17,7 @@
 
 #define WEP_KEY_COUNT 4
 
-namespace netconfig
+namespace cc::platform::netconfig
 {
     define_log_scope("netconfig");
 
@@ -438,7 +438,7 @@ namespace netconfig
     extern const core::types::SymbolMap<NMActiveConnectionStateReason> ac_reason_map;
     extern const core::types::SymbolMap<NMConnectivityState> connectivity_state_map;
 
-}  // namespace netconfig
+}  // namespace cc::platform::netconfig
 
 std::ostream &operator<<(std::ostream &stream, NMState state);
 std::ostream &operator<<(std::ostream &stream, NMWepKeyType key_type);

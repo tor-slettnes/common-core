@@ -8,7 +8,7 @@
 #pragma once
 #include "platform/process.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     /// @brief Process invocation on Linux
     class WindowsProcessProvider : public ProcessProvider
@@ -24,4 +24,4 @@ namespace core::platform
         PID process_id() const override;
     };
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

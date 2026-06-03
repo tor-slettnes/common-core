@@ -11,10 +11,10 @@
 #include "grpc-signalclient.h++"
 #include "string/misc.h++"
 
-namespace switchboard::grpc
+namespace cc::platform::switchboard::grpc
 {
     class Proxy : public switchboard::Provider,
-                  public core::grpc::SignalClient<cc::platform::switchboard::grpc::Switchboard,
+                  public cc::grpc::SignalClient<cc::platform::switchboard::grpc::Switchboard,
                                                   cc::platform::switchboard::protobuf::Signal>,
                   public core::types::enable_create_shared<Proxy>
     {
@@ -87,4 +87,4 @@ namespace switchboard::grpc
     protected:
         core::dt::Duration ready_timeout;
     };
-};  // namespace switchboard::grpc
+};  // namespace cc::platform::switchboard::grpc

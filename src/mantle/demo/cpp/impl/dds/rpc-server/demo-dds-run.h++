@@ -10,7 +10,7 @@
 
 #include <memory>
 
-namespace demo::dds
+namespace cc::demo::dds
 {
     void run_dds_service(
         std::shared_ptr<demo::API> api_provider,

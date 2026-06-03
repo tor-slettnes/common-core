@@ -10,7 +10,7 @@
 #include "avro-schemabuilder.h++"
 #include "types/value.h++"
 
-namespace avro
+namespace cc::avro
 {
     class CompoundValue : public BaseValue
     {
@@ -42,4 +42,4 @@ namespace avro
         bool take_schema;
         avro_value_iface_t *iface;
     };
-}  // namespace avro
+}  // namespace cc::avro

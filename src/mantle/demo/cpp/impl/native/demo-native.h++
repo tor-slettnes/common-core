@@ -9,7 +9,7 @@
 #include "demo-provider.h++"
 #include "types/create-shared.h++"
 
-namespace demo
+namespace cc::demo
 {
     class NativeImpl : public API,
                        public core::types::enable_create_shared<NativeImpl>
@@ -26,4 +26,4 @@ namespace demo
         void start_ticking() override;
         void stop_ticking() override;
     };
-}  // namespace demo
+}  // namespace cc::demo

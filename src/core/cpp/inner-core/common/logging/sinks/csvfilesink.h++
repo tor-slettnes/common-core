@@ -18,7 +18,7 @@
 #include <fstream>
 #include <mutex>
 
-namespace core::logging
+namespace cc::core::logging
 {
     const std::string SETTING_COL_SEP = "column separator";
     const std::string DEFAULT_COL_SEP = ",";
@@ -68,4 +68,4 @@ namespace core::logging
             return CSVFileSink::create_shared(sink_id);
         });
 
-}  // namespace core::logging
+}  // namespace cc::core::logging

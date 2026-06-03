@@ -12,7 +12,7 @@
 #include "types/create-shared.h++"
 #include "types/valuemap.h++"
 
-namespace core::types
+namespace cc::core::types
 {
     class KeyValueMap : public std::map<Key, Value>,
                         public Streamable,
@@ -250,4 +250,4 @@ namespace core::types
         return kvmap;
     }
 
-}  // namespace core::types
+}  // namespace cc::core::types

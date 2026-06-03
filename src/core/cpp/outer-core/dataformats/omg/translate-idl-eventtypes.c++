@@ -9,7 +9,7 @@
 #include "translate-idl-inline.h++"
 #include "chrono/date-time.h++"
 
-namespace idl
+namespace cc::idl
 {
     //==========================================================================
     // Domain
@@ -148,4 +148,4 @@ namespace idl
         };
     }
 
-}  // namespace idl
+}  // namespace cc::idl

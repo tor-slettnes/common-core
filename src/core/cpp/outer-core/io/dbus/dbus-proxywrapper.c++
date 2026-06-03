@@ -10,7 +10,7 @@
 #include "glib-variant.h++"
 #include "glib-errors.h++"
 
-namespace core::dbus
+namespace cc::dbus
 {
     //==========================================================================
     // ProxyContainer
@@ -51,12 +51,12 @@ namespace core::dbus
 
     std::string ProxyWrapper::shortpath() const
     {
-        std::vector<std::string> parts = str::split(this->objectpath, "/");
+        std::vector<std::string> parts = core::str::split(this->objectpath, "/");
         if (parts.size() >= 2)
         {
-            return str::format(".../%s/%s",
-                               parts.at(parts.size() - 2),
-                               parts.at(parts.size() - 1));
+            return core::str::format(".../%s/%s",
+                                     parts.at(parts.size() - 2),
+                                     parts.at(parts.size() - 1));
         }
         else
         {
@@ -66,15 +66,15 @@ namespace core::dbus
 
     std::string ProxyWrapper::shortname() const
     {
-        return str::stem(this->interfacename, ".");
+        return core::str::stem(this->interfacename, ".");
     }
 
     std::string ProxyWrapper::identifier() const
     {
-        return str::format("%s.%s(%r)",
-                           str::stem(this->servicename, "."),
-                           str::stem(this->interfacename, "."),
-                           this->shortpath());
+        return core::str::format("%s.%s(%r)",
+                                 core::str::stem(this->servicename, "."),
+                                 core::str::stem(this->interfacename, "."),
+                                 this->shortpath());
     }
 
     void ProxyWrapper::on_ready(const Glib::RefPtr<Gio::AsyncResult>& result,
@@ -92,7 +92,7 @@ namespace core::dbus
             }
             catch (...)
             {
-                core::glib::log_exception(std::current_exception(), identifier);
+                cc::glib::log_exception(std::current_exception(), identifier);
             }
         }
     }
@@ -110,7 +110,7 @@ namespace core::dbus
             "PropertiesChanged",
             [=](const Glib::VariantContainerBase& parameters) {
                 this->on_properties_change(
-                    core::glib::variant_cast<Gio::DBus::Proxy::MapChangedProperties>(
+                    cc::glib::variant_cast<Gio::DBus::Proxy::MapChangedProperties>(
                         parameters, 0));
             });
 
@@ -152,9 +152,13 @@ namespace core::dbus
         }
         catch (...)
         {
-            core::glib::log_exception(
+            cc::glib::log_exception(
                 std::current_exception(),
-                str::format("%s.%s(%s)", this->identifier(), methodname, parameters));
+                core::str::format(
+                    "%s.%s(%s)",
+                    this->identifier(),
+                    methodname,
+                    parameters));
         }
     }
 
@@ -167,10 +171,10 @@ namespace core::dbus
         const std::string& methodname,
         const Glib::VariantContainerBase& parameters) const
     {
-        std::string preamble = str::format("%s.%s(%s)",
-                                           this->identifier(),
-                                           methodname,
-                                           parameters);
+        std::string preamble = core::str::format("%s.%s(%s)",
+                                                 this->identifier(),
+                                                 methodname,
+                                                 parameters);
         logf_trace(preamble);
         try
         {
@@ -178,7 +182,7 @@ namespace core::dbus
         }
         catch (const Glib::Error& e)
         {
-            throw core::glib::Error(e, preamble);
+            throw cc::glib::Error(e, preamble);
         }
     }
 
@@ -329,4 +333,4 @@ namespace core::dbus
             }
         }
     }
-}  // namespace core::dbus
+}  // namespace cc::dbus

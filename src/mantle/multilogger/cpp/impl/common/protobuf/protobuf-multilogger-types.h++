@@ -18,65 +18,83 @@ namespace cc::protobuf
     // Loggable
 
     void encode(const core::types::Loggable &native,
-                cc::platform::multilogger::protobuf::Loggable *proto) noexcept;
+                platform::multilogger::protobuf::Loggable *proto) noexcept;
 
     core::types::Loggable::ptr decode_loggable(
-        const cc::platform::multilogger::protobuf::Loggable &proto,
+        const platform::multilogger::protobuf::Loggable &proto,
         const std::string &default_host = {}) noexcept;
 
     //==========================================================================
     // Data
 
     void encode(const core::logging::Data &native,
-                cc::platform::multilogger::protobuf::Data *proto) noexcept;
+                platform::multilogger::protobuf::Data *proto) noexcept;
 
-    void decode(const cc::platform::multilogger::protobuf::Data &proto,
+    void decode(const platform::multilogger::protobuf::Data &proto,
                 core::logging::Data *native) noexcept;
 
     //==========================================================================
     // Message
 
     void encode(const core::logging::Message &native,
-                cc::platform::multilogger::protobuf::Message *proto) noexcept;
+                platform::multilogger::protobuf::Message *proto) noexcept;
 
-    void decode(const cc::platform::multilogger::protobuf::Message &proto,
+    void decode(const platform::multilogger::protobuf::Message &proto,
                 const std::string &default_host,
                 core::logging::Message *native) noexcept;
 
     //==========================================================================
     // SinkID
 
-    void encode(const multilogger::SinkID &native, cc::platform::multilogger::protobuf::SinkID *proto);
-    void decode(const cc::platform::multilogger::protobuf::SinkID &proto, multilogger::SinkID *native);
+    void encode(const platform::multilogger::SinkID &native,
+                platform::multilogger::protobuf::SinkID *proto);
+
+    void decode(const platform::multilogger::protobuf::SinkID &proto,
+                platform::multilogger::SinkID *native);
 
     //==========================================================================
     // SinkSpec
 
-    void encode(const multilogger::SinkSpec &native, cc::platform::multilogger::protobuf::SinkSpec *proto);
-    void decode(const cc::platform::multilogger::protobuf::SinkSpec &proto, multilogger::SinkSpec *native);
+    void encode(const platform::multilogger::SinkSpec &native,
+                platform::multilogger::protobuf::SinkSpec *proto);
+
+    void decode(const platform::multilogger::protobuf::SinkSpec &proto,
+                platform::multilogger::SinkSpec *native);
 
     //==========================================================================
-    // multilogger::SinkSpecs <-> cc::platform::multilogger::protobuf::SinkSpecs
+    // platform::multilogger::SinkSpecs <-> platform::multilogger::protobuf::SinkSpecs
 
-    void encode(const multilogger::SinkSpecs &native, cc::platform::multilogger::protobuf::SinkSpecs *proto);
-    void decode(const cc::platform::multilogger::protobuf::SinkSpecs &proto, multilogger::SinkSpecs *native);
+    void encode(const platform::multilogger::SinkSpecs &native,
+                platform::multilogger::protobuf::SinkSpecs *proto);
+
+    void decode(const platform::multilogger::protobuf::SinkSpecs &proto,
+                platform::multilogger::SinkSpecs *native);
 
     //==========================================================================
     // ColumnSpec
 
-    void encode(const core::logging::ColumnSpec &native, cc::platform::multilogger::protobuf::ColumnSpec *proto);
-    void decode(const cc::platform::multilogger::protobuf::ColumnSpec &proto, core::logging::ColumnSpec *native);
+    void encode(const core::logging::ColumnSpec &native,
+                platform::multilogger::protobuf::ColumnSpec *proto);
+
+    void decode(const platform::multilogger::protobuf::ColumnSpec &proto,
+                core::logging::ColumnSpec *native);
 
     //==========================================================================
     // ColumnType
 
-    void encode(const core::types::ValueType &native, cc::platform::multilogger::protobuf::ColumnType *proto);
-    void decode(const cc::platform::multilogger::protobuf::ColumnType &proto, core::types::ValueType *native);
+    void encode(const core::types::ValueType &native,
+                platform::multilogger::protobuf::ColumnType *proto);
+
+    void decode(const platform::multilogger::protobuf::ColumnType &proto,
+                core::types::ValueType *native);
 
     //==========================================================================
     // ListenerSpec
 
-    void encode(const multilogger::ListenerSpec &native, cc::platform::multilogger::protobuf::ListenerSpec *proto);
-    void decode(const cc::platform::multilogger::protobuf::ListenerSpec &proto, multilogger::ListenerSpec *native);
+    void encode(const platform::multilogger::ListenerSpec &native,
+                platform::multilogger::protobuf::ListenerSpec *proto);
+
+    void decode(const platform::multilogger::protobuf::ListenerSpec &proto,
+                platform::multilogger::ListenerSpec *native);
 
 }  // namespace cc::protobuf

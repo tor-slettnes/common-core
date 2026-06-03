@@ -13,7 +13,7 @@
 
 #include <set>
 
-namespace multilogger::native
+namespace cc::platform::multilogger::native
 {
     class QueueListener
         : public core::logging::Sink,
@@ -49,4 +49,4 @@ namespace multilogger::native
         std::set<std::string> hosts;
         std::set<std::string> applications;
     };
-}  // namespace multilogger::native
+}  // namespace cc::platform::multilogger::native

@@ -7,7 +7,7 @@
 
 #include "vfs-attribute-store.h++"
 
-namespace vfs::local
+namespace cc::platform::vfs::local
 {
     constexpr auto ATTRIBUTE_STORE = ".attributes";
     constexpr auto DIRECTORY_ENTRY = ".";
@@ -162,4 +162,4 @@ namespace vfs::local
             this->erase(extraneous_name);
         }
     }
-}  // namespace vfs::local
+}  // namespace cc::platform::vfs::local

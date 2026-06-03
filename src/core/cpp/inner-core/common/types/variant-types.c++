@@ -11,7 +11,7 @@
 #include "variant-tvlist.h++"
 #include "variant-kvmap.h++"
 
-namespace core::types
+namespace cc::core::types
 {
     const Tag nulltag;
     const NullValueType nullvalue;
@@ -224,4 +224,4 @@ namespace core::types
         return ss.str();
     }
 
-}  // namespace core::types
+}  // namespace cc::core::types

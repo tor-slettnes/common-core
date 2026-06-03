@@ -8,7 +8,7 @@
 #pragma once
 #include "parsers/common/basewriter.h++"
 
-namespace core::json
+namespace cc::core::json
 {
     class CustomWriter : public parsers::BaseWriter
     {
@@ -47,4 +47,4 @@ namespace core::json
                                        bool pretty,
                                        const std::string &indent);
     };
-}  // namespace core::json
+}  // namespace cc::core::json

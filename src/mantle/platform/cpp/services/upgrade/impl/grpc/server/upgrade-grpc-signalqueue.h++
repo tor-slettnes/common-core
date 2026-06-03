@@ -9,7 +9,7 @@
 #include "cc/platform/upgrade/protobuf/upgrade_types.pb.h"  // generated from `upgrade.proto`
 #include "grpc-signalqueue.h++"
 
-namespace upgrade::grpc
+namespace cc::platform::upgrade::grpc
 {
     //==========================================================================
     /// @class SignalQueue
@@ -22,15 +22,15 @@ namespace upgrade::grpc
     /// own protobuf Signal() message and then appends the result to this queue,
     /// from which they are then streamed back to the client.
     ///
-    /// See `core::grpc::SignalQueue<T>` for additional info.
+    /// See `cc::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<::cc::platform::upgrade::protobuf::Signal>
+    class SignalQueue : public cc::grpc::SignalQueue<protobuf::Signal>
     {
-        using Super = core::grpc::SignalQueue<::cc::platform::upgrade::protobuf::Signal>;
+        using Super = cc::grpc::SignalQueue<protobuf::Signal>;
 
     public:
         using Super::Super;
         void initialize() override;
         void deinitialize() override;
     };
-}  // namespace upgrade::grpc
+}  // namespace cc::platform::upgrade::grpc

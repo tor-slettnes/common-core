@@ -32,14 +32,14 @@ int main(int argc, char** argv)
     try
     {
         // Initialize paths, load settings, set up shutdown signal handlers
-        core::application::initialize_daemon(argc, argv, "demo");
+        cc::core::application::initialize_daemon(argc, argv, "demo");
 
-        demo::options = std::make_unique<demo::Options>();
-        demo::options->apply(argc, argv);
+        ::options = std::make_unique<cc::demo::Options>();
+        ::options->apply(argc, argv);
 
         // API provider. In this process we use the native/direct implementation.
-        auto api_provider = demo::NativeImpl::create_shared(
-            demo::options->identity);
+        auto api_provider = cc::demo::NativeImpl::create_shared(
+            ::options->identity);
 
         logf_debug("Initializing Demo API provider: %s", api_provider->implementation());
         api_provider->initialize();
@@ -47,34 +47,34 @@ int main(int argc, char** argv)
         std::list<std::thread> server_threads;
 
 #ifdef USE_GRPC
-        if (demo::options->enable_grpc)
+        if (::options->enable_grpc)
         {
             logf_debug("Spawning gRPC server");
-            server_threads.push_back(core::thread::supervised_thread(
-                demo::grpc::run_grpc_service,
+            server_threads.push_back(cc::core::thread::supervised_thread(
+                cc::demo::grpc::run_grpc_service,
                 api_provider,
-                demo::options->bind_address));
+                ::options->bind_address));
         }
 #endif
 
 #ifdef USE_DDS
-        if (demo::options->enable_dds)
+        if (::options->enable_dds)
         {
             logf_debug("Spawning DDS server");
-            server_threads.push_back(core::thread::supervised_thread(
-                demo::dds::run_dds_service,
+            server_threads.push_back(cc::core::thread::supervised_thread(
+                cc::demo::dds::run_dds_service,
                 api_provider,
-                demo::options->identity,
-                demo::options->domain_id));
+                ::options->identity,
+                ::options->domain_id));
         }
 #endif
 
 #ifdef USE_ZMQ
-        if (demo::options->enable_zmq)
+        if (::options->enable_zmq)
         {
             log_debug("Spawning ZMQ server");
-            server_threads.push_back(core::thread::supervised_thread(
-                demo::zmq::run_zmq_service,
+            server_threads.push_back(cc::core::thread::supervised_thread(
+                cc::demo::zmq::run_zmq_service,
                 api_provider,
                 ""));
         }

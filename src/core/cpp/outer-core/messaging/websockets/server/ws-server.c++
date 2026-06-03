@@ -7,7 +7,7 @@
 
 #include "ws-server.h++"
 
-namespace core::ws
+namespace cc::ws
 {
     Server::Server(const std::string &address,
                    const std::string &service_name)
@@ -59,4 +59,4 @@ namespace core::ws
         this->ws_server_.start_accept();
         this->ws_server_.run();
     }
-}  // namespace core::ws
+}  // namespace cc::ws

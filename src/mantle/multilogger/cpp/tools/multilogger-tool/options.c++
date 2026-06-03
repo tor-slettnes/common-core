@@ -13,7 +13,7 @@
 #include "logging/sinks/factory.h++"
 #include "string/format.h++"
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
     Options::Options()
         : Super(),
@@ -75,10 +75,10 @@ namespace multilogger
         switch (this->implementation)
         {
         case Implementation::GRPC:
-            return multilogger::grpc::ClientImpl::create_shared(this->host);
+            return grpc::ClientImpl::create_shared(this->host);
 
         case Implementation::ZMQ:
-            return multilogger::zmq::ClientImpl::create_shared(this->host);
+            return zmq::ClientImpl::create_shared(this->host);
 
         default:
             return {};
@@ -94,8 +94,8 @@ namespace multilogger
         this->open_stream_sink(min_level);
 
         using namespace std::placeholders;
-        multilogger::signal_log_item.connect(this->signal_handle,
-                                             std::bind(&Options::on_log_item, this, _1));
+        signal_log_item.connect(this->signal_handle,
+                                std::bind(&Options::on_log_item, this, _1));
 
         this->provider->start_listening({
             .min_level = min_level,
@@ -109,7 +109,7 @@ namespace multilogger
         this->provider->stop_listening();
         this->close_stream_sink();
 
-        multilogger::signal_log_item.disconnect(this->signal_handle);
+        signal_log_item.disconnect(this->signal_handle);
     }
 
     void Options::open_stream_sink(core::status::Level threshold)
@@ -139,5 +139,6 @@ namespace multilogger
         }
     }
 
-    std::unique_ptr<Options> options;
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger
+
+std::unique_ptr<cc::platform::multilogger::Options> options;

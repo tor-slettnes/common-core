@@ -8,7 +8,7 @@
 #include "multilogger-types.h++"
 #include "types/symbolmap.h++"
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
     std::ostream &operator<<(std::ostream &stream, const SinkSpec &spec)
     {
@@ -69,4 +69,4 @@ namespace multilogger
         return stream;
     }
 
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger

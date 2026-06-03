@@ -9,23 +9,25 @@
 #include "settings/settings.h++"
 #include "multilogger-grpc-clientsink.h++"
 
-Options::Options()
-    : Super()
+namespace cc::platform
 {
-    this->describe("Common Core platform server.");
-}
+    Options::Options()
+        : Super()
+    {
+        this->describe("Common Core platform server.");
+    }
 
-void Options::add_options()
-{
-    Super::add_options();
+    void Options::add_options()
+    {
+        Super::add_options();
 
-    this->add_opt(
-        {"-h", "--host"},
-        "ADDRESS",
-        "Server address in the form [HOST][:PORT].",
-        &this->host,
-        core::settings->get("host").as_string());
+        this->add_opt(
+            {"-h", "--host"},
+            "ADDRESS",
+            "Server address in the form [HOST][:PORT].",
+            &this->host,
+            core::settings->get("host").as_string());
+    }
+}  // namespace cc::platform
 
-}
-
-std::unique_ptr<Options> options;
+std::unique_ptr<cc::platform::Options> options;

@@ -10,10 +10,10 @@
 #include "grpc-signalclient.h++"
 #include "types/create-shared.h++"
 
-namespace upgrade::grpc
+namespace cc::platform::upgrade::grpc
 {
-    using ClientBaseImpl = core::grpc::SignalClient<::cc::platform::upgrade::grpc::Upgrade,
-                                                    ::cc::platform::upgrade::protobuf::Signal>;
+    using ClientBaseImpl = cc::grpc::SignalClient<platform::upgrade::grpc::Upgrade,
+                                                    platform::upgrade::protobuf::Signal>;
 
     class Client : public ClientBaseImpl,
                    public core::types::enable_create_shared<Client>
@@ -27,9 +27,9 @@ namespace upgrade::grpc
         void initialize() override;
 
     private:
-        static void on_scan_progress(const ::cc::platform::upgrade::protobuf::Signal &signal);
-        static void on_upgrade_available(const ::cc::platform::upgrade::protobuf::Signal &signal);
-        static void on_upgrade_pending(const ::cc::platform::upgrade::protobuf::Signal &signal);
-        static void on_upgrade_progress(const ::cc::platform::upgrade::protobuf::Signal &signal);
+        static void on_scan_progress(const platform::upgrade::protobuf::Signal &signal);
+        static void on_upgrade_available(const platform::upgrade::protobuf::Signal &signal);
+        static void on_upgrade_pending(const platform::upgrade::protobuf::Signal &signal);
+        static void on_upgrade_progress(const platform::upgrade::protobuf::Signal &signal);
     };
-}  // namespace upgrade::grpc
+}  // namespace cc::platform::upgrade::grpc

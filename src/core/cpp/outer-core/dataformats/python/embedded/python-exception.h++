@@ -10,7 +10,7 @@
 #include "status/exception.h++"
 #include "types/value.h++"
 
-namespace core::python
+namespace cc::python
 {
     class Exception : public core::exception::Exception<std::runtime_error>
     {
@@ -21,8 +21,8 @@ namespace core::python
         // Exception(PyObject *exc, bool borrowed = false);
         Exception(const std::string &text,
                   const std::string &symbol = {},
-                  const types::KeyValueMap &attributes = {});
+                  const core::types::KeyValueMap &attributes = {});
         std::string text() const noexcept override;
-        types::ValueList args() const noexcept;
+        core::types::ValueList args() const noexcept;
     };
-}  // namespace core::python
+}  // namespace cc::python

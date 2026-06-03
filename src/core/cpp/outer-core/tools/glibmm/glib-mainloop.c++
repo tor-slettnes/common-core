@@ -12,7 +12,7 @@
 #include <glibmm/main.h>
 #include <functional>
 
-namespace core::glib
+namespace cc::glib
 {
     void mainloop()
     {
@@ -26,4 +26,4 @@ namespace core::glib
 
         core::platform::signal_shutdown.disconnect(signal_handle);
     }
-}  // namespace core::glib
+}  // namespace cc::glib

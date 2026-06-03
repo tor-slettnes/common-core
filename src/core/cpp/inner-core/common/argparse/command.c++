@@ -8,7 +8,7 @@
 #include "command.h++"
 #include "status/exceptions.h++"
 
-namespace core::argparse
+namespace cc::core::argparse
 {
     //==========================================================================
     // CommandOptions methods
@@ -264,4 +264,4 @@ namespace core::argparse
         return "[" + core::str::join(alternatives, "|") + "]";
     }
 
-}  // namespace core::argparse
+}  // namespace cc::core::argparse

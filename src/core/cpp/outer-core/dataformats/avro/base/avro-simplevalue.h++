@@ -11,7 +11,7 @@
 #include "types/bytevector.h++"
 #include "types/value.h++"
 
-namespace avro
+namespace cc::avro
 {
     class SimpleValue : public BaseValue
     {

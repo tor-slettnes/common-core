@@ -7,8 +7,8 @@
 
 #include "reader.h++"
 
-namespace core::json
+namespace cc::core::json
 {
     Reader reader;
     FastReader fast_reader;
-}  // namespace core::json
+}  // namespace cc::core::json

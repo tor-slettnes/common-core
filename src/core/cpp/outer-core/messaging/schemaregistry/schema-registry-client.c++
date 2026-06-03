@@ -10,7 +10,7 @@
 #include "parsers/json/reader.h++"
 #include "parsers/json/writer.h++"
 
-namespace core::sr
+namespace cc::sr
 {
     SchemaRegistryClient::SchemaRegistryClient(
         const std::string &registry_url,
@@ -115,4 +115,4 @@ namespace core::sr
         }
     }
 
-}  // namespace core::sr
+}  // namespace cc::sr

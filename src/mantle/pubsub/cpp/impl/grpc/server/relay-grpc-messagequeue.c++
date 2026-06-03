@@ -9,7 +9,7 @@
 #include "relay-types.h++"
 #include "protobuf-variant-types.h++"
 
-namespace pubsub::grpc
+namespace cc::platform::pubsub::grpc
 {
     MessageQueue::MessageQueue(
         const pubsub::TopicSet &topics,
@@ -50,4 +50,4 @@ namespace pubsub::grpc
             this->put(std::move(msg));
         }
     }
-}  // namespace pubsub::grpc
+}  // namespace cc::platform::pubsub::grpc

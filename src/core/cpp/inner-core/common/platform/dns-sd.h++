@@ -9,7 +9,7 @@
 #include "provider.h++"
 #include "settings/settingsstore.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     /// @brief Abstract provider for service discovery related functions
     class ServiceDiscoveryProvider : public Provider
@@ -41,4 +41,4 @@ namespace core::platform
     };
 
     extern ProviderProxy<ServiceDiscoveryProvider> dns_sd;
-}  // namespace core::platform
+}  // namespace cc::core::platform

@@ -7,8 +7,8 @@
 
 #include "timezone.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     ProviderProxy<TimeZoneProvider> timezone("timezone");
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

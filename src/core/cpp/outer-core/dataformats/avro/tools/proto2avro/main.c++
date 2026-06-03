@@ -14,13 +14,13 @@
 int main (int argc, char **argv)
 {
     // Initialize paths, load settings, set up shutdown signal handlers
-    core::application::initialize(argc, argv);
+    cc::core::application::initialize(argc, argv);
 
-    auto options = std::make_unique<core::argparse::CommonOptions>();
+    auto options = std::make_unique<cc::core::argparse::CommonOptions>();
     options->apply(argc, argv);
 
     const google::protobuf::Descriptor *desc = cc::protobuf::status::Error::GetDescriptor();
-    std::cout << avro::schema_from_proto(desc)
+    std::cout << cc::avro::schema_from_proto(desc)
               << std::endl;
     return 0;
 }

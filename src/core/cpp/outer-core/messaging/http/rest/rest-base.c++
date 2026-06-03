@@ -8,7 +8,7 @@
 #include "rest-base.h++"
 #include "string/convert.h++"
 
-namespace core::http
+namespace cc::http
 {
     std::string RESTBase::real_url(const std::string &partial_url,
                                    const std::string &url_option,
@@ -82,7 +82,7 @@ namespace core::http
             *username = match.str(2);
             *password = match.str(3);
             *host = match.str(4);
-            *port = str::convert_to<uint>(match.str(5), 0);
+            *port = core::str::convert_to<uint>(match.str(5), 0);
             *path = match.str(6);
             return true;
         }
@@ -128,4 +128,4 @@ namespace core::http
         return ss.str();
     }
 
-}  // namespace core::http
+}  // namespace cc::http

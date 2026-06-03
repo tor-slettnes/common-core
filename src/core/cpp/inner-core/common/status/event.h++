@@ -9,7 +9,7 @@
 #include "level.h++"
 #include "types/loggable.h++"
 
-namespace core::status
+namespace cc::core::status
 {
     //==========================================================================
     // Symbols provided here.
@@ -73,4 +73,4 @@ namespace core::status
         Level level_ = Level::NONE;
         std::string origin_;
     };
-}  // namespace core::status
+}  // namespace cc::core::status

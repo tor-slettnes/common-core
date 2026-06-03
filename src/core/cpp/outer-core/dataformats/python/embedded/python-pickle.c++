@@ -8,19 +8,19 @@
 #include "python-pickle.h++"
 #include "python-runtime.h++"
 
-namespace core::python
+namespace cc::python
 {
-    ContainerObject unpickle(const types::ByteVector &bytes)
+    ContainerObject unpickle(const core::types::ByteVector &bytes)
     {
-        return core::python::runtime->call(
+        return cc::python::runtime->call(
             "pickle",
             "loads",
             SimpleObject::Vector({SimpleObject::pybytes_from_bytes(bytes)}));
     }
 
-    types::ByteVector pickle(const SimpleObject &object)
+    core::types::ByteVector pickle(const SimpleObject &object)
     {
-        ContainerObject result = core::python::runtime->call(
+        ContainerObject result = cc::python::runtime->call(
             "pickle",
             "dumps",
             SimpleObject::Vector({object}));
@@ -36,4 +36,4 @@ namespace core::python
     }
 
     // Pickler pickler;
-};  // namespace core::python
+};  // namespace cc::python

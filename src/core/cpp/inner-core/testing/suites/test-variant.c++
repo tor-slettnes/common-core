@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 
-namespace core::types
+namespace cc::core::types
 {
     class DerivedValue : public Value
     {
@@ -205,4 +205,4 @@ namespace core::types
     //     EXPECT_EQ(wide_result.front(), wide_result.back());
     // }
 
-}  // namespace core::types
+}  // namespace cc::core::types

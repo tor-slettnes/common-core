@@ -12,7 +12,7 @@
 #include "logging/logging.h++"
 #include "platform/symbols.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     template <class ProtoT>
     class ProtoBufSignalWriter : public cc::protobuf::SignalForwarder<ProtoT>,
@@ -42,4 +42,4 @@ namespace core::zmq
         }
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

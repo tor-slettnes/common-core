@@ -11,7 +11,7 @@
 #include "protobuf-demo-types.h++"
 #include "platform/symbols.h++"
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
     void SignalWriter::initialize()
     {
@@ -63,4 +63,4 @@ namespace demo::zmq
         Super::deinitialize();
     }
 
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

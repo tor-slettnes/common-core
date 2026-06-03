@@ -11,7 +11,7 @@
 #include "parsers/json/writer.h++"
 #include "status/exceptions.h++"
 
-namespace core::http
+namespace cc::http
 {
     static constexpr auto SETTING_VERIFY_CERT = "verify certificate";
 
@@ -27,9 +27,9 @@ namespace core::http
     {
     }
 
-    types::Value RESTClient::get_json(
+    core::types::Value RESTClient::get_json(
         const std::string &path,
-        const types::TaggedValueList &query,
+        const core::types::TaggedValueList &query,
         bool fail_on_error,
         uint max_attempts,
         const core::dt::Duration &retry_interval,
@@ -53,7 +53,7 @@ namespace core::http
                           response_code);    // response_code
                 done = true;
             }
-            catch (const exception::FailedPrecondition &e)
+            catch (const core::exception::FailedPrecondition &e)
             {
                 logf_info("HTTP request failed %d times, %d attempts remaining: %s: %s",
                           attempt,
@@ -74,24 +74,24 @@ namespace core::http
         }
 
         this->check_content_type(location, content_type, this->content_type);
-        return json::fast_reader.read_stream(response_stream);
+        return core::json::fast_reader.read_stream(response_stream);
     }
 
-    types::Value RESTClient::get_json(
+    core::types::Value RESTClient::get_json(
         const std::string &path,
-        const types::TaggedValueList &query,
+        const core::types::TaggedValueList &query,
         bool fail_on_error,
         ResponseCode *response_code) const
     {
         std::string location = join_path_query(path, query);
-        return json::fast_reader.read_stream(
+        return core::json::fast_reader.read_stream(
             this->get(location, this->content_type, fail_on_error, response_code));
     }
 
-    types::Value RESTClient::put_json(
+    core::types::Value RESTClient::put_json(
         const std::string &path,
-        const types::TaggedValueList &query,
-        const types::KeyValueMap &data,
+        const core::types::TaggedValueList &query,
+        const core::types::KeyValueMap &data,
         bool fail_on_error,
         ResponseCode *response_code) const
     {
@@ -99,16 +99,16 @@ namespace core::http
         return this->put_json(location, data, fail_on_error, response_code);
     }
 
-    types::Value RESTClient::put_json(
+    core::types::Value RESTClient::put_json(
         const std::string &path,
-        const types::KeyValueMap &data,
+        const core::types::KeyValueMap &data,
         bool fail_on_error,
         ResponseCode *response_code) const
     {
         std::stringstream jsondata;
         std::string received_content_type;
-        json::fast_writer.write_stream(jsondata, data);
-        return json::fast_reader.read_stream(
+        core::json::fast_writer.write_stream(jsondata, data);
+        return core::json::fast_reader.read_stream(
             this->put(
                 path,                // location
                 this->content_type,  // content_type
@@ -119,13 +119,13 @@ namespace core::http
                 response_code));     // response_code
     }
 
-    types::Value RESTClient::post_json(
+    core::types::Value RESTClient::post_json(
         const std::string &path,
         const std::string &json,
         bool fail_on_error,
         ResponseCode *response_code) const
     {
-        return json::fast_reader.read_stream(
+        return core::json::fast_reader.read_stream(
             this->post(
                 path,                // location
                 this->content_type,  // content_type
@@ -135,27 +135,27 @@ namespace core::http
                 response_code));     // response_code
     }
 
-    types::Value RESTClient::post_json(
+    core::types::Value RESTClient::post_json(
         const std::string &path,
-        const types::Value &data,
+        const core::types::Value &data,
         bool fail_on_error,
         ResponseCode *response_code) const
     {
         std::stringstream request;
-        json::fast_writer.write_stream(request, data);
+        core::json::fast_writer.write_stream(request, data);
 
         return this->post_json(path, request.str(), fail_on_error, response_code);
     }
 
-    types::Value RESTClient::del_json(
+    core::types::Value RESTClient::del_json(
         const std::string &path,
-        const types::TaggedValueList &query,
+        const core::types::TaggedValueList &query,
         bool fail_on_error,
         ResponseCode *response_code) const
     {
         std::string location = join_path_query(path, query);
-        return json::fast_reader.read_stream(
+        return core::json::fast_reader.read_stream(
             this->del(location, this->content_type, fail_on_error, response_code));
     }
 
-}  // namespace core::http
+}  // namespace cc::http

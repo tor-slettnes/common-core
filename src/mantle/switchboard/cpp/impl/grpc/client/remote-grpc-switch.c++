@@ -13,7 +13,7 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
-namespace switchboard::grpc
+namespace cc::platform::switchboard::grpc
 {
 
     //==========================================================================
@@ -38,7 +38,7 @@ namespace switchboard::grpc
     {
         assertf(dependency, "Cannot add empty dependency reference");
 
-        ::cc::platform::switchboard::protobuf::AddDependencyRequest req;
+        platform::switchboard::protobuf::AddDependencyRequest req;
         req.set_switch_name(this->name());
         req.set_predecessor_name(dependency->predecessor_name());
         cc::protobuf::encode(dependency, req.mutable_dependency());
@@ -51,7 +51,7 @@ namespace switchboard::grpc
         SwitchName predecessor_name,
         bool reevaluate)
     {
-        ::cc::platform::switchboard::protobuf::RemoveDependencyRequest req;
+        platform::switchboard::protobuf::RemoveDependencyRequest req;
         req.set_switch_name(this->name());
         req.set_predecessor_name(predecessor_name);
         req.set_reevaluate(reevaluate);
@@ -89,10 +89,10 @@ namespace switchboard::grpc
         bool replace_interceptors,
         bool update_state)
     {
-        ::cc::platform::switchboard::protobuf::SetSpecificationRequest req;
+        platform::switchboard::protobuf::SetSpecificationRequest req;
         req.set_switch_name(this->name());
 
-        ::cc::platform::switchboard::protobuf::Specification *spec = req.mutable_spec();
+        platform::switchboard::protobuf::Specification *spec = req.mutable_spec();
         if (primary)
         {
             spec->set_is_primary(primary.value());
@@ -129,10 +129,10 @@ namespace switchboard::grpc
                    error,
                    attributes);
 
-        ::cc::platform::switchboard::protobuf::SetTargetRequest req;
+        platform::switchboard::protobuf::SetTargetRequest req;
         req.set_switch_name(this->name());
         req.set_target_state(
-            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::State>(target_state));
+            cc::protobuf::encoded<platform::switchboard::protobuf::State>(target_state));
 
         if (error)
         {
@@ -142,21 +142,21 @@ namespace switchboard::grpc
         req.set_clear_existing(clear_existing);
 
         req.set_invoke_interceptors(
-            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::InvocationStyle>(
+            cc::protobuf::encoded<platform::switchboard::protobuf::InvocationStyle>(
                 invoke_interceptors));
 
         req.set_cascade_descendants(
-            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::CascadeStyle>(
+            cc::protobuf::encoded<platform::switchboard::protobuf::CascadeStyle>(
                 cascade_descendants));
 
         req.set_reenter(reenter);
 
         req.set_on_cancel(
-            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::ExceptionHandling>(
+            cc::protobuf::encoded<platform::switchboard::protobuf::ExceptionHandling>(
                 on_cancel));
 
         req.set_on_error(
-            cc::protobuf::encoded<::cc::platform::switchboard::protobuf::ExceptionHandling>(
+            cc::protobuf::encoded<platform::switchboard::protobuf::ExceptionHandling>(
                 on_error));
         return this->proxy()->call_check(&Proxy::Stub::SetTarget, req).updated();
     }
@@ -164,7 +164,7 @@ namespace switchboard::grpc
     core::types::KeyValueMap RemoteSwitch::get_attributes(
         bool inherit) const
     {
-        ::cc::platform::switchboard::protobuf::GetAttributesRequest req;
+        platform::switchboard::protobuf::GetAttributesRequest req;
         req.set_switch_name(this->name());
         req.set_inherit(inherit);
 
@@ -176,11 +176,11 @@ namespace switchboard::grpc
         const core::types::KeyValueMap &attributes,
         bool clear_existing)
     {
-        ::cc::platform::switchboard::protobuf::SetAttributesRequest req;
+        platform::switchboard::protobuf::SetAttributesRequest req;
         req.set_switch_name(this->name());
         cc::protobuf::encode(attributes, req.mutable_attributes());
         req.set_clear_existing(clear_existing);
         return this->proxy()->call_check(&Proxy::Stub::SetAttributes, req).updated();
     }
 
-}  // namespace switchboard::grpc
+}  // namespace cc::platform::switchboard::grpc

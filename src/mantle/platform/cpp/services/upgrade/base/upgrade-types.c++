@@ -7,7 +7,7 @@
 
 #include "upgrade-types.h++"
 
-namespace upgrade
+namespace cc::platform::upgrade
 {
     //==========================================================================
     // PackageSource
@@ -31,7 +31,6 @@ namespace upgrade
     {
         return !this->operator==(other);
     }
-
 
     bool PackageSource::empty() const noexcept
     {
@@ -238,18 +237,19 @@ namespace upgrade
         {STATE_FAILED, "FAILED"},
         {STATE_FINALIZED, "FINALIZED"},
     };
-}  // namespace upgrade
+}  // namespace cc::platform::upgrade
 
 namespace std
 {
-    std::ostream &operator<<(std::ostream &stream,
-                             const upgrade::Location &location)
+    std::ostream &operator<<(
+        std::ostream &stream,
+        const cc::platform::upgrade::Location &location)
     {
-        if (auto *vpath = std::get_if<vfs::Path>(&location))
+        if (auto *vpath = std::get_if<cc::platform::vfs::Path>(&location))
         {
             stream << "{vfs_path=" << *vpath << "}";
         }
-        else if (auto *url = std::get_if<upgrade::URL>(&location))
+        else if (auto *url = std::get_if<cc::platform::upgrade::URL>(&location))
         {
             stream << "{url=" << *url << "}";
         }

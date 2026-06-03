@@ -8,8 +8,8 @@
 #pragma once
 #include "python-containerobject.h++"
 
-namespace core::python
+namespace cc::python
 {
-    ContainerObject unpickle(const types::ByteVector &bytes);
-    types::ByteVector pickle(const SimpleObject &object);
-};  // namespace core::python
+    ContainerObject unpickle(const core::types::ByteVector &bytes);
+    core::types::ByteVector pickle(const SimpleObject &object);
+};  // namespace cc::python

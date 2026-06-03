@@ -9,7 +9,7 @@
 #include "sysconfig-host.h++"
 #include "sysconfig-grpc-client.h++"
 
-namespace sysconfig::grpc
+namespace cc::platform::sysconfig::grpc
 {
     class HostConfigProvider : public HostConfigInterface
     {
@@ -28,4 +28,4 @@ namespace sysconfig::grpc
     private:
         std::shared_ptr<Client> client;
     };
-}  // namespace sysconfig::grpc
+}  // namespace cc::platform::sysconfig::grpc

@@ -10,7 +10,7 @@
 #include "switch.h++"
 #include "types/create-shared.h++"
 
-namespace switchboard::grpc
+namespace cc::platform::switchboard::grpc
 {
     //==========================================================================
     /// @class RemoteSwitch
@@ -23,7 +23,7 @@ namespace switchboard::grpc
     class RemoteSwitch : public Switch,
                          public core::types::enable_create_shared<RemoteSwitch>
     {
-        // using Client = core::grpc::ClientWrapper<cc::platform::switchboard::grpc::Switchboard>;
+        // using Client = cc::grpc::ClientWrapper<cc::platform::switchboard::grpc::Switchboard>;
         // friend class Proxy;
 
     protected:
@@ -81,4 +81,4 @@ namespace switchboard::grpc
             bool clear_existing) override;
     };
 
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

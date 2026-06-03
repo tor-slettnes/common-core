@@ -12,7 +12,7 @@
 #include "sysconfig-grpc-product.h++"
 #include "sysconfig-grpc-process.h++"
 
-namespace sysconfig::grpc
+namespace cc::platform::sysconfig::grpc
 {
     void register_providers(const std::string &target_host,
                             bool wait_for_ready,
@@ -40,4 +40,4 @@ namespace sysconfig::grpc
         timezone.unregisterProvider<TimeZoneProvider>();
         time.unregisterProvider<TimeConfigProvider>();
     }
-}  // namespace sysconfig::grpc
+}  // namespace cc::platform::sysconfig::grpc

@@ -8,7 +8,7 @@
 #include "relay-publisher.h++"
 #include "settings/settings.h++"
 
-namespace pubsub
+namespace cc::platform::pubsub
 {
     constexpr auto SETTING_QUEUE_SIZE = "publish queue size";
     constexpr auto DEFAULT_QUEUE_SIZE = 4096;
@@ -63,4 +63,4 @@ namespace pubsub
         }
     }
 
-}  // namespace pubsub
+}  // namespace cc::platform::pubsub

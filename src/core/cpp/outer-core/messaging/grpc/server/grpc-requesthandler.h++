@@ -9,7 +9,7 @@
 #include "grpc-base.h++"
 #include "protobuf-standard-types.h++"
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class RequestHandlerBase
@@ -85,7 +85,7 @@ namespace core::grpc
     ///      int main (int argc, char **argv)
     ///      {
     ///        ...
-    ///        core::grpc::ServerBuilder builder;
+    ///        cc::grpc::ServerBuilder builder;
     ///        builder.add_service(std::make_shared<MyRequestHandler>());
     ///        ...
     ///        auto server = builder.BuildAndStart();
@@ -149,4 +149,4 @@ namespace core::grpc
         }
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

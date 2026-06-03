@@ -13,7 +13,7 @@
 #include "cc/platform/multilogger/grpc/multilogger_service.grpc.pb.h"
 #include "cc/protobuf/status/status.pb.h"
 
-namespace multilogger::grpc
+namespace cc::platform::multilogger::grpc
 {
     //--------------------------------------------------------------------------
     // ClientListener
@@ -22,7 +22,7 @@ namespace multilogger::grpc
                            public core::types::enable_create_shared<ClientListener>
     {
     protected:
-        ClientListener(const std::unique_ptr<::cc::platform::multilogger::grpc::MultiLogger::Stub> &stub,
+        ClientListener(const std::unique_ptr<MultiLogger::Stub> &stub,
                        const ListenerSpec& request);
 
     public:
@@ -37,6 +37,6 @@ namespace multilogger::grpc
 
     private:
         ::grpc::ClientContext context_;
-        std::unique_ptr<::grpc::ClientReader<::cc::platform::multilogger::protobuf::Loggable>> reader_;
+        std::unique_ptr<::grpc::ClientReader<protobuf::Loggable>> reader_;
     };
-}  // namespace multilogger::grpc
+}  // namespace cc::platform::multilogger::grpc

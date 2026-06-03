@@ -8,7 +8,7 @@
 #include "builder.h++"
 #include "buildinfo.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     MessageBuilder::MessageBuilder(Dispatcher *dispatcher,
                                    status::Level level,
@@ -53,4 +53,4 @@ namespace core::logging
             this->dispatcher_->submit(this->shared_from_this());
         }
     }
-}  // namespace core::logging
+}  // namespace cc::core::logging

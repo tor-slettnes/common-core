@@ -9,7 +9,7 @@
 #include "sink.h++"
 #include "status/level.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     enum class DefaultOption
     {
@@ -89,4 +89,4 @@ namespace core::logging
 
     extern SinkRegistry sink_registry;
 
-}  // namespace core::logging
+}  // namespace cc::core::logging

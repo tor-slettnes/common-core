@@ -12,7 +12,7 @@
 
 #include "types/create-shared.h++"
 
-namespace demo::dds
+namespace cc::demo::dds
 {
     //==========================================================================
     // @brief Process requests from DemoService clients
@@ -36,4 +36,4 @@ namespace demo::dds
     private:
         std::shared_ptr<API> provider;
     };
-}  // namespace demo::dds
+}  // namespace cc::demo::dds

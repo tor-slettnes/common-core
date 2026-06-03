@@ -13,7 +13,7 @@
 #include <dds/pub/ddspub.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
-namespace core::dds
+namespace cc::dds
 {
     //==========================================================================
     // @class PubSubChannnel
@@ -109,4 +109,4 @@ namespace core::dds
         }
     };
 
-}  // namespace core::dds
+}  // namespace cc::dds

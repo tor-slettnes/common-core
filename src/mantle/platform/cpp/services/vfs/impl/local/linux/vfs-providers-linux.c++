@@ -8,7 +8,7 @@
 #include "vfs-providers-local.h++"
 #include "vfs-linux-provider.h++"
 
-namespace vfs::local
+namespace cc::platform::vfs::local
 {
     void register_providers()
     {
@@ -20,4 +20,4 @@ namespace vfs::local
         vfs.unregisterProvider<LinuxProvider>();
     }
 
-}  // namespace vfs::local
+}  // namespace cc::platform::vfs::local

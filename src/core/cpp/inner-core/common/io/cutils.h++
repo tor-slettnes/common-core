@@ -9,7 +9,7 @@
 #include <type_traits>
 #include <system_error>
 
-namespace core::io
+namespace cc::core::io
 {
     template <class T, std::enable_if_t<std::is_integral_v<T>, bool> = true>
     T checkstatus(T status, const std::string &context = {})
@@ -31,4 +31,4 @@ namespace core::io
         return pointer;
     }
 
-} // namespace core::io
+} // namespace cc::core::io

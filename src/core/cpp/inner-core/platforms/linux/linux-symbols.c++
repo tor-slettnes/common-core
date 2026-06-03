@@ -10,7 +10,7 @@
 
 #include <uuid.h>
 
-namespace core::platform
+namespace cc::core::platform
 {
     LinuxSymbolsProvider::LinuxSymbolsProvider(const std::string &name)
         : PosixSymbolsProvider(name)
@@ -39,4 +39,4 @@ namespace core::platform
         }
     }
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

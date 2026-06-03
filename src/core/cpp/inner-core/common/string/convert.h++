@@ -18,7 +18,7 @@
 
 using namespace std::literals::string_literals;  // ""s
 
-namespace core::str
+namespace cc::core::str
 {
     // std::string type_description(const std::type_info &ti);
     void checkstream(const std::istream &ss,
@@ -292,4 +292,4 @@ namespace core::str
         }
     }
 
-}  // namespace core::str
+}  // namespace cc::core::str

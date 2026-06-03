@@ -10,7 +10,7 @@
 #include "protobuf-inline.h++"
 #include "chrono/date-time.h++"
 
-namespace demo
+namespace cc::demo
 {
     DemoTest::DemoTest(std::shared_ptr<demo::API> demo_provider)
         : demo_provider(demo_provider),
@@ -103,4 +103,4 @@ namespace demo
         EXPECT_EQ(td, decoded_td);
     }
 
-}  // namespace demo
+}  // namespace cc::demo

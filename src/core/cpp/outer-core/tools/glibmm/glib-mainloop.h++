@@ -5,7 +5,7 @@
 /// @author Tor Slettnes
 //==============================================================================
 
-namespace core::glib
+namespace cc::glib
 {
     void mainloop();
-}  // namespace core::glib
+}  // namespace cc::glib

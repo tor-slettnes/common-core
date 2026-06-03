@@ -14,7 +14,7 @@
 
 #pragma comment(lib, "advapi32.lib")
 
-namespace core::platform
+namespace cc::core::platform
 {
     WindowsServiceProvider::WindowsServiceProvider()
         : Super(TYPE_NAME_FULL(This), path->exec_name())
@@ -169,4 +169,4 @@ namespace core::platform
     SERVICE_STATUS WindowsServiceProvider::service_status = {SERVICE_WIN32_OWN_PROCESS};
     SERVICE_STATUS_HANDLE WindowsServiceProvider::service_status_handle = nullptr;
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

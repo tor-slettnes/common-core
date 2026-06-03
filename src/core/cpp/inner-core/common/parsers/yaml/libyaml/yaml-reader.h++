@@ -8,7 +8,7 @@
 #pragma once
 #include "parsers/common/basereader.h++"
 
-namespace core::yaml
+namespace cc::core::yaml
 {
     class YamlReader : public parsers::BaseReader
     {
@@ -23,4 +23,4 @@ namespace core::yaml
         types::Value read_stream(std::istream &stream) const override;
         using Super::read_stream;
     };
-}  // namespace core::yaml
+}  // namespace cc::core::yaml

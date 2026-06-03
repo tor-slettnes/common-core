@@ -10,7 +10,7 @@
 #include "status/exceptions.h++"
 #include "platform/init.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     Responder::Responder(const std::string &address,
                          const std::string &channel_name,
@@ -55,7 +55,7 @@ namespace core::zmq
             {
                 if (auto request = this->receive())
                 {
-                    types::ByteVector reply;
+                    core::types::ByteVector reply;
                     this->process_binary_request(*request, &reply);
                     if (this->initialized())
                     {
@@ -75,4 +75,4 @@ namespace core::zmq
         logf_trace("%s is no longer listening for requests", *this);
     }
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

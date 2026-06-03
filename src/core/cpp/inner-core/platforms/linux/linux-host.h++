@@ -9,7 +9,7 @@
 #include "posix-host.h++"
 #include "types/valuemap.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     /// @brief POSIX provider for host related functions
     class LinuxHostProvider : public PosixHostProvider
@@ -36,4 +36,4 @@ namespace core::platform
         types::ValueMap<std::string, std::string> os_release;
     };
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

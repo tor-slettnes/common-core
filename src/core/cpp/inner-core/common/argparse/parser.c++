@@ -12,7 +12,7 @@
 #include <regex>
 #include <sstream>  // std::stringstream
 
-namespace core::argparse
+namespace cc::core::argparse
 {
     //==========================================================================
     // Parser methods
@@ -479,4 +479,4 @@ namespace core::argparse
         }
     }
 
-}  // namespace core::argparse
+}  // namespace cc::core::argparse

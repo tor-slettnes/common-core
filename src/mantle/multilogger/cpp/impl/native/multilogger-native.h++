@@ -10,7 +10,7 @@
 #include "logging/sinks/factory.h++"
 #include "types/create-shared.h++"
 
-namespace multilogger::native
+namespace cc::platform::multilogger::native
 {
     class Logger : public API,
                    public core::types::enable_create_shared<Logger>
@@ -43,4 +43,4 @@ namespace multilogger::native
         std::thread listener_thread_;
         std::shared_ptr<LogSource> listener_;
     };
-}  // namespace multilogger::native
+}  // namespace cc::platform::multilogger::native

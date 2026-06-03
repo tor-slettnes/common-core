@@ -7,7 +7,7 @@
 
 #include "options.h++"
 
-namespace multilogger
+namespace cc::platform::multilogger
 {
     Options::Options()
         : Super(),
@@ -38,5 +38,6 @@ namespace multilogger
 #endif
     }
 
-    std::unique_ptr<Options> options;
-}  // namespace multilogger
+}  // namespace cc::platform::multilogger
+
+std::unique_ptr<cc::platform::multilogger::Options> options;

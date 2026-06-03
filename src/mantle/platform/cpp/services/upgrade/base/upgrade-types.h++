@@ -13,7 +13,7 @@
 #include "types/symbolmap.h++"
 #include "types/listable.h++"
 
-namespace upgrade
+namespace cc::platform::upgrade
 {
     define_log_scope("upgrade");
 
@@ -160,10 +160,11 @@ namespace upgrade
     static std::ostream &operator<<(std::ostream &stream,
                                     UpgradeProgress::State state);
 
-}  // namespace upgrade
+}  // namespace cc::platform::upgrade
 
 namespace std
 {
-    std::ostream &operator<<(std::ostream &stream,
-                             const upgrade::Location &location);
+    std::ostream &operator<<(
+        std::ostream &stream,
+        const cc::platform::upgrade::Location &location);
 }

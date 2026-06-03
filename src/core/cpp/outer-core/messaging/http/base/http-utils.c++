@@ -15,7 +15,7 @@
 
 #include <regex>
 
-namespace core::http
+namespace cc::http
 {
     bool decompose_header(const std::string &text, Header *header)
     {
@@ -33,7 +33,7 @@ namespace core::http
             header->emplace(matchit->str(1), matchit->str(2));
             endpos = matchit->position(0) + matchit->length(0);
         }
-        return str::strip(text.substr(endpos)).empty();
+        return core::str::strip(text.substr(endpos)).empty();
     }
 
     bool successful_response(ResponseCode code)
@@ -61,7 +61,7 @@ namespace core::http
 #if LIBCURL_VERSION_NUM >= 0x075000
             std::string message = curl_url_strerror(code);
 #else
-            std::string message = str::format("CURL URL code %d", code);
+            std::string message = core::str::format("CURL URL code %d", code);
 #endif
             core::types::KeyValueMap attributes = {
                 {"curl_code", code},
@@ -72,7 +72,7 @@ namespace core::http
                 attributes.insert_or_assign("url", url);
             }
 
-            throw exception::FailedPrecondition(message, attributes);
+            throw core::exception::FailedPrecondition(message, attributes);
         }
     }
 
@@ -138,7 +138,7 @@ namespace core::http
         {
             std::string portstring;
             _curl_url_get(&rc, handle, CURLUPART_PORT, &portstring, flags);
-            *port = str::convert_to<uint>(portstring, 0);
+            *port = core::str::convert_to<uint>(portstring, 0);
         }
 
         _curl_url_get(&rc, handle, CURLUPART_PATH, path, flags);
@@ -148,9 +148,9 @@ namespace core::http
             std::string stringquery;
             query->clear();
             _curl_url_get(&rc, handle, CURLUPART_QUERY, &stringquery, 0);
-            for (const std::string &part : str::split(stringquery, "&"))
+            for (const std::string &part : core::str::split(stringquery, "&"))
             {
-                std::vector<std::string> kv = str::split(part, "=", 1);
+                std::vector<std::string> kv = core::str::split(part, "=", 1);
                 if (kv.size() == 2)
                 {
                     query->emplace_back(url_decode(kv.front()),
@@ -201,7 +201,7 @@ namespace core::http
 
         if ((rc == CURLUE_OK) && port)
         {
-            rc = curl_url_set(handle, CURLUPART_PORT, str::to_string(*port).data(), flags);
+            rc = curl_url_set(handle, CURLUPART_PORT, core::str::to_string(*port).data(), flags);
         }
 
         if ((rc == CURLUE_OK) && path)
@@ -255,8 +255,8 @@ namespace core::http
     //         std::stringstream ss;
 
     //         // Eliminate double `/` when joining `base/` and `/rel`.
-    //         bool base_slash = str::endswith(base, "/");
-    //         bool rel_slash = str::startswith(rel, "/");
+    //         bool base_slash = core::str::endswith(base, "/");
+    //         bool rel_slash = core::str::startswith(rel, "/");
 
     //         ss.write(base.data(), base.size() - ((base_slash && rel_slash) ? 1 : 0));
     //         ss.write(rel.data(), rel.size());
@@ -328,12 +328,12 @@ namespace core::http
         return result;
     }
 
-    static platform::InitTask global_init(
+    static core::platform::InitTask global_init(
         "curl_global_init",
         std::bind(::curl_global_init, CURL_GLOBAL_ALL));
 
-    static platform::ExitTask global_cleanup(
+    static core::platform::ExitTask global_cleanup(
         "curl_global_cleanup",
         ::curl_global_cleanup);
 
-}  // namespace core::http
+}  // namespace cc::http

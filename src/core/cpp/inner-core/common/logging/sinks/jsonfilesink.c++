@@ -8,7 +8,7 @@
 #include "jsonfilesink.h++"
 #include "platform/path.h++"
 
-namespace core::logging
+namespace cc::core::logging
 {
     JsonFileSink::JsonFileSink(const std::string &sink_id)
         : Super(sink_id),
@@ -64,4 +64,4 @@ namespace core::logging
             return false;
         }
     }
-}  // namespace core::logging
+}  // namespace cc::core::logging

@@ -11,7 +11,7 @@
 
 #include <unordered_set>
 
-namespace core::platform
+namespace cc::core::platform
 {
     //==========================================================================
     // InitTask
@@ -79,4 +79,4 @@ namespace core::platform
 
     extern core::signal::AsyncVoidSignal signal_startup;
     extern core::signal::AsyncVoidSignal signal_shutdown;
-}  // namespace core::platform
+}  // namespace cc::core::platform

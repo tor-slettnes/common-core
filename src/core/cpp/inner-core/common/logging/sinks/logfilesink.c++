@@ -9,7 +9,7 @@
 #include "platform/path.h++"
 #include <iomanip>
 
-namespace core::logging
+namespace cc::core::logging
 {
     LogFileSink::LogFileSink(const std::string &sink_id)
         : Super(sink_id),
@@ -70,4 +70,4 @@ namespace core::logging
         }
     }
 
-}  // namespace core::logging
+}  // namespace cc::core::logging

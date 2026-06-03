@@ -8,9 +8,9 @@
 #pragma once
 #include "switchboard.h++"
 
-namespace switchboard::grpc
+namespace cc::platform::switchboard::grpc
 {
     void run_grpc_service(
         std::shared_ptr<switchboard::Provider> api_provider,
         const std::string &listen_address = {});
-}  // namespace demo::grpc
+}  // namespace cc::demo::grpc

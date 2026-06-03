@@ -22,7 +22,7 @@ typedef unsigned int pid_t;
 #define W_OK 2
 #endif
 
-namespace core::platform
+namespace cc::core::platform
 {
     WindowsPathProvider::WindowsPathProvider(const std::string &programpath)
         : Super("WindowsPathProvider", programpath)
@@ -142,4 +142,4 @@ namespace core::platform
     {
         return PathMatchSpec(filename.c_str(), mask.c_str());
     }
-} // namespace core::platform
+} // namespace cc::core::platform

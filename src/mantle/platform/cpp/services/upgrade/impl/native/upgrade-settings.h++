@@ -8,7 +8,7 @@
 #pragma once
 #include "settings/settingsstore.h++"
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     constexpr auto SETTINGS_FILE = "upgrade";
 
@@ -34,4 +34,4 @@ namespace upgrade::native
     constexpr auto SETTING_SCAN_RETRIES = "scan retries";
     constexpr auto DEFAULT_SCAN_RETRIES = 10;
 
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

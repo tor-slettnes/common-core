@@ -10,7 +10,7 @@
 #include "vfs.h++"
 #include "status/exceptions.h++"
 
-namespace upgrade::native
+namespace cc::platform::upgrade::native
 {
     VFSPackageIndex::VFSPackageIndex(
         const core::SettingsStore::ptr &settings,
@@ -75,4 +75,4 @@ namespace upgrade::native
         return package_info;
     }
 
-}  // namespace upgrade::native
+}  // namespace cc::platform::upgrade::native

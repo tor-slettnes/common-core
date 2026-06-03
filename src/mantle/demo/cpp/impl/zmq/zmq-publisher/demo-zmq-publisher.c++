@@ -8,7 +8,7 @@
 #include "demo-zmq-publisher.h++"
 #include "demo-signals.h++"
 
-namespace demo::zmq
+namespace cc::demo::zmq
 {
     Publisher::Publisher(const std::string &bind_address,
                          const std::string &channel_name)
@@ -32,4 +32,4 @@ namespace demo::zmq
         }
         Super::deinitialize();
     }
-}  // namespace demo::zmq
+}  // namespace cc::demo::zmq

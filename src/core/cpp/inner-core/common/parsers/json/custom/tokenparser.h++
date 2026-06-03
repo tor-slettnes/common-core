@@ -11,7 +11,7 @@
 
 #include <charconv>
 
-namespace core::json
+namespace cc::core::json
 {
     class TokenParser
     {
@@ -76,4 +76,4 @@ namespace core::json
         static const SymbolMapping symbol_map;
         std::list<std::string> indentation_stack;
     };
-} // namespace core::json
+} // namespace cc::core::json

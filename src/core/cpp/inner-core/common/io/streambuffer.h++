@@ -10,7 +10,7 @@
 #include <vector>
 #include <utility>
 
-namespace core::io
+namespace cc::core::io
 {
     // Output buffer size allocated by `overflow()`
     constexpr std::streamsize BUFSIZE = 4096;
@@ -57,4 +57,4 @@ namespace core::io
         BufferType __input;
         bool __input_completed = false;
     };
-}  // namespace core::io
+}  // namespace cc::core::io

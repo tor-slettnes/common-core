@@ -20,7 +20,7 @@
 #include <string>
 #include <algorithm>
 
-namespace core
+namespace cc::core
 {
     namespace dt
     {
@@ -1121,25 +1121,25 @@ namespace core
                               decimals);
         }
     }  // namespace steady
-}  // namespace core
+}  // namespace cc::core
 
 namespace std::chrono
 {
-    std::ostream &operator<<(std::ostream &stream, const core::dt::TimePoint &tp)
+    std::ostream &operator<<(std::ostream &stream, const cc::core::dt::TimePoint &tp)
     {
-        core::dt::tp_to_stream(stream, tp);
+        cc::core::dt::tp_to_stream(stream, tp);
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, const core::dt::Duration &dur)
+    std::ostream &operator<<(std::ostream &stream, const cc::core::dt::Duration &dur)
     {
-        core::dt::dur_to_stream(stream, dur);
+        cc::core::dt::dur_to_stream(stream, dur);
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, const core::steady::TimePoint &stp)
+    std::ostream &operator<<(std::ostream &stream, const cc::core::steady::TimePoint &stp)
     {
-        core::steady::tp_to_stream(stream, stp);
+        cc::core::steady::tp_to_stream(stream, stp);
         return stream;
     }
 
@@ -1160,6 +1160,6 @@ bool operator==(const std::tm &lhs, const std::tm &rhs)
 
 std::ostream &operator<<(std::ostream &stream, const std::tm &tm)
 {
-    stream << std::put_time(&tm, core::dt::DEFAULT_FORMAT);
+    stream << std::put_time(&tm, cc::core::dt::DEFAULT_FORMAT);
     return stream;
 }

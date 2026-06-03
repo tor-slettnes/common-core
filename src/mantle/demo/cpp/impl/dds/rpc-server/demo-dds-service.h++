@@ -9,15 +9,15 @@
 #include "demo-dds-requesthandler.h++"
 #include "dds-service.h++"
 
-namespace demo::dds
+namespace cc::demo::dds
 {
     //==========================================================================
     // @class Service
     // @brief Handle requests from DemoService clients
 
-    class Service : public core::dds::Service<CC::Demo::DemoServiceService>
+    class Service : public cc::dds::Service<CC::Demo::DemoServiceService>
     {
-        using Super = core::dds::Service<CC::Demo::DemoServiceService>;
+        using Super = cc::dds::Service<CC::Demo::DemoServiceService>;
 
     public:
         Service(const ::dds::rpc::Server &server,
@@ -25,4 +25,4 @@ namespace demo::dds
                 const std::shared_ptr<API> &api);
     };
 
-}  // namespace demo::dds
+}  // namespace cc::demo::dds

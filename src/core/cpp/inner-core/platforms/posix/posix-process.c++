@@ -26,7 +26,7 @@
 
 #define ELEMENTS(array) (sizeof(array) / sizeof(array[0]))
 
-namespace core::platform
+namespace cc::core::platform
 {
 
     //==========================================================================
@@ -647,4 +647,4 @@ namespace core::platform
 
     std::set<FileDescriptor> PosixProcessProvider::open_fds;
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

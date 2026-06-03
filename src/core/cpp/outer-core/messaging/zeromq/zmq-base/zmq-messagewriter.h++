@@ -8,7 +8,7 @@
 #pragma once
 #include "zmq-publisher.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     using Header = core::types::ByteVector;
 
@@ -23,7 +23,7 @@ namespace core::zmq
         virtual void deinitialize() {}
 
         const std::optional<Header> &header() const noexcept;
-        void write(const types::ByteVector &bytes);
+        void write(const core::types::ByteVector &bytes);
 
     protected:
         std::shared_ptr<Publisher> publisher() const;
@@ -33,4 +33,4 @@ namespace core::zmq
         std::optional<Header> header_;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

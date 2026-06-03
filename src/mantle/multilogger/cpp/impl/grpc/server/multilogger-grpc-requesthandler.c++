@@ -11,7 +11,7 @@
 #include "protobuf-inline.h++"
 #include "protobuf-message.h++"
 
-namespace multilogger::grpc
+namespace cc::platform::multilogger::grpc
 {
     RequestHandler::RequestHandler(const std::shared_ptr<API>& provider)
         : provider(provider)
@@ -20,7 +20,7 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::Submit(
         ::grpc::ServerContext* context,
-        const ::cc::platform::multilogger::protobuf::Loggable* request,
+        const protobuf::Loggable* request,
         ::google::protobuf::Empty* response)
     {
         try
@@ -38,12 +38,12 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::Writer(
         ::grpc::ServerContext* context,
-        ::grpc::ServerReader<::cc::platform::multilogger::protobuf::Loggable>* reader,
+        ::grpc::ServerReader<protobuf::Loggable>* reader,
         ::google::protobuf::Empty* response)
     {
         try
         {
-            ::cc::platform::multilogger::protobuf::Loggable loggable;
+            protobuf::Loggable loggable;
             while (reader->Read(&loggable))
             {
                 this->provider->submit(cc::protobuf::decode_loggable(
@@ -60,8 +60,8 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::Listen(
         ::grpc::ServerContext* context,
-        const ::cc::platform::multilogger::protobuf::ListenerSpec* request,
-        ::grpc::ServerWriter<::cc::platform::multilogger::protobuf::Loggable>* writer)
+        const protobuf::ListenerSpec* request,
+        ::grpc::ServerWriter<protobuf::Loggable>* writer)
     {
         try
         {
@@ -78,8 +78,8 @@ namespace multilogger::grpc
                 {
                     break;
                 }
-
-                writer->Write(cc::protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(loggable.value()));
+                writer->Write(
+                    cc::protobuf::encoded_shared<protobuf::Loggable>(loggable.value()));
             }
 
             listener->close();
@@ -93,8 +93,8 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::AddSink(
         ::grpc::ServerContext* context,
-        const ::cc::platform::multilogger::protobuf::SinkSpec* request,
-        ::cc::platform::multilogger::protobuf::AddSinkResult* response)
+        const protobuf::SinkSpec* request,
+        protobuf::AddSinkResult* response)
     {
         try
         {
@@ -117,8 +117,8 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::RemoveSink(
         ::grpc::ServerContext* context,
-        const ::cc::platform::multilogger::protobuf::SinkID* request,
-        ::cc::platform::multilogger::protobuf::RemoveSinkResult* response)
+        const protobuf::SinkID* request,
+        protobuf::RemoveSinkResult* response)
     {
         try
         {
@@ -135,8 +135,8 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::GetSink(
         ::grpc::ServerContext* context,
-        const ::cc::platform::multilogger::protobuf::SinkID* request,
-        ::cc::platform::multilogger::protobuf::SinkSpec* response)
+        const protobuf::SinkID* request,
+        protobuf::SinkSpec* response)
     {
         try
         {
@@ -155,7 +155,7 @@ namespace multilogger::grpc
     ::grpc::Status RequestHandler::GetAllSinks(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::multilogger::protobuf::SinkSpecs* response)
+        protobuf::SinkSpecs* response)
     {
         try
         {
@@ -173,7 +173,7 @@ namespace multilogger::grpc
     ::grpc::Status RequestHandler::ListSinks(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::multilogger::protobuf::SinkNames* response)
+        protobuf::SinkNames* response)
     {
         try
         {
@@ -192,7 +192,7 @@ namespace multilogger::grpc
     ::grpc::Status RequestHandler::ListSinkTypes(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::multilogger::protobuf::SinkTypes* response)
+        protobuf::SinkTypes* response)
     {
         try
         {
@@ -211,7 +211,7 @@ namespace multilogger::grpc
     ::grpc::Status RequestHandler::ListMessageFields(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::multilogger::protobuf::FieldNames* response)
+        protobuf::FieldNames* response)
     {
         try
         {
@@ -230,7 +230,7 @@ namespace multilogger::grpc
     ::grpc::Status RequestHandler::ListErrorFields(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::multilogger::protobuf::FieldNames* response)
+        protobuf::FieldNames* response)
     {
         try
         {
@@ -246,4 +246,4 @@ namespace multilogger::grpc
         }
     }
 
-}  // namespace multilogger::grpc
+}  // namespace cc::platform::multilogger::grpc

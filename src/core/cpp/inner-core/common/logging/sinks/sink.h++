@@ -14,7 +14,7 @@
 #include <memory>
 #include <string>
 
-namespace core::logging
+namespace cc::core::logging
 {
     using types::Loggable;
     using SinkID = std::string;
@@ -78,4 +78,4 @@ namespace core::logging
         std::optional<Loggable::ContractID> contract_id_;
         status::Level threshold_;
     };
-}  // namespace core::logging
+}  // namespace cc::core::logging

@@ -13,7 +13,7 @@
 
 #include "cc/protobuf/request_reply/request_reply.pb.h"
 
-namespace core::zmq
+namespace cc::zmq
 {
     class ProtoBufClient : public Requester
     {
@@ -64,8 +64,8 @@ namespace core::zmq
         //======================================================================
         // Invoke method  with variant request/reply parameters
 
-        types::Value call(const std::string &method_name,
-                          const types::Value &request,
+        core::types::Value call(const std::string &method_name,
+                          const core::types::Value &request,
                           SendFlags send_flags = 0,
                           RecvFlags recv_flags = 0) const;
 
@@ -77,7 +77,7 @@ namespace core::zmq
                                       const ::google::protobuf::Message &request,
                                       SendFlags send_flags) const;
 
-        bool read_protobuf_result(types::ByteVector *bytes,
+        bool read_protobuf_result(core::types::ByteVector *bytes,
                                   RecvFlags recv_flags) const;
 
     public:
@@ -90,7 +90,7 @@ namespace core::zmq
         {
             this->send_protobuf_invocation(method_name, request, send_flags);
 
-            types::ByteVector bytes;
+            core::types::ByteVector bytes;
             ResponseType response;
             if (this->read_protobuf_result(&bytes, recv_flags))
             {
@@ -110,4 +110,4 @@ namespace core::zmq
         uint client_id;
         uint last_request_id;
     };
-};  // namespace core::zmq
+};  // namespace cc::zmq

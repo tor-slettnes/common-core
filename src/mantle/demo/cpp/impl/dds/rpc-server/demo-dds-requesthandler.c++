@@ -12,7 +12,7 @@
 
 #include "logging/logging.h++"
 
-namespace demo::dds
+namespace cc::demo::dds
 {
     RequestHandler::RequestHandler(const std::shared_ptr<API> &api_provider)
         : provider(api_provider)
@@ -55,4 +55,4 @@ namespace demo::dds
         this->provider->stop_ticking();
     }
 
-}  // namespace demo::dds
+}  // namespace cc::demo::dds

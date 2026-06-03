@@ -13,7 +13,7 @@
 #include <librdkafka/rdkafkacpp.h>
 #include <mutex>
 
-namespace core::kafka
+namespace cc::kafka
 {
     define_log_scope("kafka");
 
@@ -71,4 +71,4 @@ namespace core::kafka
         std::unordered_map<void *, CallbackData::ptr> callback_map;
         std::mutex callback_mutex;
     };
-}  // namespace core::kafka
+}  // namespace cc::kafka

@@ -13,26 +13,26 @@
 
 int main(int argc, char **argv)
 {
-    core::application::initialize(argc, argv);
+    cc::core::application::initialize(argc, argv);
 
     try
     {
-        demo::options = std::make_unique<demo::Options>("gRPC");
-        demo::options->apply(argc, argv);
+        ::options = std::make_unique<cc::demo::Options>("gRPC");
+        ::options->apply(argc, argv);
 
         logf_debug("Creating gRPC demo provider");
-        demo::provider = demo::grpc::ClientImpl::create_shared(
-            demo::options->identity,
-            demo::options->host);
+        cc::demo::provider = cc::demo::grpc::ClientImpl::create_shared(
+            ::options->identity,
+            ::options->host);
 
         logf_debug("Initializing gRPC demo provider");
-        demo::provider->initialize();
+        cc::demo::provider->initialize();
 
         logf_debug("Handling command in gRPC demo provider");
-        bool success = demo::options->handle_command();
+        bool success = ::options->handle_command();
 
         logf_debug("Deinitializing gRPC demo provider");
-        demo::provider->deinitialize();
+        cc::demo::provider->deinitialize();
         return success ? 0 : -1;
     }
     catch (...)

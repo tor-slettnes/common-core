@@ -8,7 +8,7 @@
 #include "posix-logsink.h++"
 #include <syslog.h>
 
-namespace core::platform
+namespace cc::core::platform
 {
     PosixLogSinkProvider::PosixLogSinkProvider(
         const std::string &application_id,
@@ -62,4 +62,4 @@ namespace core::platform
         {status::Level::FATAL, LOG_EMERG},
     };
 
-}  // namespace core::platform
+}  // namespace cc::core::platform

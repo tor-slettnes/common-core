@@ -11,9 +11,9 @@
 #include <memory>
 #include <string>
 
-namespace multilogger::grpc
+namespace cc::platform::multilogger::grpc
 {
     void run_service(
         std::shared_ptr<API> multilogger_provider,
         const std::string &listen_address = {});
-}  // namespace multilogger::grpc
+}  // namespace cc::platform::multilogger::grpc

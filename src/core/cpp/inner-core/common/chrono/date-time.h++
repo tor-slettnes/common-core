@@ -19,7 +19,7 @@
 
 using namespace std::literals::chrono_literals;
 
-namespace core
+namespace cc::core
 {
     /// Date/Time utilities
     namespace dt
@@ -610,7 +610,7 @@ namespace core
                std::chrono::duration_cast<typename TargetClock::duration>(relative_to_now);
     }
 
-}  // namespace core
+}  // namespace cc::core
 
 namespace std::chrono
 {

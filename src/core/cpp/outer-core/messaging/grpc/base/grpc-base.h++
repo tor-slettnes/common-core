@@ -16,7 +16,7 @@
 #include "string/misc.h++"
 #include <grpc++/grpc++.h>
 
-namespace core::grpc
+namespace cc::grpc
 {
     define_log_scope("grpc");
 
@@ -110,4 +110,4 @@ namespace core::grpc
         const std::string full_service_name_;
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

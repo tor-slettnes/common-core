@@ -9,7 +9,7 @@
 #include "builder.h++"
 #include "parsers/common/basewriter.h++"
 
-namespace core::json
+namespace cc::core::json
 {
     class RapidWriter : public parsers::BaseWriter
     {
@@ -28,4 +28,4 @@ namespace core::json
                             bool pretty = false) const override;
     };
 
-}  // namespace core::json
+}  // namespace cc::core::json

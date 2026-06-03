@@ -16,7 +16,7 @@ namespace rapidjson
 
 #include <rapidjson/document.h>
 
-namespace core::json
+namespace cc::core::json
 {
     class RapidReader : public parsers::BaseReader
     {
@@ -38,4 +38,4 @@ namespace core::json
         static types::ValueListPtr decode_array(const ::rapidjson::Value &jarray);
         static types::KeyValueMapPtr decode_object(const ::rapidjson::Value &jobject);
     };
-}  // namespace core::json
+}  // namespace cc::core::json

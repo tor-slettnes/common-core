@@ -8,7 +8,7 @@
 #pragma once
 #include "provider.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     using UID = std::uint32_t;
     using GID = std::uint32_t;
@@ -30,4 +30,4 @@ namespace core::platform
 
     /// Global instance, populated with the "best" provider for this system.
     extern ProviderProxy<UserProvider> user;
-}  // namespace core::platform
+}  // namespace cc::core::platform

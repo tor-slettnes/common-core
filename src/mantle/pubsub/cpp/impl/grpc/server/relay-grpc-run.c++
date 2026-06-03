@@ -13,13 +13,13 @@
 #include "chrono/date-time.h++"
 #include "string/misc.h++"
 
-namespace pubsub::grpc
+namespace cc::platform::pubsub::grpc
 {
     void run_grpc_service(
         const std::string &listen_address)
     {
         log_debug("Creating gRPC server builder");
-        core::grpc::ServerBuilder builder(listen_address);
+        cc::grpc::ServerBuilder builder(listen_address);
 
         log_debug("Creating Relay gRPC request handler");
         auto request_handler = RequestHandler::create_shared();
@@ -43,4 +43,4 @@ namespace pubsub::grpc
         core::platform::signal_shutdown.disconnect(signal_handle);
         server.reset();
     }
-}  // namespace pubsub::grpc
+}  // namespace cc::platform::pubsub::grpc

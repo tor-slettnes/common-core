@@ -10,7 +10,7 @@
 #include "platform/path.h++"
 #include "logging/logging.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     ProtoBufServer::ProtoBufServer(const std::string &bind_address,
                                    const std::string &channel_name,
@@ -39,8 +39,8 @@ namespace core::zmq
         Super::deinitialize();
     }
 
-    void ProtoBufServer::process_binary_request(const types::ByteVector &packed_request,
-                                                types::ByteVector *packed_reply)
+    void ProtoBufServer::process_binary_request(const core::types::ByteVector &packed_request,
+                                                core::types::ByteVector *packed_reply)
     {
         cc::protobuf::request_reply::Request request;
         cc::protobuf::request_reply::Reply reply;
@@ -88,15 +88,15 @@ namespace core::zmq
     void ProtoBufServer::insert_error_response(cc::protobuf::request_reply::Reply *reply,
                                                cc::protobuf::request_reply::StatusCode status_code,
                                                const std::string &text,
-                                               const types::KeyValueMap &attributes)
+                                               const core::types::KeyValueMap &attributes)
     {
         cc::protobuf::request_reply::Status *status = reply->mutable_status();
         status->set_code(status_code);
 
-        status::Error event(text,                                           // text
+        core::status::Error event(text,                                           // text
                             core::status::Domain::APPLICATION,              // domain
-                            platform::path->exec_name(),                    // origin
-                            static_cast<status::Error::Code>(status_code),  // code
+                            core::platform::path->exec_name(),                    // origin
+                            static_cast<core::status::Error::Code>(status_code),  // code
                             cc::protobuf::request_reply::StatusCode_Name(status_code),           // symbol
                             core::status::Level::ERROR,                    // level
                             {},                                             // timepoint
@@ -105,4 +105,4 @@ namespace core::zmq
         cc::protobuf::encode(event, status->mutable_details());
     }
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

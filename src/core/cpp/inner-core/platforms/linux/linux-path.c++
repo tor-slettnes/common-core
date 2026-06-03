@@ -7,7 +7,7 @@
 
 #include "linux-path.h++"
 
-namespace core::platform
+namespace cc::core::platform
 {
     LinuxPathProvider::LinuxPathProvider(const std::string &exec_name)
         : Super("LinuxPathProvider", exec_name),
@@ -20,4 +20,4 @@ namespace core::platform
         return !this->exec_path_.empty() ? this->exec_path_
                                          : Super::exec_path();
     }
-}  // namespace core::platform
+}  // namespace cc::core::platform

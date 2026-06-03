@@ -12,7 +12,7 @@
 #include <future>
 #include <mutex>
 
-namespace switchboard
+namespace cc::platform::switchboard
 {
     using ThreadMap = std::unordered_map<SwitchRef, std::thread>;
 
@@ -190,4 +190,4 @@ namespace switchboard
         StatusRef notified_status;
         // std::recursive_mutex interceptor_mutex;
     };
-}  // namespace switchboard
+}  // namespace cc::platform::switchboard

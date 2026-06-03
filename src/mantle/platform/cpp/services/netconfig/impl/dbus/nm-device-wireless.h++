@@ -9,7 +9,7 @@
 #include "nm-wrappers.h++"
 #include "nm-accesspoint.h++"
 
-namespace netconfig::dbus
+namespace cc::platform::netconfig::dbus
 {
     //==========================================================================
     /// Network Manager WiFi device
@@ -22,10 +22,10 @@ namespace netconfig::dbus
 
     public:
         WirelessDevice(
-            core::dbus::ProxyContainer* container,
-            const core::dbus::ConnectionPtr& connection,
-            const core::dbus::ServiceName& servicename,
-            const core::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer* container,
+            const cc::dbus::ConnectionPtr& connection,
+            const cc::dbus::ServiceName& servicename,
+            const cc::dbus::ObjectPath& objectpath);
 
         static std::shared_ptr<WirelessDevice> get_by_ap(
             const std::shared_ptr<AccessPoint> ap,
@@ -58,11 +58,11 @@ namespace netconfig::dbus
             const Glib::VariantBase& change);
 
         bool update_active_accesspoint(
-            const core::dbus::ProxyWrapper* source,
+            const cc::dbus::ProxyWrapper* source,
             core::signal::MappingAction action);
 
     private:
-        std::set<core::dbus::ObjectPath> accesspoints;
+        std::set<cc::dbus::ObjectPath> accesspoints;
     };
 
-}  // namespace netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

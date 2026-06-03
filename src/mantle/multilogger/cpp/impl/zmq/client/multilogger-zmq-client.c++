@@ -10,7 +10,7 @@
 #include "protobuf-multilogger-types.h++"
 #include "protobuf-inline.h++"
 
-namespace multilogger::zmq
+namespace cc::platform::multilogger::zmq
 {
     ClientImpl::ClientImpl(const std::string &host)
         : ProtoBufClient(
@@ -25,7 +25,7 @@ namespace multilogger::zmq
     void ClientImpl::initialize()
     {
         API::initialize();
-        core::zmq::ProtoBufClient::initialize();
+        cc::zmq::ProtoBufClient::initialize();
     }
 
     void ClientImpl::deinitialize()
@@ -45,7 +45,7 @@ namespace multilogger::zmq
             subscriber->deinitialize();
         }
 
-        core::zmq::ProtoBufClient::deinitialize();
+        cc::zmq::ProtoBufClient::deinitialize();
         API::deinitialize();
     }
 
@@ -127,11 +127,11 @@ namespace multilogger::zmq
         return reader;
     }
 
-    std::shared_ptr<core::zmq::Subscriber> ClientImpl::subscriber()
+    std::shared_ptr<cc::zmq::Subscriber> ClientImpl::subscriber()
     {
         if (!this->subscriber_)
         {
-            this->subscriber_ = std::make_shared<core::zmq::Subscriber>(
+            this->subscriber_ = std::make_shared<cc::zmq::Subscriber>(
                 this->host_,
                 MONITOR_CHANNEL,
                 Role::SATELLITE);
@@ -141,11 +141,11 @@ namespace multilogger::zmq
         return this->subscriber_;
     }
 
-    std::shared_ptr<core::zmq::Publisher> ClientImpl::publisher()
+    std::shared_ptr<cc::zmq::Publisher> ClientImpl::publisher()
     {
         if (!this->publisher_)
         {
-            this->publisher_ = std::make_shared<core::zmq::Publisher>(
+            this->publisher_ = std::make_shared<cc::zmq::Publisher>(
                 this->host_,
                 SUBMIT_CHANNEL,
                 Role::SATELLITE);
@@ -163,4 +163,4 @@ namespace multilogger::zmq
         }
         return this->writer_;
     }
-}  // namespace multilogger::zmq
+}  // namespace cc::platform::multilogger::zmq

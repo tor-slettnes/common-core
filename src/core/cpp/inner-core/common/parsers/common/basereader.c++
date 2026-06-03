@@ -9,7 +9,7 @@
 
 #include <fstream>
 
-namespace core::parsers
+namespace cc::core::parsers
 {
     BaseReader::BaseReader(const std::string &name)
         : name(name)
@@ -48,4 +48,4 @@ namespace core::parsers
     {
         return this->read_stream(stream);
     }
-}  // namespace core::parsers
+}  // namespace cc::core::parsers

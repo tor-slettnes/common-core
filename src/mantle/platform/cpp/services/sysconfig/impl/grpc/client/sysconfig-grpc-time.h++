@@ -9,7 +9,7 @@
 #include "sysconfig-time.h++"
 #include "sysconfig-grpc-client.h++"
 
-namespace sysconfig::grpc
+namespace cc::platform::sysconfig::grpc
 {
     class TimeConfigProvider : public TimeConfigInterface
     {
@@ -33,4 +33,4 @@ namespace sysconfig::grpc
     private:
         std::shared_ptr<Client> client;
     };
-}  // namespace sysconfig::grpc
+}  // namespace cc::platform::sysconfig::grpc

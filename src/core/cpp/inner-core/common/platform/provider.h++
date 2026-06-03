@@ -13,7 +13,7 @@
 #include <memory>
 #include <string>
 
-namespace core::platform
+namespace cc::core::platform
 {
     class Provider;
 
@@ -158,4 +158,4 @@ namespace core::platform
         std::string typeName;
         std::shared_ptr<Domain> provider;
     };
-}  // namespace core::platform
+}  // namespace cc::core::platform
