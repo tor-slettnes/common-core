@@ -40,13 +40,13 @@ namespace cc::platform::pubsub::grpc
         bool write(const std::string &topic,
                    const core::types::Value &value) override;
 
-    private:
         void start_writer() override;
         void stop_writer() override;
 
         void start_reader() override;
         void stop_reader() override;
 
+    private:
         Reader::ptr create_reader(
             const std::vector<Topic> &topics = {});
 
