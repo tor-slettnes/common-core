@@ -124,5 +124,3 @@ namespace cc::platform::vfs
                           cxt);
     }
 }  // namespace cc::platform::vfs
-
-std::unique_ptr<cc::platform::vfs::Options> options;

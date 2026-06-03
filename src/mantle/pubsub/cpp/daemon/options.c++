@@ -51,5 +51,3 @@ namespace cc::platform::pubsub
     }
 
 }  // namespace cc::platform::pubsub
-
-std::unique_ptr<cc::platform::pubsub::Options> options;

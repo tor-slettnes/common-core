@@ -25,5 +25,3 @@ namespace cc::platform::multilogger
     };
 
 }  // namespace cc::platform::multilogger
-
-extern std::unique_ptr<cc::platform::multilogger::Options> options;

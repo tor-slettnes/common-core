@@ -67,7 +67,7 @@ In our case, a new client might issue a greeting like this:
 
 ```
 demo::signal_greeting.emit(core::signal::MAP_ADDITION,
-                           ::options->identity,
+                           options->identity,
                            demo::Greeting(...));
 ```
 

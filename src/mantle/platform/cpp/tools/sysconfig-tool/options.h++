@@ -61,5 +61,3 @@ namespace cc::platform::sysconfig
         std::string signal_handle;
     };
 }  // namespace cc::platform::sysconfig
-
-extern std::unique_ptr<cc::platform::sysconfig::Options> options;

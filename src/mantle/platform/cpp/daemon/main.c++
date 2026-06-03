@@ -22,8 +22,8 @@ int main(int argc, char** argv)
     {
         // Initialize paths, load settings, set up shutdown signal handlers
         cc::core::application::initialize_daemon(argc, argv, "platform");
-        ::options = std::make_unique<cc::platform::Options>();
-        ::options->apply(argc, argv);
+        auto options = std::make_unique<cc::platform::Options>();
+        options->apply(argc, argv);
 
         cc::platform::sysconfig::native::register_providers();
         cc::platform::netconfig::dbus::register_providers();
@@ -41,7 +41,7 @@ int main(int argc, char** argv)
         server_threads.push_back(
             cc::core::thread::supervised_thread(
                 cc::platform::run_grpc_service,
-                ::options->bind_address));
+                options->bind_address));
 
         for (std::thread& t : server_threads)
         {

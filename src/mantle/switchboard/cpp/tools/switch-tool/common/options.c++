@@ -45,5 +45,3 @@ namespace cc::platform::switchboard
     }
 
 }  // namespace cc::platform::switchboard
-
-std::unique_ptr<cc::platform::switchboard::Options> options;

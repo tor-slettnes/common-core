@@ -164,5 +164,3 @@ namespace cc::platform::sysconfig
                           pi);
     }
 }  // namespace cc::platform::sysconfig
-
-std::unique_ptr<cc::platform::sysconfig::Options> options;

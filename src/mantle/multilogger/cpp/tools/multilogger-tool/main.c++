@@ -13,7 +13,7 @@
 int main(int argc, char** argv)
 {
     cc::core::application::initialize(argc, argv);
-    ::options = std::make_unique<cc::platform::multilogger::Options>();
-    ::options->apply(argc, argv);
-    return ::options->handle_command();
+    auto options = std::make_unique<cc::platform::multilogger::Options>();
+    options->apply(argc, argv);
+    return options->handle_command();
 }

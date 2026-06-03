@@ -29,5 +29,3 @@ namespace cc::platform
             core::settings->get("host").as_string());
     }
 }  // namespace cc::platform
-
-std::unique_ptr<cc::platform::Options> options;

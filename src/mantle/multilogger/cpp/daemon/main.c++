@@ -26,8 +26,8 @@ int main(int argc, char** argv)
     {
         // Initialize paths, load settings, set up shutdown signal handlers
         cc::core::application::initialize_daemon(argc, argv, "multilogger");
-        ::options = std::make_unique<cc::platform::multilogger::Options>();
-        ::options->apply(argc, argv);
+        auto options = std::make_unique<cc::platform::multilogger::Options>();
+        options->apply(argc, argv);
 
         auto log_provider = cc::platform::multilogger::native::Logger::create_shared();
         log_provider->initialize();
@@ -35,24 +35,24 @@ int main(int argc, char** argv)
         std::list<std::thread> server_threads;
 
 #ifdef USE_GRPC
-        if (::options->enable_grpc)
+        if (options->enable_grpc)
         {
             logf_debug("Spawning gRPC server");
             server_threads.push_back(cc::core::thread::supervised_thread(
                 cc::platform::multilogger::grpc::run_service,
                 log_provider,
-                ::options->bind_address));
+                options->bind_address));
         }
 #endif
 
 #ifdef USE_ZMQ
-        if (::options->enable_zmq)
+        if (options->enable_zmq)
         {
             logf_debug("Spawning ZeroMQ server");
             server_threads.push_back(cc::core::thread::supervised_thread(
                 cc::platform::multilogger::zmq::run_service,
                 log_provider,
-                ::options->bind_address));
+                options->bind_address));
         }
 #endif
 

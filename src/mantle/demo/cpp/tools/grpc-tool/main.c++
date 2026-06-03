@@ -17,19 +17,19 @@ int main(int argc, char **argv)
 
     try
     {
-        ::options = std::make_unique<cc::demo::Options>("gRPC");
-        ::options->apply(argc, argv);
+        auto options = std::make_unique<cc::demo::Options>("gRPC");
+        options->apply(argc, argv);
 
         logf_debug("Creating gRPC demo provider");
         cc::demo::provider = cc::demo::grpc::ClientImpl::create_shared(
-            ::options->identity,
-            ::options->host);
+            options->identity,
+            options->host);
 
         logf_debug("Initializing gRPC demo provider");
         cc::demo::provider->initialize();
 
         logf_debug("Handling command in gRPC demo provider");
-        bool success = ::options->handle_command();
+        bool success = options->handle_command();
 
         logf_debug("Deinitializing gRPC demo provider");
         cc::demo::provider->deinitialize();

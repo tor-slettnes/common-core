@@ -23,5 +23,3 @@ namespace cc::platform
         std::string host;
     };
 }  // namespace cc::platform
-
-extern std::unique_ptr<cc::platform::Options> options;

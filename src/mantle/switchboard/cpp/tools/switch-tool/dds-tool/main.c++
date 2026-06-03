@@ -18,20 +18,20 @@ int main(int argc, char** argv)
 
     try
     {
-        ::options = std::make_unique<cc::platform::switchboard::Options>("DDS");
-        ::options->apply(argc, argv);
+        auto options = std::make_unique<cc::platform::switchboard::Options>("DDS");
+        options->apply(argc, argv);
 
         // Create a switchboard subscriber, which handles both direct publications and RPC responses.
         logf_trace("Creating switchboard Subscriber");
         auto subscriber = cc::platform::switchboard::dds::Subscriber::create_shared(
-            ::options->identity,
-            ::options->domain_id);
+            options->identity,
+            options->domain_id);
 
         // Create a Switchboard proxy, which makes RPC calls to the real switchboard service.
         logf_trace("Creating Switchboard Proxy");
         auto proxy = cc::platform::switchboard::dds::Proxy::create_shared(
-            ::options->domain_id,
-            std::chrono::seconds(::options->timeout));
+            options->domain_id,
+            std::chrono::seconds(options->timeout));
 
         logf_trace("Initializing switchboard subscriber");
         subscriber->initialize();
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
         proxy->wait_ready();
 
         logf_trace("Handling command");
-        bool success = ::options->handle_command(proxy);
+        bool success = options->handle_command(proxy);
 
         logf_debug("Shutting down proxy");
         proxy->deinitialize();

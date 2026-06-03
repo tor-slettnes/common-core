@@ -188,5 +188,3 @@ namespace cc::platform::netconfig
                           data);
     }
 }  // namespace cc::platform::netconfig
-
-std::unique_ptr<cc::platform::netconfig::Options> options;

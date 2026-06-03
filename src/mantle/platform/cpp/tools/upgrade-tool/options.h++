@@ -64,5 +64,3 @@ namespace cc::platform::upgrade
         std::vector<std::string> args;
     };
 }  // namespace cc::platform::upgrade
-
-extern std::unique_ptr<cc::platform::upgrade::Options> options;

@@ -17,15 +17,15 @@ int main(int argc, char** argv)
 {
     cc::core::application::initialize(argc, argv);
 
-    ::options = std::make_unique<cc::demo::Options>("ZeroMQ");
-    ::options->apply(argc, argv);
+    auto options = std::make_unique<cc::demo::Options>("ZeroMQ");
+    options->apply(argc, argv);
 
     auto subscriber = cc::demo::zmq::Subscriber::create_shared(
-        ::options->host);
+        options->host);
 
     cc::demo::provider = cc::demo::zmq::ClientImpl::create_shared(
-        ::options->identity,
-        ::options->host);
+        options->identity,
+        options->host);
 
     logf_debug("Initializing ZeroMQ demo subscriber");
     subscriber->initialize();
@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     logf_debug("Initializing ZeroMQ demo provider");
     cc::demo::provider->initialize();
 
-    bool success = ::options->handle_command();
+    bool success = options->handle_command();
 
     // // Invoke shutdown triggers
     // logf_debug("Emitting shutdown signal");

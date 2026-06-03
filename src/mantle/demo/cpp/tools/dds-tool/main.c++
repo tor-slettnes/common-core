@@ -15,18 +15,18 @@ int main(int argc, char** argv)
 {
     cc::core::application::initialize(argc, argv);
 
-    ::options = std::make_unique<cc::demo::Options>("RTI DDS");
-    ::options->apply(argc, argv);
+    auto options = std::make_unique<cc::demo::Options>("RTI DDS");
+    options->apply(argc, argv);
 
     logf_debug("Creating DDS demo provider");
     cc::demo::provider = cc::demo::dds::ClientImpl::create_shared(
-        ::options->identity,
-        ::options->domain_id);
+        options->identity,
+        options->domain_id);
 
     logf_debug("Initializing DDS demo provider");
     cc::demo::provider->initialize();
 
-    bool success = ::options->handle_command();
+    bool success = options->handle_command();
 
     logf_debug("Deinitializing DDS demo provider");
     cc::demo::provider->deinitialize();

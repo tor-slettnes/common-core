@@ -72,5 +72,3 @@ namespace cc::platform::vfs
         std::vector<std::string> args;
     };
 }  // namespace cc::platform::vfs
-
-extern std::unique_ptr<cc::platform::vfs::Options> options;

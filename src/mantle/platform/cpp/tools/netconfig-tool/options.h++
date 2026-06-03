@@ -74,5 +74,3 @@ namespace cc::platform::netconfig
         std::vector<std::string> args;
     };
 }  // namespace cc::platform::netconfig
-
-extern std::unique_ptr<cc::platform::netconfig::Options> options;

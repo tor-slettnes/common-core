@@ -163,5 +163,3 @@ namespace cc::platform::upgrade
                           progress);
     }
 }  // namespace cc::platform::upgrade
-
-std::unique_ptr<cc::platform::upgrade::Options> options;

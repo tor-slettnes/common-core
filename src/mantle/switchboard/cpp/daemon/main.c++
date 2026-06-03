@@ -24,8 +24,8 @@ int main(int argc, char** argv)
     {
         cc::core::application::initialize_daemon(argc, argv, "switchboard");
 
-        ::options = std::make_unique<cc::platform::switchboard::Options>();
-        ::options->apply(argc, argv);
+        auto options = std::make_unique<cc::platform::switchboard::Options>();
+        options->apply(argc, argv);
 
         // Prepare switchboard request handler
         auto switchboard_provider = cc::platform::switchboard::Central::create_shared();
@@ -36,27 +36,27 @@ int main(int argc, char** argv)
         std::list<std::thread> server_threads;
 
 #ifdef USE_GRPC
-        if (::options->enable_grpc)
+        if (options->enable_grpc)
         {
             logf_debug("Starting gRPC server");
             server_threads.push_back(
                 cc::core::thread::supervised_thread(
                     cc::platform::switchboard::grpc::run_grpc_service,
                     switchboard_provider,
-                    ::options->bind_address));
+                    options->bind_address));
         }
 #endif
 
 #ifdef USE_DDS
-        if (::options->enable_dds)
+        if (options->enable_dds)
         {
             logf_debug("Starting DDS server");
             server_threads.push_back(
                 cc::core::thread::supervised_thread(
                     cc::platform::switchboard::dds::run_dds_service,
                     switchboard_provider,
-                    ::options->identity,
-                    ::options->domain_id));
+                    options->identity,
+                    options->domain_id));
         }
 #endif
 
