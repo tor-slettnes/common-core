@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file avro-protobufvalue.c++
+/// @file avro-protobufschema.c++
 /// @brief Create Avro values from ProtoBuf messages
 /// @author Tor Slettnes
 //==============================================================================
@@ -23,6 +23,29 @@ namespace cc::avro
           descriptor(descriptor)
     {
         this->add_fields();
+    }
+
+    SchemaWrapper &ProtoBufSchema::from_proto(
+        const google::protobuf::Descriptor *descriptor)
+    {
+        using SchemaMap = std::unordered_map<
+            const google::protobuf::Descriptor *,
+            SchemaWrapper>;
+
+        static SchemaMap schema_map;
+        static std::mutex mtx;
+
+        if (schema_map.count(descriptor) == 0)
+        {
+            logf_debug("schema_from_proto(%s) miss; creating", descriptor->full_name());
+            auto context = std::make_shared<BuilderContext>();
+            SchemaWrapper schema = ProtoBufSchema::from_descriptor(context, descriptor);
+
+            std::scoped_lock lock(mtx);
+            schema_map.insert_or_assign(descriptor, std::move(schema));
+        }
+
+        return schema_map.at(descriptor);
     }
 
     void ProtoBufSchema::add_fields()
@@ -223,32 +246,6 @@ namespace cc::avro
         {
             return {};
         }
-    }
-
-    //--------------------------------------------------------------------------
-    // schema_from_proto (Entry point)
-
-    SchemaWrapper &schema_from_proto(const google::protobuf::Descriptor *descriptor)
-    {
-        using SchemaMap = std::unordered_map<
-            const google::protobuf::Descriptor *,
-            SchemaWrapper>;
-
-        static SchemaMap schema_map;
-        static std::mutex mtx;
-
-
-        if (schema_map.count(descriptor) == 0)
-        {
-            logf_debug("schema_from_proto(%s) miss; creating", descriptor->full_name());
-            auto context = std::make_shared<BuilderContext>();
-            SchemaWrapper schema = ProtoBufSchema::from_descriptor(context, descriptor);
-
-            std::scoped_lock lock(mtx);
-            schema_map.insert_or_assign(descriptor, std::move(schema));
-        }
-
-        return schema_map.at(descriptor);
     }
 
 }  // namespace cc::avro

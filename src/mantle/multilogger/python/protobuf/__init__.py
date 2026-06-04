@@ -1,6 +1,6 @@
 #!/bin/echo Do not invoke directly.
 #===============================================================================
-## @file multilogger.py
+## @file __init__.py
 ## @brief Support for ProtoBuf types from `multilogger.proto`.
 ## @author Tor Slettnes
 #===============================================================================

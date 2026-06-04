@@ -20,24 +20,17 @@ import logging, threading
 
 class Subscriber (Endpoint):
     endpoint_type = 'subscriber'
+    socket_type = zmq.SUB
 
     def __init__(self,
-                 host_address: str,
+                 address: str,
                  channel_name: str|None = None,
                  product_name: str|None = None,
                  project_name: str|None = None,
                  role: Endpoint.Role = Endpoint.Role.SATELLITE,
                  ):
 
-        Endpoint.__init__(
-            self,
-            address = host_address,
-            channel_name = channel_name,
-            product_name = product_name,
-            project_name = project_name,
-            socket_type = zmq.SUB,
-            role = role)
-
+        Endpoint.__init__(**locals())
         self.subscriptions = set()
         self.receive_thread = None
         self.keep_receiving = False

@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file multilogger-zmq-client.h++
+/// @file multilogger-zmq-client.c++
 /// @brief Logging service - ZMQ client implementation
 /// @author Tor Slettnes
 //==============================================================================

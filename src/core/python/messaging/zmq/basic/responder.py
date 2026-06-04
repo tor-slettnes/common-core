@@ -17,6 +17,7 @@ import logging, threading
 
 class Responder (Endpoint):
     endpoint_type = 'responder'
+    socket_type = zmq.REP
 
     def __init__(self,
                  bind_address: str,
@@ -26,15 +27,7 @@ class Responder (Endpoint):
                  role: Endpoint.Role = Endpoint.Role.HOST,
                  ):
 
-        Endpoint.__init__(
-            self,
-            address = bind_address,
-            channel_name = channel_name,
-            product_name = product_name,
-            project_name = project_name,
-            socket_type = zmq.REP,
-            role = role)
-
+        Endpoint.__init__(**locals())
         self.listen_thread = None
         self.keep_listening = False
 

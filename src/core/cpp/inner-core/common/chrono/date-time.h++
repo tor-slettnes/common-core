@@ -162,6 +162,12 @@ namespace cc::core
         ///     Maximum number of time units to include
         /// @param[in] delimiter
         ///     Delimiter between time units
+        /// @param[in] date_prefix
+        ///     Prefix prepended before date
+        /// @param[in] time_prefix
+        ///     Prefix prepended before time of day
+        /// @param[in] precision
+        ///     Sub-second precision below which deltas are ignored
         ///
         /// Format strings are printf() style, interpreted by `str::format()`.
         ///
@@ -266,6 +272,10 @@ namespace cc::core
         ///     Maximum number of time units to include
         /// @param[in] delimiter
         ///     Delimiter between time units
+        /// @param[in] date_prefix
+        ///     Prefix prepended before date
+        /// @param[in] time_prefix
+        ///     Prefix prepended before time of day
         /// @return
         ///     String representing the provided duration
         ///
@@ -379,10 +389,10 @@ namespace cc::core
 
         /// Convert a scalar epoch-based timestamp a TimePoint.
         ///
-        /// @param[in] scalar
+        /// @param[in] value
         ///     Time units since UNIX Epoch
         ///
-        /// @param[in] multiplier_decimal_expoent
+        /// @param[in] multiplier_decimal_exponent
         ///     Decimal exponent yielding the number of seconds per time unit,
         ///     e.g. -9 for nanoseconds, -3 for millseconds or 0 for seconds.
         ///

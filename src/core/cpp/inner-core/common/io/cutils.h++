@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file cutils.c++
+/// @file cutils.h++
 /// @brief Misc. utility functions for interacting with C/system calls
 /// @author Tor Slettnes
 //==============================================================================

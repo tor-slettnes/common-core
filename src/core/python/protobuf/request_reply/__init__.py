@@ -1,6 +1,6 @@
 #!/usr/bin/echo Do not invoke directly.
 #===============================================================================
-## @file rr.py
+## @file __init__.py
 ## @brief Wrapper module for `request_reply.proto`
 ## @author Tor Slettnes
 #===============================================================================

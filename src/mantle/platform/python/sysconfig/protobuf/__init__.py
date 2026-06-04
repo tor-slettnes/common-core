@@ -1,6 +1,6 @@
 #!/usr/bin/echo Do not invoke directly.
 #===============================================================================
-## @file sysconfig.py
+## @file __init__.py
 ## @brief Utility functions for data types from `sysconfig.proto`
 ## @author Tor Slettnes
 #===============================================================================

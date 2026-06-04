@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within package
-from ..common import Endpoint
+from ..common import EndpointBase
 from ...core.settingsstore import SettingsStore
 
 ### Stanard Python modules
@@ -34,7 +34,7 @@ AddressPair = namedtuple('AddressPair', ('host', 'port'))
 #-------------------------------------------------------------------------------
 # Base class
 
-class Base (Endpoint):
+class Base (EndpointBase):
     messaging_flavor = 'gRPC'
 
     # `service_name` should be overwritten by final subclass to look up settings
@@ -54,10 +54,10 @@ class Base (Endpoint):
                 "Subclass %r should set `service_name` -- see %s"%\
                 (type(self).__name__, __file__)
 
-        Endpoint.__init__(self,
-                          channel_name = self.service_name,
-                          product_name = product_name,
-                          project_name = project_name)
+        EndpointBase.__init__(self,
+                              channel_name = self.service_name,
+                              product_name = product_name,
+                              project_name = project_name)
 
 
     def max_request_size(self) -> Optional[str]:

@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file sysconfig-providers-native-linux.h++
+/// @file sysconfig-providers-native-systemd.h++
 /// @brief SysConfig service - SystemD implementation wrapper
 /// @author Tor Slettnes
 //==============================================================================

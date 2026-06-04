@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file vectorutils.h++
+/// @file containerutils.h++
 /// @brief Specialized container wrappers and operators
 /// @author Tor Slettnes
 //==============================================================================

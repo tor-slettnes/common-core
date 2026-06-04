@@ -419,17 +419,17 @@ class SettingsStore (dict):
             Automatically save the resulting settings store delta in the local
             settings folder.
 
-        @raises IndexError
+        @exception IndexError
             The provided `path` contains a index to dereference an intermediate
             list value, but the index is not within `range(len(LIST)+1)`.
 
-        @raises TypeError
+        @exception TypeError
             An attempt was made to dereference an intermediate object that is
             either not a dictionary or a list, or using a path element of an
             invalid type (for instance an unhashable type, or a non-integer
             value to dereference a list).
 
-        @raises KeyError
+        @exception KeyError
             An attempt was made to dereference an intermediate dictionary value
             with a non-existing key, with the `raise_missing` option set.
         '''
@@ -626,9 +626,28 @@ class SettingsStore (dict):
             settings folder (`/etc/common-core` or `$HOME/.config/common-core`,
             whichever is writable by the current user).
 
-        See `help(json.dump)` for information on the additional arguments
-        `sort_keys`, `skipkeys`, `ensure_ascii`, `check_circular`, `allow_nan`
-        and `indent`.
+        @param keep_empty
+            Save to the file even if this settings object is empty.  Otherwise,
+            nothing is saved, and any existing file matches are removed from the
+            local settings folder.
+
+        @param sort_keys
+            See `help(json.dump)`
+
+        @param skipkeys
+            See `help(json.dump)`
+
+        @param ensure_ascii
+            See `help(json.dump)`
+
+        @param check_circular
+            See `help(json.dump)`
+
+        @param allow_nan
+            See `help(json.dump)`
+
+        @param indent
+            See `help(json.dump)`
         '''
 
         args = locals()
@@ -669,8 +688,24 @@ class SettingsStore (dict):
             distribution (i.e, corresponding filenames within
             `/usr/share/common-core/settings`).
 
-        See `help(json.dump)` for information on the additional arguments
-        `skipkeys`, `ensure_ascii`, `check_circular`, `allow_nan` and `indent`.
+        @param sort_keys
+            See `help(json.dump)`
+
+        @param skipkeys
+            See `help(json.dump)`
+
+        @param ensure_ascii
+            See `help(json.dump)`
+
+        @param check_circular
+            See `help(json.dump)`
+
+        @param allow_nan
+            See `help(json.dump)`
+
+        @param indent
+            See `help(json.dump)`
+
         '''
 
         if only_delta:

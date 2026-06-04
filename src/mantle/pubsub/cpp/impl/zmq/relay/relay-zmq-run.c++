@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file relay-zmq-run.h++
+/// @file relay-zmq-run.c++
 /// @brief Message Relay - ZeroMQ listener initialization
 /// @author Tor Slettnes
 //==============================================================================

@@ -91,8 +91,8 @@ namespace cc::platform::netconfig::dbus
 
     //==========================================================================
     /// @brief Return a map of all available data structures of the specified type
-    /// @param
-    ///    Reference to data objects for the specified type
+    /// @returns
+    ///    Map of references to data objects for the specified type
 
     template <class WrapperType, class DataType>
     inline core::types::ValueMap<Key, std::shared_ptr<DataType>> datamap()

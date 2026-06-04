@@ -182,7 +182,7 @@ namespace cc::platform::vfs
         bool update = false,
         bool with_attributes = true);
 
-    /// @brief Move `source` path to `target.
+    /// @brief Move `source` path to `target`.
     /// @param[in] source
     ///     source path
     /// @param[in] target

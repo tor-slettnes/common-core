@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file avro-base.c++
+/// @file avro-simplevalue.c++
 /// @brief Common functionality wrappers for SimpleValue endpoints
 /// @author Tor Slettnes
 //==============================================================================

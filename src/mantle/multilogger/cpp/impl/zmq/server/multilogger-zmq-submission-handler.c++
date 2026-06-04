@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file multilogger-zmq-submission-handler.c+
+/// @file multilogger-zmq-submission-handler.c++
 /// @brief Handle log events received from clients over ZMQ
 /// @author Tor Slettnes
 //==============================================================================

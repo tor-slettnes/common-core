@@ -265,11 +265,9 @@ namespace cc::core::platform
 
         /// @brief
         ///     Check if a file name matches a shell-style file name mask (globbing pattern)
-        /// @param[in] masks
+        /// @param[in] mask
         ///     A shell-style filename mask (e.g. `*.txt`, `????-??-??.log`)
         /// @param[in] filename
-        ///     Filename to check
-        /// @param[in] match
         ///     Filename to check
         /// @param[in] match_leading_period
         ///     Whether wildcards (`*` and `?`) match a leading period in

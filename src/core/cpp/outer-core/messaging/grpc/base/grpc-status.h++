@@ -59,7 +59,7 @@ namespace cc::grpc
 
         /// @brief
         ///     Constructor from a `status::Error` instance
-        /// @param[in] Error
+        /// @param[in] error
         ///     Error instance
         Status(const Error &error);
 
@@ -85,7 +85,7 @@ namespace cc::grpc
         ///     Constructor from an Error instance with explicit status code
         /// @param[in] status_code
         ///     gRPC Status
-        /// @param[in] Error
+        /// @param[in] error
         ///     Error instance
         Status(::grpc::StatusCode status_code, const Error &error);
 
@@ -121,9 +121,9 @@ namespace cc::grpc
 
         /// @brief
         ///     Determine if this Status object is fundamentally equivalent to another.
-        /// @param[in]
+        /// @param[in] other
         ///     Other event/Status object with which this is to be compared
-        /// @description
+        /// @note
         ///     Equivalence is based on object attributes that are deemed
         ///     sufficient to distinghish a repeated instance of this from
         ///     another type of status.  For example, status codes and texts are

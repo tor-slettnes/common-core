@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file grpc-service.c++
+/// @file multilogger-grpc-run.c++
 /// @brief Launch MultiLogger gRPC services
 /// @author Tor Slettnes
 //==============================================================================

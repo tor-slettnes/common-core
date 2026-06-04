@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file avro-base.h++
+/// @file avro-simplevalue.h++
 /// @brief Common functionality wrappers for AVRO serialization
 /// @author Tor Slettnes
 //==============================================================================

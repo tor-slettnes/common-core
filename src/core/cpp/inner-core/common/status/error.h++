@@ -58,9 +58,7 @@ namespace cc::core::status
 
         /// @brief
         ///     Determine if this Status object is fundamentally equivalent to another.
-        /// @param[in]
-        ///     Other event/Status object with which this is to be compared
-        /// @description
+        /// @note
         ///     Equivalence is based on object attributes that are deemed
         ///     sufficient to distinghish a repeated instance of this from
         ///     another type of status.  For example, status codes and texts are

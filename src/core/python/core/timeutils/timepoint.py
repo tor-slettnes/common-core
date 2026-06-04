@@ -229,7 +229,7 @@ class TimePoint (float):
         @exception TypeError
             The input value could not be converted to a TimePoint nor a TimeInterval
 
-        @xception ValueError
+        @exception ValueError
             The provided string input is not a valid ISO 8601 date/time string,
             nor a supported duration string.
         '''

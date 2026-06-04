@@ -1,6 +1,6 @@
 #!/usr/bin/echo Do not invoke directly.
 #===============================================================================
-## @file utils.py
+## @file message.py
 ## @brief Utility functions for ProtoBuf messages
 ## @author Tor Slettnes
 #===============================================================================

@@ -25,6 +25,7 @@ class SignalClient (SignalMixIn, GenericClient):
 
     def __init__(self,
                  host: str|None = None,
+                 port: int|None = None,
                  wait_for_ready: bool = False,
                  product_name: str|None = None,
                  project_name: str|None = None,
@@ -32,8 +33,7 @@ class SignalClient (SignalMixIn, GenericClient):
                  signal_store: SignalStore|None = None,
                  signal_type: SignalMessage|None = None,
                  watch_all: bool = True,
-                 use_cache: bool = True,
-                 **kwargs):
+                 use_cache: bool = True):
         '''
         @param host
             Server host and/or port number, in the form `address:port`.
@@ -45,6 +45,9 @@ class SignalClient (SignalMixIn, GenericClient):
             - grpc-endpoints-PROJECT_NAME.json,
             - grpc-endpoints-common.json.
            (The ALL CAPS portions are substituted as appropriate)
+
+        @param port
+            Explicit port number, if any.
 
         @param wait_for_ready
             If a connection attempt fails, keep retrying until successful.
@@ -58,7 +61,7 @@ class SignalClient (SignalMixIn, GenericClient):
             Name of code project (e.g. parent code repository). Used to locate
             corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
 
-        @param interceptor_errors
+        @param intercept_errors
             Raise any errors encountered in custom gRPC interceptors
 
         @param signal_store
@@ -92,6 +95,7 @@ class SignalClient (SignalMixIn, GenericClient):
         GenericClient.__init__(
             self,
             host = host,
+            port = port,
             wait_for_ready = wait_for_ready,
             product_name = product_name,
             project_name = project_name,

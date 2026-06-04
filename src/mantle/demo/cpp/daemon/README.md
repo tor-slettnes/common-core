@@ -18,5 +18,5 @@ If deployed on actual system computer this step would be done automatically by t
 
 ### That's it.
 
-The server is now ready to serve incoming requests. Refer to the additional README files for the [demo-dds-tool](../utils/dds-tool/README.md) utilty for additional instructions on how to proceed with the actual tests.
+The server is now ready to serve incoming requests. Refer to the additional README files for the [demo-dds-tool](../tools/dds-tool/README.md) utilty for additional instructions on how to proceed with the actual tests.
 

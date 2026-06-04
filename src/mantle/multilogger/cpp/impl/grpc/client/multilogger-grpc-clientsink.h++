@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file multilogger-grpc-clientsink.c++
+/// @file multilogger-grpc-clientsink.h++
 /// @brief Log to remote MultiLogger service
 /// @author Tor Slettnes
 //==============================================================================

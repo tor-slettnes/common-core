@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file schemaregistry-client.c++
+/// @file schema-registry-client.c++
 /// @brief Client for Confluent Schema Registry
 /// @author Tor Slettnes
 //==============================================================================

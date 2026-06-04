@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file async-sink.h++
+/// @file async-wrapper.h++
 /// @brief Capture/process loggable items in an asynchronous queue
 /// @author Tor Slettnes
 //==============================================================================

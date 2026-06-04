@@ -20,11 +20,11 @@ namespace cc::core::types
 
     /// @class enable_create_shared
     /// @tparam SharedClass
-    ///     Class which will get a static `::create_shared()` method
+    ///     Class which will get a static `create_shared()` method
     /// @tparam Base
-    ///     Type of std::shared_ptr<> instance returned by `::create_shared()`
+    ///     Type of std::shared_ptr<> instance returned by `create_shared()`
     ///
-    /// This adds a static public `::create_shared()` method to an arbitrary class T
+    /// This adds a static public `create_shared()` method to an arbitrary class T
     /// to return a new 'shared_ptr<T>' instance.
     ///
     /// `enable_create_shared<T>` is further derived from

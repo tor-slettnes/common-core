@@ -14,23 +14,17 @@ import zmq
 
 class Publisher (Endpoint, MessageBase):
     endpoint_type = 'publisher'
+    socket_type = zmq.PUB
 
     def __init__(self,
-                 bind_address: str,
+                 address: str,
                  channel_name: str|None = None,
                  product_name: str|None = None,
                  project_name: str|None = None,
                  role: Endpoint.Role = Endpoint.Role.HOST,
                  ):
 
-        Endpoint.__init__(
-            self,
-            address = bind_address,
-            channel_name = channel_name,
-            product_name = product_name,
-            project_name = project_name,
-            socket_type = zmq.PUB,
-            role = role)
+        Endpoint.__init__(**locals())
 
     def publish(self,
                 topic: str|bytes|bytearray|None,

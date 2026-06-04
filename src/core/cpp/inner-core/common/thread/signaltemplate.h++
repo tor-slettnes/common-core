@@ -179,6 +179,8 @@ namespace cc::core::signal
         /// @brief Register a signal handler for signals of the provided template type.
         /// @param[in] slot
         ///     A callback function, invoked whenever the signal is emitted
+        /// @param[in] emit_cached
+        ///     Invoke handler immediately with previously cached value, if any
         /// @return
         ///     A unique handle, which can later be used to disconnect
         Handle connect(const Slot &slot, bool emit_cached = true)
@@ -194,6 +196,8 @@ namespace cc::core::signal
         ///     subsequent cancellation.
         /// @param[in] slot
         ///     A callback function, invoked whenever the signal is emitted
+        /// @param[in] emit_cached
+        ///     Invoke handler immediately with previously cached value, if any
         void connect(const Handle &handle, const Slot &slot, bool emit_cached = true)
         {
             std::scoped_lock lck(this->signal_mtx_);
@@ -371,6 +375,8 @@ namespace cc::core::signal
         /// @brief Register a signal handler for signals of the provided template type.
         /// @param[in] slot
         ///     A callback function, invoked whenever the signal is emitted
+        /// @param[in] emit_cached
+        ///     Invoke handler immediately with previously cached value, if any
         /// @return
         ///     A unique handle, which can later be used to disconnect
         Handle connect(const Slot &slot, bool emit_cached = true)
@@ -386,6 +392,8 @@ namespace cc::core::signal
         ///     subsequent cancellation.
         /// @param[in] slot
         ///     A callback function, invoked whenever the signal is emitted
+        /// @param[in] emit_cached
+        ///     Invoke handler immediately with previously cached value, if any
         void connect(const Handle &handle, const Slot &slot, bool emit_cached = true)
         {
             std::scoped_lock lck(this->signal_mtx_);
@@ -574,6 +582,8 @@ namespace cc::core::signal
         /// @brief Register a signal handler for this signal.
         /// @param[in] slot
         ///     A function invoked whenever signal data is emitted
+        /// @param[in] emit_cached
+        ///     Invoke handler immediately with previously cached values, if any
         /// @return
         ///     Unique handle which can later be used to disconnect
         Handle connect(const Slot &slot, bool emit_cached = true)
@@ -588,6 +598,8 @@ namespace cc::core::signal
         ///     Unique handle which can later be used to disconnect
         /// @param[in] slot
         ///     A function invoked whenever signal data is emitted
+        /// @param[in] emit_cached
+        ///     Invoke handler immediately with previously cached values, if any
         void connect(const Handle &handle, const Slot &slot, bool emit_cached = true)
         {
             std::scoped_lock lck(this->signal_mtx_);

@@ -51,13 +51,11 @@ namespace cc::grpc
 
         /// @brief
         ///     Indicate whether we are connected to a service.
-        /// @param[in]
+        /// @param[in] attempt
         ///     Attempt to connect if the current connectivity state is IDLE.
         bool connected(bool attempt = true) const;
 
         /// @brief Wait for service to become available.
-        /// @return
-        ///      `true` if server is available, `false` otherwise.
         void wait_for_connected() const;
 
         /// @brief Wait up to a specified duration for service to become available.

@@ -20,11 +20,11 @@ namespace cc::core::types
 
     /// @class enable_create_unique
     /// @tparam UniqueClass
-    ///     Class which will get a static `::create_unique()` method
+    ///     Class which will get a static `create_unique()` method
     /// @tparam Base
-    ///     Type of std::unique_ptr<> instance returned by `::create_unique()`
+    ///     Type of std::unique_ptr<> instance returned by `create_unique()`
     ///
-    /// This adds a static public `::create_unique()` method to an arbitrary class T
+    /// This adds a static public `create_unique()` method to an arbitrary class T
     /// to return a new 'unique_ptr<T>' instance.
     ///
     /// `enable_create_unique<T>` is further derived from

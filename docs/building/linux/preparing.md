@@ -4,8 +4,7 @@ Preparing Your Build Environment
 You have several options for creating a build environment in which you can build, debug, and run the applications within this repository:
 
 1. [Native Linux Host](#native)
-2. [Linux managed `chroot` environment](#schroot)
-3. [Docker](#docker)
+2. [Docker](#docker)
 
 
 > **Note:** To run the inline commands below, open a shell prompt (e.g. a Linux terminal application) and navigate to your top-level work directory where you cloned this repository (or the parent repository if you are using this as a submodule).

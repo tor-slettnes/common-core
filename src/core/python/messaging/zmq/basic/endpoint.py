@@ -19,12 +19,13 @@ except ImportError as e:
     raise e from None
 
 ### Modules within package
-from ...common.endpoint import Endpoint as EndpointBase
+from ...common.endpoint import EndpointBase
 
 
 class Endpoint (EndpointBase):
     messaging_flavor  = 'ZMQ'
     context = zmq.Context()
+    socket_type = None
 
     class Role (enum.IntEnum):
         UNDEFINED = 0
@@ -33,11 +34,10 @@ class Endpoint (EndpointBase):
 
     def __init__(self,
                  address     : str,
-                 channel_name: str,
-                 socket_type : zmq.SocketType,
-                 role        : Role = Role.UNDEFINED,
+                 channel_name: str|None = None,
                  product_name: str|None = None,
                  project_name: str|None = None,
+                 role        : Role = Role.UNDEFINED,
                  ):
         '''
         Initializer.
@@ -53,10 +53,13 @@ class Endpoint (EndpointBase):
             generalized service name, adapted for RPC/Request/Response, Pub/Sub,
             and other ZMQ socket types.
 
-        @param socket_type
-            ZMQ socket type to use for this endpoint. Typically a hardcoded
-            value is passed in from direct descendants of this class, e.g.
-            `Publisher` would use `zmq.PUB`.
+        @param product_name
+            Name of the product, used to locate corresponding settings files
+            (e.g. `zmq-endpoints-PRODUCT.yaml`).
+
+        @param project_name
+            Name of code project (e.g. parent code repository), used to locate
+            corresponding settings files (e.g. `zmq-endpoints-PROJECT.yaml`)
 
         @param role
             Default role of this endpoint vis a vis its peers.
@@ -65,14 +68,6 @@ class Endpoint (EndpointBase):
             `Endpoint.Role.SATELLITE` means that this will connect to a (local
             or remote) peer.  If not provided, an explicit call to `bind()` or
             `connect()` will be required in order to communicate with peers.
-
-        @param product_name
-            Name of the product, used to locate corresponding settings files
-            (e.g. `zmq-endpoints-PRODUCT.yaml`).
-
-        @param project_name
-            Name of code project (e.g. parent code repository), used to locate
-            corresponding settings files (e.g. `zmq-endpoints-PROJECT.yaml`)
         '''
 
         EndpointBase.__init__(self,
@@ -81,7 +76,7 @@ class Endpoint (EndpointBase):
                               product_name = product_name)
 
         self._provided_address = address
-        self.socket            = self.context.socket(socket_type)
+        self.socket            = self.context.socket(self.socket_type)
         self.role              = role
         self.bound_address     = None
         self.host_address      = None
@@ -148,11 +143,11 @@ class Endpoint (EndpointBase):
         return b''.join(self.receive_parts(flags))
 
     def sanitized_host_address(self,
-                               provided: str|None = None) -> str:
+                               address: str|None = None) -> str:
         '''
         Sanitize the provided host address into a format as expected by ZMQ.
 
-        @param provided
+        @param address
             Address to sanitize, if different from what was previously provided
             to `__init__()`.  Missing components (`scheme`, `host`, `port`) are
             populated with default values: `tcp`, `localhost`, `5555`.
@@ -161,7 +156,7 @@ class Endpoint (EndpointBase):
             Sanitized address of the form `scheme://host:port`.
         '''
 
-        return self._realaddress(provided,
+        return self._realaddress(address,
                                  "scheme", "host", "port",
                                  "tcp", "localhost", 5555)
 
@@ -190,11 +185,11 @@ class Endpoint (EndpointBase):
             self.socket.disconnect(host_address)
 
     def sanitized_bind_address(self,
-                               provided: str|None = None) -> str:
+                               address: str|None = None) -> str:
         '''
         Sanitize the provided bind (interface) address into a format as expected by ZMQ.
 
-        @param provided
+        @param address
             Address to sanitize, if different from what was previously provided
             to `__init__()`.  Missing components (`scheme`, `host`, `port`) are
             populated with default values: `tcp`, `*`, `5555`.
@@ -203,7 +198,7 @@ class Endpoint (EndpointBase):
             Sanitized address of the form `scheme://host:port`.
         '''
 
-        return self._realaddress(provided,
+        return self._realaddress(address,
                                  "scheme", "listen", "port",
                                  "tcp", "*", 5555)
 
@@ -236,7 +231,7 @@ class Endpoint (EndpointBase):
 
 
     def _realaddress(self,
-                     provided      : str|None = None,
+                     address       : str|None = None,
                      schemeOption  : str = "scheme",
                      hostOption    : str = "",
                      portOption    : int = "port",
@@ -288,7 +283,7 @@ class Endpoint (EndpointBase):
           may still be empty)
         '''
 
-        (scheme, host, port) = self._splitAddress(provided or self._provided_address or "")
+        (scheme, host, port) = self._splitAddress(address or self._provided_address or "")
 
         if schemeOption and not scheme:
             scheme = self.setting(schemeOption, defaultScheme)

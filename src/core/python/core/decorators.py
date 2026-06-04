@@ -27,7 +27,7 @@ except ImportError:
 def virtual(function: Callable):
     '''
     Function decorator that indicates a function that *may* be overridden in
-    subclasses.  This is different from @abstractmethod, which forces override
+    subclasses.  This is different from \@abstractmethod, which forces override
     (more like "pure virtual" function in C++, Java, etc).
     '''
     return function

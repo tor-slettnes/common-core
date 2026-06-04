@@ -2,7 +2,6 @@
 Generic communications endpoint
 '''
 
-__all__ = ['Endpoint']
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
@@ -16,7 +15,7 @@ from cc.core.settingsstore import SettingsStore
 #===============================================================================
 # Base class
 
-class Endpoint (DocBase, LogBase):
+class EndpointBase (DocBase, LogBase):
     # `messaging_flavor` should be overwritten by direct subclasses to indicate
     # message platform, e.g., `gRPC`, `DDS`, `ZMQ`, ...
     messaging_flavor = None

@@ -330,11 +330,6 @@ namespace cc::platform::switchboard
         ///    Trigger any direct descendants to reevaluate their state based
         ///    on this and its other dependencies after each state transition.
         ///
-        /// @param[in] descendant_propagation
-        ///    Whether and how to trigger descendants to reevaluate their state
-        ///    based on this and its other dependencies after the state change,
-        ///    if any.
-        ///
         /// @param[in] reenter
         ///    Make the state transition even if the switch is already in the
         ///    desired target state.

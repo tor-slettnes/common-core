@@ -128,7 +128,7 @@ namespace cc::platform::switchboard
         /// @param[in] declarations
         ///     Switch names mapped to corresponding declarations, structured
         ///     like those those in a declarations file.
-        /// @param[in] replae_specifications
+        /// @param[in] replace_specifications
         ///     Parse and update switch specifications from the provided maps.
         /// @param[in] replace_statuses
         ///     Parse and update switch statuses from the provided maps.
@@ -147,7 +147,7 @@ namespace cc::platform::switchboard
         ///     If not provided, all switches are exported.
         /// @param[in] include_specifications
         ///     Include specifications in the generated map
-        /// @param[in] include_status
+        /// @param[in] include_statuses
         ///     Include current switch statuses in generated map
         /// @return
         ///     Switch names mapped to corresponding declarations.
@@ -163,7 +163,7 @@ namespace cc::platform::switchboard
         ///      following an applicable state change.
         /// @param[in] interceptor
         ///      Interceptor to be invoked after each matching state change.
-        /// @param[in] switch_seleciton
+        /// @param[in] switch_selection
         ///      Switches to which this intereceptor will be added.
         /// @param[in] immediate
         ///      If the interceptor's trigger states include this switch's
@@ -173,8 +173,11 @@ namespace cc::platform::switchboard
         ///      immediately.  In this case, unless the interceptor's
         ///      `asynchronous` flag is also True, the call blocks until the
         ///      interceptor has completed.
+        /// @param[in] future
+        ///      Also assign interceptor to any matching switches created in the
+        ///      future.
         /// @return
-        ///     `true` if the interceptor was added, `false` if the name already existed.
+        ///      `true` iff a new interceptor was added.
 
         virtual bool add_interceptor(
             const InterceptorRef &interceptor,

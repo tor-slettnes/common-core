@@ -13,23 +13,16 @@ import zmq
 
 class Requester (Endpoint):
     endpoint_type = 'requester'
+    socket_type = zmq.REQ
 
     def __init__(self,
-                 host_address: str,
-                 channel_name: str,
+                 address: str,
+                 channel_name: str|None = None,
                  product_name: str|None = None,
                  project_name: str|None = None,
                  role: Endpoint.Role = Endpoint.Role.SATELLITE):
 
-        Endpoint.__init__(
-            self,
-            address = host_address,
-            channel_name = channel_name,
-            product_name = product_name,
-            project_name = project_name,
-            socket_type = zmq.REQ,
-            role = role)
-
+        Endpoint.__init__(**locals())
 
     def send_receive(self, request : bytes) -> bytes:
         self.send_bytes(request)

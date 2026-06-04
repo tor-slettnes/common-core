@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within package
-from ..common import Endpoint
+from ..common import EndpointBase
 from cc.core.invocation import check_type
 
 ### Standard Python modules
@@ -27,7 +27,7 @@ class HTTPServerError (HTTPError):
     pass
 
 
-class HTTPBase (Endpoint):
+class HTTPBase (EndpointBase):
     messaging_flavor = 'HTTP'
 
     # `service_name` should be overwritten by final subclass to look up settings
@@ -46,10 +46,10 @@ class HTTPBase (Endpoint):
                 "Subclass %r should set `service_name` -- see %s"%\
                 (type(self).__name__, __file__)
 
-        Endpoint.__init__(self,
-                          channel_name = self.service_name,
-                          product_name = product_name,
-                          project_name = project_name)
+        EndpointBase.__init__(self,
+                              channel_name = self.service_name,
+                              product_name = product_name,
+                              project_name = project_name)
 
     def get_target_url(self, provided: str = ''):
         return urllib.parse.urlunsplit(self.get_target(provided))

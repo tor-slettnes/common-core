@@ -44,8 +44,6 @@ namespace cc::core::types
         ///     Maximum queue size.
         /// @param[in] overflow_disposition
         ///     How to handle `put()` requests into a full queue.
-        /// @param[in] close_on_shutdown
-        ///     Close this queue on program shutdown (to prevent hang)
 
         BlockingQueueBase(
             std::size_t maxsize,

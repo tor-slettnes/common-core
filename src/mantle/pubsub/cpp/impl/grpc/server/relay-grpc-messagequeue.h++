@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file relay-grpc-signalqueue.h++
+/// @file relay-grpc-messagequeue.h++
 /// @brief connect server-side signals to gRPC streams initiated by clients
 /// @author Tor Slettnes
 //==============================================================================

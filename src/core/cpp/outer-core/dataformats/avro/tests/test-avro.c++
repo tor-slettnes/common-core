@@ -40,7 +40,9 @@ namespace cc::avro
 
     TEST(AvroTest, ProtoBufEventToJsonSchema)
     {
-        const SchemaWrapper &wrapper = schema_from_proto(cc::protobuf::status::Error::GetDescriptor());
+        const SchemaWrapper &wrapper = ProtoBufSchema::from_proto(
+            cc::protobuf::status::Error::GetDescriptor());
+
         // std::string json = wrapper.as_json();
         std::string json = core::json::writer.encoded(wrapper, true);
         auto of1 = std::ofstream("event.json");
@@ -203,7 +205,6 @@ namespace cc::avro
     //     // Now add a second field to the schema, and try to deserialize from the original payload.
     // }
 
-
     TEST(AvroTest, DeserializeWithExcessBytes)
     {
         auto context = std::make_shared<BuilderContext>();
@@ -243,6 +244,5 @@ namespace cc::avro
 
         EXPECT_TRUE(avro_value_equal(&original_field1, &updated_field1));
     }
-
 
 }  // namespace cc::avro

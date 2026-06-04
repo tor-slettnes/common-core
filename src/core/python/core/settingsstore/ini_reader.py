@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -i
 #===============================================================================
-## @file inifilereader.py
+## @file ini_reader.py
 ## @brief Parse .INI-style settings files
 ## @author Tor Slettnes
 #===============================================================================

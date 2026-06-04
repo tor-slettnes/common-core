@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file multilogger-zmq-requesthandler.h++
+/// @file multilogger-zmq-request-handler.h++
 /// @brief Handle MultiLogger control requests received from clients over ZMQ
 /// @author Tor Slettnes
 //==============================================================================

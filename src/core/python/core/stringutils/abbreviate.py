@@ -105,7 +105,7 @@ def ident_abbrev(identifier: str,
     @param identifier
         Mixed-case identifier
 
-    @param strip_first_lowercase
+    @param strip_initial_lowercase
         Also strip the initial lowercase character if applicable
 
     @param strip_trailing_lowercase

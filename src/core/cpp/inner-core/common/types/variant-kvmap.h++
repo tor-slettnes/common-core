@@ -31,11 +31,13 @@ namespace cc::core::types
         ///   Obtain the value specified by `key`.
         /// @param[in] key
         ///   Mapping key
+        /// @param[in] fallback
+        ///   Value returned if `key` is not found
         /// @param[in] ignoreCase
         ///   If `true` and the exact key is not found, try again with a
         ///   case-insensitive search.
         /// @returns
-        ///   The mapped value if found, otherwise an empty value.
+        ///   The mapped value if found, otherwise the provided `fallback`
         const Value &get(
             const std::string &key,
             const Value &fallback = {},

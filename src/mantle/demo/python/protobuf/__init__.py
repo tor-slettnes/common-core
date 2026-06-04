@@ -1,6 +1,6 @@
 #!/bin/echo Do not invoke directly.
 #===============================================================================
-## @file demo.py
+## @file __init__.py
 ## @brief Support for ProtoBuf types from `demo.proto`.
 ## @author Tor Slettnes <tslettnes@picarro.com>
 #===============================================================================

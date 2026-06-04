@@ -28,15 +28,15 @@ class SignalRequestHandler (SignalMixIn, RequestHandler):
                  project_name   : str|None = None,
                  ):
         '''
-        param[in] signal_store
+        @param[in] signal_store
            An instance of `protobuf.signal.SignalStore` from which
            we receive signals.
 
-        param[in] bind_address
+        @param[in] bind_address
            Listener address, which will be added to gRPC server.  For additional
            information, refer to `__init__()` in the `RequestHandler` parent class.
 
-        param[in] max_queue_size
+        @param[in] max_queue_size
            Max size of queue that will hold locally-emitted signals until
            they are streamed back to the client.  None means unlimited.
 

@@ -30,7 +30,7 @@ namespace cc::avro
     public:
         /// @brief
         ///     RAII constructor for C `avro_value_t` instances.
-        /// @param[in] c_value
+        /// @param[in] avro_value
         ///     `avro_value_t` pointer
 
         BaseValue(const avro_value_t &avro_value);

@@ -74,7 +74,7 @@ The outputs will be:
 - one or more [Python wheels](https://pythonwheels.com/) (`.whl` files) that you can use in a Python 3.9 or higher environment on any platform
 
 
-#### About components
+### About components
 
 The above will either create a single `.deb` package containing all installable components, or a separate `.deb` file for each. This behavior is controlled by the option `CPACK_DEB_COMPONENT_INSTALL` found in any of these places (in order of priority):
 
@@ -84,7 +84,7 @@ The above will either create a single `.deb` package containing all installable 
 
 Throughout the code in this repository, install components are is identified using the `COMPONENT` option to the CMake [install()](https://cmake.org/cmake/help/latest/module/CPackComponent.html#command:cpack_add_component) command, or indirectly with our own wrapper methods such as [BuildExecutable()](../../../cmake/BuildExecutable.cmake), [BuildPython()](../../../cmake/BuildPython.cmake), etc.  Detailed definitions for each component are provided using the CMake command [cpack_add_component()](https://cmake.org/cmake/help/latest/module/CPackComponent.html#command:cpack_add_component)
 
-#### Package name
+### Package name
 
 The Debian package name (or the prefix if you're creating multiple packages as described above) is specified with the option `CPACK_PACKAGE_NAME` (again in `CPackConfig.cmake`; see above for resolution order).
 

@@ -1,6 +1,6 @@
 #!/usr/bin/echo Do not invoke directly.
 #===============================================================================
-## @file servicer.py
+## @file generic_request_handler.py
 ## @brief Interactive wrapper for access to Instrument Services via gRPC
 ## @author Tor Slettnes
 #===============================================================================

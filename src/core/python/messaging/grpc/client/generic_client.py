@@ -75,6 +75,9 @@ class GenericClient (Base, MessageDissecter):
            (The ALL CAPS portions are substituted as appropriate;
            specifically, SETTINGS_SUFFIX is any of `json`, `yaml`, or `ini`).
 
+        @param port
+           Explicit port number, if any.
+
         @param wait_for_ready
             If a connection attempt fails, keep retrying until successful.
             This value may be overriden per call.
@@ -87,7 +90,7 @@ class GenericClient (Base, MessageDissecter):
             Name of code project (e.g. parent code repository). Used to locate
             corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
 
-        @param interceptor_errors
+        @param intercept_errors
             Raise any errors encountered in custom gRPC interceptors
 
         '''

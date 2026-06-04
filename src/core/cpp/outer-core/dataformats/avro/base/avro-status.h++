@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file avro-status.c++
+/// @file avro-status.h++
 /// @brief Check return status from Avro calls; throw if error
 /// @author Tor Slettnes
 //==============================================================================

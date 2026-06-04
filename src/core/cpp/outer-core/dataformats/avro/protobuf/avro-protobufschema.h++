@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file avro-protobufvalue.h++
+/// @file avro-protobufschema.h++
 /// @brief Create Avro values from ProtoBuf messages
 /// @author Tor Slettnes
 //==============================================================================
@@ -28,14 +28,28 @@ namespace cc::avro
         using SchemaMap = core::types::ValueMap<const google::protobuf::Descriptor *,
                                                 SchemaWrapper>;
 
-        friend SchemaWrapper &schema_from_proto(const google::protobuf::Descriptor *);
-
     public:
         // @param[in] descriptor
         //     ProtoBuf message descriptor
 
         ProtoBufSchema(
             const ContextRef &context,
+            const google::protobuf::Descriptor *descriptor);
+
+    public:
+        //--------------------------------------------------------------------------
+        /// @brief
+        ///     Get an Avro schema wrapper for a ProtoBuf message type
+        /// @param[in] descriptor
+        ///     ProtoBuf message descriptor
+        /// @return
+        ///     A new or existing `SchemaWrapper` instance.
+        ///
+        /// Well-known ProtoBuf message types are mapped to predefined Avro schemas.
+        /// Custom types are mapped via a new or existing `ProtoBufSchema`
+        /// instance.  New instances are cached for future reuse.
+
+        static SchemaWrapper &from_proto(
             const google::protobuf::Descriptor *descriptor);
 
     private:
@@ -61,23 +75,8 @@ namespace cc::avro
         static std::optional<std::string> field_comment(
             const google::protobuf::FieldDescriptor *fd);
 
-
     private:
         const google::protobuf::Descriptor *descriptor;
     };
-
-    //--------------------------------------------------------------------------
-    /// @brief
-    ///     Get an Avro schema wrapper for a ProtoBuf message type
-    /// @param[in] descriptor
-    ///     ProtoBuf message descriptor
-    /// @return
-    ///     A new or existing `SchemaWrapper` instance.
-    ///
-    /// Well-known ProtoBuf message types are mapped to predefined Avro schemas.
-    /// Custom types are mapped via a new or existing `ProtoBufSchema`
-    /// instance.  New instances are cached for future reuse.
-
-    SchemaWrapper &schema_from_proto(const google::protobuf::Descriptor *descriptor);
 
 }  // namespace cc::avro

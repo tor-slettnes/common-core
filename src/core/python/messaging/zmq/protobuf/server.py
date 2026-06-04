@@ -28,7 +28,7 @@ class Server (Responder):
     '''
 
     def __init__(self,
-                 bind_address    : str,
+                 address         : str,
                  channel_name    : str|None,
                  product_name    : str|None = None,
                  project_name    : str|None = None,
@@ -38,7 +38,7 @@ class Server (Responder):
 
         Responder.__init__(
             self,
-            bind_address = bind_address,
+            address = address,
             channel_name = channel_name,
             product_name = product_name,
             project_name = project_name,

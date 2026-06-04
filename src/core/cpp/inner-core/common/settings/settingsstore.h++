@@ -45,7 +45,7 @@ namespace cc::core
         ///     Constructor.
         /// @param[in] filenames
         ///     Absolute or relative path names from which to load initial settings.
-        ///     @sa 'load()`.
+        ///     @sa `load()`.
         /// @param[in] directories
         ///     A list of folders in which to look for relative settings file
         ///     paths.  The default value is as returned from
@@ -63,7 +63,7 @@ namespace cc::core
         ///     Constructor that loads from a file on creation.
         /// @param[in] filename
         ///     Absolute or relative path name from which to load initial settings.
-        ///     @sa 'load()`.
+        ///     @sa `load()`.
         /// @param[in] directories
         ///     A list of folders in which to look for relative settings file paths.
         ///     @sa SettingsStore() default constructor.
