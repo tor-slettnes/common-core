@@ -5,4 +5,4 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-from .endpoint import Endpoint
+from .endpoint import EndpointBase
