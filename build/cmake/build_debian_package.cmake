@@ -383,12 +383,6 @@ endfunction()
 ## @fn cc_add_debian_control_script
 ## @brief
 ##    Add a script to be invoked during Debian package installation or removal.
-##
-## We install this script in `share/PACKAGE_NAME/PHASE.d`, along with a
-## main control script (e.g. `postinst`,`prerm` etc) to invoke `run-parts`
-## on that folder.  We do this because there may be more than one script
-## to invoke for a given package, for instance to install a Python wheel in
-## a virtual environment and also to add it as a `systemd` service.
 
 function(cc_add_debian_control_script)
   set(_options)
@@ -396,57 +390,23 @@ function(cc_add_debian_control_script)
     COMPONENT                 # CPack component to which this script belongs
     PHASE                     # One of: `preinst`, `postinst`, `prerm`, `postrm`
     TEMPLATE                  # Input template file (normally ending in `.in`)
-    OUTPUT_FILE               # Script name within parts folder
   )
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if(arg_COMPONENT AND arg_PHASE AND arg_TEMPLATE)
-    cc_cpack_get_debian_package_name(
-      COMPONENT "${arg_COMPONENT}"
-      OUTPUT_VARIABLE PACKAGE_NAME)
-
-    cmake_path(APPEND DEBIAN_CONTROL_STAGING_DIR ${PACKAGE_NAME} ${arg_PHASE}.d
-      OUTPUT_VARIABLE staging_dir)
-
-    if(arg_OUTPUT_FILE)
-      set(script_name "${arg_OUTPUT_FILE}")
-    else()
-      cmake_path(GET arg_TEMPLATE STEM LAST_ONLY script_name)
-    endif()
-
-    file(MAKE_DIRECTORY "${staging_dir}")
+    set(control_script ${arg_PHASE})
 
     cmake_path(ABSOLUTE_PATH arg_TEMPLATE
       BASE_DIRECTORY "${DEBIAN_TEMPLATE_DIR}"
       OUTPUT_VARIABLE template_path)
 
-    configure_file("${template_path}" "${staging_dir}/${script_name}" @ONLY)
+    configure_file("${template_path}" "${control_script}" @ONLY)
 
-    cmake_path(SET destination "share/${PACKAGE_NAME}/${arg_PHASE}.d")
-
-    install(PROGRAMS "${staging_dir}/${script_name}"
+    cc_cpack_debian_config(PACKAGE_CONTROL_EXTRA
+      "${CMAKE_CURRENT_BINARY_DIR}/${control_script}"
       COMPONENT "${arg_COMPONENT}"
-      DESTINATION "${destination}")
-
-    set(control_var "controls_${PACKAGE_NAME}")
-    set(controls "$ENV{${control_var}}")
-    list(FIND controls "${arg_PHASE}" found_index)
-    if(found_index LESS 0)
-      list(APPEND controls "${arg_PHASE}")
-      set(ENV{${control_var}} "${controls}")
-
-      set(PHASE "${arg_PHASE}")
-      cmake_path(ABSOLUTE_PATH destination
-        BASE_DIRECTORY "${INSTALL_ROOT}"
-        OUTPUT_VARIABLE PARTS_DIRECTORY)
-
-      cmake_path(APPEND staging_dir "${arg_PHASE}" OUTPUT_VARIABLE control_script)
-      configure_file("${DEBIAN_TEMPLATE_DIR}/run-hooks.in" "${control_script}" @ONLY)
-      cc_cpack_debian_config(PACKAGE_CONTROL_EXTRA "${control_script}"
-        COMPONENT "${arg_COMPONENT}"
-        APPEND)
-    endif()
+      APPEND
+    )
   endif()
 endfunction()
-

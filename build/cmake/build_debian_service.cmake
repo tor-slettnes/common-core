@@ -75,11 +75,12 @@ function(cc_add_debian_service UNIT)
     "${DEBIAN_TEMPLATE_DIR}/service-unit.in")
   configure_file("${service_template}" "${_service_unit}" @ONLY)
 
+
   cc_get_argument_or_default(install
     INSTALL
     "${arg_INSTALL_COMPONENT}"
-    "${arg_KEYWORDS_MISSING_VALUES}")
-
+    "${arg_KEYWORDS_MISSING_VALUES}"
+  )
 
   if(install AND arg_INSTALL_COMPONENT)
     install(
@@ -124,16 +125,6 @@ function(cc_add_service_enable_hooks UNIT)
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  cc_get_argument_or_default(postinst_template
-    POSTINST_TEMPLATE
-    "${DEBIAN_TEMPLATE_DIR}/service-postinst.in"
-    "${arg_KEYWORDS_MISSING_VALUES}")
-
-  cc_get_argument_or_default(prerm_template
-    PRERM_TEMPLATE
-    "${DEBIAN_TEMPLATE_DIR}/service-prerm.in"
-    "${arg_KEYWORDS_MISSING_VALUES}")
-
   set(SERVICE_UNIT "${UNIT}")
 
   cmake_path(APPEND INSTALL_ROOT "${arg_INSTALL_DIRECTORY}"
@@ -142,33 +133,40 @@ function(cc_add_service_enable_hooks UNIT)
   cmake_path(APPEND SERVICE_UNIT_DIR "${UNIT}"
     OUTPUT_VARIABLE SERVICE_UNIT_PATH)
 
-  cmake_path(GET UNIT STEM LAST_ONLY unitbase)
-  set(script "${unitbase}-service")
-
   cc_get_ternary(START_OR_RESTART arg_RESTART restart start)
+
+  cc_get_value_or_default(postinst_template
+    POSTINST_TEMPLATE
+    "${DEBIAN_TEMPLATE_DIR}/service-postinst.in"
+    "${arg_KEYWORDS_MISSING_VALUES}")
+
+  cc_get_value_or_default(prerm_template
+    PRERM_TEMPLATE
+    "${DEBIAN_TEMPLATE_DIR}/service-prerm.in"
+    "${arg_KEYWORDS_MISSING_VALUES}")
 
   cc_add_debian_control_script(
     COMPONENT "${arg_INSTALL_COMPONENT}"
     PHASE "preinst"
     TEMPLATE "${arg_PREINST_TEMPLATE}"
-    OUTPUT_FILE "90-${script}")
+  )
 
   cc_add_debian_control_script(
     COMPONENT "${arg_INSTALL_COMPONENT}"
     PHASE "postinst"
     TEMPLATE "${postinst_template}"
-    OUTPUT_FILE "90-${script}")
+  )
 
   cc_add_debian_control_script(
     COMPONENT "${arg_INSTALL_COMPONENT}"
     PHASE "prerm"
     TEMPLATE "${prerm_template}"
-    OUTPUT_FILE "10-${script}")
+  )
 
   cc_add_debian_control_script(
     COMPONENT "${arg_INSTALL_COMPONENT}"
     PHASE "postrm"
     TEMPLATE "${arg_POSTRM_TEMPLATE}"
-    OUTPUT_FILE "10-${script}")
+  )
 
 endfunction()

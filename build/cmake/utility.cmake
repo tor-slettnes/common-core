@@ -30,7 +30,7 @@ function(cc_get_argument_or_default
     OUTPUT_VARIABLE             # Variable to populate with input or default
     KEYWORD                     # Argument keyword
     DEFAULT                     # Value to populate if input variable is absent
-    KEYWORDS_MISSING_VALUE_LIST # List of arguments with empty input values
+    MISSING_VALUE_LIST          # List of arguments with empty input values
   )
   set(_singleargs
     PREFIX                      # Argument variable prefix; default: "arg"
@@ -41,11 +41,13 @@ function(cc_get_argument_or_default
   if(${prefix}_${KEYWORD})
     set("${OUTPUT_VARIABLE}" "${${prefix}_${KEYWORD}}" PARENT_SCOPE)
   else()
-    list(FIND KEYWORDS_MISSING_VALUE_LIST ${KEYWORD} _found)
+    list(FIND MISSING_VALUE_LIST ${KEYWORD} _found)
     if (_found LESS 0)
       set("${OUTPUT_VARIABLE}" "${DEFAULT}" PARENT_SCOPE)
+      set(output "${DEFAULT}")
     else()
       unset("${OUTPUT_VARIABLE}" PARENT_SCOPE)
+      set(output "")
     endif()
   endif()
 endfunction()
