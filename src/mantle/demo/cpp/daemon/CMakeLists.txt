@@ -50,6 +50,7 @@ if(SERVER_INSTALL_COMPONENT)
       PROGRAM "sbin/${TARGET}"
       DESCRIPTION "DEMO service"
       INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"
+      UNIT_OPTIONS "Conflicts=demo-server.service"
       ENABLE
       RESTART
     )

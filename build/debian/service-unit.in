@@ -2,6 +2,7 @@
 Description=@SERVICE_DESCRIPTION@
 #Wants=network.target
 After=network.target
+@UNIT_OPTIONS@
 
 [Service]
 Type=exec

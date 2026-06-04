@@ -29,6 +29,7 @@ function(cc_add_debian_service UNIT)
 
   )
   set(_multiargs
+    UNIT_OPTIONS                # Additional SystemD unit options
     ARGS                        # Command arguments
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -65,6 +66,7 @@ function(cc_add_debian_service UNIT)
     OUTPUT_VARIABLE SETTINGS_DIR)
 
   list(JOIN arg_ARGS " " SERVICE_ARGS)
+  list(JOIN arg_UNIT_OPTIONS "\n" UNIT_OPTIONS)
   set(SERVICE_DESCRIPTION "${arg_DESCRIPTION}")
   set(SERVICE_USER "${arg_USERNAME}")
 

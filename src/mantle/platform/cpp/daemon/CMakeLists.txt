@@ -50,6 +50,7 @@ if(ENABLE_SERVICES)
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "Platform server: System configuration, Networking, File access, Upgrade"
     INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"
+    UNIT_OPTIONS "Conflicts=platform-server.service"
     ENABLE
   )
 endif()

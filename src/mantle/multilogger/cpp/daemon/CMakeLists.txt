@@ -37,6 +37,7 @@ if(ENABLE_SERVICES)
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "Record events such as diagnostic messages, errors, and telemetry."
     INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"
+    UNIT_OPTIONS "Conflicts=multilogger.service"
     ENABLE
   )
 endif()
