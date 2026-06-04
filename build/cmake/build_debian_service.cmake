@@ -19,6 +19,7 @@ function(cc_add_debian_service UNIT)
     PROGRAM                     # Path to executable to launch as service/daemon
     DESCRIPTION                 # Description field for service unit
     USERNAME                    # Username for serivce
+    INSTALL                     # Whether to install (requires INSTALL_COMPONENT; default is ON)
     INSTALL_COMPONENT           # CPack component containing service unit
     SERVICE_TEMPLATE            # Custom Service unit template
     PREINST_TEMPLATE            # Custom `preinst` script template
@@ -72,26 +73,32 @@ function(cc_add_debian_service UNIT)
     "${DEBIAN_TEMPLATE_DIR}/service-unit.in")
   configure_file("${service_template}" "${_service_unit}" @ONLY)
 
-  if(arg_INSTALL_COMPONENT)
+  cc_get_argument_or_default(install
+    INSTALL
+    "${arg_INSTALL_COMPONENT}"
+    "${arg_KEYWORDS_MISSING_VALUES}")
+
+
+  if(install AND arg_INSTALL_COMPONENT)
     install(
       FILES "${CMAKE_CURRENT_BINARY_DIR}/${_service_unit}"
       DESTINATION "${_dest}"
       COMPONENT "${arg_INSTALL_COMPONENT}"
     )
-  endif()
 
-  if(arg_ENABLE)
-    cc_get_optional_keyword(RESTART arg_RESTART)
+    if(arg_ENABLE)
+      cc_get_optional_keyword(RESTART arg_RESTART)
 
-    cc_add_service_enable_hooks("${_service_unit}"
-      INSTALL_DIRECTORY "${_dest}"
-      INSTALL_COMPONENT "${arg_INSTALL_COMPONENT}"
-      PREINST_TEMPLATE "${arg_PREINST_TEMPLATE}"
-      POSTINST_TEMPLATE "${arg_POSTINST_TEMPLATE}"
-      PRERM_TEMPLATE "${arg_PRERM_TEMPLATE}"
-      POSTRM_TEMPLATE "${arg_POSTRM_TEMPLATE}"
-      ${RESTART}
-    )
+      cc_add_service_enable_hooks("${_service_unit}"
+        INSTALL_DIRECTORY "${_dest}"
+        INSTALL_COMPONENT "${arg_INSTALL_COMPONENT}"
+        PREINST_TEMPLATE "${arg_PREINST_TEMPLATE}"
+        POSTINST_TEMPLATE "${arg_POSTINST_TEMPLATE}"
+        PRERM_TEMPLATE "${arg_PRERM_TEMPLATE}"
+        POSTRM_TEMPLATE "${arg_POSTRM_TEMPLATE}"
+        ${RESTART}
+      )
+    endif()
   endif()
 endfunction()
 
@@ -116,12 +123,12 @@ function(cc_add_service_enable_hooks UNIT)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   cc_get_argument_or_default(postinst_template
-    arg_POSTINST_TEMPLATE
+    POSTINST_TEMPLATE
     "${DEBIAN_TEMPLATE_DIR}/service-postinst.in"
     "${arg_KEYWORDS_MISSING_VALUES}")
 
   cc_get_argument_or_default(prerm_template
-    arg_PRERM_TEMPLATE
+    PRERM_TEMPLATE
     "${DEBIAN_TEMPLATE_DIR}/service-prerm.in"
     "${arg_KEYWORDS_MISSING_VALUES}")
 

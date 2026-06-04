@@ -85,7 +85,7 @@ function(cc_add_settings TARGET)
 
   cc_get_argument_or_default(
     data_dir
-    arg_WHEEL_DESTINATION
+    WHEEL_DESTINATION
     "settings"
     "${arg_KEYWORDS_MISSING_VALUES}"
   )

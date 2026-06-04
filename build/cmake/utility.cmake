@@ -8,9 +8,14 @@
 ## @fn cc_get_value_or_default
 ## @brief Get the contents of the specified variable, or else a defaultvalue
 
-function(cc_get_value_or_default OUTPUT_VARIABLE VARIABLE DEFAULT)
-  if(${VARIABLE})
-    set("${OUTPUT_VARIABLE}" "${${VARIABLE}}" PARENT_SCOPE)
+function(cc_get_value_or_default
+    OUTPUT_VARIABLE
+    INPUT_VARIABLE
+    DEFAULT
+  )
+
+  if(${INPUT_VARIABLE})
+    set("${OUTPUT_VARIABLE}" "${${INPUT_VARIABLE}}" PARENT_SCOPE)
   else()
     set("${OUTPUT_VARIABLE}" "${DEFAULT}" PARENT_SCOPE)
   endif()
@@ -21,13 +26,26 @@ endfunction()
 ## @brief
 ##    Get a named argument (even if provided but empty), otherwise return default value
 
-function(cc_get_argument_or_default OUTPUT_VARIABLE VARIABLE DEFAULT MISSING_LIST)
-  if(${VARIABLE})
-    set("${OUTPUT_VARIABLE}" "${${VARIABLE}}" PARENT_SCOPE)
+function(cc_get_argument_or_default
+    OUTPUT_VARIABLE             # Variable to populate with input or default
+    KEYWORD                     # Argument keyword
+    DEFAULT                     # Value to populate if input variable is absent
+    KEYWORDS_MISSING_VALUE_LIST # List of arguments with empty input values
+  )
+  set(_singleargs
+    PREFIX                      # Argument variable prefix; default: "arg"
+  )
+  cmake_parse_arguments(arg "" "${_singleargs}" "" ${ARGN})
+  cc_get_value_or_default(prefix arg_PREFIX "arg")
+
+  if(${prefix}_${KEYWORD})
+    set("${OUTPUT_VARIABLE}" "${${prefix}_${KEYWORD}}" PARENT_SCOPE)
   else()
-    list(FIND MISSING_LIST ${VARIABLE} _found)
-    if (${_found} LESS 0)
+    list(FIND KEYWORDS_MISSING_VALUE_LIST ${KEYWORD} _found)
+    if (_found LESS 0)
       set("${OUTPUT_VARIABLE}" "${DEFAULT}" PARENT_SCOPE)
+    else()
+      unset("${OUTPUT_VARIABLE}" PARENT_SCOPE)
     endif()
   endif()
 endfunction()

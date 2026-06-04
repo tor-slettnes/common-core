@@ -13,16 +13,16 @@
 function(cc_add_executable TARGET)
   set(_options)
   set(_singleargs
-    DESTINATION                 # Destination directory, e.g. `bin` or `sbin`
-    INSTALL                     # Whether to install (requires INSTALL_COMPONENT; default is ON)
-    INSTALL_COMPONENT           # Install component; required for install.
+    DESTINATION           # Destination directory, e.g. `bin` or `sbin`
+    INSTALL               # Whether to install (requires INSTALL_COMPONENT; default is ON)
+    INSTALL_COMPONENT     # Install component; required for install.
   )
   set(_multiargs
-    SOURCES                     # Input files
-    LIB_DEPS                    # CMake target or third-party library dependencies
-    OBJ_DEPS                    # CMake "OBJECT" library dependencies
-    PKG_DEPS                    # 3rd party package dependencies; requires `pkg-conf`.
-    MOD_DEPS                    # CMake `Find*` module dependencies
+    SOURCES               # Input files
+    LIB_DEPS              # CMake target or third-party library dependencies
+    OBJ_DEPS              # CMake "OBJECT" library dependencies
+    PKG_DEPS              # 3rd party package dependencies; requires `pkg-conf`.
+    MOD_DEPS              # CMake `Find*` module dependencies
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -36,7 +36,7 @@ function(cc_add_executable TARGET)
   endforeach()
 
   cc_get_argument_or_default(install
-    arg_INSTALL
+    INSTALL
     "${arg_INSTALL_COMPONENT}"
     "${arg_KEYWORDS_MISSING_VALUES}")
 
@@ -57,7 +57,7 @@ function(cc_add_executable TARGET)
     )
   endif()
 
-  if(install)
+  if(install AND arg_INSTALL_COMPONENT)
     set(install_args
       TARGETS "${TARGET}"
       RUNTIME

@@ -84,7 +84,7 @@ function(cc_add_proto TARGET)
 
     cc_get_argument_or_default(
       namespace                       # OUTPUT_VARIABLE
-      arg_PYTHON_NAMESPACE            # VARIABLE
+      PYTHON_NAMESPACE                # VARIABLE
       "${PYTHON_GENERATED_NAMESPACE}" # DEFAULT
       "${arg_KEWORDS_MISSING_VALUES}" # MISSING_LIST
     )

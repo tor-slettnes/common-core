@@ -555,12 +555,12 @@ function(cc_add_python_wheel_install_hook)
   # Stage and add Debian postinst/prerm scripts
 
   cc_get_argument_or_default(postinst_template
-    arg_POSTINST_TEMPLATE
+    POSTINST_TEMPLATE
     "${DEBIAN_TEMPLATE_DIR}/wheel-postinst.in"
     "${arg_KEYWORDS_MISSING_VALUES}")
 
   cc_get_argument_or_default(prerm_template
-    arg_PRERM_TEMPLATE
+    PRERM_TEMPLATE
     "${DEBIAN_TEMPLATE_DIR}/wheel-prerm.in"
     "${arg_KEYWORDS_MISSING_VALUES}")
 
