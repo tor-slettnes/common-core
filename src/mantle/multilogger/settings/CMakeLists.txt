@@ -8,5 +8,6 @@
 cc_add_settings(cc_multilogger_settings
   SETTINGS_DEPS cc_core_settings
   DIRECTORIES "."
+  INSTALL ${BUILD_MULTILOGGER}
   INSTALL_COMPONENT "${SETTINGS_INSTALL_COMPONENT}"
 )

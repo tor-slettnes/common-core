@@ -14,19 +14,20 @@ cmake_path(SET CC_SETTINGS_STAGING_DIR "${CC_STAGING_DIR}/settings")
 
 function(cc_add_settings TARGET)
   set(_options
-    RECURSE                # Recursively descend into provided DIRECTORIES
+    RECURSE           # Recursively descend into provided DIRECTORIES
   )
   set(_singleargs
-    DESTINATION            # Override default target folder
-    WHEEL_DESTINATION      # Override target folder inside `.whl` files
-    STAGING_DIR            # Override default staging folder
-    INSTALL_COMPONENT      # CPack install component
+    DESTINATION       # Override default target folder
+    WHEEL_DESTINATION # Override target folder inside `.whl` files
+    STAGING_DIR       # Override default staging folder
+    INSTALL           # Whether to install (requires INSTALL_COMPONENT; default is ON)
+    INSTALL_COMPONENT # CPack install component
   )
   set(_multiargs
-    FILES                  # Explicit file paths
-    DIRECTORIES            # Directories from which to collect matching files
-    FILENAME_PATTERN       # Filename masks to collect from provided DIRECTORIES
-    SETTINGS_DEPS          # Add build dependency on additional settings targets
+    FILES             # Explicit file paths
+    DIRECTORIES       # Directories from which to collect matching files
+    FILENAME_PATTERN  # Filename masks to collect from provided DIRECTORIES
+    SETTINGS_DEPS     # Add build dependency on additional settings targets
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -144,9 +145,13 @@ function(cc_add_settings TARGET)
     endforeach()
   endforeach()
 
+  cc_get_argument_or_default(install
+    INSTALL
+    "${arg_INSTALL_COMPONENT}"
+    "${arg_KEYWORDS_MISSING_VALUES}")
 
   ### Install from staging folder, if requested.
-  if(arg_INSTALL_COMPONENT)
+  if(install)
     cc_get_value_or_default(destination
       arg_DESTINATION
       "${SETTINGS_DIR}")
