@@ -19,10 +19,28 @@ namespace cc::avro
     ProtoBufSchema::ProtoBufSchema(
         const ContextRef &context,
         const google::protobuf::Descriptor *descriptor)
-        : RecordSchema(context, descriptor->name()),
+        : RecordSchema(context, This::schema_name(descriptor)),
           descriptor(descriptor)
     {
         this->add_fields();
+    }
+
+    std::string ProtoBufSchema::schema_name(
+        const google::protobuf::Descriptor *descriptor)
+    {
+        std::vector<std::string> parts = core::str::split(
+            descriptor->full_name(),
+            ".");
+
+        for (auto it = parts.begin(); it != parts.end(); it++)
+        {
+            if (auto *translated_name = This::namespace_translation_map.get_ptr(*it))
+            {
+                *it = *translated_name;
+            }
+        }
+
+        return core::str::join(parts, ".");
     }
 
     SchemaWrapper &ProtoBufSchema::from_proto(
@@ -247,5 +265,9 @@ namespace cc::avro
             return {};
         }
     }
+
+    ProtoBufSchema::NameTranslationMap ProtoBufSchema::namespace_translation_map = {
+        {"protobuf", ""},
+    };
 
 }  // namespace cc::avro

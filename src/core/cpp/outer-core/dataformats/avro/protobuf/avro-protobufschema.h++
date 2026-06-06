@@ -27,6 +27,7 @@ namespace cc::avro
         using DescriptorSet = std::unordered_set<const google::protobuf::Descriptor *>;
         using SchemaMap = core::types::ValueMap<const google::protobuf::Descriptor *,
                                                 SchemaWrapper>;
+        using NameTranslationMap = core::types::ValueMap<std::string, std::string>;
 
     public:
         // @param[in] descriptor
@@ -37,6 +38,9 @@ namespace cc::avro
             const google::protobuf::Descriptor *descriptor);
 
     public:
+        static std::string schema_name(
+            const google::protobuf::Descriptor *descriptor);
+
         //--------------------------------------------------------------------------
         /// @brief
         ///     Get an Avro schema wrapper for a ProtoBuf message type
@@ -77,6 +81,8 @@ namespace cc::avro
 
     private:
         const google::protobuf::Descriptor *descriptor;
+
+        static NameTranslationMap namespace_translation_map;
     };
 
 }  // namespace cc::avro
