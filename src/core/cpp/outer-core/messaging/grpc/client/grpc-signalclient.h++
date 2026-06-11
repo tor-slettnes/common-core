@@ -125,8 +125,9 @@ namespace cc::grpc
                 this->watching = true;
                 this->watch_start = core::steady::Clock::now();
                 cc::protobuf::signal::Filter filter = this->signal_filter();
-                logf_debug("Invoking %s::watch(filter=%s)",
+                logf_debug("Invoking %s(%r).Watch(filter=%s)",
                            this->servicename(true),
+                           this->host(),
                            filter);
                 this->receiver.start(
                     &ServiceT::Stub::Watch,
@@ -140,7 +141,9 @@ namespace cc::grpc
         {
             if (this->watching)
             {
-                logf_debug("Ending %s::watch()", this->servicename(true));
+                logf_debug("Ending %s(%r).Watch()",
+                           this->servicename(true),
+                           this->host());
             }
             this->watching = false;
             this->completion_event->cancel();
