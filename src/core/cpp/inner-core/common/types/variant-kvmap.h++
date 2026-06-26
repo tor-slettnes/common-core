@@ -239,17 +239,17 @@ namespace cc::core::types
         void to_stream(std::ostream &stream) const override;
     };
 
-    // //--------------------------------------------------------------------------
-    // // Non-member functions
+    //--------------------------------------------------------------------------
+    // Non-member functions
 
-    // template <class T>
-    // KeyValueMap &operator<<(KeyValueMap &kvmap, const T &inputs)
-    // {
-    //     for (const auto &[key, value] : inputs)
-    //     {
-    //         kvmap[key] << value;
-    //     }
-    //     return kvmap;
-    // }
+    template <class T>
+    KeyValueMap &operator<<(KeyValueMap &kvmap, const T &inputs)
+    {
+        for (const auto &[key, value] : inputs)
+        {
+            kvmap[key] << value;
+        }
+        return kvmap;
+    }
 
 }  // namespace cc::core::types

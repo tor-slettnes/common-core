@@ -100,11 +100,11 @@ namespace cc::core::types
         }
     };
 
-    // template <class T>
-    // Value operator<<(Value &value, const T &input)
-    // {
-    //     return ValueBuilder<T>::create_from(input);
-    // }
+    template <class T>
+    Value operator<<(Value &value, const T &input)
+    {
+        return ValueBuilder<T>::create_from(input);
+    }
 
 
     //==========================================================================
