@@ -144,11 +144,11 @@ namespace cc::kafka
             topic,                                              // topic_name
             RdKafka::Topic::PARTITION_UA,                       // partition
             RdKafka::Producer::RK_MSG_COPY,                     // msgflags
-            const_cast<core::types::Byte *>(payload.data()),          // payload
+            const_cast<core::types::Byte *>(payload.data()),    // payload
             payload.size(),                                     // len
             key_ ? const_cast<char *>(key_->data()) : nullptr,  // key
             key_ ? key_->size() : 0,                            // key_len
-            core::dt::to_milliseconds(tp_),                           // timestamp
+            core::dt::to_milliseconds(tp_),                     // timestamp
             headers_,                                           // headers
             this->dr_capture_.add_callback_data(cb_data));      // msg_opaque
 

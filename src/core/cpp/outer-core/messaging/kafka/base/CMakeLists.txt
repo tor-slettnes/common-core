@@ -21,6 +21,7 @@ set(SOURCES
   kafka-callbacks.c++
   kafka-endpoint.c++
   kafka-producer.c++
+  kafka-consumer.c++
 )
 
 ### Recepies to build the library

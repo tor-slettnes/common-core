@@ -71,4 +71,21 @@ namespace cc::kafka
         std::unordered_map<void *, CallbackData::ptr> callback_map;
         std::mutex callback_mutex;
     };
+
+    //--------------------------------------------------------------------------
+    /// @class ConsumerCapture
+    /// @brief
+    ///     Capture queued messages for Kafka consumer
+
+    class ConsumerCapture : public RdKafka::ConsumeCb
+    {
+        using This = ConsumerCapture;
+
+        virtual ~ConsumerCapture() = default;
+
+    protected:
+        void consume_cb(RdKafka::Message &msg, void *opaque) override;
+    };
+
+
 }  // namespace cc::kafka

@@ -333,7 +333,7 @@ class SignalStore (LogBase):
 
         if slot:
             if slots := self.slots.get(name):
-                for index, invocation in slots:
+                for index, invocation in enumerate(slots):
                     callback, kwargs = invocation
                     if callback == slot:
                         del slots[index]

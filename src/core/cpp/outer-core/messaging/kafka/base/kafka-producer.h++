@@ -22,17 +22,15 @@ namespace cc::kafka
                  const core::types::KeyValueMap &settings = {});
         ~Producer();
 
-    protected:
+    public:
+        void set_dr_callback(const DeliveryReportCapture::Callback &callback);
         void initialize() override;
         void deinitialize() override;
 
     protected:
         void init_dr_capture();
         void init_handle();
-
-    public:
         RdKafka::Producer *handle() override;
-        void set_dr_callback(const DeliveryReportCapture::Callback &callback);
 
     private:
         void start_poll();

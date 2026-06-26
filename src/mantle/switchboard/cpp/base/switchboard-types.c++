@@ -223,7 +223,7 @@ namespace cc::platform::switchboard
     {
         tvlist->append("patterns",
                        core::types::ValueList::create_shared_from(this->patterns));
-        tvlist->append("ix_regex", this->is_regex);
+        tvlist->append("is_regex", this->is_regex);
     }
 
     //==========================================================================

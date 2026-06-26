@@ -199,20 +199,20 @@ namespace cc::core::types
         }
     };
 
-    //--------------------------------------------------------------------------
-    // Non-member functions
+    // //--------------------------------------------------------------------------
+    // // Non-member functions
 
-    template <class T>
-    TaggedValueList &operator<<(TaggedValueList &tvlist, const T &inputs)
-    {
-        tvlist.reserve(tvlist.size() + inputs.size());
-        for (const auto &[tag, value] : inputs)
-        {
-            auto &tv = tvlist.emplace_back();
-            tv.first = tag;
-            tv.second << value;
-        }
-        return tvlist;
-    }
+    // template <class T>
+    // TaggedValueList &operator<<(TaggedValueList &tvlist, const T &inputs)
+    // {
+    //     tvlist.reserve(tvlist.size() + inputs.size());
+    //     for (const auto &[tag, value] : inputs)
+    //     {
+    //         auto &tv = tvlist.emplace_back();
+    //         tv.first = tag;
+    //         tv.second << value;
+    //     }
+    //     return tvlist;
+    // }
 
 }  // namespace cc::core::types

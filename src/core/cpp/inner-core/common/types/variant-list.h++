@@ -112,7 +112,7 @@ namespace cc::core::types
         static std::shared_ptr<ValueList> create_shared_from(const ContainerT &container)
         {
             auto list = std::make_shared<ValueList>();
-            (*list) << container;
+            list->populate_from(container);
             return list;
         }
 
@@ -120,23 +120,23 @@ namespace cc::core::types
         static ValueList create_from(const ContainerT &container)
         {
             ValueList list;
-            list << container;
+            list.populate_from(container);
             return list;
         }
     };
 
-    //--------------------------------------------------------------------------
-    // Non-member functions
+    // //--------------------------------------------------------------------------
+    // // Non-member functions
 
-    template <class T>
-    ValueList &operator<<(ValueList &vlist, const T &inputs)
-    {
-        vlist.reserve(vlist.size() + inputs.size());
-        for (const auto &input: inputs)
-        {
-            vlist.emplace_back() << input;
-        }
-        return vlist;
-    }
+    // template <class T>
+    // ValueList &operator<<(ValueList &vlist, const T &inputs)
+    // {
+    //     vlist.reserve(vlist.size() + inputs.size());
+    //     for (const auto &input: inputs)
+    //     {
+    //         vlist.emplace_back() << input;
+    //     }
+    //     return vlist;
+    // }
 
 }  // namespace cc::core::types

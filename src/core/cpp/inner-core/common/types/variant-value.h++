@@ -289,8 +289,8 @@ namespace cc::core::types
     //--------------------------------------------------------------------------
     // Non-member functions
 
-    // template <class T>
-    // Value operator<<(Value &value, const T &input);
+    template <class T>
+    Value operator<<(Value &value, const T &input);
 
     //--------------------------------------------------------------------------
     // Non-member contents

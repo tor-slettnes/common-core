@@ -362,7 +362,7 @@ help:
 .PHONY: install-build-requirements prepare_linux
 install-build-requirements prepare_linux:
 	@echo "Installing required Debian build requirements..."
-	@$(call list_debian_requirements) | sudo xargs apt install --yes --no-install-recommends
+	@$(call list_debian_requirements) | xargs apt install --yes --no-install-recommends
 
 ### Delegate docker_ targets to its own Makefile
 docker-% docker_%:

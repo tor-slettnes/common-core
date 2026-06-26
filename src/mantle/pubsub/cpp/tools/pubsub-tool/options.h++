@@ -35,12 +35,19 @@ namespace cc::platform::pubsub::grpc
         void add_commands();
 
         void publish();
+        void listen_topics();
         void on_monitor_start() override;
         void on_monitor_end() override;
 
         void on_message(
             const Topic &topic,
             const core::types::Value &payload) const;
+
+        void monitor_topics();
+        void on_topiclistener_start();
+        void on_topiclistener_end();
+        void on_message_topic(const std::string &topic);
+
 
     protected:
         std::shared_ptr<pubsub::Subscriber> subscriber();
@@ -54,5 +61,6 @@ namespace cc::platform::pubsub::grpc
         bool json_output_;
         std::shared_ptr<pubsub::Subscriber> subscriber_;
         std::shared_ptr<pubsub::Publisher> publisher_;
+        pubsub::TopicSet seen_topics_;
     };
 }  // namespace cc::platform::pubsub::grpc

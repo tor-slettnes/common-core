@@ -102,6 +102,12 @@ namespace cc::platform::pubsub::grpc
             "Subscribe to and listen for messages on the specified topics. "
             "If no topics are given, subscribe to all messsages.",
             std::bind(&Options::monitor, this));
+
+        this->add_command(
+            "collect_topics",
+            {},
+            "Listen for message topics, printing only new ones as they appear.",
+            std::bind(&Options::monitor_topics, this));
     }
 
     void Options::publish()
@@ -202,6 +208,55 @@ namespace cc::platform::pubsub::grpc
 
         std::cout << std::endl;
     }
+
+    void Options::monitor_topics()
+    {
+        this->on_topiclistener_start();
+        try
+        {
+            std::cout << std::endl
+                      << "### Collecting topics. Press ENTER to end. ###"
+                      << std::endl
+                      << std::endl;
+            std::string dummy;
+            std::getline(std::cin, dummy);
+        }
+        catch (...)
+        {
+            this->on_topiclistener_end();
+            throw;
+        }
+        this->on_topiclistener_end();
+    }
+
+    void Options::on_topiclistener_start()
+    {
+        using namespace std::placeholders;
+        this->subscriber()->initialize();
+        this->subscriber()->subscribe(
+            this->signal_handle,
+            {},
+            [&](const Topic &topic, const core::types::Value &message) {
+                this->on_message_topic(topic);
+            });
+
+    }
+
+    void Options::on_topiclistener_end()
+    {
+        this->subscriber()->unsubscribe(this->signal_handle);
+        this->subscriber()->deinitialize();
+    }
+
+    void Options::on_message_topic(const std::string &topic)
+    {
+        if (!this->seen_topics_.count(topic))
+        {
+            this->seen_topics_.insert(topic);
+            std::cout << topic << std::endl;
+        }
+    }
+
 
     std::shared_ptr<pubsub::Subscriber> Options::subscriber()
     {
