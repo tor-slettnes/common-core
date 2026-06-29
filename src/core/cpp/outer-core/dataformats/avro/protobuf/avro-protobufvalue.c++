@@ -337,7 +337,8 @@ namespace cc::avro
         const google::protobuf::FieldDescriptor *fd)
     {
         assertf(avro_value_get_type(avro_value) == AVRO_ARRAY,
-                "Attempt to assign repeated ProtoBuf value type %s to Avro non-array value type %s",
+                "Attempt to assign repeated ProtoBuf message %s value type %s to Avro non-array value type %s",
+                msg.GetDescriptor()->full_name(),
                 fd->full_name(),
                 avro::type_name(*avro_value));
 
@@ -372,7 +373,8 @@ namespace cc::avro
                 fd_key->type_name());
 
         assertf(avro_value_get_type(avro_value) == AVRO_MAP,
-                "Attempt to assign ProtoBuf map<%s, %s> to Avro non-map value type %s",
+                "Attempt to assign ProtoBuf message %s map<%s, %s> to Avro non-map value type %s",
+                msg.GetDescriptor()->full_name(),
                 fd_key->type_name(),
                 fd_value->type_name(),
                 avro::type_name(*avro_value));
@@ -397,8 +399,8 @@ namespace cc::avro
     }
 
     void ProtoBufValue::assign_from_enum_field(
-            avro_value_t *avro_value,
-            const google::protobuf::EnumValueDescriptor *enum_value)
+        avro_value_t *avro_value,
+        const google::protobuf::EnumValueDescriptor *enum_value)
     {
         // avro::set_enum_value(avro_value,
         //                      enum_value->index(),

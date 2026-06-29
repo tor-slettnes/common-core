@@ -569,7 +569,7 @@ namespace cc::platform::switchboard
         ExceptionHandling on_error)
     {
         return this->set_target(
-            (error && *error) ? STATE_FAILED : this->target_state(this->active()),
+            (error && error->is_error()) ? STATE_FAILED : this->target_state(this->active()),
             error,
             attributes,
             clear_existing,
@@ -609,19 +609,14 @@ namespace cc::platform::switchboard
     ErrorMap Switch::errors() const noexcept
     {
         ErrorMap errors;
-        if (this->failed())
+        if (auto error = this->error())
         {
-            if (this->error())
-            {
-                errors.insert_or_assign(
-                    this->name(),
-                    this->error());
-            }
+            errors.insert_or_assign(this->name(), error);
+        }
 
-            for (const SwitchRef &pred : this->get_predecessors())
-            {
-                errors.merge(pred->errors());
-            }
+        for (const SwitchRef &pred : this->get_predecessors())
+        {
+            errors.merge(pred->errors());
         }
         return errors;
     }

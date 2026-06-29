@@ -102,11 +102,11 @@ namespace cc::avro
         else
         {
             schema = This::field_schema(fd);
-        }
 
-        if (fd->is_repeated())
-        {
-            schema = ArraySchema(schema);
+            if (fd->is_repeated())
+            {
+                schema = ArraySchema(schema);
+            }
         }
 
         return schema;
