@@ -9,6 +9,7 @@
 #include "protobuf-variant-types.h++"
 #include "protobuf-standard-types.h++"
 #include "protobuf-enum.h++"
+#include "string/expand.h++"
 #include "logging/logging.h++"
 
 namespace cc::avro
@@ -18,33 +19,17 @@ namespace cc::avro
 
     ProtoBufSchema::ProtoBufSchema(
         const ContextRef &context,
-        const google::protobuf::Descriptor *descriptor)
-        : RecordSchema(context, This::schema_name(descriptor)),
+        const google::protobuf::Descriptor *descriptor,
+        const std::optional<std::string> &name)
+        : RecordSchema(context, name.value_or(descriptor->full_name())),
           descriptor(descriptor)
     {
         this->add_fields();
     }
 
-    std::string ProtoBufSchema::schema_name(
-        const google::protobuf::Descriptor *descriptor)
-    {
-        std::vector<std::string> parts = core::str::split(
-            descriptor->full_name(),
-            ".");
-
-        for (auto it = parts.begin(); it != parts.end(); it++)
-        {
-            if (auto *translated_name = This::namespace_translation_map.get_ptr(*it))
-            {
-                *it = *translated_name;
-            }
-        }
-
-        return core::str::join(parts, ".");
-    }
-
     SchemaWrapper &ProtoBufSchema::from_proto(
-        const google::protobuf::Descriptor *descriptor)
+        const google::protobuf::Descriptor *descriptor,
+        const std::optional<std::string> &name)
     {
         using SchemaMap = std::unordered_map<
             const google::protobuf::Descriptor *,
@@ -55,9 +40,13 @@ namespace cc::avro
 
         if (schema_map.count(descriptor) == 0)
         {
-            logf_debug("schema_from_proto(%s) miss; creating", descriptor->full_name());
+            logf_debug("schema_from_proto(%s) miss; creating",
+                       name.value_or(descriptor->full_name()));
             auto context = std::make_shared<BuilderContext>();
-            SchemaWrapper schema = ProtoBufSchema::from_descriptor(context, descriptor);
+            SchemaWrapper schema = ProtoBufSchema::from_descriptor(
+                context,
+                descriptor,
+                name);
 
             std::scoped_lock lock(mtx);
             schema_map.insert_or_assign(descriptor, std::move(schema));
@@ -161,7 +150,9 @@ namespace cc::avro
 
         case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
         case google::protobuf::FieldDescriptor::TYPE_GROUP:
-            schema = This::from_descriptor(this->context, fd->message_type());
+            schema = This::from_descriptor(
+                this->context,
+                fd->message_type());
             break;
 
         default:
@@ -190,7 +181,8 @@ namespace cc::avro
 
     SchemaWrapper ProtoBufSchema::from_descriptor(
         const ContextRef &context,
-        const google::protobuf::Descriptor *descriptor)
+        const google::protobuf::Descriptor *descriptor,
+        const std::optional<std::string> &name)
     {
         switch (descriptor->well_known_type())
         {
@@ -247,7 +239,7 @@ namespace cc::avro
             }
             else
             {
-                return ProtoBufSchema(context, descriptor);
+                return ProtoBufSchema(context, descriptor, name);
             }
         }
     }
@@ -265,9 +257,5 @@ namespace cc::avro
             return {};
         }
     }
-
-    ProtoBufSchema::NameTranslationMap ProtoBufSchema::namespace_translation_map = {
-        {"protobuf", ""},
-    };
 
 }  // namespace cc::avro

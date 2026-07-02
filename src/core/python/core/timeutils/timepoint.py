@@ -422,8 +422,8 @@ class TimePoint (float):
 
          - If the input is 0 or negative, UNIX Epoch is assumed
 
-         - If the scalar is positive, it is first converted to seconds by
-           repeatedly dividing by 1000, until it falls below
+         - If the input is positive, it is first converted to seconds by
+           repeatedly dividing by 1000 until it falls below
            `AUTOSCALE_SECONDS_UPPER_LIMIT`.
 
          - The resulting timestamp is bounded between January 1st 1971
@@ -449,7 +449,7 @@ class TimePoint (float):
             Epoch-based timestamp value
 
         @param scale
-            This may be given as one of two types: An integer represnting the
+            This may be given as one of two types: An integer representing the
             decimal exponent / order of magnitude of the input (for example, -3
             to indicate that the input is provided as millseconds), or a float
             representing its actual scale relative to one second (for example,

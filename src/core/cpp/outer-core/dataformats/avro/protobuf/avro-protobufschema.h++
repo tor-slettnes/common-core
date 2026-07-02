@@ -35,12 +35,10 @@ namespace cc::avro
 
         ProtoBufSchema(
             const ContextRef &context,
-            const google::protobuf::Descriptor *descriptor);
+            const google::protobuf::Descriptor *descriptor,
+            const std::optional<std::string> &name = {});
 
     public:
-        static std::string schema_name(
-            const google::protobuf::Descriptor *descriptor);
-
         //--------------------------------------------------------------------------
         /// @brief
         ///     Get an Avro schema wrapper for a ProtoBuf message type
@@ -54,7 +52,8 @@ namespace cc::avro
         /// instance.  New instances are cached for future reuse.
 
         static SchemaWrapper &from_proto(
-            const google::protobuf::Descriptor *descriptor);
+            const google::protobuf::Descriptor *descriptor,
+            const std::optional<std::string> &name = {});
 
     private:
         void add_fields();
@@ -74,15 +73,14 @@ namespace cc::avro
 
         static SchemaWrapper from_descriptor(
             const ContextRef &context,
-            const google::protobuf::Descriptor *descriptor);
+            const google::protobuf::Descriptor *descriptor,
+            const std::optional<std::string> &name={});
 
         static std::optional<std::string> field_comment(
             const google::protobuf::FieldDescriptor *fd);
 
     private:
         const google::protobuf::Descriptor *descriptor;
-
-        static NameTranslationMap namespace_translation_map;
     };
 
 }  // namespace cc::avro

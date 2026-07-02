@@ -87,6 +87,16 @@ namespace cc::core::signal
 
         VoidSignal(const std::string &id);
 
+        /// @brief Indicate whether the specified signal handle is connected.
+        /// @param[in] handle
+        ///     Signal handle.
+        /// @return
+        ///     Boolean indicating whether the specified signal handle is registered.
+        bool connected(const Handle &handle) const
+        {
+            return this->slots_.count(handle);
+        }
+
         /// @brief Register a signal handler for signals of the provided template type.
         /// @param[in] slot
         ///     A callback function, invoked whenever the signal is emitted
@@ -174,6 +184,16 @@ namespace cc::core::signal
         DataSignal(const std::string &id, bool caching = false)
             : Super(id, caching)
         {
+        }
+
+        /// @brief Indicate whether the specified signal handle is connected.
+        /// @param[in] handle
+        ///     Signal handle.
+        /// @return
+        ///     Boolean indicating whether the specified signal handle is registered.
+        bool connected(const Handle &handle) const
+        {
+            return this->slots_.count(handle);
         }
 
         /// @brief Register a signal handler for signals of the provided template type.
@@ -370,6 +390,16 @@ namespace cc::core::signal
         SharedDataSignal(const std::string &id, bool caching = false)
             : Super(id, caching)
         {
+        }
+
+        /// @brief Indicate whether the specified signal handle is connected.
+        /// @param[in] handle
+        ///     Signal handle.
+        /// @return
+        ///     Boolean indicating whether the specified signal handle is registered.
+        bool connected(const Handle &handle) const
+        {
+            return this->slots_.count(handle);
         }
 
         /// @brief Register a signal handler for signals of the provided template type.
@@ -577,6 +607,16 @@ namespace cc::core::signal
         MappingSignal(const std::string &id, bool caching = false)
             : Super(id, caching)
         {
+        }
+
+        /// @brief Indicate whether the specified signal handle is connected.
+        /// @param[in] handle
+        ///     Signal handle.
+        /// @return
+        ///     Boolean indicating whether the specified signal handle is registered.
+        bool connected(const Handle &handle) const
+        {
+            return this->slots_.count(handle);
         }
 
         /// @brief Register a signal handler for this signal.

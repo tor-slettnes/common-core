@@ -46,8 +46,9 @@ namespace cc::platform::pubsub::grpc
         void monitor_topics();
         void on_topiclistener_start();
         void on_topiclistener_end();
-        void on_message_topic(const std::string &topic);
-
+        void on_message_topic(
+            const std::string &topic,
+            const core::types::Value &message);
 
     protected:
         std::shared_ptr<pubsub::Subscriber> subscriber();
@@ -56,9 +57,10 @@ namespace cc::platform::pubsub::grpc
     private:
         const std::string implementation;
         const std::string signal_handle;
+        bool json_output_;
+        bool verbose_;
         Transport transport_;
         fs::path input_file_;
-        bool json_output_;
         std::shared_ptr<pubsub::Subscriber> subscriber_;
         std::shared_ptr<pubsub::Publisher> publisher_;
         pubsub::TopicSet seen_topics_;

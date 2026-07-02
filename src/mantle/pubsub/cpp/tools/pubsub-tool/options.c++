@@ -35,6 +35,7 @@ namespace cc::platform::pubsub::grpc
     Options::Options()
         : signal_handle(TYPE_NAME_FULL(This)),
           json_output_(false),
+          verbose_(false),
           transport_(Transport::GRPC)
     {
         this->describe("Send or receive messages via Relay");
@@ -55,6 +56,12 @@ namespace cc::platform::pubsub::grpc
             "Publish/Subscribe over ZMQ",
             &this->transport_,
             Transport::ZMQ);
+
+        this->add_flag(
+            {"--verbose"},
+            "Print extra detail where applicable",
+            &this->verbose_,
+            false);
 
         this->add_opt<fs::path>(
             {"--input"},
@@ -105,7 +112,7 @@ namespace cc::platform::pubsub::grpc
 
         this->add_command(
             "collect_topics",
-            {},
+            {"[verbose]"},
             "Listen for message topics, printing only new ones as they appear.",
             std::bind(&Options::monitor_topics, this));
     }
@@ -237,9 +244,8 @@ namespace cc::platform::pubsub::grpc
             this->signal_handle,
             {},
             [&](const Topic &topic, const core::types::Value &message) {
-                this->on_message_topic(topic);
+                this->on_message_topic(topic, message);
             });
-
     }
 
     void Options::on_topiclistener_end()
@@ -248,15 +254,26 @@ namespace cc::platform::pubsub::grpc
         this->subscriber()->deinitialize();
     }
 
-    void Options::on_message_topic(const std::string &topic)
+    void Options::on_message_topic(const std::string &topic,
+                                   const core::types::Value &message)
     {
         if (!this->seen_topics_.count(topic))
         {
             this->seen_topics_.insert(topic);
-            std::cout << topic << std::endl;
+            if (this->verbose_)
+            {
+                std::cout << "["
+                          << topic
+                          << "]: "
+                          << message
+                          << std::endl;
+            }
+            else
+            {
+                std::cout << topic << std::endl;
+            }
         }
     }
-
 
     std::shared_ptr<pubsub::Subscriber> Options::subscriber()
     {
