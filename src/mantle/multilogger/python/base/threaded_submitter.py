@@ -44,6 +44,9 @@ class ThreadedSubmitter (Submitter):
         self.queue_size = queue_size
         self.reset()
 
+    def __del__(self):
+        self.close()
+
     def reset(self):
         self._writer_thread = None
 
@@ -83,7 +86,7 @@ class ThreadedSubmitter (Submitter):
             )
             t.start()
 
-    def close_writer(self, wait: bool = False):
+    def close_writer(self, wait: bool = True):
         '''
         Close any active writer stream to MultiLogger.
         '''

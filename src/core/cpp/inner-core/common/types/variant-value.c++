@@ -785,7 +785,7 @@ namespace cc::core::types
             return dt::to_duration(this->as_real());
 
         case ValueType::STRING:
-            return dt::to_duration(this->get<std::string>());
+            return dt::try_to_duration(this->get<std::string>()).value_or(fallback);
 
         case ValueType::BYTEVECTOR:
             try
