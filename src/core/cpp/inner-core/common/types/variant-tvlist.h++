@@ -80,11 +80,6 @@ namespace cc::core::types
         Value get(uint index, const Value &fallback = {}) const noexcept;
         Value get(int index, const Value &fallback = {}) const noexcept;
 
-        /// Get the value at the specified index, or a default value if not in range
-        std::optional<Value> try_get(const Tag &tag, bool ignoreCase) const noexcept;
-        std::optional<Value> try_get(uint index) const noexcept;
-        std::optional<Value> try_get(int index) const noexcept;
-
         /// Return the tag for each item
         TagList tags() const noexcept;
 

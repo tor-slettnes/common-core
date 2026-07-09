@@ -34,9 +34,6 @@ namespace cc::sr
         using This = SchemaRegistryClient;
         using Super = cc::http::RESTClient;
 
-    public:
-        using SchemaID = std::uint32_t;
-
     protected:
         SchemaRegistryClient(
             const std::string &registry_url,

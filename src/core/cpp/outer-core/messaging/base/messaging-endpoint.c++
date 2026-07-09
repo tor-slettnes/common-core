@@ -113,17 +113,20 @@ namespace cc::messaging
         const std::string &key,
         const core::types::Value &fallback) const
     {
-        if (auto opt_value = this->settings()->get(this->channel_name()).try_get(key))
+        if (auto value = this->settings()->get(this->channel_name()).get(key))
         {
-            return opt_value.value();
+            return value;
         }
 
-        if (auto opt_value = this->settings()->get(DEFAULT_CHANNEL).try_get(key))
+        else if (auto value = this->settings()->get(DEFAULT_CHANNEL).get(key))
         {
-            return opt_value.value();
+            return value;
         }
 
-        return fallback;
+        else
+        {
+            return fallback;
+        }
     }
 
     std::optional<fs::path> Endpoint::settings_file(const std::string &flavor) const

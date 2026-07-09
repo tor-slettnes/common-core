@@ -75,6 +75,7 @@ namespace cc::core::types
         operator bool() const noexcept;
         bool has_type() const noexcept;
         bool has_nonempty_value() const noexcept;
+        const Value &nonempty_value() const noexcept;
 
         bool is_simple() const noexcept;
         bool is_bool() const noexcept;
@@ -212,16 +213,6 @@ namespace cc::core::types
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
-        std::optional<Value> try_get(
-            const std::string &key,
-            bool ignoreCase = false) const noexcept;
-
-        std::optional<Value> try_get(
-            const uint index) const noexcept;
-
-        std::optional<Value> try_get(
-            const int index) const noexcept;
-
         Value &operator[](const char *key);
         Value &operator[](const std::string &key);
         Value &operator[](const uint index);
@@ -257,6 +248,10 @@ namespace cc::core::types
         // Convencience wrapper around std::get_if<T>(*this)
         template <class T>
         inline const T *get_if() const;
+
+        // Convencience wrapper around std::get_if<T>(*this)
+        template <class T>
+        inline const T *get_if_nonempty() const;
 
         template <class T>
         inline T &emplace_from(const Value &other);

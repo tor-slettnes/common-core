@@ -58,8 +58,7 @@ Example usage:
   >>> msg=MessageTuple(topic='my topic', value={'six': [1, 2, 3], 'five': False})
   ```
 
-  **Note:** Upon first invocation, `enqueue()` creates a publication queue, as well as a and a worker thread to read from this queue and publish the messages in the background.  The preferred queue size can be provided int the `Client()` constructor, above.
-
+  **Note:** Upon first invocation, `enqueue()` creates a publication queue, as well as a worker thread to read from this queue and publish the messages in the background.  The maximum queue size can be provided in the `Client()` constructor (see `BaseClient.__init__()`).
 
 * Cancel the subscription
 

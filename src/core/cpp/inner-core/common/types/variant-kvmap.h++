@@ -43,33 +43,6 @@ namespace cc::core::types
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
-        /// @brief
-        ///   Obtain a optional container to the value specified by `key`, if found.
-        /// @param[in] key
-        ///   Mapping key
-        /// @param[in] ignoreCase
-        ///   If `true` and the exact key is not found, try again with a
-        ///   case-insensitive search.
-        /// @returns
-        ///   The mapped value if found, otherwise an empty optional container.
-
-        std::optional<Value> try_get(
-            const std::string &key,
-            bool ignoreCase = false) const noexcept;
-
-        /// @brief
-        ///   Obtain a pointer to the value specified by `key`, if found.
-        /// @param[in] key
-        ///   Mapping key
-        /// @param[in] ignoreCase
-        ///   If `true` and the exact key is not found, try again with a
-        ///   case-insensitive search.
-        /// @returns
-        ///   Pointer to the mapepd value if found, otherwise `nullptr`.
-        const Value *get_ptr(
-            const std::string &key,
-            bool ignoreCase = false) const noexcept;
-
         ValueListPtr get_valuelist_ptr(
             const std::string &key,
             bool ignoreCase = false) const noexcept;

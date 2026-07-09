@@ -37,9 +37,6 @@ namespace cc::core::types
         const Value &get(uint index, const Value &fallback = {}) const noexcept;
         const Value &get(int index, const Value &fallback = {}) const noexcept;
 
-        std::optional<Value> try_get(uint index) const noexcept;
-        std::optional<Value> try_get(int index) const noexcept;
-
         TaggedValueList as_tvlist() const noexcept;
 
         /// Return a copy where items with empty values are filtered out

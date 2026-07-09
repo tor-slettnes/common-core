@@ -123,6 +123,20 @@ namespace cc::core::types
         return std::get_if<T>(this);
     }
 
+    // Convencience wrapper around std::get<T>(*this)
+    template <class T>
+    const T *Value::get_if_nonempty() const
+    {
+        if (this->has_nonempty_value())
+        {
+            return std::get_if<T>(this);
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
     template <class T>
     T &Value::emplace_from(const Value &other)
     {

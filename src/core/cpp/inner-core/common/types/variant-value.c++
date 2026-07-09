@@ -229,23 +229,8 @@ namespace cc::core::types
         case ValueType::NONE:
             return false;
 
-        case ValueType::BOOL:
-            return true;
-
         case ValueType::CHAR:
             return this->get<char>() != '\0';
-
-        case ValueType::UINT:
-            return this->get<largest_uint>() != 0;
-
-        case ValueType::SINT:
-            return this->get<largest_sint>() != 0;
-
-        case ValueType::REAL:
-            return this->get<largest_real>() != 0.0;
-
-        case ValueType::COMPLEX:
-            return this->get<complex>() != complex(0.0, 0.0);
 
         case ValueType::STRING:
             return !this->get<std::string>().empty();
@@ -269,7 +254,7 @@ namespace cc::core::types
             return !this->get<KeyValueMapPtr>()->empty();
 
         default:
-            return false;
+            return true;
         }
     }
 
@@ -1176,51 +1161,6 @@ namespace cc::core::types
 
         default:
             return fallback;
-        }
-    }
-
-    std::optional<Value> Value::try_get(const std::string &key, bool ignoreCase) const noexcept
-    {
-        switch (this->type())
-        {
-        case ValueType::KVMAP:
-            return std::get<KeyValueMapPtr>(*this)->try_get(key, ignoreCase);
-
-        case ValueType::TVLIST:
-            return std::get<TaggedValueListPtr>(*this)->try_get(key, ignoreCase);
-
-        default:
-            return {};
-        }
-    }
-
-    std::optional<Value> Value::try_get(const uint index) const noexcept
-    {
-        switch (this->type())
-        {
-        case ValueType::VALUELIST:
-            return std::get<ValueListPtr>(*this)->try_get(index);
-
-        case ValueType::TVLIST:
-            return std::get<TaggedValueListPtr>(*this)->try_get(index);
-
-        default:
-            return {};
-        }
-    }
-
-    std::optional<Value> Value::try_get(const int index) const noexcept
-    {
-        switch (this->type())
-        {
-        case ValueType::VALUELIST:
-            return std::get<ValueListPtr>(*this)->try_get(index);
-
-        case ValueType::TVLIST:
-            return std::get<TaggedValueListPtr>(*this)->try_get(index);
-
-        default:
-            return {};
         }
     }
 

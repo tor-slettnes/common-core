@@ -17,38 +17,10 @@ namespace cc::core::types
         const Value &fallback,
         bool ignoreCase) const noexcept
     {
-        if (const Value *value = this->get_ptr(key, ignoreCase))
-        {
-            return *value;
-        }
-        else
-        {
-            return fallback;
-        }
-    }
-
-    std::optional<Value> KeyValueMap::try_get(
-        const std::string &key,
-        bool ignoreCase) const noexcept
-    {
-        if (const Value *value = this->get_ptr(key, ignoreCase))
-        {
-            return *value;
-        }
-        else
-        {
-            return {};
-        }
-    }
-
-    const Value *KeyValueMap::get_ptr(
-        const std::string &key,
-        bool ignoreCase) const noexcept
-    {
         try
         {
             // First a plain lookup
-            return &this->at(key);
+            return this->at(key);
         }
         catch (const std::out_of_range &)
         {
@@ -60,12 +32,13 @@ namespace cc::core::types
                 {
                     if (str::tolower(c_key) == lowerkey)
                     {
-                        return &c_value;
+                        return c_value;
                     }
                 }
             }
+
             // Nope, nothing found.
-            return nullptr;
+            return fallback;
         }
     }
 
@@ -97,9 +70,9 @@ namespace cc::core::types
     {
         for (const std::string &candidate : candidates)
         {
-            if (const auto *value = this->get_ptr(candidate))
+            if (const auto &value = this->get(candidate, {}, ignoreCase))
             {
-                return *value;
+                return value;
             }
         }
         return fallback;
