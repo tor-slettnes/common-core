@@ -165,7 +165,7 @@ namespace cc::core::types
         const Value &fallback,
         bool ignoreCase) const noexcept
     {
-        if (const auto &value = this->get(tag, fallback, ignoreCase))
+        if (const auto &value = this->get(tag, {}, ignoreCase))
         {
             if (value.has_nonempty_value())
             {
