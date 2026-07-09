@@ -210,7 +210,7 @@ namespace cc::core::types
 
         Value get_nonempty(
             const std::string &key,
-            const Value &fallback,
+            const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
         Value get_any(
