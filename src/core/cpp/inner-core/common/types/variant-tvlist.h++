@@ -60,13 +60,18 @@ namespace cc::core::types
         bool mappable() const noexcept;
 
         /// Get the first value
-        const Value &front(const Value &fallback = {}) const noexcept;
+        Value front(const Value &fallback = {}) const noexcept;
 
         /// Get the last value
-        const Value &back(const Value &fallback = {}) const noexcept;
+        Value back(const Value &fallback = {}) const noexcept;
 
         /// Get the first value with the specified tag, or a default value if not found.
         Value get(
+            const Tag &tag,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
+
+        Value get_nonempty(
             const Tag &tag,
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;

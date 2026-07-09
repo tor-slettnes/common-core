@@ -38,7 +38,23 @@ namespace cc::core::types
         ///   case-insensitive search.
         /// @returns
         ///   The mapped value if found, otherwise the provided `fallback`
-        const Value &get(
+        Value get(
+            const std::string &key,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
+
+        /// @brief
+        ///   Obtain the value specified by `key` iff non-empty.
+        /// @param[in] key
+        ///   Mapping key
+        /// @param[in] fallback
+        ///   Value returned if `key` is not found
+        /// @param[in] ignoreCase
+        ///   If `true` and the exact key is not found, try again with a
+        ///   case-insensitive search.
+        /// @returns
+        ///   The mapped value if found and non-empty, otherwise the provided `fallback`
+        Value get_nonempty(
             const std::string &key,
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
@@ -55,7 +71,7 @@ namespace cc::core::types
             const std::string &key,
             bool ignoreCase = false) const noexcept;
 
-        const Value &get_any(
+        Value get_any(
             const std::vector<std::string> &candidates,
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;

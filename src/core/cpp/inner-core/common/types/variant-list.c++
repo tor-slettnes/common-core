@@ -9,7 +9,7 @@
 
 namespace cc::core::types
 {
-    const Value &ValueList::front(const Value &fallback) const noexcept
+    Value ValueList::front(const Value &fallback) const noexcept
     {
         if (!this->empty())
         {
@@ -21,7 +21,7 @@ namespace cc::core::types
         }
     }
 
-    const Value &ValueList::back(const Value &fallback) const noexcept
+    Value ValueList::back(const Value &fallback) const noexcept
     {
         if (!this->empty())
         {
@@ -33,7 +33,7 @@ namespace cc::core::types
         }
     }
 
-    const Value &ValueList::get(uint index, const Value &fallback) const noexcept
+    Value ValueList::get(uint index, const Value &fallback) const noexcept
     {
         try
         {
@@ -46,7 +46,7 @@ namespace cc::core::types
 
     }
 
-    const Value &ValueList::get(int index, const Value &fallback) const noexcept
+    Value ValueList::get(int index, const Value &fallback) const noexcept
     {
         try
         {

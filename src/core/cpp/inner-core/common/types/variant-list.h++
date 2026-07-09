@@ -32,10 +32,10 @@ namespace cc::core::types
         // void shrink_to_fit() {}
 
     public:
-        const Value &front(const Value &fallback = {}) const noexcept;
-        const Value &back(const Value &fallback = {}) const noexcept;
-        const Value &get(uint index, const Value &fallback = {}) const noexcept;
-        const Value &get(int index, const Value &fallback = {}) const noexcept;
+        Value front(const Value &fallback = {}) const noexcept;
+        Value back(const Value &fallback = {}) const noexcept;
+        Value get(uint index, const Value &fallback = {}) const noexcept;
+        Value get(int index, const Value &fallback = {}) const noexcept;
 
         TaggedValueList as_tvlist() const noexcept;
 

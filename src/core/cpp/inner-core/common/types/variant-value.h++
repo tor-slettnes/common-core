@@ -184,10 +184,10 @@ namespace cc::core::types
         ///    applicable, otherwise an empty `shared_ptr`.
         KeyValueMapPtr get_kvmap_ptr() const noexcept;
 
-        const Value &front(
+        Value front(
             const Value &fallback = {}) const noexcept;
 
-        const Value &back(
+        Value back(
             const Value &fallback = {}) const noexcept;
 
         Value get(
@@ -208,6 +208,11 @@ namespace cc::core::types
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
+        Value get_nonempty(
+            const std::string &key,
+            const Value &fallback,
+            bool ignoreCase = false) const noexcept;
+
         Value get_any(
             const std::vector<std::string> &candidates,
             const Value &fallback = {},
@@ -219,7 +224,6 @@ namespace cc::core::types
         Value &operator[](const int index);
 
         Value deepcopy() const;
-
 
     public:
         /// Send a readable representation of this value to an output stream

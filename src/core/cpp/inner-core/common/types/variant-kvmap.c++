@@ -12,7 +12,7 @@
 
 namespace cc::core::types
 {
-    const Value &KeyValueMap::get(
+    Value KeyValueMap::get(
         const std::string &key,
         const Value &fallback,
         bool ignoreCase) const noexcept
@@ -42,6 +42,21 @@ namespace cc::core::types
         }
     }
 
+    Value KeyValueMap::get_nonempty(
+        const std::string &key,
+        const Value &fallback,
+        bool ignoreCase) const noexcept
+    {
+        if (Value value = this->get(key, {}, ignoreCase))
+        {
+            if (value.has_nonempty_value())
+            {
+                return value;
+            }
+        }
+        return fallback;
+    }
+
     ValueListPtr KeyValueMap::get_valuelist_ptr(
         const std::string &key,
         bool ignoreCase) const noexcept
@@ -63,7 +78,7 @@ namespace cc::core::types
         return this->get(key, {}, ignoreCase).get_kvmap_ptr();
     }
 
-    const Value &KeyValueMap::get_any(
+    Value KeyValueMap::get_any(
         const std::vector<std::string> &candidates,
         const Value &fallback,
         bool ignoreCase) const noexcept

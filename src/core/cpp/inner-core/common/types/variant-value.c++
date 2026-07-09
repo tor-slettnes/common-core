@@ -1060,7 +1060,7 @@ namespace cc::core::types
         }
     }
 
-    const Value &Value::front(const Value &fallback) const noexcept
+    Value Value::front(const Value &fallback) const noexcept
     {
         switch (this->type())
         {
@@ -1075,7 +1075,7 @@ namespace cc::core::types
         }
     }
 
-    const Value &Value::back(const Value &fallback) const noexcept
+    Value Value::back(const Value &fallback) const noexcept
     {
         switch (this->type())
         {
@@ -1140,6 +1140,24 @@ namespace cc::core::types
 
         case ValueType::TVLIST:
             return std::get<TaggedValueListPtr>(*this)->get(key, fallback, ignoreCase);
+
+        default:
+            return fallback;
+        }
+    }
+
+    Value Value::get_nonempty(
+        const std::string &key,
+        const Value &fallback,
+        bool ignoreCase) const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::KVMAP:
+            return std::get<KeyValueMapPtr>(*this)->get_nonempty(key, fallback, ignoreCase);
+
+        case ValueType::TVLIST:
+            return std::get<TaggedValueListPtr>(*this)->get_nonempty(key, fallback, ignoreCase);
 
         default:
             return fallback;

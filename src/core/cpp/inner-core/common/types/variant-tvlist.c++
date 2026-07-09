@@ -121,7 +121,7 @@ namespace cc::core::types
         return true;
     }
 
-    const Value &TaggedValueList::front(const Value &fallback) const noexcept
+    Value TaggedValueList::front(const Value &fallback) const noexcept
     {
         if (!this->empty())
         {
@@ -133,7 +133,7 @@ namespace cc::core::types
         }
     }
 
-    const Value &TaggedValueList::back(const Value &fallback) const noexcept
+    Value TaggedValueList::back(const Value &fallback) const noexcept
     {
         if (!this->empty())
         {
@@ -145,9 +145,10 @@ namespace cc::core::types
         }
     }
 
-    Value TaggedValueList::get(const Tag &tag,
-                               const Value &fallback,
-                               bool ignoreCase) const noexcept
+    Value TaggedValueList::get(
+        const Tag &tag,
+        const Value &fallback,
+        bool ignoreCase) const noexcept
     {
         if (auto it = this->find(tag, ignoreCase); it != this->end())
         {
@@ -159,9 +160,25 @@ namespace cc::core::types
         }
     }
 
-    Value TaggedValueList::get_any(const std::vector<std::string> &candidates,
-                                   const Value &fallback,
-                                   bool ignoreCase) const noexcept
+    Value TaggedValueList::get_nonempty(
+        const Tag &tag,
+        const Value &fallback,
+        bool ignoreCase) const noexcept
+    {
+        if (const auto &value = this->get(tag, fallback, ignoreCase))
+        {
+            if (value.has_nonempty_value())
+            {
+                return value;
+            }
+        }
+        return fallback;
+    }
+
+    Value TaggedValueList::get_any(
+        const std::vector<std::string> &candidates,
+        const Value &fallback,
+        bool ignoreCase) const noexcept
     {
         for (const Tag &candidate : candidates)
         {
@@ -173,7 +190,9 @@ namespace cc::core::types
         return fallback;
     }
 
-    Value TaggedValueList::get(uint index, const Value &fallback) const noexcept
+    Value TaggedValueList::get(
+        uint index,
+        const Value &fallback) const noexcept
     {
         try
         {
@@ -185,7 +204,9 @@ namespace cc::core::types
         }
     }
 
-    Value TaggedValueList::get(int index, const Value &fallback) const noexcept
+    Value TaggedValueList::get(
+        int index,
+        const Value &fallback) const noexcept
     {
         try
         {
@@ -261,7 +282,7 @@ namespace cc::core::types
     {
         TaggedValueList copy;
         copy.reserve(this->size());
-        for (const auto &[tag, value]: *this)
+        for (const auto &[tag, value] : *this)
         {
             copy.emplace_back(tag, value.deepcopy());
         }
@@ -285,7 +306,6 @@ namespace cc::core::types
         }
         return kvmap;
     }
-
 
     TaggedValueList &TaggedValueList::extend(const TaggedValueList &other)
     {
