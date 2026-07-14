@@ -15,6 +15,8 @@ namespace cc::sr
 {
     using SchemaID = std::uint32_t;
     using SchemaName = std::string;
+    constexpr auto ENVELOPE_SIZE = sizeof(core::types::Byte) + sizeof(SchemaID);
+
 
     struct UnwrappedPayload
     {
@@ -38,7 +40,6 @@ namespace cc::sr
         std::optional<UnwrappedPayload> unwrap(
             const core::types::ByteVector &wrapped) const;
 
-        std::size_t envelope_size() const;
         std::size_t wrapped_size(const core::types::ByteVector &original) const;
         std::size_t wrapped_size(const UnwrappedPayload &unwrapped) const;
     };

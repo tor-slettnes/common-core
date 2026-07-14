@@ -25,8 +25,8 @@ namespace cc::avro
     constexpr auto TypeName_Map = "map";
     constexpr auto TypeName_Array = "array";
     constexpr auto TypeName_Fixed = "fixed";
-    constexpr auto TypeName_Complex = "Complex";
 
+    constexpr auto TypeName_Complex = "Complex";
     constexpr auto TypeName_Variant = "Variant";
     constexpr auto TypeName_CalendarTimeInterval = "CalendarTimeInterval";
     constexpr auto TypeName_TimeInterval = "TimeInterval";

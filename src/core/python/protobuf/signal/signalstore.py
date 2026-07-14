@@ -482,7 +482,7 @@ class SignalStore (LogBase):
             kwargs.update(mapping_key = key)
 
         if signal_name:
-            kwargs.update({signal_name: value})
+            kwargs.update({signal_name: value or {}})
 
         return self.signal_type(**kwargs)
 

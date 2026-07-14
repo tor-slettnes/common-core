@@ -8,6 +8,10 @@
 #pragma once
 #include "kafka-endpoint.h++"
 
+#include "chrono/date-time.h++"
+#include "types/bytevector.h++"
+#include "types/value.h++"
+
 #include <thread>
 
 namespace cc::kafka
@@ -33,7 +37,7 @@ namespace cc::kafka
 
     public:
         void subscribe(const std::vector<std::string> &topics);
-        void unsubscribe();
+        void clear_subscriptions();
 
     private:
         void start_consuming();
@@ -43,11 +47,21 @@ namespace cc::kafka
     protected:
         virtual void handle_message(RdKafka::Message *message);
 
+        virtual void handle_message(
+            const core::dt::TimePoint &tp,
+            const std::string &topic,
+            const std::string &key,
+            const core::types::KeyValueMap &header,
+            const core::types::ByteVector &payload);
+
     protected:
         void set_consumer_key(const std::optional<std::string> &key);
         const std::optional<std::string> &consumer_key() const;
 
     private:
+        core::types::KeyValueMap extract_headers(
+            const RdKafka::Headers *headers) const;
+
         void shutdown();
 
     private:

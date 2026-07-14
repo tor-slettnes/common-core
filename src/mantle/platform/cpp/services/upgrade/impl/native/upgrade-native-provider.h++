@@ -13,7 +13,7 @@
 #include "upgrade-signals.h++"
 #include "vfs-context.h++"
 #include "thread/uniquelock.h++"
-#include "types/shared_ptr_map.h++"
+#include "types/shared-ptr-map.h++"
 
 #include <mutex>
 #include <chrono>

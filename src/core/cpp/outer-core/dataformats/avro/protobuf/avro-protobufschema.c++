@@ -21,7 +21,7 @@ namespace cc::avro
         const ContextRef &context,
         const google::protobuf::Descriptor *descriptor,
         const std::optional<std::string> &name)
-        : RecordSchema(context, name.value_or(descriptor->full_name())),
+        : RecordSchema(context, name.value_or(descriptor->name())),
           descriptor(descriptor)
     {
         this->add_fields();
@@ -41,7 +41,7 @@ namespace cc::avro
         if (schema_map.count(descriptor) == 0)
         {
             logf_debug("schema_from_proto(%s) miss; creating",
-                       name.value_or(descriptor->full_name()));
+                       name.value_or(descriptor->name()));
             auto context = std::make_shared<BuilderContext>();
             SchemaWrapper schema = ProtoBufSchema::from_descriptor(
                 context,
@@ -73,7 +73,10 @@ namespace cc::avro
                 // two alternate fields of the same type. Therefore, we include
                 // each field from the oneof block as separate Avro fields, but
                 // with `null` as an alternate value type.
-                field_schema = core::types::ValueList({TypeName_Null, field_schema});
+                field_schema = core::types::ValueList({
+                    TypeName_Null,
+                    field_schema,
+                });
             }
 
             this->add_field(fd->name(), field_schema, This::field_comment(fd));

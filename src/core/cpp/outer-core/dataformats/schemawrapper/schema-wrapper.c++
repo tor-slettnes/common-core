@@ -16,10 +16,10 @@ namespace cc::sr
         SchemaID schema_id,
         core::types::Byte magic) const
     {
-        core::types::ByteVector wrapped(this->envelope_size() + payload.size());
+        core::types::ByteVector wrapped(ENVELOPE_SIZE + payload.size());
         wrapped[0] = magic;
         *reinterpret_cast<std::uint32_t *>(wrapped.data() + 1) = htonl(schema_id);
-        memcpy(wrapped.data() + this->envelope_size(), payload.data(), payload.size());
+        memcpy(wrapped.data() + ENVELOPE_SIZE, payload.data(), payload.size());
         return wrapped;
     }
 
@@ -32,15 +32,15 @@ namespace cc::sr
     std::optional<UnwrappedPayload> SchemaWrapper::unwrap(
         const core::types::ByteVector &wrapped) const
     {
-        if (wrapped.size() >= this->envelope_size())
+        if (wrapped.size() >= ENVELOPE_SIZE)
         {
             UnwrappedPayload unwrapped;
             unwrapped.magic = wrapped[0];
             unwrapped.id = ntohl(*reinterpret_cast<const std::uint32_t *>(wrapped.data() + 1));
 
-            std::size_t payload_size = wrapped.size() - this->envelope_size();
+            std::size_t payload_size = wrapped.size() - ENVELOPE_SIZE;
             memcpy(unwrapped.payload.data(),
-                   wrapped.data() + this->envelope_size(),
+                   wrapped.data() + ENVELOPE_SIZE,
                    payload_size);
 
             return unwrapped;
@@ -51,19 +51,14 @@ namespace cc::sr
         }
     }
 
-    std::size_t SchemaWrapper::envelope_size() const
-    {
-        return sizeof(core::types::Byte) + sizeof(SchemaID);
-    }
-
     std::size_t SchemaWrapper::wrapped_size(const core::types::ByteVector &original) const
     {
-        return this->envelope_size() + original.size();
+        return ENVELOPE_SIZE + original.size();
     }
 
     std::size_t SchemaWrapper::wrapped_size(const UnwrappedPayload &unwrapped) const
     {
-        return this->envelope_size() + unwrapped.payload.size();
+        return ENVELOPE_SIZE + unwrapped.payload.size();
     }
 
 }  // namespace cc::sr

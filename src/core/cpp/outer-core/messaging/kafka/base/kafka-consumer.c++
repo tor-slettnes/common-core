@@ -85,7 +85,7 @@ namespace cc::kafka
         this->start_consuming();
     }
 
-    void Consumer::unsubscribe()
+    void Consumer::clear_subscriptions()
     {
         this->stop_consuming();
         this->handle()->unsubscribe();
@@ -143,15 +143,28 @@ namespace cc::kafka
 
     void Consumer::handle_message(RdKafka::Message *message)
     {
-        auto payload = core::types::ByteVector::from_pointer(
-            message->msg_opaque(),
-            message->len());
+        this->handle_message(
+            core::dt::ms_to_timepoint(message->timestamp().timestamp),
+            message->topic_name(),
+            message->key() ? *message->key() : "",
+            this->extract_headers(message->headers()),
+            core::types::ByteVector::from_pointer(
+                message->msg_opaque(),
+                message->len()));
+    }
 
-        logf_info("Received Kafka message, timestamp=%s, offset=%d, key=%r, len=%d: %s",
-                  core::dt::ms_to_timepoint(message->timestamp().timestamp),
-                  message->offset(),
-                  message->key(),
-                  message->len(),
+    void Consumer::handle_message(
+        const core::dt::TimePoint &tp,
+        const std::string &topic,
+        const std::string &key,
+        const core::types::KeyValueMap &header,
+        const core::types::ByteVector &payload)
+    {
+        logf_info("Received Kafka message, topic=%r, key=%r, header=%s: %s",
+                  tp,
+                  topic,
+                  key,
+                  header,
                   payload.to_hex());
     }
 
@@ -163,6 +176,22 @@ namespace cc::kafka
     const std::optional<std::string> &Consumer::consumer_key() const
     {
         return this->consumer_key_;
+    }
+
+    core::types::KeyValueMap Consumer::extract_headers(
+        const RdKafka::Headers *headers) const
+    {
+        core::types::KeyValueMap kvmap;
+        if (headers)
+        {
+            for (const RdKafka::Headers::Header &header : headers->get_all())
+            {
+                kvmap.insert_or_assign(
+                    header.key(),
+                    std::string(header.value_string(), header.value_size()));
+            }
+        }
+        return kvmap;
     }
 
     void Consumer::shutdown()
