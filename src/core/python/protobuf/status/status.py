@@ -50,9 +50,9 @@ def is_error(error: Error) -> bool:
 
 
 def encodePossibleError(error: Error|Exception|str,
-                        domain: Domain = Domain.APPLICATION,
+                        domain: Domain|None = None,
                         origin: str|None = None,
-                        level: Level = Level.ERROR,
+                        level: Level|None = None,
                         symbol: str|None = None,
                         code: int|None = None,
                         timestamp: TimePointInput|None = None,
@@ -67,9 +67,9 @@ def encodePossibleError(error: Error|Exception|str,
 
 
 def encodeError(error: Error|Exception|str,
-                domain: Domain = Domain.APPLICATION,
+                domain: Domain|None = None,
                 origin: str|None = None,
-                level: Level = Level.ERROR,
+                level: Level|None = None,
                 symbol: str|None = None,
                 code: int|None = None,
                 timestamp: TimePointInput|None = None,
@@ -99,14 +99,18 @@ def encodeError(error: Error|Exception|str,
 
     if domain is not None:
         output.domain = domain
+    elif not output.domain:
+        output.domain = Domain.APPLICATION
 
     if origin is not None:
         output.origin = origin
-    elif domain == Domain.APPLICATION:
+    elif not output.origin and domain == Domain.APPLICATION:
         output.origin = process_name()
 
     if level is not None:
         output.level = level
+    elif not output.level:
+        output.level = Level.ERROR
 
     if symbol is not None:
         output.symbol = symbol

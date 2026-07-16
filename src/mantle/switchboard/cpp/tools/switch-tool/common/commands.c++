@@ -8,6 +8,7 @@
 #include "options.h++"
 #include "switchboard.h++"
 #include "status/exceptions.h++"
+#include "chrono/date-time.h++"
 
 #include <algorithm>
 
@@ -838,14 +839,24 @@ namespace cc::platform::switchboard
                                  const switchboard::SwitchName &name,
                                  const switchboard::Specification &spec)
     {
-        core::str::format(std::cout, "spec:   %-12s %-32r %s\n", action, name, spec);
+        core::str::format(std::cout,
+                          "[%s] spec:   %-12s %-32r %s\n",
+                          core::dt::to_string(core::dt::Clock::now(), 3, "%T"),
+                          action,
+                          name,
+                          spec);
     }
 
     void Options::on_signal_status(core::signal::MappingAction action,
                                    const switchboard::SwitchName &name,
                                    const switchboard::Status &status)
     {
-        core::str::format(std::cout, "status: %-12s %-32r %s\n", action, name, status);
+        core::str::format(std::cout,
+                          "[%s] status: %-12s %-32r %s\n",
+                          core::dt::to_string(core::dt::Clock::now(), 3, "%T"),
+                          action,
+                          name,
+                          status);
     }
 
     std::vector<switchboard::SwitchRef> Options::get_switches_or_all()

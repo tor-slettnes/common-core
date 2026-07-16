@@ -274,6 +274,13 @@ def host_settings_dir() -> FilePath:
     return install_root() / LOCAL_SETTINGS_DIR
 
 
+def preinstalled_settings_dir() -> FilePath:
+    '''
+    Return the directory containing preinstalled defaults.
+    '''
+    return install_root() / SETTINGS_DIR
+
+
 def find_settings_files(basename: FilePathInput,
                         suffixes: Sequence[str] = settings_suffixes,
                         search_path: SearchPath|None = None,

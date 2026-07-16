@@ -48,10 +48,8 @@ namespace cc::platform::switchboard
 
         if (inserted)
         {
-            sw->set_spec({});
-            sw->status()->active = active;
             logf_info("Created switch: %s", sw->name());
-            sw->notify_status();
+            sw->set_spec({});
 
             for (const auto &[key, data] : this->interceptor_factory_map)
             {
@@ -60,6 +58,8 @@ namespace cc::platform::switchboard
                     sw->add_interceptor(data.interceptor);
                 }
             }
+
+            sw->set_active(active);
         }
 
         return {sw, inserted};
