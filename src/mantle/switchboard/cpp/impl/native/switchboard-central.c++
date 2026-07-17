@@ -50,6 +50,7 @@ namespace cc::platform::switchboard
         {
             logf_info("Created switch: %s", sw->name());
             sw->set_spec({});
+            sw->set_active(active);
 
             for (const auto &[key, data] : this->interceptor_factory_map)
             {
@@ -59,7 +60,6 @@ namespace cc::platform::switchboard
                 }
             }
 
-            sw->set_active(active);
         }
 
         return {sw, inserted};

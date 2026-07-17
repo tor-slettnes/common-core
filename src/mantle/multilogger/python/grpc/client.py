@@ -93,6 +93,8 @@ class Client (GenericClient, API, ThreadedSubmitter):
             log_level = log_level,
             queue_size = queue_size)
 
+    def __del__(self):
+        self.deinitialize()
 
     def initialize(self):
         GenericClient.initialize(self)
@@ -115,11 +117,10 @@ class Client (GenericClient, API, ThreadedSubmitter):
                 self.stub.Writer(queue_iterator, wait_for_ready = wait_for_ready)
             except Exception as e:
                 if self.is_writer_open():
-                    self.logger.debug(
-                        "Failed to stream message to MultiLogger service at %s: [%s]; retrying in 2s: %s"%
-                        (self.host, type(e).__name__, e))
+                    # self.logger.debug(
+                    #     "Failed to stream message to MultiLogger service at %s: [%s]; retrying in 2s: %s"%
+                    #     (self.host, type(e).__name__, e))
                     time.sleep(2.0)
-
 
 
 if __name__ == '__main__':

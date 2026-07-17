@@ -567,7 +567,11 @@ namespace cc::platform::switchboard
     void Options::add_switch()
     {
         std::string name = this->get_arg("SWITCH");
-        auto [sw, added] = this->provider->add_switch(name);
+        FlagMap flags;
+        bool &active = flags["active"];
+        this->get_flags(&flags, false);
+
+        auto [sw, added] = this->provider->add_switch(name, active);
         std::cout << (added ? "added" : "no change") << std::endl;
     }
 
