@@ -78,12 +78,12 @@ namespace cc::core::logging
             this->set_compress_after_use(compress_after_use.as_bool());
         }
 
-        if (const auto &rotation = settings.try_get_as<dt::DateTimeInterval>(SETTING_ROTATION))
+        if (const auto &rotation = settings.try_convert_to<dt::DateTimeInterval>(SETTING_ROTATION))
         {
             this->set_rotation_interval(rotation.value());
         }
 
-        if (const auto &expiration = settings.try_get_as<dt::DateTimeInterval>(SETTING_EXPIRATION))
+        if (const auto &expiration = settings.try_convert_to<dt::DateTimeInterval>(SETTING_EXPIRATION))
         {
             this->set_expiration_interval(expiration.value());
         }

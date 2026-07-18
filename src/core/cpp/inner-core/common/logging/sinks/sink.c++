@@ -36,7 +36,7 @@ namespace cc::core::logging
             this->set_contract_id(contract_id.as_string());
         }
 
-        if (auto threshold = settings.try_get_as<status::Level>(SETTING_THRESHOLD))
+        if (auto threshold = settings.try_convert_to<status::Level>(SETTING_THRESHOLD))
         {
             this->set_threshold(threshold.value());
         }

@@ -42,26 +42,13 @@ namespace cc::platform::switchboard
         const SwitchName &switch_name,
         bool active)
     {
-        const auto &[sw, inserted] = this->find_or_insert<CentralSwitch>(
-            switch_name,
-            this->shared_from_this());
+        auto [sw, inserted] = this->insert_switch(switch_name);
 
         if (inserted)
         {
-            logf_info("Created switch: %s", sw->name());
             sw->set_spec({});
             sw->set_active(active);
-
-            for (const auto &[key, data] : this->interceptor_factory_map)
-            {
-                if (sw->is_in_selection(data.switch_selection))
-                {
-                    sw->add_interceptor(data.interceptor);
-                }
-            }
-
         }
-
         return {sw, inserted};
     }
 
@@ -121,6 +108,27 @@ namespace cc::platform::switchboard
         return changes;
     }
 
+    std::pair<Central::CentralSwitchRef, bool> Central::insert_switch(
+        const SwitchName &switch_name)
+    {
+        const auto &[sw, inserted] = this->find_or_insert<CentralSwitch>(
+            switch_name,
+            this->shared_from_this());
+
+        if (inserted)
+        {
+            logf_info("Created switch: %s", sw->name());
+            for (const auto &[key, data] : this->interceptor_factory_map)
+            {
+                if (sw->is_in_selection(data.switch_selection))
+                {
+                    sw->add_interceptor(data.interceptor);
+                }
+            }
+        }
+        return {sw, inserted};
+    }
+
     void Central::load_default_switches(
         bool replace_specifications,
         bool replace_statuses,
@@ -167,10 +175,10 @@ namespace cc::platform::switchboard
     {
         SwitchMap switches =
             !selection
-                ? this->switches
+            ? this->switches
             : selection->is_regex
-                ? this->find_regex_matches(selection->patterns)
-                : this->find_glob_matches(selection->patterns);
+            ? this->find_regex_matches(selection->patterns)
+            : this->find_glob_matches(selection->patterns);
 
         core::types::KeyValueMap declarations;
         for (const auto &[name, sw] : switches)
@@ -198,10 +206,10 @@ namespace cc::platform::switchboard
             auto [it, added] = this->interceptor_factory_map.insert_or_assign(
                 interceptor->name(),
                 InterceptorFactoryData({
-                    .interceptor = interceptor,
-                    .switch_selection = switch_selection,
-                    .immediate = immediate,
-                }));
+                        .interceptor = interceptor,
+                        .switch_selection = switch_selection,
+                        .immediate = immediate,
+                    }));
 
             inserted |= added;
         }
@@ -246,24 +254,22 @@ namespace cc::platform::switchboard
         bool replace_status,
         InvocationStyle invoke_interceptors)
     {
-        bool default_active = declaration.get(SETTING_SWITCH_ACTIVE).as_bool();
-        auto [sw, inserted] = this->add_switch(name, default_active);
+        auto [sw, inserted] = this->insert_switch(name);
 
-        if (auto central_switch = std::dynamic_pointer_cast<CentralSwitch>(sw))
-        {
-            central_switch->import_spec(
-                declaration,            // declaration
-                replace_specification,  // replace_aliases
-                replace_specification,  // replace_localizations
-                replace_specification,  // replace_dependencies
-                false);                 // replace_interceptors
+        core::types::Value active_setting = declaration.get(SETTING_SWITCH_ACTIVE);
 
-            central_switch->import_status(
-                declaration,                 // declaration
-                replace_status,              // replace_attributes
-                replace_status || inserted,  // set_state
-                invoke_interceptors);        // invoke_interceptors
-        }
+        sw->import_spec(
+            declaration,           // declaration
+            replace_specification, // replace_aliases
+            replace_specification, // replace_localizations
+            replace_specification, // replace_dependencies
+            false);                // replace_interceptors
+
+        sw->import_status(
+            declaration,          // declaration
+            replace_status,       // replace_attributes
+            true,                 // set_state
+            invoke_interceptors); // invoke_interceptors
 
         return inserted;
     }

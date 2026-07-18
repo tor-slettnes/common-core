@@ -161,13 +161,13 @@ namespace cc::core::types
                        const std::string &postfix) const;
 
         template <class T>
-        std::optional<T> try_get_as(const std::string &key, bool ignore_case = false) const
+        std::optional<T> try_convert_to(const std::string &key, bool ignore_case = false) const
         {
             return this->get(key, {}, ignore_case).try_convert_to<T>();
         }
 
         template <class T>
-        std::optional<T> try_get_as(const uint index) const
+        std::optional<T> try_convert_to(const uint index) const
         {
             return this->get(index).try_convert_to<T>();
         }

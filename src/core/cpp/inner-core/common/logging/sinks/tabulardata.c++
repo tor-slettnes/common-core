@@ -119,7 +119,7 @@ namespace cc::core::logging
         {
             return ColumnSpec({
                 .field_name = colspec->get(0).as_string(),
-                .column_name = colspec->try_get_as<std::string>(1),
+                .column_name = colspec->try_convert_to<std::string>(1),
                 .column_type = core::types::TypeNames.from_string(
                     colspec->get(2).as_string(),
                     core::types::ValueType::STRING),

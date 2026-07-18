@@ -249,6 +249,9 @@ namespace cc::core::types
         template <class T>
         inline const T &get() const;
 
+        template <class T>
+        inline std::optional<T> try_get() const; 
+
         // Convencience wrapper around std::get_if<T>(*this)
         template <class T>
         inline const T *get_if() const;

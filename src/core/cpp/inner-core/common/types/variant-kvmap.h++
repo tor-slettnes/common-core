@@ -177,7 +177,7 @@ namespace cc::core::types
         insert_if_value(const std::string &key, const Value &value);
 
         template <class T>
-        std::optional<T> try_get_as(const std::string &key, bool ignore_case = false) const
+        std::optional<T> try_convert_to(const std::string &key, bool ignore_case = false) const
         {
             return this->get(key, {}, ignore_case).try_convert_to<T>();
         }

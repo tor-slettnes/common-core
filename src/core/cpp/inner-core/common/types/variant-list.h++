@@ -69,7 +69,7 @@ namespace cc::core::types
 
     public:
         template <class T>
-        std::optional<T> try_get_as(const uint index) const
+        std::optional<T> try_convert_to(const uint index) const
         {
             return this->get(index).try_convert_to<T>();
         }

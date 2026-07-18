@@ -7,6 +7,7 @@
 
 #pragma once
 #include "switchboard.h++"
+#include "central-switch.h++"
 #include "types/create-shared.h++"
 #include "settings/settingsstore.h++"
 
@@ -40,6 +41,8 @@ namespace cc::platform::switchboard
         using InterceptorFactoryMap = std::unordered_map<
             InterceptorName,
             InterceptorFactoryData>;
+
+        using CentralSwitchRef = std::shared_ptr<CentralSwitch>;
 
     protected:
         Central();
@@ -82,6 +85,9 @@ namespace cc::platform::switchboard
             const std::optional<SwitchSelection> &switch_selection = {}) override;
 
     private:
+        std::pair<CentralSwitchRef, bool> insert_switch(
+            const SwitchName &switch_name);
+
         void load_default_switches(
             bool replace_specifications = false,
             bool replace_statuses = false,

@@ -75,7 +75,7 @@ namespace cc::core::logging
         const types::KeyValueMap &settings) const
     {
         return settings
-            .try_get_as<status::Level>("threshold")
+            .try_convert_to<status::Level>("threshold")
             .value_or(status::Level::TRACE);
     }
 
