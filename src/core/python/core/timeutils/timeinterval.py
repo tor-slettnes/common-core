@@ -75,6 +75,7 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 import datetime
+import math
 import re
 
 TimeIntervalType = datetime.timedelta
@@ -184,17 +185,54 @@ class TimeInterval (float):
         '''
         return TimeInterval(float(self) * scalar)
 
+
     def __truediv__ (self, divisor: float):
         '''
         Divide this time inteval by a scalar value
         '''
         return TimeInterval(float(self) / divisor)
 
+
+    def __eq__(self, other: TimeIntervalType|str|float|int) -> bool:
+        '''
+        Return True iff this interval is equivalent to the provided input.
+        '''
+        return math.isclose(self, self.from_value(other))
+
+
+    def __lt__(self, other: TimeIntervalType|str|float|int) -> bool:
+        '''
+        Return True iff this interval is smaller than the provided input.
+        '''
+        return float(self) < float(self.from_value(other))
+
+
+    def __gt__(self, other: TimeIntervalType|str|float|int) -> bool:
+        '''
+        Return True iff this interval is greater than the provided input.
+        '''
+        return float(self) > float(self.from_value(other))
+
+
+    def __le__(self, other: TimeIntervalType|str|float|int) -> bool:
+        '''
+        Return True iff this interval is smaller than or equal to the provided input.
+        '''
+        return (self < other) or (self == other)
+
+
+    def __ge__(self, other: TimeIntervalType|str|float|int) -> bool:
+        '''
+        Return True iff this interval is greater than or equal to the provided input.
+        '''
+        return (self > other) or (self == other)
+
+
     @classmethod
     def try_from(cls,
                  input: TimeIntervalType|float|int|str|None,
                  fallback: object|None = None,
-                 decimal_exponent: int = 0,
+                 scale: int = 0,
                  ) -> 'TimeInterval':
         '''
         Create a new TimeInterval from a variant/undetermined type, such as an
@@ -210,13 +248,13 @@ class TimeInterval (float):
 
         if input is not None:
             try:
-                return cls.from_value(input, decimal_exponent)
+                return cls.from_value(input, scale)
             except (ValueError, TypeError):
                 pass
 
         if fallback is not None:
             try:
-                return cls.from_value(fallback, decimal_exponent)
+                return cls.from_value(fallback, scale)
             except (ValueError, TypeError):
                 pass
 
@@ -226,7 +264,7 @@ class TimeInterval (float):
     @classmethod
     def from_value(cls,
                    input: TimeIntervalType|float|int|str,
-                   decimal_exponent: int = 0,
+                   scale: int|float = 0,
                    ) -> 'TimeInterval':
         '''
         Create a new TimeInterval value from any supported time interval representation.
@@ -234,7 +272,8 @@ class TimeInterval (float):
         * If the input is an existing `TimeInterval` value, it is returned intact.
 
         * Any other `int`, `float`, or string representation of a plain number
-          is scaled to seconds according to the `decimal_exponent` input argument.
+          is scaled to seconds according to the `scale` input argument, see
+          `scaled_from()` for details.
 
         * Any `datetime.timedelta` input is passed on to `from_timedelta()`.
 
@@ -250,10 +289,13 @@ class TimeInterval (float):
         @param input
             A supported time interval representation
 
-        @param decimal_exponent
-            Any numeric input is multiplied by ten to the specified power to
-            yield seconds. For instance, `0` means no scaling, `-3` means
-            convert from milliseconcds.
+        @param scale
+            Either an integer representing the decimal exponent / order of
+            magnitude of the input (for example, -3 to indicate that the input
+            is provided as millseconds), or a float representing its actual
+            scale relative to one second (for example, 0.001 to indicate
+            milliseconds). The latter meaning is assumed for any value 10 or
+            higher.
 
         @returns
             A new `TimeInterval` value.
@@ -275,7 +317,7 @@ class TimeInterval (float):
                 pass
 
         if isinstance(input, int|float):
-            return TimeInterval(input * (10**decimal_exponent))
+            return cls.scaled_from(input, scale)
 
         elif isinstance(input, datetime.timedelta):
             return TimeInterval(input.total_seconds())
@@ -294,29 +336,50 @@ class TimeInterval (float):
     @classmethod
     def scaled_from(cls,
                     input: int|float,
-                    scale: float) -> 'TimePoint':
+                    scale: int|float) -> 'TimeInterval':
         '''
         Create a new TimeInterval from a scalar input with specified
-        scaling.  Effectively, this is just a pedantic alternative to
-        `TimeInterval(input * scale)`.
+        scaling, specified as one of the following:
+
+          - An integer representing the decimal exponent / order of magnitude of
+            the input; for example, -3 to indiate that the input is provided in
+            milliseconds
+
+          - A float representing its actual scale relative to one second; for
+            example, 0.001 to indicate milliseconds.  This is always assumed if
+            `scale` is 10 or higher.
 
         @param input
             Interval value
 
         @param scale
-            Input interval scaling factor
-
+            Order of magnitude or relative scale, as described above.
 
         ### Example:
 
         ```python
+        import math
         from cc.core.timeutils import TimeInterval, MILLISECOND
-        interval = Timeinterval.scaled_from(JAVA_DURATION, MILLSECOND)
+        assert MILLISECOND == 0.001
+
+        java_duration = 1234567890
+        interval = Timeinterval.scaled_from(java_duration, MILLSECOND)
+
+        assert math.isclose(interval, java_duration / 1000)
         ```
         '''
+
+        if isinstance(scale, int) and (scale < 10):
+            scale = 10**scale
+
+        elif not isinstance(scale, (int, float)):
+            raise TypeError(
+                "`scale` input must be numeric; see `help(%s)`" % (
+                    cls.scaled_from.__qualname__,
+                ))
+
         return TimeInterval(input * scale
                             + ((input * scale)//LEAP) * DAY)
-
 
 
     @classmethod

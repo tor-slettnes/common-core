@@ -56,7 +56,7 @@ conversion methods to support additional common representations such as:
   ### Even a `from_value()` method to create a TimePoint from a
   ### variant/uncontrolled input value, such as a JSON or YAML settings value.
   >>> tp = TimePoint.from_value("2025-10-01 00:00:00")
-  >>> tp = TimePoint.from_value(1759302000000000, decimal_exponent=-6)
+  >>> tp = TimePoint.from_value(1759302000000000, scale=MICROSECONDS)
 
   ### Convert from `datetime` instances, assuming local time if naive
   >>> dt = datetime.datetime.now()
@@ -131,6 +131,7 @@ __author__ = 'Tor Slettnes'
 import enum
 import time
 import datetime
+import math
 from .timeinterval import (
     TimeInterval, TimeIntervalType,
     YEAR, MONTH, DAY,
@@ -275,6 +276,40 @@ class TimePoint (float):
                 "not a supported TimeInterval or TimePoint input type: "
                 + type(input).__name__)
 
+
+    def __eq__(self, other: TimePointType|str|float|int) -> bool:
+        '''
+        Return True iff this interval is equivalent to the provided input.
+        '''
+        return math.isclose(self, self.from_value(other))
+
+    def __lt__(self, other: TimePointType|str|float|int) -> bool:
+        '''
+        Return True iff this interval is smaller than the provided input.
+        '''
+        return float(self) < float(self.from_value(other))
+
+
+    def __gt__(self, other: TimePointType|str|float|int) -> bool:
+        '''
+        Return True iff this interval is greater than the provided input.
+        '''
+        return float(self) > float(self.from_value(other))
+
+
+    def __le__(self, other: TimePointType|str|float|int) -> bool:
+        '''
+        Return True iff this interval is smaller than or equal to the provided input.
+        '''
+        return (self < other) or (self == other)
+
+
+    def __ge__(self, other: TimePointType|str|float|int) -> bool:
+        '''
+        Return True iff this interval is greater than or equal to the provided input.
+        '''
+        return (self > other) or (self == other)
+
     @classmethod
     def now(cls) -> 'TimePoint':
         '''
@@ -287,7 +322,7 @@ class TimePoint (float):
     def try_from(cls,
                  input: TimePointType|str|float|int|None,
                  fallback: object = None,
-                 decimal_exponent: int|None = None,
+                 scale: int|float|None = None,
                  assume_utc: bool = False,
                  ) -> 'TimePoint|None':
         '''
@@ -304,13 +339,13 @@ class TimePoint (float):
 
         if input is not None:
             try:
-                return cls.from_value(input, decimal_exponent, assume_utc)
+                return cls.from_value(input, scale, assume_utc)
             except (ValueError, TypeError):
                 pass
 
         if fallback is not None:
             try:
-                return cls.from_value(fallback, decimal_exponent, assume_utc)
+                return cls.from_value(fallback, scale, assume_utc)
             except (ValueError, TypeError):
                 pass
 
@@ -320,7 +355,7 @@ class TimePoint (float):
     @classmethod
     def from_value(cls,
                    input: TimePointType|str|float|int,
-                   decimal_exponent: int|None = None,
+                   scale: int|float|None = None,
                    assume_utc: bool = False,
                    ) -> 'TimePoint':
 
@@ -332,8 +367,9 @@ class TimePoint (float):
         * If the input is an existing `TimePoint` value, it is returned intact.
 
         * Any other `int`, `float`, or string representation of a plain number
-          is assumed to be an Epoch-based timestamp.  Use the `decimal_exponent`
-          input argument to specify explicit scaling if desired.
+          is assumed to be an Epoch-based timestamp.  Use the `scale` input
+          argument to specify explicit scaling if desired, otherwise the scale
+          is determined implicitly; see `autoscaled_from()`.
 
         * Any other string is passed to `from_string()`.  This may raise a
           ValueError if the string contents is not ISO 8601 compliant.
@@ -352,11 +388,8 @@ class TimePoint (float):
         @param input
             A supported timestamp representation
 
-        @param decimal_exponent
-            If provided, any numeric input is divided by ten to the specified
-            power to yield seconds since Epoch. For instance, `0` means no
-            scaling, `-3` means convert from milliseconcds. If not provided,
-            numeric input values are passed on to `autoscaled_from()`.
+        @param scale
+            Scale numeric input as described in `scaled_from()`.
 
         @param assume_utc
             Interpret "naive" time/date values as UTC and not local time
@@ -387,10 +420,7 @@ class TimePoint (float):
                 pass
 
         if isinstance(input, int|float):
-            if isinstance(decimal_exponent, int):
-                return cls(input / (10**decimal_exponent))
-            else:
-                return cls.autoscaled_from(input)
+            return cls.scaled_from(input, scale)
 
         elif isinstance(input, str):
             return cls.from_string(input, assume_utc)
@@ -440,7 +470,7 @@ class TimePoint (float):
     @classmethod
     def scaled_from(cls,
                     input: int|float,
-                    scale: int|float) -> 'TimePoint':
+                    scale: int|float|None) -> 'TimePoint':
         '''
         Create a new TimePoint from an Epoch-based input with specified
         scaling/resolution.
@@ -449,30 +479,44 @@ class TimePoint (float):
             Epoch-based timestamp value
 
         @param scale
-            This may be given as one of two types: An integer representing the
-            decimal exponent / order of magnitude of the input (for example, -3
-            to indicate that the input is provided as millseconds), or a float
+            Explicit scaling. This may be an integer representing the decimal
+            exponent / order of magnitude of the input (for example, -3 to
+            indicate that the input is provided as millseconds), or a float
             representing its actual scale relative to one second (for example,
             0.001 to indicate milliseconds). The latter meaning is assumed for
-            any value 10 or higher.
+            any value 10 or higher.  If not provided, the input is implicitly
+            scaled; see `autoscaled_from()`.
 
 
         ### Example:
 
         ```python
+        import time
         from cc.core.timeutils import TimePoint, MILLISECOND
         assert MILLISECOND == 0.001
 
-        tp1 = TimePoint.scaled_from(JAVA_TIMESTAMP, MILLSECOND)
-        tp2 = TimePoint.scaled_from(JAVA_TIMESTAMP, -3)
+        java_timestamp = TimePoint.now().to_milliseconds()
+
+        tp1 = TimePoint.scaled_from(java_timestamp, MILLSECOND)
+        tp2 = TimePoint.scaled_from(java_timestamp, -3)
         assert tp1 == tp2
         ```
         '''
 
         if isinstance(scale, int) and (scale < 10):
-            scale = 10**scale
+            return TimePoint(input * (10**scale))
 
-        return TimePoint(input * scale)
+        elif isinstance(scale, (int, float)):
+            return TimePoint(input * scale)
+
+        elif scale is None:
+            return cls.autoscaled_from(input)
+
+        else:
+            raise TypeError(
+                "`scale` input must be None or numeric; see `help(%s)`" % (
+                    cls.scaled_from.__qualname__,
+                ))
 
 
 

@@ -758,8 +758,13 @@ namespace cc::platform::switchboard
         bool set_state,
         InvocationStyle invoke_interceptors)
     {
-        const auto& attributes = status.get(SETTING_SWITCH_ATTRIBUTES).get_kvmap();
+        if (const bool* active_update = status.get(SETTING_SWITCH_ACTIVE).get_if<bool>())
+        {
+            this->status()->active = *active_update;
+            set_state = true;
+        }
 
+        const auto& attributes = status.get(SETTING_SWITCH_ATTRIBUTES).get_kvmap();
         if (const core::types::Value& error_spec = status.get(SETTING_SWITCH_ERROR))
         {
             auto error = std::make_shared<core::status::Error>(error_spec.get_kvmap());
