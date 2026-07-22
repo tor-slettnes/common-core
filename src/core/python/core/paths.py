@@ -35,7 +35,12 @@ SearchPathInput = Sequence[FilePathInput]
 
 ModuleName      = str
 
-_settingspaths: dict[str, SearchPath] = {}
+class PathSelector(enum.IntEnum):
+    LOCAL = 0
+    PREINSTALLED = 1
+    PACKAGE = 2
+
+_settingspaths: dict[PathSelector, SearchPath] = {}
 
 SettingsSuffixes = namedtuple(
     'SettingsSuffixes',
@@ -163,10 +168,15 @@ def settings_path(
     If provided, the `package` argument is expanded to the folder in which the
     corresponding Python package is installed, and appended to the result.
     '''
-    return local_settings_path() + preinstalled_settings_path(package)
+    path = []
+    path.extend(local_settings_path())
+    path.extend(preinstalled_settings_path())
+    if package:
+        path.append(package_dir(package))
+    return path
 
 
-def preinstalled_settings_path(package: str|None = None) -> SearchPath:
+def preinstalled_settings_path() -> SearchPath:
     '''
     Obtain a list of folders in which to find settings files containing
     preinstalled defaults.  See `cc.core.settingsstore.SettingsStore()` for
@@ -183,10 +193,8 @@ def preinstalled_settings_path(package: str|None = None) -> SearchPath:
       is installed.
     '''
 
-    PREINSTALLED_PATH_SELECTOR = "preinstalled"
-
     try:
-        return _settingspaths[PREINSTALLED_PATH_SELECTOR]
+        return _settingspaths[PathSelector.PREINSTALLED]
     except KeyError:
         searchpath = []
 
@@ -196,10 +204,7 @@ def preinstalled_settings_path(package: str|None = None) -> SearchPath:
         ### Embedded `settings` folder inside distribution archive (wheel or executable)
         searchpath.append(python_root() / 'settings')
 
-        if package is not None:
-            searchpath.append(package_dir(package))
-
-        _settingspaths[PREINSTALLED_PATH_SELECTOR] = searchpath
+        _settingspaths[PathSelector.PREINSTALLED] = searchpath
         return searchpath
 
 
@@ -226,10 +231,8 @@ def local_settings_path() -> SearchPath:
         `c:\\common-core\\config` on Windows).
     '''
 
-    LOCAL_PATH_SELECTOR = "local"
-
     try:
-        return _settingspaths[LOCAL_PATH_SELECTOR]
+        return _settingspaths[PathSelector.LOCAL]
 
     except KeyError:
         if configpath := os.getenv('CONFIGPATH', ''):
@@ -245,7 +248,7 @@ def local_settings_path() -> SearchPath:
             if hostdir := host_settings_dir():
                 searchpath.append(hostdir)
 
-        _settingspaths[LOCAL_PATH_SELECTOR] = searchpath
+        _settingspaths[PathSelector.LOCAL] = searchpath
         return searchpath
 
 
