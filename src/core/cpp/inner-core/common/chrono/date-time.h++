@@ -351,6 +351,10 @@ namespace cc::core
         //--------------------------------------------------------------------------
         // Duration conversions
 
+        Duration int_to_duration(
+            std::int64_t scalar,
+            int decimal_exponent = 0);
+
         /// Convert from milliseconds (Java style) to Duration
         Duration ms_to_duration(std::int64_t milliseconds);
 

@@ -17,40 +17,38 @@
 
 namespace cc::avro
 {
-    class ProtoBufBuilder
+    class ProtoBufReconstructor
     {
-        using This = ProtoBufBuilder;
+        using This = ProtoBufReconstructor;
 
         using SchemaMap = core::types::ValueMap<
-            ::google::protobuf::Descriptor *,
+            ::google::protobuf::Descriptor*,
             std::shared_ptr<ProtoBufSchema>>;
 
     public:
-        void reconstruct(
-            const BaseValue &avro_value,
-            ::google::protobuf::Message *msg) const;
+        bool reconstruct(
+            const BaseValue& avro_value,
+            ::google::protobuf::Message* msg) const;
 
     private:
-        static void reconstruct_variant(
-            const BaseValue &avro_value,
-            cc::protobuf::variant::Value *value);
+        static bool reconstruct_variant(
+            const BaseValue& avro_value,
+            cc::protobuf::variant::Value* proto);
 
-        static void reconstruct_variant_list(
-            const BaseValue &avro_value,
-            cc::protobuf::variant::ValueList *list);
+        static bool reconstruct_variant_list(
+            const BaseValue& avro_value,
+            cc::protobuf::variant::ValueList* proto);
 
-        static void reconstruct_variant_map(
-            const BaseValue &avro_value,
-            cc::protobuf::variant::KeyValueMap *kvmap);
+        static bool reconstruct_variant_map(
+            const BaseValue& avro_value,
+            cc::protobuf::variant::KeyValueMap* proto);
 
-        static void reconstruct_wellknown(
-            const BaseValue &avro_value,
-            ::google::protobuf::Message *msg);
+        static bool reconstruct_wellknown(
+            const BaseValue& avro_value,
+            ::google::protobuf::Message* msg);
 
-        static void reconstruct_custom(
-            const BaseValue &avro_value,
-            ::google::protobuf::Message *msg);
-
-
+        static bool reconstruct_custom(
+            const BaseValue& avro_value,
+            ::google::protobuf::Message* msg);
     };
 }  // namespace cc::avro

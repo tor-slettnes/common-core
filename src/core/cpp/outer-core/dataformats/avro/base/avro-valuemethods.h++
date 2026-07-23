@@ -172,6 +172,14 @@ namespace cc::avro
     std::optional<core::types::ByteVector> get_fixed(
         const avro_value_t &avro_value);
 
+    std::optional<core::dt::TimePoint> get_timepoint(
+        const avro_value_t &avro_value,
+        const std::optional<int> &decimal_exponent = {});
+
+    std::optional<core::dt::Duration> get_duration(
+        const avro_value_t &avro_value,
+        int decimal_exponent = -3);
+
     core::types::Value get_value(
         const avro_value_t &avro_value,
         bool enums_as_strings);

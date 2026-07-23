@@ -846,6 +846,44 @@ namespace cc::avro
         }
     }
 
+
+    std::optional<core::dt::TimePoint> get_timepoint(
+        const avro_value_t &avro_value,
+        const std::optional<int> &decimal_exponent)
+    {
+        if (auto opt_long = get_long(avro_value))
+        {
+            return core::dt::int_to_timepoint(*opt_long, decimal_exponent);
+        }
+        else if (auto opt_int = get_int(avro_value))
+        {
+            return core::dt::int_to_timepoint(*opt_int, decimal_exponent);
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    std::optional<core::dt::Duration> get_duration(
+        const avro_value_t &avro_value,
+        int decimal_exponent)
+    {
+        if (auto opt_long = get_long(avro_value))
+        {
+            return core::dt::int_to_duration(*opt_long, decimal_exponent);
+        }
+        else if (auto opt_int = get_int(avro_value))
+        {
+            return core::dt::int_to_duration(*opt_int, decimal_exponent);
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+
     core::types::Value get_value(
         const avro_value_t &avro_value,
         bool enums_as_strings)

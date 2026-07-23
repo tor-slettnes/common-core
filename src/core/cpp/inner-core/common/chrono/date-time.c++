@@ -570,6 +570,42 @@ namespace cc::core
         //--------------------------------------------------------------------------
         // Duration conversions
 
+        Duration int_to_duration(
+            std::int64_t scalar,
+            int decimal_exponent)
+        {
+            while (decimal_exponent < -9)
+            {
+                scalar /= 10;
+                decimal_exponent++;
+            }
+
+            while ((decimal_exponent > 0) || (decimal_exponent % 3 != 0))
+            {
+                scalar *= 10;
+                decimal_exponent--;
+            }
+
+            switch (decimal_exponent)
+            {
+            case -9:
+                return std::chrono::duration_cast<Duration>(
+                    std::chrono::nanoseconds(scalar));
+
+            case -6:
+                return std::chrono::duration_cast<Duration>(
+                    std::chrono::microseconds(scalar));
+
+            case -3:
+                return std::chrono::duration_cast<Duration>(
+                    std::chrono::milliseconds(scalar));
+
+            default:
+                return std::chrono::duration_cast<Duration>(
+                    std::chrono::seconds(scalar));
+            }
+        }
+
         Duration ms_to_duration(std::int64_t milliseconds)
         {
             return std::chrono::duration_cast<Duration>(

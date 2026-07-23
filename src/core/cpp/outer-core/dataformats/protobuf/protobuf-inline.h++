@@ -22,8 +22,23 @@
 
 namespace cc::protobuf
 {
-    //==========================================================================
-    // Decode repeated fields
+    //--------------------------------------------------------------------------
+    // Encoding wrappers
+
+    template <class ProtoType, class NativeType>
+    bool encode_optional(const std::optional<NativeType> &native,
+                         ProtoType *proto)
+    {
+        if (native.has_value() && (proto != nullptr))
+        {
+            encode(native.value(), proto);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     template <class ProtoType, class NativeType>
     void encode_sequence(const typename NativeType::const_iterator &begin,
@@ -49,6 +64,9 @@ namespace cc::protobuf
             encode(item, items->Add());
         }
     }
+
+    //--------------------------------------------------------------------------
+    // Encoding wrappers
 
     template <class NativeType, class ProtoType>
     void decode_to_vector(const google::protobuf::RepeatedPtrField<ProtoType> &items,
