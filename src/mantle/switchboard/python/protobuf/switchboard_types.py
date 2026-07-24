@@ -92,6 +92,9 @@ def encodeLocalization(localization : LocalizationInput|None = None,
     elif isinstance(localization, Mapping):
         result.MergeFrom(Localization(**localization))
 
+    if isinstance(state_texts, Mapping):
+        state_texts = {state:text for (state, text) in state_texts.items() if text}
+
     result.MergeFrom(Localization(
         description = description,
         activate_text = activate_text,
