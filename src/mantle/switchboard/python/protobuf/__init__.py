@@ -32,6 +32,8 @@ from .switchboard_types import (
     ### ProtoBuf encode/decode utility methods
     encodeLocalization,
     encodeLocalizationMap,
+    encodeDependency,
+    encodeDependencyMap,
     encodeStateSet,
     encodeSwitchSelection,
     encodeOptionalSwitchSelection,

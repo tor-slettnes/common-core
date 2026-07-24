@@ -429,7 +429,7 @@ class Switch (DocBase, SwitchboardDissecter):
 
     def set_localization(self,
                          language_code: LanguageCode = DEFAULT_LANGUAGE,
-                         localization: Localization|None = None,
+                         localization: Localization|Mapping|None = None,
                          *,
                          description: str|None = None,
                          activate_text: str|None = None,
@@ -444,8 +444,9 @@ class Switch (DocBase, SwitchboardDissecter):
             (e.g. "en" or "en_US")
 
         @param localization
-            Preconstructed ProtoBuf `Localization` message.
-            Alternatively this can be constructed from the following arguments.
+            Preconstructed ProtoBuf `Localization` message, or a field/value map
+            required to build one.  Alternatively this can be constructed from
+            the following arguments.
 
         @param description
             Description of this switch
@@ -494,6 +495,7 @@ class Switch (DocBase, SwitchboardDissecter):
         '''
 
         update = encodeLocalization(
+            localization = localization,
             description = description,
             activate_text = activate_text,
             deactivate_text = deactivate_text,

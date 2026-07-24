@@ -15,7 +15,7 @@ from cc.protobuf.utils import native_enum_from_proto
 
 ### Generated from `.../protos/cc/platform/switchboard/protobuf/switchboard_types.proto`
 from .switchboard_types_pb2 import (
-    DependencyPolarity, DependencyStatus,
+    Dependency, DependencyMap, DependencyPolarity, DependencyStatus,
     InterceptorPhase, InterceptorInvocation,
     ExceptionHandling, InvocationStyle, CascadeStyle, State,
     Localization, LocalizationMap, SwitchSelection,
@@ -32,6 +32,7 @@ StateMask          = int
 StateSet           = Set[State] | Sequence[State]
 StateSetInput      = StateSet | State | StateMask
 
+SwitchName            = str
 SwitchNamePattern     = str | re.Pattern
 SwitchSelectionInput  = SwitchSelection | SwitchNamePattern | Sequence[SwitchNamePattern]
 
@@ -41,6 +42,8 @@ TargetTextsInput = Mapping[State, str]
 
 LocalizationInput = Localization | Mapping[str, object]
 LocalizationsInput = LocalizationMap | Mapping[str, LocalizationInput]
+DependencyInput = Dependency | Mapping[str, object]
+DependenciesInput = DependencyMap | Mapping[SwitchName, DependencyInput]
 
 LanguageCode = str
 LanguageChoice = LanguageCode | Sequence[LanguageCode]
@@ -65,7 +68,7 @@ def encodeStateSet(states: StateSet,
         while mask <= states:
             if (states & mask):
                 output.append(mask)
-            mask *= 2
+            mask <<= 1
 
     else:
         raise TypeError("StateSet requires a bitmask or a sequence of states")
@@ -73,7 +76,7 @@ def encodeStateSet(states: StateSet,
     return output
 
 
-def encodeLocalization(localization : Localization|None = None,
+def encodeLocalization(localization : LocalizationInput|None = None,
                        description: str|None = None,
                        activate_text: str|None = None,
                        deactivate_text: str|None = None,
@@ -83,8 +86,11 @@ def encodeLocalization(localization : Localization|None = None,
     ### Start with a new copy so as not to modify the `localization` input, if any.
     result = Localization()
 
-    if localization:
+    if isinstance(localization, Localization):
         result.CopyFrom(localization)
+
+    elif isinstance(localization, Mapping):
+        result.MergeFrom(Localization(**localization))
 
     result.MergeFrom(Localization(
         description = description,
@@ -101,12 +107,66 @@ def encodeLocalizationMap(localizations: LocalizationsInput) -> LocalizationMap:
 
     elif isinstance(localizations, Mapping):
         return LocalizationMap(
-            map = {language:localization
+            map = {language:encodeLocalization(localization)
                    for (language, localization) in localizations.items()})
 
     else:
-        raise TypeError("Expected a 'LocalizationMap' message or a dictionary, got %s"%
-                        (type(localizations).__name__))
+        raise TypeError(
+            "Expected a 'LocalizationMap' message or a mapping, got %s"%(
+                type(localizations).__qualname__,
+            ))
+
+
+def encodeDependency(dependency : DependencyInput|None = None,
+                     trigger_states: StateSet|None = None,
+                     polarity: DependencyPolarity|None = None,
+                     hard: bool|None = None,
+                     sufficient: bool|None = None,
+                     automatic: bool|None = None,
+                     output: Dependency|None = None):
+    '''
+    Create a Dependency message
+    '''
+
+    if output is None:
+        output = Dependency()
+    else:
+        output.Clear()
+
+
+    if isinstance(dependency, Dependency):
+        output.CopyFrom(dependency)
+
+    elif isinstance(dependency, Mapping):
+        output.MergeFrom(Dependency(**dependency))
+
+    if trigger_states is not None:
+        encodeStateSet(trigger_states, output.trigger_states)
+    elif automatic is not None:
+        encodeStateSet(State.SETTLED if automatic else 0, output.trigger_states)
+
+    output.MergeFrom(Dependency(
+        polarity = polarity,
+        hard = hard,
+        sufficient = sufficient))
+
+    return output
+
+
+def encodeDependencyMap(dependencies: DependenciesInput) -> DependencyMap:
+    if isinstance(dependencies, DependencyMap):
+        return dependencies
+
+    elif isinstance(dependencies, Mapping):
+        return DependencyMap(
+            map = {predecessor:encodeDependency(dependency)
+                   for (predecessor, dependency) in dependencies.items()})
+
+    else:
+        raise TypeError(
+            "Expected a 'DependencyMap' message or a mapping, got %s"%(
+                type(dependencies).__qualname__,
+            ))
 
 
 def encodeOptionalSwitchSelection(patterns: SwitchSelectionInput|None,
@@ -140,7 +200,7 @@ def encodeSwitchSelection(patterns: SwitchSelectionInput,
                 "'str' or 're.Pattern' objects; got '%s': %s" %(
                     __package__,
                     SwitchSelection.__name__,
-                    type(pat).__name__,
+                    type(pat).__qualname__,
                     pat,
                 ))
 

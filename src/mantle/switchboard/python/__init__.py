@@ -25,6 +25,8 @@ from .protobuf import (
     TargetTextsInput,
     LanguageChoice,
     LanguageCode,
+    Localization,
+    LocalizationMap,
     LocalizationInput,
     LocalizationsInput,
     InterceptorMethod,
@@ -37,6 +39,8 @@ from .protobuf import (
     ### ProtoBuf encode/decode utility methods
     encodeLocalization,
     encodeLocalizationMap,
+    encodeDependency,
+    encodeDependencyMap,
     encodeStateSet,
     encodeSwitchSelection,
     encodeOptionalSwitchSelection,
