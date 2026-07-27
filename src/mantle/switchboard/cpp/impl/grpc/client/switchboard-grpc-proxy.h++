@@ -33,11 +33,11 @@ namespace cc::platform::switchboard::grpc
         void deinitialize() override;
         bool available() const override;
         bool wait_ready() const override;
-        SwitchMap get_switches() const override;
+        // SwitchMap get_switches() const override;
 
-        SwitchRef get_switch(
-            const SwitchName &name,
-            bool required) const override;
+        // SwitchRef get_switch(
+        //     const SwitchName &name,
+        //     bool required) const override;
 
         std::pair<SwitchRef, bool> add_switch(
             const SwitchName &switch_name,

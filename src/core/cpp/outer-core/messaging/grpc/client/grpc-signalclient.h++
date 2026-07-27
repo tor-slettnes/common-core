@@ -194,7 +194,9 @@ namespace cc::grpc
     protected:
         inline void on_init_complete() override
         {
-            logf_trace("Got completion, setting completion_event();");
+            logf_debug(
+                "%s: got completion, setting completion_event()",
+                *this);
             this->completion_event->set();
         }
 

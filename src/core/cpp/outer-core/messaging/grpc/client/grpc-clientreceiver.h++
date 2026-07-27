@@ -112,7 +112,11 @@ namespace cc::grpc
 
             while (reader->Read(&msg))
             {
-                logf_trace("Received streamed message: %s", msg);
+                logf_trace(
+                    "Service %s client received streamed message: %s(%s)",
+                    ServiceT::service_full_name(),
+                    MessageT::GetDescriptor()->name(),
+                    msg);
                 this->handler(msg);
             }
 
