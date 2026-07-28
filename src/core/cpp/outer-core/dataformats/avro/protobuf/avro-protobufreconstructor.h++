@@ -26,29 +26,64 @@ namespace cc::avro
             std::shared_ptr<ProtoBufSchema>>;
 
     public:
-        bool reconstruct(
+        static bool reconstruct(
             const BaseValue& avro_value,
-            ::google::protobuf::Message* msg) const;
+            ::google::protobuf::Message* msg);
 
     private:
+        static bool reconstruct_record(
+            const avro_value_t& avro_value,
+            ::google::protobuf::Message* msg);
+
         static bool reconstruct_variant(
-            const BaseValue& avro_value,
+            const avro_value_t& avro_value,
             cc::protobuf::variant::Value* proto);
 
         static bool reconstruct_variant_list(
-            const BaseValue& avro_value,
+            const avro_value_t& avro_value,
             cc::protobuf::variant::ValueList* proto);
 
         static bool reconstruct_variant_map(
-            const BaseValue& avro_value,
+            const avro_value_t& avro_value,
             cc::protobuf::variant::KeyValueMap* proto);
 
         static bool reconstruct_wellknown(
-            const BaseValue& avro_value,
+            const avro_value_t& avro_value,
             ::google::protobuf::Message* msg);
 
         static bool reconstruct_custom(
-            const BaseValue& avro_value,
+            const avro_value_t& avro_value,
             ::google::protobuf::Message* msg);
+
+        static bool reconstruct_field(
+            const avro_value_t& avro_value,
+            google::protobuf::Message* msg,
+            const google::protobuf::FieldDescriptor* fd);
+
+        static bool reconstruct_single_field(
+            const avro_value_t& avro_value,
+            google::protobuf::Message* msg,
+            const google::protobuf::FieldDescriptor* fd);
+
+        static bool reconstruct_indexed_field(
+            const avro_value_t& avro_value,
+            google::protobuf::Message* msg,
+            const google::protobuf::FieldDescriptor* fd,
+            int index);
+
+        static bool reconstruct_repeated_field(
+            const avro_value_t& avro_value,
+            google::protobuf::Message* msg,
+            const google::protobuf::FieldDescriptor* fd);
+
+        static bool reconstruct_mapped_field(
+            const avro_value_t& avro_value,
+            google::protobuf::Message* msg,
+            const google::protobuf::FieldDescriptor* fd);
+
+        static bool reconstruct_enum_field(
+            const avro_value_t& avro_value,
+            google::protobuf::Message* msg,
+            const google::protobuf::FieldDescriptor* fd);
     };
 }  // namespace cc::avro
