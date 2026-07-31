@@ -10,6 +10,7 @@
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
 
+#include <iostream>
 // #include <stdlib.h>
 
 // #include <algorithm>
@@ -17,23 +18,28 @@
 
 namespace cc::avro
 {
-    avro_schema_t schema(const avro_value_t &avro_value)
+    avro_schema_t schema(const avro_value_t& avro_value)
     {
         return avro_value_get_schema(&avro_value);
     }
 
-    avro_type_t type(const avro_value_t &avro_value)
+    std::string schema_name(const avro_value_t& avro_value)
+    {
+        return avro_schema_name(schema(avro_value));
+    }
+
+    avro_type_t type(const avro_value_t& avro_value)
     {
         return avro_value_get_type(&avro_value);
     }
 
-    std::string type_name(const avro_value_t &avro_value)
+    std::string type_name(const avro_value_t& avro_value)
     {
         return avro_schema_type_name(avro::schema(avro_value));
     }
 
     avro_schema_t schema_from_json(
-        const std::string &json)
+        const std::string& json)
     {
         avro_schema_t schema;
         checkstatus(avro_schema_from_json_length(
@@ -45,12 +51,12 @@ namespace cc::avro
     }
 
     avro_value_t get_field_by_index(
-        const avro_value_t &avro_value,
+        const avro_value_t& avro_value,
         int index,
-        const std::optional<std::string> &expected_name)
+        const std::optional<std::string>& expected_name)
     {
         avro_value_t indexed_value;
-        const char *field_name = nullptr;
+        const char* field_name = nullptr;
         checkstatus(avro_value_get_by_index(
                         &avro_value,
                         index,
@@ -73,9 +79,9 @@ namespace cc::avro
     }
 
     avro_value_t get_field_by_name(
-        const avro_value_t &avro_value,
-        const std::string &name,
-        const std::optional<size_t> &expected_index)
+        const avro_value_t& avro_value,
+        const std::string& name,
+        const std::optional<size_t>& expected_index)
     {
         avro_value_t named_value;
         size_t field_index = 0;
@@ -100,14 +106,14 @@ namespace cc::avro
         return named_value;
     }
 
-    void set_null(avro_value_t *avro_value)
+    void set_null(avro_value_t* avro_value)
     {
         avro_value_reset(avro_value);
         checkstatus(avro_value_set_null(avro_value));
     }
 
     void set_int(
-        avro_value_t *avro_value,
+        avro_value_t* avro_value,
         int intvalue)
     {
         avro_value_reset(avro_value);
@@ -115,7 +121,7 @@ namespace cc::avro
     }
 
     void set_long(
-        avro_value_t *avro_value,
+        avro_value_t* avro_value,
         long longvalue)
     {
         avro_value_reset(avro_value);
@@ -123,7 +129,7 @@ namespace cc::avro
     }
 
     void set_float(
-        avro_value_t *avro_value,
+        avro_value_t* avro_value,
         float floatvalue)
     {
         avro_value_reset(avro_value);
@@ -131,7 +137,7 @@ namespace cc::avro
     }
 
     void set_double(
-        avro_value_t *avro_value,
+        avro_value_t* avro_value,
         double doublevalue)
     {
         avro_value_reset(avro_value);
@@ -139,7 +145,7 @@ namespace cc::avro
     }
 
     void set_boolean(
-        avro_value_t *avro_value,
+        avro_value_t* avro_value,
         bool boolvalue)
     {
         avro_value_reset(avro_value);
@@ -147,7 +153,7 @@ namespace cc::avro
     }
 
     void set_enum(
-        avro_value_t *avro_value,
+        avro_value_t* avro_value,
         int enumvalue)
     {
         avro_value_reset(avro_value);
@@ -155,8 +161,8 @@ namespace cc::avro
     }
 
     void set_enum(
-        avro_value_t *avro_value,
-        const std::string &enumsymbol)
+        avro_value_t* avro_value,
+        const std::string& enumsymbol)
     {
         int enum_value = avro_schema_enum_get_by_name(
             avro::schema(*avro_value),
@@ -170,8 +176,8 @@ namespace cc::avro
     }
 
     void set_string(
-        avro_value_t *avro_value,
-        const std::string &string)
+        avro_value_t* avro_value,
+        const std::string& string)
     {
         avro_value_reset(avro_value);
         checkstatus(avro_value_set_string_len(
@@ -181,42 +187,42 @@ namespace cc::avro
     }
 
     void set_bytes(
-        avro_value_t *avro_value,
-        const core::types::Bytes &bytes)
+        avro_value_t* avro_value,
+        const core::types::Bytes& bytes)
     {
         avro_value_reset(avro_value);
         checkstatus(avro_value_set_bytes(
             avro_value,
-            const_cast<core::types::Byte *>(bytes.data()),
+            const_cast<core::types::Byte*>(bytes.data()),
             bytes.size()));
     }
 
     void set_bytes(
-        avro_value_t *avro_value,
-        const std::string &bytes)
+        avro_value_t* avro_value,
+        const std::string& bytes)
     {
         avro_value_reset(avro_value);
         checkstatus(avro_value_set_bytes(
             avro_value,
-            const_cast<char *>(bytes.data()),
+            const_cast<char*>(bytes.data()),
             bytes.size()));
     }
 
     void set_fixed(
-        avro_value_t *avro_value,
-        const core::types::Bytes &bytes,
-        const std::optional<std::size_t> &nbytes)
+        avro_value_t* avro_value,
+        const core::types::Bytes& bytes,
+        const std::optional<std::size_t>& nbytes)
     {
         avro_value_reset(avro_value);
         checkstatus(avro_value_set_fixed(
             avro_value,
-            const_cast<core::types::Byte *>(bytes.data()),
+            const_cast<core::types::Byte*>(bytes.data()),
             nbytes.value_or(bytes.size())));
     }
 
     void set_datetime_interval(
-        avro_value_t *value,
-        const core::dt::DateTimeInterval &interval)
+        avro_value_t* value,
+        const core::dt::DateTimeInterval& interval)
     {
         // The Avro `duration` logical type is a fixed array of 12 bytes, split
         // into three groups of packed 4-byte (32-bit) unsigned integers with
@@ -285,21 +291,21 @@ namespace cc::avro
     }
 
     void set_time_interval(
-        avro_value_t *avro_value,
-        const core::dt::Duration &dur)
+        avro_value_t* avro_value,
+        const core::dt::Duration& dur)
     {
         avro::set_long(avro_value, core::dt::to_milliseconds(dur));
     }
 
     void set_timestamp(
-        avro_value_t *avro_value,
-        const core::dt::TimePoint &tp)
+        avro_value_t* avro_value,
+        const core::dt::TimePoint& tp)
     {
         avro::set_long(avro_value, core::dt::to_milliseconds(tp));
     }
 
-    void set_variant(avro_value_t *value,
-                     const core::types::Value &variant)
+    void set_variant(avro_value_t* value,
+                     const core::types::Value& variant)
     {
         avro_value_t value_field = avro::get_field_by_index(*value, 0, SchemaField_VariantValue);
         avro_value_t branch;
@@ -349,15 +355,15 @@ namespace cc::avro
             avro::set_time_interval(&branch, variant.as_duration());
             break;
 
-            // case core::types::ValueType::VALUELIST:
-            //     avro::set_variant_branch(&value_field, VariantSchema::VT_ARRAY, &branch);
-            //     avro::set_variant_list(&branch, variant.get_valuelist());
-            //     break;
+        // case core::types::ValueType::VALUELIST:
+        //     avro::set_variant_branch(&value_field, VariantSchema::VT_ARRAY, &branch);
+        //     avro::set_variant_list(&branch, variant.get_valuelist());
+        //     break;
 
-            // case core::types::ValueType::KVMAP:
-            //     avro::set_variant_branch(&value_field, VariantSchema::VT_MAP, &branch);
-            //     avro::set_variant_map(&branch, variant.get_kvmap());
-            //     break;
+        // case core::types::ValueType::KVMAP:
+        //     avro::set_variant_branch(&value_field, VariantSchema::VT_MAP, &branch);
+        //     avro::set_variant_map(&branch, variant.get_kvmap());
+        //     break;
 
         default:
             avro::set_variant_branch(&value_field, VariantSchema::VT_NULL, &branch);
@@ -367,16 +373,21 @@ namespace cc::avro
                         variant);
             break;
         }
+        std::cout << "Created avro type "
+                  << type_name(branch)
+                  << " from "
+                  << variant
+                  << std::endl;
     }
 
-    void set_variant_list(avro_value_t *avro_value,
-                          const core::types::ValueList &list)
+    void set_variant_list(avro_value_t* avro_value,
+                          const core::types::ValueList& list)
     {
         assertf(avro_value_get_type(avro_value) == AVRO_ARRAY,
                 "Attempt to assign variant value list to Avro non-array value type %s",
                 avro::type_name(*avro_value));
 
-        for (const core::types::Value &value : list)
+        for (const core::types::Value& value : list)
         {
             avro_value_t element;
             checkstatus(avro_value_append(avro_value,  // value
@@ -387,14 +398,14 @@ namespace cc::avro
         }
     }
 
-    void set_variant_map(avro_value_t *avro_value,
-                         const core::types::KeyValueMap &kvmap)
+    void set_variant_map(avro_value_t* avro_value,
+                         const core::types::KeyValueMap& kvmap)
     {
         assertf(avro_value_get_type(avro_value) == AVRO_MAP,
                 "Attempt to assign variant key value map to Avro non-map value type %s",
                 avro::type_name(*avro_value));
 
-        for (const auto &[key, value] : kvmap)
+        for (const auto& [key, value] : kvmap)
         {
             avro_value_t element;
             checkstatus(avro_value_add(
@@ -409,9 +420,9 @@ namespace cc::avro
         }
     }
 
-    void set_variant_branch(avro_value_t *avro_value,
+    void set_variant_branch(avro_value_t* avro_value,
                             VariantSchema::Type type,
-                            avro_value_t *branch)
+                            avro_value_t* branch)
     {
         assertf(avro_value_get_type(avro_value) == AVRO_UNION,
                 "Attempt to set branch of Avro non-union value type %s",
@@ -425,8 +436,8 @@ namespace cc::avro
                     core::str::format("set_variant_branch (%d)", type));
     }
 
-    void set_value(avro_value_t *avro_value,
-                   const core::types::Value &value)
+    void set_value(avro_value_t* avro_value,
+                   const core::types::Value& value)
     {
         switch (avro::type(*avro_value))
         {
@@ -499,14 +510,14 @@ namespace cc::avro
         }
     }
 
-    void set_map(avro_value_t *avro_value,
-                 const core::types::KeyValueMap &kvmap)
+    void set_map(avro_value_t* avro_value,
+                 const core::types::KeyValueMap& kvmap)
     {
         assertf(avro_value_get_type(avro_value) == AVRO_MAP,
                 "Attempt to assign key value map to Avro non-map value type %s",
                 avro::type_name(*avro_value));
 
-        for (const auto &[key, value] : kvmap)
+        for (const auto& [key, value] : kvmap)
         {
             avro_value_t element;
             checkstatus(avro_value_add(
@@ -520,14 +531,14 @@ namespace cc::avro
         }
     }
 
-    void set_array(avro_value_t *avro_value,
-                   const core::types::ValueList &values)
+    void set_array(avro_value_t* avro_value,
+                   const core::types::ValueList& values)
     {
         assertf(avro_value_get_type(avro_value) == AVRO_ARRAY,
                 "Attempt to assign value list to Avro non-array value type %s",
                 avro::type_name(*avro_value));
 
-        for (const core::types::Value &value : values)
+        for (const core::types::Value& value : values)
         {
             avro_value_t element;
             checkstatus(avro_value_append(avro_value,  // value
@@ -538,8 +549,8 @@ namespace cc::avro
         }
     }
 
-    void set_record(avro_value_t *avro_value,
-                    const core::types::KeyValueMap &kvmap)
+    void set_record(avro_value_t* avro_value,
+                    const core::types::KeyValueMap& kvmap)
     {
         assertf(avro_value_get_type(avro_value) == AVRO_RECORD,
                 "Attempt to assign key value map to Avro non-record value type %s",
@@ -551,7 +562,7 @@ namespace cc::avro
         for (int field_num = 0; field_num < size; field_num++)
         {
             avro_value_t field_value;
-            const char *field_name = nullptr;
+            const char* field_name = nullptr;
             checkstatus(avro_value_get_by_index(
                             avro_value,
                             field_num,
@@ -599,8 +610,8 @@ namespace cc::avro
     //     avro::set_value(&field_value, value);
     // }
 
-    void set_union(avro_value_t *avro_value,
-                   const core::types::Value &value)
+    void set_union(avro_value_t* avro_value,
+                   const core::types::Value& value)
     {
         assertf(avro_value_get_type(avro_value) == AVRO_UNION,
                 "Attempt to assign union to Avro non-union value type %s",
@@ -684,17 +695,17 @@ namespace cc::avro
         }
     }
 
-    void set_from_serialized(avro_value_t *value,
-                             const core::types::Bytes &bytes)
+    void set_from_serialized(avro_value_t* value,
+                             const core::types::Bytes& bytes)
     {
         avro_reader_t reader = avro_reader_memory(
-            reinterpret_cast<const char *>(bytes.data()), bytes.size());
+            reinterpret_cast<const char*>(bytes.data()), bytes.size());
 
         checkstatus(avro_value_read(reader, value));
     }
 
     std::optional<int> get_int(
-        const avro_value_t &avro_value)
+        const avro_value_t& avro_value)
     {
         int result = 0;
         if (avro_value_get_int(&avro_value, &result) == 0)
@@ -708,7 +719,7 @@ namespace cc::avro
     }
 
     std::optional<long> get_long(
-        const avro_value_t &avro_value)
+        const avro_value_t& avro_value)
     {
         long result = 0;
         if (avro_value_get_long(&avro_value, &result) == 0)
@@ -722,7 +733,7 @@ namespace cc::avro
     }
 
     std::optional<float> get_float(
-        const avro_value_t &avro_value)
+        const avro_value_t& avro_value)
     {
         float result = 0.0;
         if (avro_value_get_float(&avro_value, &result) == 0)
@@ -736,7 +747,7 @@ namespace cc::avro
     }
 
     std::optional<double> get_double(
-        const avro_value_t &avro_value)
+        const avro_value_t& avro_value)
     {
         double result = 0.0;
         if (avro_value_get_double(&avro_value, &result) == 0)
@@ -750,7 +761,7 @@ namespace cc::avro
     }
 
     std::optional<bool> get_boolean(
-        const avro_value_t &avro_value)
+        const avro_value_t& avro_value)
     {
         int result = 0;
         if (avro_value_get_boolean(&avro_value, &result))
@@ -764,7 +775,7 @@ namespace cc::avro
     }
 
     std::optional<int> get_enum_value(
-        const avro_value_t &avro_value)
+        const avro_value_t& avro_value)
     {
         int result = 0;
         if (avro_value_get_enum(&avro_value, &result))
@@ -778,7 +789,7 @@ namespace cc::avro
     }
 
     std::optional<std::string> get_enum_symbol(
-        const avro_value_t &avro_value)
+        const avro_value_t& avro_value)
     {
         int enum_value = 0;
         avro_schema_t schema = avro::schema(avro_value);
@@ -795,9 +806,9 @@ namespace cc::avro
     }
 
     std::optional<std::string> get_string(
-        const avro_value_t &avro_value)
+        const avro_value_t& avro_value)
     {
-        const char *c_string = nullptr;
+        const char* c_string = nullptr;
         std::size_t size = 0;
 
         if (avro_value_get_string(&avro_value, &c_string, &size) == 0)
@@ -811,13 +822,13 @@ namespace cc::avro
     }
 
     std::optional<core::types::ByteVector> get_bytes(
-        const avro_value_t &avro_value)
+        const avro_value_t& avro_value)
     {
-        const core::types::Byte *bytes = nullptr;
+        const core::types::Byte* bytes = nullptr;
         std::size_t size = 0;
         if (avro_value_get_bytes(
                 &avro_value,
-                reinterpret_cast<const void **>(&bytes),
+                reinterpret_cast<const void**>(&bytes),
                 &size) == 0)
         {
             return core::types::ByteVector(bytes, bytes + size);
@@ -829,13 +840,13 @@ namespace cc::avro
     }
 
     std::optional<core::types::ByteVector> get_fixed(
-        const avro_value_t &avro_value)
+        const avro_value_t& avro_value)
     {
-        const core::types::Byte *data = nullptr;
+        const core::types::Byte* data = nullptr;
         std::size_t size = 0;
         if (avro_value_get_fixed(
                 &avro_value,
-                reinterpret_cast<const void **>(&data),
+                reinterpret_cast<const void**>(&data),
                 &size) == 0)
         {
             return core::types::ByteVector(data, data + size);
@@ -846,10 +857,9 @@ namespace cc::avro
         }
     }
 
-
     std::optional<core::dt::TimePoint> get_timepoint(
-        const avro_value_t &avro_value,
-        const std::optional<int> &decimal_exponent)
+        const avro_value_t& avro_value,
+        const std::optional<int>& decimal_exponent)
     {
         if (auto opt_long = get_long(avro_value))
         {
@@ -866,7 +876,7 @@ namespace cc::avro
     }
 
     std::optional<core::dt::Duration> get_duration(
-        const avro_value_t &avro_value,
+        const avro_value_t& avro_value,
         int decimal_exponent)
     {
         if (auto opt_long = get_long(avro_value))
@@ -883,9 +893,22 @@ namespace cc::avro
         }
     }
 
+    core::types::Value get_variant(
+        const avro_value_t& avro_value,
+        bool enums_as_strings)
+    {
+        if ((schema_name(avro_value) == TypeName_Variant))
+        {
+            if (core::types::KeyValueMapPtr kvmap = get_map(avro_value, true))
+            {
+                return kvmap->get(SchemaField_VariantValue);
+            }
+        }
+        return get_value(avro_value, enums_as_strings);
+    }
 
     core::types::Value get_value(
-        const avro_value_t &avro_value,
+        const avro_value_t& avro_value,
         bool enums_as_strings)
     {
         switch (avro::type(avro_value))
@@ -944,7 +967,7 @@ namespace cc::avro
     }
 
     core::types::KeyValueMapPtr get_map(
-        const avro_value_t &avro_value,
+        const avro_value_t& avro_value,
         bool enums_as_strings)
     {
         std::size_t size = 0;
@@ -954,19 +977,19 @@ namespace cc::avro
             kvmap = std::make_shared<core::types::KeyValueMap>();
             for (std::size_t index = 0; index < size; index++)
             {
-                const char *key = nullptr;
-                avro_value_t avro_value;
+                const char* key = nullptr;
+                avro_value_t element;
                 avro_value_get_by_index(
                     &avro_value,
                     index,
-                    &avro_value,
+                    &element,
                     &key);
 
                 if (key != nullptr)
                 {
                     kvmap->insert_or_assign(
                         key,
-                        get_value(avro_value, enums_as_strings));
+                        get_value(element, enums_as_strings));
                 }
             }
         }
@@ -974,7 +997,7 @@ namespace cc::avro
     }
 
     core::types::ValueListPtr get_array(
-        const avro_value_t &avro_value,
+        const avro_value_t& avro_value,
         bool enums_as_strings)
     {
         std::size_t size = 0;
@@ -985,22 +1008,22 @@ namespace cc::avro
 
             for (std::size_t index = 0; index < size; index++)
             {
-                avro_value_t avro_value;
+                avro_value_t element;
                 checkstatus(
                     avro_value_get_by_index(
                         &avro_value,
                         index,
-                        &avro_value,
+                        &element,
                         nullptr));
 
-                list->at(index) = get_value(avro_value, enums_as_strings);
+                list->at(index) = get_value(element, enums_as_strings);
             }
         }
         return list;
     }
 
     core::types::Value get_union(
-        const avro_value_t &avro_value,
+        const avro_value_t& avro_value,
         bool enums_as_strings)
     {
         avro_value_t branch_value;
@@ -1015,7 +1038,7 @@ namespace cc::avro
     }
 
     std::set<avro_type_t> union_types(
-        const avro_schema_t &schema)
+        const avro_schema_t& schema)
     {
         std::set<avro_type_t> types;
 

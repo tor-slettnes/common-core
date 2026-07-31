@@ -40,7 +40,7 @@ namespace cc::avro
 
     TEST(AvroTest, ProtoBufEventToJsonSchema)
     {
-        const SchemaWrapper &wrapper = ProtoBufSchema::from_proto(
+        const SchemaWrapper& wrapper = ProtoBufSchema::from_proto(
             cc::protobuf::status::Error::GetDescriptor());
 
         // std::string json = wrapper.as_json();
@@ -51,10 +51,10 @@ namespace cc::avro
         of1.close();
     }
 
-    TEST(AvroTest, VariantToAvro)
+    TEST(AvroTest, VariantMapToAvro)
     {
         auto context = std::make_shared<BuilderContext>();
-        VariantSchema schema(context);
+        VariantMapSchema schema(context);
         CompoundValue compound{schema};
 
         core::types::KeyValueMap kvmap = {
@@ -69,7 +69,13 @@ namespace cc::avro
             {"my_5_seconds", std::chrono::seconds(5)},
         };
 
-        avro::set_variant(compound.c_value(), kvmap);
+        std::string schema_text = schema.as_json();
+        auto of1 = std::ofstream("variant-schema.json");
+        of1.write(schema_text.data(), schema_text.size());
+        EXPECT_TRUE(of1.tellp() > 0);
+        of1.close();
+
+        avro::set_variant_map(compound.c_value(), kvmap);
         // compound.set_variant(kvmap);
         std::string json = compound.as_json(true);
 
@@ -77,6 +83,28 @@ namespace cc::avro
         of.write(json.data(), json.size());
         EXPECT_TRUE(of.tellp() > 0);
         of.close();
+
+        core::types::KeyValueMapPtr avro_feedback = avro::get_map(
+            compound.avro_value(),
+            true);
+
+        EXPECT_EQ(
+            core::dt::to_milliseconds(kvmap.get("my_timestamp").as_timepoint()),
+            avro_feedback->get("my_timestamp").get(SchemaField_VariantValue).as_sint64());
+
+    }
+
+    TEST(AvroTest, VariantFromAvro)
+    {
+        auto context = std::make_shared<BuilderContext>();
+        VariantSchema schema(context);
+        CompoundValue compound{schema};
+
+        core::types::Value int_value(42);
+        avro::set_variant(compound.c_value(), int_value);
+
+        core::types::Value avro_feedback = avro::get_variant(compound.avro_value(), true);
+        EXPECT_EQ(int_value, avro_feedback);
     }
 
     TEST(AvroTest, ProtoBufToAvro)

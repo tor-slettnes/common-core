@@ -9,50 +9,34 @@
 #include "protobuf-variant-types.h++"
 #include "protobuf-standard-types.h++"
 #include "protobuf-enum.h++"
-#include "string/expand.h++"
+#include "string/misc.h++"
 #include "logging/logging.h++"
 
 namespace cc::avro
 {
+    const std::unordered_set<std::string> NAMESPACE_REMOVALS = {
+        "protobuf",
+    };
+
     //--------------------------------------------------------------------------
     // ProtoBufSchema
 
     ProtoBufSchema::ProtoBufSchema(
-        const ContextRef &context,
-        const google::protobuf::Descriptor *descriptor,
-        const std::optional<std::string> &name)
-        : RecordSchema(context, name.value_or(descriptor->name())),
+        const ContextRef& context,
+        const google::protobuf::Descriptor* descriptor)
+        : RecordSchema(context, This::schema_name(descriptor)),
           descriptor(descriptor)
     {
         this->add_fields();
     }
 
-    SchemaWrapper &ProtoBufSchema::from_proto(
-        const google::protobuf::Descriptor *descriptor,
-        const std::optional<std::string> &name)
+    SchemaWrapper ProtoBufSchema::from_proto(
+        const google::protobuf::Descriptor* descriptor)
     {
-        using SchemaMap = std::unordered_map<
-            const google::protobuf::Descriptor *,
-            SchemaWrapper>;
-
-        static SchemaMap schema_map;
-        static std::mutex mtx;
-
-        if (schema_map.count(descriptor) == 0)
-        {
-            logf_debug("schema_from_proto(%s) miss; creating",
-                       name.value_or(descriptor->name()));
-            auto context = std::make_shared<BuilderContext>();
-            SchemaWrapper schema = ProtoBufSchema::from_descriptor(
-                context,
-                descriptor,
-                name);
-
-            std::scoped_lock lock(mtx);
-            schema_map.insert_or_assign(descriptor, std::move(schema));
-        }
-
-        return schema_map.at(descriptor);
+        auto context = std::make_shared<BuilderContext>();
+        return ProtoBufSchema::from_descriptor(
+            context,
+            descriptor);
     }
 
     void ProtoBufSchema::add_fields()
@@ -61,10 +45,10 @@ namespace cc::avro
 
         for (int i = 0; i < n_fields; i++)
         {
-            const google::protobuf::FieldDescriptor *fd = this->descriptor->field(i);
+            const google::protobuf::FieldDescriptor* fd = this->descriptor->field(i);
 
             core::types::Value field_schema = This::field(fd);
-            if (const google::protobuf::OneofDescriptor *ood = fd->containing_oneof())
+            if (const google::protobuf::OneofDescriptor* ood = fd->containing_oneof())
             {
                 // Avro does not have an exact counterpart to ProtoBuf `oneof`
                 // fields. Specifically, an Avro Union is not suitable, since it
@@ -84,7 +68,7 @@ namespace cc::avro
     }
 
     core::types::Value ProtoBufSchema::field(
-        const google::protobuf::FieldDescriptor *fd) const
+        const google::protobuf::FieldDescriptor* fd) const
     {
         core::types::Value schema;
         if (fd->is_map())
@@ -105,7 +89,7 @@ namespace cc::avro
     }
 
     core::types::Value ProtoBufSchema::field_schema(
-        const google::protobuf::FieldDescriptor *fd) const
+        const google::protobuf::FieldDescriptor* fd) const
     {
         core::types::Value schema;
 
@@ -166,26 +150,25 @@ namespace cc::avro
     }
 
     EnumSchema ProtoBufSchema::enum_schema(
-        const google::protobuf::EnumDescriptor *ed,
-        const google::protobuf::EnumValueDescriptor *default_value) const
+        const google::protobuf::EnumDescriptor* ed,
+        const google::protobuf::EnumValueDescriptor* default_value) const
     {
         return {
             this->context,
-            ed->name(),
+            This::translated_namespace(ed->full_name()),
             cc::protobuf::enum_names(ed),
             cc::protobuf::enum_name(default_value->number(), ed)};
     }
 
     MapSchema ProtoBufSchema::map_schema(
-        const google::protobuf::Descriptor *md) const
+        const google::protobuf::Descriptor* md) const
     {
         return This::field_schema(md->map_value());
     }
 
     SchemaWrapper ProtoBufSchema::from_descriptor(
-        const ContextRef &context,
-        const google::protobuf::Descriptor *descriptor,
-        const std::optional<std::string> &name)
+        const ContextRef& context,
+        const google::protobuf::Descriptor* descriptor)
     {
         switch (descriptor->well_known_type())
         {
@@ -242,13 +225,13 @@ namespace cc::avro
             }
             else
             {
-                return ProtoBufSchema(context, descriptor, name);
+                return ProtoBufSchema(context, descriptor);
             }
         }
     }
 
     std::optional<std::string> ProtoBufSchema::field_comment(
-        const google::protobuf::FieldDescriptor *fd)
+        const google::protobuf::FieldDescriptor* fd)
     {
         google::protobuf::SourceLocation source;
         if (fd->GetSourceLocation(&source))
@@ -259,6 +242,31 @@ namespace cc::avro
         {
             return {};
         }
+    }
+
+    std::string ProtoBufSchema::schema_name(
+        const google::protobuf::Descriptor* descriptor)
+    {
+        return This::translated_namespace(descriptor->full_name());
+    }
+
+    std::string ProtoBufSchema::translated_namespace(
+        const std::string& protobuf_namespace)
+    {
+        std::vector<std::string> parts = core::str::split(protobuf_namespace, ".");
+
+        for (auto it = parts.begin(); it != parts.end();)
+        {
+            if (NAMESPACE_REMOVALS.count(*it))
+            {
+                it = parts.erase(it);
+            }
+            else
+            {
+                it++;
+            }
+        }
+        return core::str::join(parts, ".");
     }
 
 }  // namespace cc::avro

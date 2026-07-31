@@ -71,4 +71,5 @@ namespace cc::avro
         avro::set_from_serialized(&this->value, bytes);
     }
 
+
 }  // namespace cc::avro

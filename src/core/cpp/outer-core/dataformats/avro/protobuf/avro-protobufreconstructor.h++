@@ -65,13 +65,12 @@ namespace cc::avro
             google::protobuf::Message* msg,
             const google::protobuf::FieldDescriptor* fd);
 
-        static bool reconstruct_indexed_field(
+        static bool reconstruct_repeated_field(
             const avro_value_t& avro_value,
             google::protobuf::Message* msg,
-            const google::protobuf::FieldDescriptor* fd,
-            int index);
+            const google::protobuf::FieldDescriptor* fd);
 
-        static bool reconstruct_repeated_field(
+        static bool reconstruct_repeated_element(
             const avro_value_t& avro_value,
             google::protobuf::Message* msg,
             const google::protobuf::FieldDescriptor* fd);
@@ -81,7 +80,7 @@ namespace cc::avro
             google::protobuf::Message* msg,
             const google::protobuf::FieldDescriptor* fd);
 
-        static bool reconstruct_enum_field(
+        static std::optional<int> reconstruct_enum_value(
             const avro_value_t& avro_value,
             google::protobuf::Message* msg,
             const google::protobuf::FieldDescriptor* fd);

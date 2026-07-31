@@ -12,12 +12,14 @@
 namespace cc::sr
 {
     using SchemaID = std::uint32_t;
+    using SchemaSubject = std::string;
     using SchemaName = std::string;
     using SchemaText = std::string;
 
     struct SchemaRecord
     {
         SchemaID id = 0;
+        SchemaSubject subject;
         SchemaName name;
         core::types::Value definition;
     };
@@ -47,18 +49,21 @@ namespace cc::sr
         SchemaRecord fetch_by_id(
             SchemaID id) const;
 
-        SchemaRecord fetch_by_name(
-            const SchemaName &name) const;
+        SchemaRecord fetch_by_subject(
+            const SchemaSubject &subject) const;
 
         SchemaRecord register_schema(
-            const SchemaName &name,
+            const SchemaSubject &subject,
             const core::types::Value &schema);
 
         SchemaRecord register_schema(
-            const SchemaName &name,
+            const SchemaSubject &subject,
             const SchemaText &schema_text);
 
     private:
+        std::string extract_name(
+            const core::types::Value &response) const;
+
         core::types::Value extract_schema(
             const core::types::Value &response) const;
     };

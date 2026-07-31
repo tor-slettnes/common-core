@@ -7,15 +7,16 @@
 
 #include "schema-registry-client.h++"
 #include "string/expand.h++"
+#include "string/misc.h++"
 #include "parsers/json/reader.h++"
 #include "parsers/json/writer.h++"
 
 namespace cc::sr
 {
     SchemaRegistryClient::SchemaRegistryClient(
-        const std::string &registry_url,
-        const std::string &registry_name,
-        const std::string &messaging_flavor)
+        const std::string& registry_url,
+        const std::string& registry_name,
+        const std::string& messaging_flavor)
         : Super(registry_url,
                 registry_name,
                 "SchemaRegistry",
@@ -28,12 +29,11 @@ namespace cc::sr
         return this->real_url({});
     }
 
-    void SchemaRegistryClient::set_registry_url(const std::string &url)
+    void SchemaRegistryClient::set_registry_url(const std::string& url)
     {
         (*this->settings())[this->channel_name()]["url"] = url;
         this->settings()->save();
     }
-
 
     SchemaRecord SchemaRegistryClient::fetch_by_id(
         SchemaID id) const
@@ -49,44 +49,45 @@ namespace cc::sr
 
         return {
             .id = id,
-            .name = schema.get("name").to_string(),
+            .name = this->extract_name(schema),
             .definition = schema,
         };
     }
 
-    SchemaRecord SchemaRegistryClient::fetch_by_name(
-        const SchemaName &name) const
+    SchemaRecord SchemaRegistryClient::fetch_by_subject(
+        const SchemaSubject& subject) const
     {
         std::string rel_path = core::str::expand(
-            this->setting("fetch_by_name").as_string(),
+            this->setting("fetch_by_subject").as_string(),
             {
-                {"name", name},
+                {"subject", subject},
             });
 
         core::types::Value response = this->get_json(rel_path);
+        core::types::Value schema = this->extract_schema(response);
         return {
             .id = response.get("id").as_uint32(),
-            .name = response.get("subject").to_string(),
-            .definition = this->extract_schema(response),
+            .subject = response.get("subject").to_string(),
+            .name = this->extract_name(schema),
+            .definition = schema,
         };
     }
 
     SchemaRecord SchemaRegistryClient::register_schema(
-        const SchemaName &name,
-        const core::types::Value &schema)
+        const SchemaSubject& subject,
+        const core::types::Value& schema)
     {
-        return this->register_schema(name, core::json::writer.encoded(schema));
+        return this->register_schema(subject, core::json::writer.encoded(schema));
     }
 
-
     SchemaRecord SchemaRegistryClient::register_schema(
-        const SchemaName &name,
-        const SchemaText &schema_text)
+        const SchemaSubject& subject,
+        const SchemaText& schema_text)
     {
         std::string rel_path = core::str::expand(
             this->setting("register").as_string(),
             {
-                {"name", name},
+                {"subject", subject},
             });
 
         core::types::KeyValueMap request = {
@@ -94,15 +95,28 @@ namespace cc::sr
         };
 
         core::types::Value response = this->post_json(rel_path, request);
+        core::types::Value schema = this->extract_schema(response);
+
         return {
             .id = response.get("id").as_uint32(),
-            .name = name,
-            .definition = this->extract_schema(response),
+            .subject = subject,
+            .name = this->extract_name(schema),
+            .definition = schema,
         };
     }
 
+    std::string SchemaRegistryClient::extract_name(
+        const core::types::Value& schema) const
+    {
+        std::vector<std::string> parts = {
+            schema.get("namespace").to_string(),
+            schema.get("name").to_string(),
+        };
+        return core::str::join(parts, ".");
+    }
+
     core::types::Value SchemaRegistryClient::extract_schema(
-        const core::types::Value &response) const
+        const core::types::Value& response) const
     {
         core::types::Value schema = response.get("schema");
         if (schema.is_string())

@@ -35,8 +35,7 @@ namespace cc::avro
 
         ProtoBufSchema(
             const ContextRef &context,
-            const google::protobuf::Descriptor *descriptor,
-            const std::optional<std::string> &name = {});
+            const google::protobuf::Descriptor *descriptor);
 
     public:
         //--------------------------------------------------------------------------
@@ -51,9 +50,8 @@ namespace cc::avro
         /// Custom types are mapped via a new or existing `ProtoBufSchema`
         /// instance.  New instances are cached for future reuse.
 
-        static SchemaWrapper &from_proto(
-            const google::protobuf::Descriptor *descriptor,
-            const std::optional<std::string> &name = {});
+        static SchemaWrapper from_proto(
+            const google::protobuf::Descriptor *descriptor);
 
     private:
         void add_fields();
@@ -73,11 +71,17 @@ namespace cc::avro
 
         static SchemaWrapper from_descriptor(
             const ContextRef &context,
-            const google::protobuf::Descriptor *descriptor,
-            const std::optional<std::string> &name={});
+            const google::protobuf::Descriptor *descriptor);
 
         static std::optional<std::string> field_comment(
             const google::protobuf::FieldDescriptor *fd);
+
+    public:
+        static std::string schema_name(
+            const google::protobuf::Descriptor *descriptor);
+
+        static std::string translated_namespace(
+            const std::string &protobuf_namespace);
 
     private:
         const google::protobuf::Descriptor *descriptor;

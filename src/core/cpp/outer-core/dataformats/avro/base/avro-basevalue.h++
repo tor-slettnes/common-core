@@ -67,7 +67,7 @@ namespace cc::avro
         core::types::ByteVector serialized() const;
         std::shared_ptr<core::types::ByteVector> serialized_ptr() const;
         std::string as_json(bool pretty = false) const;
-        core::types::Value as_value(bool enums_as_strings = true) const;
+        virtual core::types::Value as_value(bool enums_as_strings = true) const;
 
     protected:
         avro_value_t value;

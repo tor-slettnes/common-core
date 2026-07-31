@@ -72,6 +72,7 @@ namespace cc::avro
         //     Convert this wrapper into a Avro-C compatible schema.
         // @return
         //     New `avro_schema_t` reference.
+        std::string schema_name() const;
         avro_schema_t as_avro_schema() const;
         std::string as_json() const;
 
@@ -208,8 +209,8 @@ namespace cc::avro
             VT_DOUBLE,     // 5
             // VT_INTERVAL,   // 6
             // VT_TIMESTAMP,  // 7
-            // VT_MAP,        // 8
-            // VT_ARRAY       // 9
+            // VT_MAP,        // 6
+            // VT_ARRAY       // 7
         };
 
         VariantSchema(const ContextRef &context);

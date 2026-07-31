@@ -16,6 +16,7 @@
 namespace cc::avro
 {
     avro_schema_t schema(const avro_value_t &value);
+    std::string schema_name(const avro_value_t &value);
     avro_type_t type(const avro_value_t &value);
     std::string type_name(const avro_value_t &value);
 
@@ -179,6 +180,10 @@ namespace cc::avro
     std::optional<core::dt::Duration> get_duration(
         const avro_value_t &avro_value,
         int decimal_exponent = -3);
+
+    core::types::Value get_variant(
+        const avro_value_t &avro_value,
+        bool enums_as_strings = true);
 
     core::types::Value get_value(
         const avro_value_t &avro_value,

@@ -36,7 +36,6 @@ namespace cc::avro
 
         void set_from_value(const core::types::Value &value);
         void set_from_serialized(const core::types::Bytes &bytes);
-
     protected:
         avro_schema_t schema;
         bool take_schema;

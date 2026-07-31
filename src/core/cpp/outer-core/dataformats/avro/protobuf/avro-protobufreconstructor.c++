@@ -7,8 +7,10 @@
 
 #include "avro-protobufreconstructor.h++"
 #include "avro-valuemethods.h++"
+#include "avro-status.h++"
 #include "protobuf-standard-types.h++"
 #include "protobuf-inline.h++"
+#include "status/exceptions.h++"
 #include "logging/logging.h++"
 
 namespace cc::avro
@@ -97,7 +99,8 @@ namespace cc::avro
         {
             logf_notice(
                 "Cannot reconstruct ProtoBuf KeyValueMap from non-map Avro value %r",
-                avro::get_value(avro_value, ENUMS_AS_STRINGS));;
+                avro::get_value(avro_value, ENUMS_AS_STRINGS));
+            ;
             return false;
         }
     }
@@ -192,10 +195,6 @@ namespace cc::avro
                     dynamic_cast<google::protobuf::ListValue*>(msg));
                 reconstructed = true;
             }
-            else
-            {
-                reconstructed = false;
-            }
             break;
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_STRUCT:
@@ -206,14 +205,7 @@ namespace cc::avro
                     dynamic_cast<google::protobuf::Struct*>(msg));
                 reconstructed = true;
             }
-            else
-            {
-                reconstructed = false;
-            }
             break;
-
-        default:
-            reconstructed = false;
         }
 
         if (!reconstructed)
@@ -236,10 +228,28 @@ namespace cc::avro
         for (int i = 0; i < nfields; i++)
         {
             const google::protobuf::FieldDescriptor* fd = descriptor->field(i);
-            avro_value_t field_value = avro::get_field_by_name(
-                avro_value,
-                fd->name());
-            This::reconstruct_field(field_value, msg, fd);
+            try
+            {
+                avro_value_t field_value = avro::get_field_by_name(
+                    avro_value,
+                    fd->name());
+
+                if (!This::reconstruct_field(field_value, msg, fd))
+                {
+                    throwf(
+                        core::exception::InvalidArgument,
+                        "Cannot reconstruct ProtoBuf %s field %r of type %s from Avro value type %s: %r",
+                        msg->GetDescriptor()->full_name(),
+                        fd->name(),
+                        fd->type_name(),
+                        avro::type_name(avro_value),
+                        avro::get_value(avro_value, ENUMS_AS_STRINGS));
+                }
+            }
+            catch (...)
+            {
+                log_notice(std::current_exception());
+            }
         }
         return true;
     }
@@ -350,9 +360,10 @@ namespace cc::avro
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_ENUM:
-            if (auto opt = avro::get_enum_symbol(avro_value))
+            if (auto opt = This::reconstruct_enum_value(avro_value, msg, fd))
             {
-                reconstructed = This::reconstruct_enum_field(avro_value, msg, fd);
+                reflection->SetBool(msg, fd, *opt);
+                reconstructed = true;
             }
             break;
 
@@ -376,31 +387,13 @@ namespace cc::avro
         case google::protobuf::FieldDescriptor::TYPE_GROUP:
             if (avro::type(avro_value) == AVRO_RECORD)
             {
-                return This::reconstruct_record(
+                reconstructed = This::reconstruct_record(
                     avro_value,
                     reflection->MutableMessage(msg, fd));
             }
             break;
-
-        default:
-            logf_warning(
-                "Cannot reconstruct ProtoBuf field %s of type %s from Avro type %s",
-                fd->name(),
-                msg->GetDescriptor()->full_name(),
-                avro::type_name(avro_value));
-            break;
         }
 
-        return false;
-    }
-
-    bool ProtoBufReconstructor::reconstruct_indexed_field(
-        const avro_value_t& avro_value,
-        google::protobuf::Message *msg,
-        const google::protobuf::FieldDescriptor* fd,
-        int index)
-    {
-        const google::protobuf::Reflection* reflection = msg->GetReflection();
         return false;
     }
 
@@ -409,7 +402,142 @@ namespace cc::avro
         google::protobuf::Message* msg,
         const google::protobuf::FieldDescriptor* fd)
     {
-        return false;
+        std::size_t size = 0;
+
+        if ((avro::type(avro_value) == AVRO_ARRAY) &&
+            (avro_value_get_size(&avro_value, &size) == 0))
+        {
+            bool reconstructed = true;
+            for (std::size_t index = 0; index < size; index++)
+            {
+                avro_value_t element;
+                avro::checkstatus(
+                    avro_value_get_by_index(
+                        &avro_value,
+                        index,
+                        &element,
+                        nullptr));
+                reconstructed &= This::reconstruct_repeated_element(
+                    element,
+                    msg,
+                    fd);
+            }
+            return reconstructed;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool ProtoBufReconstructor::reconstruct_repeated_element(
+        const avro_value_t& avro_value,
+        google::protobuf::Message* msg,
+        const google::protobuf::FieldDescriptor* fd)
+    {
+        const google::protobuf::Reflection* reflection = msg->GetReflection();
+        bool reconstructed = false;
+
+        switch (fd->type())
+        {
+        case google::protobuf::FieldDescriptor::TYPE_INT32:
+        case google::protobuf::FieldDescriptor::TYPE_SINT32:
+        case google::protobuf::FieldDescriptor::TYPE_SFIXED32:
+            if (auto opt = avro::get_int(avro_value))
+            {
+                reflection->AddInt32(msg, fd, *opt);
+                reconstructed = true;
+            }
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_INT64:
+        case google::protobuf::FieldDescriptor::TYPE_SINT64:
+        case google::protobuf::FieldDescriptor::TYPE_SFIXED64:
+            if (auto opt = avro::get_long(avro_value))
+            {
+                reflection->AddInt64(msg, fd, *opt);
+                reconstructed = true;
+            }
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_UINT32:
+        case google::protobuf::FieldDescriptor::TYPE_FIXED32:
+            if (auto opt = avro::get_int(avro_value))
+            {
+                reflection->AddUInt32(msg, fd, *opt);
+                reconstructed = true;
+            }
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_UINT64:
+        case google::protobuf::FieldDescriptor::TYPE_FIXED64:
+            if (auto opt = avro::get_long(avro_value))
+            {
+                reflection->AddUInt64(msg, fd, *opt);
+                reconstructed = true;
+            }
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
+            if (auto opt = avro::get_double(avro_value))
+            {
+                reflection->AddDouble(msg, fd, *opt);
+                reconstructed = true;
+            }
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_FLOAT:
+            if (auto opt = avro::get_float(avro_value))
+            {
+                reflection->AddFloat(msg, fd, *opt);
+                reconstructed = true;
+            }
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_BOOL:
+            if (auto opt = avro::get_boolean(avro_value))
+            {
+                reflection->AddBool(msg, fd, *opt);
+                reconstructed = true;
+            }
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_ENUM:
+            if (auto opt = This::reconstruct_enum_value(avro_value, msg, fd))
+            {
+                reflection->AddEnumValue(msg, fd, *opt);
+                reconstructed = true;
+            }
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_STRING:
+            if (auto opt = avro::get_string(avro_value))
+            {
+                reflection->AddString(msg, fd, *opt);
+                reconstructed = true;
+            }
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_BYTES:
+            if (auto opt = avro::get_bytes(avro_value))
+            {
+                reflection->AddString(msg, fd, opt->as_string());
+                reconstructed = true;
+            }
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
+        case google::protobuf::FieldDescriptor::TYPE_GROUP:
+            if (avro::type(avro_value) == AVRO_RECORD)
+            {
+                reconstructed = This::reconstruct_record(
+                    avro_value,
+                    reflection->AddMessage(msg, fd));
+            }
+            break;
+        }
+
+        return reconstructed;
     }
 
     bool ProtoBufReconstructor::reconstruct_mapped_field(
@@ -423,12 +551,12 @@ namespace cc::avro
         return false;
     }
 
-    bool ProtoBufReconstructor::reconstruct_enum_field(
+    std::optional<int> ProtoBufReconstructor::reconstruct_enum_value(
         const avro_value_t& avro_value,
         google::protobuf::Message* msg,
         const google::protobuf::FieldDescriptor* fd)
     {
-        return false;
+        return {};
     }
 
 }  // namespace cc::avro
