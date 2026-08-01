@@ -46,6 +46,7 @@ class Product:
             model_name = product_settings.get(cls.PRODUCT_SETTING_MODEL),
         )
 
+    @classmethod
     def get_printable_version(cls) -> str:
         '''
         Get version number as a printable string.
