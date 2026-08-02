@@ -54,7 +54,7 @@ namespace cc::platform::sysconfig
             "get_serial_number",
             {},
             "Obtain and print the serial number for this system",
-            std::bind(&Options::set_serial_number, this));
+            std::bind(&Options::get_serial_number, this));
 
         this->add_command(
             "set_serial_number",
