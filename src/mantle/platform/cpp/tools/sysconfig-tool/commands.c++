@@ -21,16 +21,46 @@ namespace cc::platform::sysconfig
             std::bind(&Options::get_product_info, this));
 
         this->add_command(
-            "set_serial_number",
+            "get_product_name",
             {},
-            "Set the unique serial number for this system. Intended for manufacturing use.",
-            std::bind(&Options::set_serial_number, this));
+            "Obtain and print just the name of the installed product",
+            std::bind(&Options::get_product_name, this));
+
+        this->add_command(
+            "get_product_description",
+            {},
+            "Obtain and print the description of the installed product",
+            std::bind(&Options::get_product_description, this));
+
+        this->add_command(
+            "get_product_version",
+            {},
+            "Obtain and print just the version of the installed product",
+            std::bind(&Options::get_product_version, this));
+
+        this->add_command(
+            "get_model_name",
+            {},
+            "Obtain and print the model name for this system",
+            std::bind(&Options::get_model_name, this));
 
         this->add_command(
             "set_model_name",
             {},
             "Set the model name for this system. Intended for manufacturing use.",
             std::bind(&Options::set_model_name, this));
+
+        this->add_command(
+            "get_serial_number",
+            {},
+            "Obtain and print the serial number for this system",
+            std::bind(&Options::set_serial_number, this));
+
+        this->add_command(
+            "set_serial_number",
+            {},
+            "Set the unique serial number for this system. Intended for manufacturing use.",
+            std::bind(&Options::set_serial_number, this));
 
         this->add_command(
             "get_time",
@@ -335,16 +365,47 @@ namespace cc::platform::sysconfig
         std::cout << sysconfig::product->get_product_info()
                   << std::endl;
     }
-    void Options::set_serial_number()
+
+    void Options::get_product_name()
     {
-        std::string serial = this->get_arg("SERIAL_NUMBER");
-        sysconfig::product->set_serial_number(serial);
+        std::cout << sysconfig::product->get_product_info().product_name
+                  << std::endl;
+    }
+
+    void Options::get_product_description()
+    {
+        std::cout << sysconfig::product->get_product_info().product_description
+                  << std::endl;
+    }
+
+    void Options::get_product_version()
+    {
+        std::cout << sysconfig::product->get_product_info().release_version
+                  << std::endl;
+    }
+
+    void Options::get_model_name()
+    {
+        std::cout << sysconfig::product->get_product_info().model_name
+                  << std::endl;
     }
 
     void Options::set_model_name()
     {
         std::string model = this->get_arg("MODEL_NAME");
         sysconfig::product->set_model_name(model);
+    }
+
+    void Options::get_serial_number()
+    {
+        std::cout << sysconfig::product->get_product_info().serial_number
+                  << std::endl;
+    }
+
+    void Options::set_serial_number()
+    {
+        std::string serial = this->get_arg("SERIAL_NUMBER");
+        sysconfig::product->set_serial_number(serial);
     }
 
     void Options::invoke_sync()

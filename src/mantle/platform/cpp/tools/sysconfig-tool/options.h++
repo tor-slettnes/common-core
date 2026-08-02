@@ -50,8 +50,13 @@ namespace cc::platform::sysconfig
         void get_host_info();
         void set_host_name();
         void get_product_info();
-        void set_serial_number();
+        void get_product_name();
+        void get_product_description();
+        void get_product_version();
+        void get_model_name();
         void set_model_name();
+        void get_serial_number();
+        void set_serial_number();
         void invoke_sync();
         void invoke_async();
         void invoke_finish();
