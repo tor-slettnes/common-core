@@ -37,7 +37,7 @@ class SwitchboardDissecter (MessageDissecter):
         self.register_decoder(ImportResponse, self._decode_import_response)
         self.register_decoder(ExportResponse, self._decode_export_response)
 
-    def _decode_map(self, msg: Message) -> object:
+    def _decode_map(self, msg: Message) -> dict[str, object]:
         return self.decode(msg.map)
 
     def _decode_switch_identifiers(self, msg: SwitchIdentifiers) -> list[str]:

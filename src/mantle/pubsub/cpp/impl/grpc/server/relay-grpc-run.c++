@@ -16,13 +16,14 @@
 namespace cc::platform::pubsub::grpc
 {
     void run_grpc_service(
+        const std::shared_ptr<ControlInterface> relay_control,
         const std::string &listen_address)
     {
         log_debug("Creating gRPC server builder");
         cc::grpc::ServerBuilder builder(listen_address);
 
         log_debug("Creating Relay gRPC request handler");
-        auto request_handler = RequestHandler::create_shared();
+        auto request_handler = RequestHandler::create_shared(relay_control);
         builder.add_service(request_handler, listen_address.empty());
 
         log_debug("Starting Relay gRPC server");
@@ -36,11 +37,15 @@ namespace cc::platform::pubsub::grpc
                 log_info("Requested gRPC server shutdown with a 5s timeout");
             });
 
+        relay_control->initialize();
+
         log_notice("Relay gRPC server is ready on ", core::str::join(builder.listener_ports()));
         server->Wait();
         log_notice("Relay gRPC server is shutting down");
 
         core::platform::signal_shutdown.disconnect(signal_handle);
+
+        relay_control->deinitialize();
         server.reset();
     }
 }  // namespace cc::platform::pubsub::grpc

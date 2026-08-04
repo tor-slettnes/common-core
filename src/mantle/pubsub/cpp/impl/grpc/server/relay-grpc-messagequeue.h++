@@ -35,7 +35,6 @@ namespace cc::platform::pubsub::grpc
         void initialize();
         void deinitialize();
 
-    private:
         void enqueue_message(
             const std::string &topic,
             const core::types::Value &value);

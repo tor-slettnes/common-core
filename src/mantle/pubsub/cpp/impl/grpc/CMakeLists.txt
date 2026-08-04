@@ -5,5 +5,6 @@
 ## @author Tor Slettnes
 #===============================================================================
 
+add_subdirectory(protobuf)
 add_subdirectory(client)
 add_subdirectory(server)

@@ -13,7 +13,7 @@
 int main(int argc, char **argv)
 {
     cc::core::application::initialize(argc, argv);
-    auto options = std::make_unique<cc::platform::pubsub::grpc::Options>();
+    auto options = std::make_unique<cc::platform::pubsub::Options>();
     options->apply(argc, argv);
 
     try

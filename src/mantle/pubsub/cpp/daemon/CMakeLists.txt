@@ -14,6 +14,7 @@ set(TARGET ${EXEC_NAME_PREFIX}pubsub-relay)
 set(LIB_DEPS
   cc_relay_grpc_service
   cc_relay_zmq_run
+  cc_relay_broker
   cc_core_platform
 )
 

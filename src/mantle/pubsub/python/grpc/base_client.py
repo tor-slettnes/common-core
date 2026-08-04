@@ -6,10 +6,13 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
-from typing import abstractmethod, Callable, Iterator, Sequence
+from typing import abstractmethod, Callable, Iterator, Sequence, Mapping
 from collections import namedtuple
 from uuid import uuid1
 from dataclasses import dataclass
+
+### Third party modules
+from google.protobuf.empty_pb2 import Empty
 
 ### Common Core modules
 from cc.core.types import Variant
@@ -21,10 +24,16 @@ from cc.messaging.grpc import GenericClient
 ### Pub/Sub module
 from ..protobuf import (
     Publication, Filters,
-    encodePublication, decodePublication, MessageTuple,
+    Topics, ReplayPolicy, ReplayPolicyMap,
+    TopicName, TopicsInput, ReplayPolicyInput, ReplayPolicyMapInput,
+    MessageTuple,
+    encodeTopics,
+    encodePublication, decodePublication,
+    encodeReplayPolicy, encodeReplayPolicyMap,
 )
 
 SubscriberCallback = Callable[[MessageTuple], None]
+
 
 @dataclass
 class Subscription:
@@ -211,7 +220,7 @@ class BaseClient (GenericClient):
         '''
         Subscribe asynchronously to message publications from the Pub/Sub Relay.
 
-        @param handler
+        @param callback
             Callback handler to invoke when a matching publication is received
             from the Relay.
 
@@ -290,3 +299,112 @@ class BaseClient (GenericClient):
     def stop_reader(self, subscription: Subscription):
         '''Stop message reader'''
 
+
+    def call_assign_replay_policies(self, policy_map: ReplayPolicyMapInput) -> Empty:
+        return self.stub.AssignReplayPolicies(
+            encodeReplayPolicyMap(policy_map))
+
+    def call_unassign_replay_policies(self, topics: TopicsInput) -> Empty:
+        return self.stub.UnassignReplayPolicies(
+            encodeTopics(topics))
+
+    def call_get_replay_policies(self, topics: TopicsInput) -> ReplayPolicyMap:
+        return self.stub.GetReplayPolicies(
+            encodeTopics(topics))
+
+
+    @abstractmethod
+    def assign_replay_policies(self, policy_map: ReplayPolicyMapInput):
+        '''
+        Assign replay policies to multiple message topics at once,
+        optionally with additional mapping keys for each.
+
+        See `assign_replay_policy()` for details.
+        '''
+
+    @abstractmethod
+    def assign_replay_policy(self,
+                             topic: TopicName,
+                             mapping_keys: Sequence[str]|None = None):
+        '''
+        Add a replay policy to the specific message topic, optionally
+        catalogued by additional mapping keys.  The latest message(s) published
+        on this topic will subsequently be retained by the relay, and replayed
+        to subsequently connected gRPC listeners.
+
+        If one or more mapping keys are provided topic, the latest message for
+        each unique key/value combination is retained, likely resulting in
+        multiple messages being replayed.  Otherwise, only the latest message
+        pulished on this topic is replayed.
+
+        This mechanism works only for gRPC-based subscribers, where there is a
+        dedicated message stream between the relay and the subscriber.
+        Subscribers connecting over ZMQ will only receive real-time
+        publications, regardless of policy.
+
+        ## Inputs:
+
+        @param topic
+            Message topic for which replay will be enabled.
+
+        @param mapping_keys
+            Keys for which the corresponding values will be used to map
+            messages for replay.
+
+        ## Example:
+
+        * Ask the relay to capture and retain the latest message published on
+          the topic "system state", as well as the latest message for each
+          "component" value published on the topic "component_state":
+
+          ```python
+          from cc.platform.pubsub import Client
+          client = Client()
+          client.assign_replay_policy("system state")
+          client.assign_replay_policy("component_state", ["component"])
+
+        * Subsequent publications are retained as follows:
+
+          ```python
+          ## Capture intitial "system state"
+          client.publish("system state", "initializing")
+
+          ## Capture intitial component states published on "component state"
+          client.publish("component state", {"component":"engine", "state":"starting"})
+          client.publish("component state", {"component":"radio", "state":"on"})
+
+          ## Replace the "component state" message where "component" is "engine"
+          client.publish("component state", {"component":"engine", "state":"running"})
+
+          ## Replace the initial "system state" message with an update.
+          client.publish("system state", "ready")
+          ```
+        '''
+
+    @abstractmethod
+    def unassign_replay_policies(self, topics: TopicsInput):
+        '''
+        Remove replay policies from the specified topics.  Subsequent
+        subscribers will not receive a snapshot of the latest publications on
+        connect.
+        '''
+
+    @abstractmethod
+    def clear_replay_policies(self):
+        '''
+        Remove replay policies from all topics.  Subequent subscribers will
+        not receive a snapshot of the latest publications on connect.
+        '''
+
+    @abstractmethod
+    def get_replay_policies(self) -> Mapping[TopicName, ReplayPolicy]:
+        '''
+        Return a complete mapping of topics to assigned replay policies.
+        '''
+
+    @abstractmethod
+    def get_replay_policy(self, topic: TopicName) -> ReplayPolicy|None:
+        '''
+        Return the replay policy for the specified topic, if one is
+        assigned.
+        '''

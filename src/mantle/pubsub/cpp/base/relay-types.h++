@@ -11,6 +11,8 @@
 #include "types/value.h++"
 #include "types/getter.h++"
 
+#include <iostream>
+
 namespace cc::platform::pubsub
 {
     using Topic = std::string;
@@ -20,6 +22,17 @@ namespace cc::platform::pubsub
     using MessageItem = std::pair<Topic, Payload>;
     using MessageSource = core::types::Getter<MessageItem>;
     using MessageHandler = std::function<void(Topic, Payload)>;
+
+    struct ReplayPolicy
+    {
+        bool replay_latest;
+        std::vector<std::string> mapping_keys;
+    };
+    std::ostream& operator<<(std::ostream& stream, const ReplayPolicy& policy);
+
+    using ReplayPolicyMap = core::types::ValueMap<Topic, ReplayPolicy>;
+    using Payloads = std::vector<Payload>;
+    using Snapshot = core::types::ValueMap<Topic, Payloads>;
 
     //--------------------------------------------------------------------------
     // Signals
@@ -31,4 +44,3 @@ namespace cc::platform::pubsub
     define_log_scope("relay");
 
 }  // namespace cc::platform::pubsub
-

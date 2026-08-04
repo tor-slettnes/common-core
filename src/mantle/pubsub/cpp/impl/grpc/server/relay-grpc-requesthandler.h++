@@ -6,11 +6,12 @@
 //==============================================================================
 
 #pragma once
+#include "relay-grpc-messagequeue.h++"
+#include "relay-control.h++"
 #include "grpc-requesthandler.h++"
 #include "types/create-shared.h++"
 
 #include "cc/platform/pubsub/grpc/relay_service.grpc.pb.h"
-
 
 namespace cc::platform::pubsub::grpc
 {
@@ -24,21 +25,43 @@ namespace cc::platform::pubsub::grpc
         // Convencience aliases
         using This = RequestHandler;
         using Super = cc::grpc::RequestHandler<cc::platform::pubsub::grpc::Relay>;
+        using MessageWriter = ::grpc::ServerWriter<platform::pubsub::protobuf::Publication>;
 
     public:
-        ::grpc::Status Subscriber(
+        RequestHandler(
+            const std::shared_ptr<ControlInterface> relay_control);
+
+        ::grpc::Status AssignReplayPolicies(
             ::grpc::ServerContext* context,
-            const platform::pubsub::protobuf::Filters* request,
-            ::grpc::ServerWriter<platform::pubsub::protobuf::Publication>* writer) override;
+            const platform::pubsub::protobuf::ReplayPolicyMap* request,
+            ::google::protobuf::Empty* reply) override;
+
+        ::grpc::Status UnassignReplayPolicies(
+            ::grpc::ServerContext* context,
+            const platform::pubsub::protobuf::Topics* request,
+            ::google::protobuf::Empty* reply) override;
+
+        ::grpc::Status GetReplayPolicies(
+            ::grpc::ServerContext* context,
+            const platform::pubsub::protobuf::Topics* request,
+            platform::pubsub::protobuf::ReplayPolicyMap* reply) override;
 
         ::grpc::Status Publisher(
             ::grpc::ServerContext* context,
             ::grpc::ServerReader<platform::pubsub::protobuf::Publication>* reader,
-            ::google::protobuf::Empty *reply) override;
+            ::google::protobuf::Empty* reply) override;
 
         ::grpc::Status Publish(
             ::grpc::ServerContext* context,
             const platform::pubsub::protobuf::Publication* message,
-            ::google::protobuf::Empty *reply) override;
+            ::google::protobuf::Empty* reply) override;
+
+        ::grpc::Status Subscriber(
+            ::grpc::ServerContext* context,
+            const platform::pubsub::protobuf::Filters* request,
+            MessageWriter *writer) override;
+
+    private:
+        std::shared_ptr<ControlInterface> relay_control;
     };
 }  // namespace cc::platform::pubsub::grpc

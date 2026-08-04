@@ -79,6 +79,7 @@ from threading import Thread
 from cc.core.decorators import override
 from cc.core.invocation import safe_invoke
 from cc.core.roundrobin import Queue
+from cc.protobuf.dissecter import decode_message
 
 ### Pub/Sub module
 from ..protobuf import MessageTuple, decodePublication
@@ -91,6 +92,38 @@ class Client (BaseClient):
     __doc__ = BaseClient.__doc__
 
     writer_thread = None
+
+    @override
+    def assign_replay_policies(self, policy_map: ReplayPolicyMapInput):
+        self.call_assign_replay_policies(policy_map)
+
+    @override
+    def assign_replay_policy(self,
+                             topic: TopicName,
+                             mapping_keys: Sequence[str]|None = None):
+        self.call_assign_replay_policies({topic: mapping_keys})
+
+    @override
+    def unassign_replay_policies(self, topics: TopicsInput):
+        self.call_unassign_replay_policies(topics)
+
+    @override
+    def unassign_replay_policy(self, topic: TopicName):
+        self.call_unassign_replay_policies(topic)
+
+    @override
+    def clear_replay_policies(self):
+        self.call_unassign_replay_policies(())
+
+    @override
+    def get_replay_policies(self) -> Mapping[TopicName, ReplayPolicy]:
+        policy_map = self.call_get_replay_policies(())
+        return decode_message(policy_map.map)
+
+    @override
+    def get_replay_policy(self, topic: TopicName) -> ReplayPolicy|None:
+        policy_map = self.call_get_replay_policies(topic)
+        return decode_message(policy_map.map)
 
     @override
     def writer_active(self) -> bool:

@@ -84,6 +84,7 @@ import asyncio
 from cc.core.decorators import override
 from cc.core.roundrobin import AsyncQueue
 from cc.core.types import Variant
+from cc.protobuf.dissecter import decode_message
 from cc.messaging.grpc.client import AsyncMixIn
 
 ### Pub/Sub modules
@@ -104,6 +105,39 @@ class AsyncClient (AsyncMixIn, BaseClient):
 
         BaseClient.__init__(**locals())
         self.reader_tasks = set()
+
+    @override
+    async def assign_replay_policies(self, policy_map: ReplayPolicyMapInput):
+        await self.call_assign_replay_policies(policy_map)
+
+    @override
+    async def assign_replay_policy(self,
+                             topic: TopicName,
+                             mapping_keys: Sequence[str]|None = None):
+        await self.call_assign_replay_policies({topic: mapping_keys})
+
+    @override
+    async def unassign_replay_policies(self, topics: TopicsInput):
+        await self.call_unassign_replay_policies(topics)
+
+    @override
+    async def unassign_replay_policy(self, topic: TopicName):
+        await self.call_unassign_replay_policies(topic)
+
+    @override
+    async def clear_replay_policies(self):
+        await self.call_unassign_replay_policies(())
+
+    @override
+    async def get_replay_policies(self) -> Mapping[TopicName, ReplayPolicy]:
+        policy_map = await self.call_get_replay_policies(())
+        return decode_message(policy_map.map)
+
+    @override
+    async def get_replay_policy(self, topic: TopicName) -> ReplayPolicy|None:
+        policy_map = await self.call_get_replay_policies(topic)
+        return decode_message(policy_map.map)
+
 
     @override
     async def publish(self, topic: str, value: Variant):

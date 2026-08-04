@@ -11,6 +11,8 @@
 #include "logging/logging.h++"
 #include "thread/supervised-thread.h++"
 
+#include "broker-relay-control.h++"
+
 #ifdef USE_ZMQ
 #include "relay-zmq-run.h++"
 #endif
@@ -34,6 +36,8 @@ int main(int argc, char** argv)
 
         std::list<std::thread> server_threads;
 
+        std::shared_ptr<cc::platform::pubsub::ControlInterface> relay_control;
+
 #ifdef USE_ZMQ
         if (options->enable_zmq)
         {
@@ -49,8 +53,10 @@ int main(int argc, char** argv)
         if (options->enable_grpc)
         {
             logf_debug("Spawning gRPC server");
+            relay_control = cc::platform::pubsub::RelayControl::create_shared();
             server_threads.push_back(cc::core::thread::supervised_thread(
                 cc::platform::pubsub::grpc::run_grpc_service,
+                relay_control,
                 options->bind_address));
         }
 #endif

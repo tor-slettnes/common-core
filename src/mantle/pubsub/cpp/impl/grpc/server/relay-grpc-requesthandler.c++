@@ -9,6 +9,7 @@
 #include "relay-grpc-messagequeue.h++"
 #include "relay-types.h++"
 #include "protobuf-variant-types.h++"
+#include "protobuf-relay-types.h++"
 #include "protobuf-inline.h++"
 
 namespace cc::platform::pubsub::grpc
@@ -17,29 +18,68 @@ namespace cc::platform::pubsub::grpc
     // @class RequestHandler
     // @brief Process requests from Relay clients
 
-    ::grpc::Status RequestHandler::Subscriber(
-        ::grpc::ServerContext* context,
-        const platform::pubsub::protobuf::Filters* request,
-        ::grpc::ServerWriter<platform::pubsub::protobuf::Publication>* writer)
+    RequestHandler::RequestHandler(
+        const std::shared_ptr<ControlInterface> relay_control)
+        : relay_control(relay_control)
     {
-        pubsub::TopicSet topics(
-            request->topics().begin(),
-            request->topics().end());
+    }
 
-        MessageQueue queue(topics);
-        queue.initialize();
+    ::grpc::Status RequestHandler::AssignReplayPolicies(
+        ::grpc::ServerContext* context,
+        const platform::pubsub::protobuf::ReplayPolicyMap* request,
+        ::google::protobuf::Empty* reply)
+    {
+        auto policy_map = cc::protobuf::decoded<ReplayPolicyMap>(*request);
+        for (const auto& [topic, policy] : policy_map)
+        {
+            this->relay_control->assign_replay_policy(topic, policy);
+        }
+        return ::grpc::Status::OK;
+    }
 
-        try
+    ::grpc::Status RequestHandler::UnassignReplayPolicies(
+        ::grpc::ServerContext* context,
+        const platform::pubsub::protobuf::Topics* request,
+        ::google::protobuf::Empty* reply)
+    {
+        if (request->topics().empty())
         {
-            queue.stream(context, writer);
-            queue.deinitialize();
-            return ::grpc::Status::OK;
+            this->relay_control->clear_replay_policies();
         }
-        catch (...)
+        else
         {
-            queue.deinitialize();
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            for (const Topic& topic : request->topics())
+            {
+                this->relay_control->unassign_replay_policy(topic);
+            }
         }
+        return ::grpc::Status::OK;
+    }
+
+    ::grpc::Status RequestHandler::GetReplayPolicies(
+        ::grpc::ServerContext* context,
+        const platform::pubsub::protobuf::Topics* request,
+        platform::pubsub::protobuf::ReplayPolicyMap* reply)
+    {
+        if (request->topics().empty())
+        {
+            cc::protobuf::encode(
+                this->relay_control->get_replay_policies(),
+                reply);
+        }
+        else
+        {
+            auto& reply_map = *reply->mutable_map();
+            for (const Topic& topic : request->topics())
+            {
+                if (const auto& policy = this->relay_control->get_replay_policy(topic))
+                {
+                    cc::protobuf::encode(*policy, &reply_map[topic]);
+                }
+            }
+        }
+
+        return ::grpc::Status::OK;
     }
 
     ::grpc::Status RequestHandler::Publisher(
@@ -60,7 +100,7 @@ namespace cc::platform::pubsub::grpc
 
     ::grpc::Status RequestHandler::Publish(
         ::grpc::ServerContext* context,
-        const platform::pubsub::protobuf::Publication *message,
+        const platform::pubsub::protobuf::Publication* message,
         ::google::protobuf::Empty* reply)
     {
         try
@@ -73,6 +113,46 @@ namespace cc::platform::pubsub::grpc
         catch (...)
         {
             return this->failure(std::current_exception(), *message, this->peer(context));
+        }
+    }
+
+    ::grpc::Status RequestHandler::Subscriber(
+        ::grpc::ServerContext* context,
+        const platform::pubsub::protobuf::Filters* request,
+        ::grpc::ServerWriter<platform::pubsub::protobuf::Publication>* writer)
+    {
+        pubsub::TopicSet topics(
+            request->topics().begin(),
+            request->topics().end());
+
+        MessageQueue queue(topics);
+
+        try
+        {
+            if (request->replay() != pubsub::protobuf::ReplayControl::REPLAY_OFF)
+            {
+                for (const auto& [topic, payloads] : this->relay_control->replay_all())
+                {
+                    for (const core::types::Value& payload : payloads)
+                    {
+                        queue.enqueue_message(topic, payload);
+                    }
+                }
+            }
+
+            if (request->replay() != pubsub::protobuf::ReplayControl::REPLAY_ONLY)
+            {
+                queue.initialize();
+            }
+
+            queue.stream(context, writer);
+            queue.deinitialize();
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            queue.deinitialize();
+            return this->failure(std::current_exception(), *request, this->peer(context));
         }
     }
 

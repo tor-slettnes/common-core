@@ -31,6 +31,7 @@ namespace cc::core::argparse
         void report_status_and_exit(bool success);
         std::optional<std::string> next_arg();
         std::string get_arg(const std::string &what);
+        std::vector<std::string> remaining_args();
         types::TaggedValueList get_tvlist(bool required);
         types::KeyValueMap get_attributes(bool required);
         void get_flags(FlagMap *map, bool allow_leftovers = false);

@@ -12,9 +12,11 @@
 #include "platform/symbols.h++"
 #include "parsers/json/reader.h++"
 #include "parsers/json/writer.h++"
+#include "string/format.h++"
 #include "types/symbolmap.h++"
+#include "status/exceptions.h++"
 
-namespace cc::platform::pubsub::grpc
+namespace cc::platform::pubsub
 {
     core::types::SymbolMap<Transport> transport_map =
         {
@@ -22,12 +24,12 @@ namespace cc::platform::pubsub::grpc
             {Transport::ZMQ, "ZMQ"},
     };
 
-    std::ostream &operator<<(std::ostream &stream, Transport transport)
+    std::ostream& operator<<(std::ostream& stream, Transport transport)
     {
         return transport_map.to_stream(stream, transport);
     }
 
-    std::istream &operator>>(std::istream &stream, Transport &transport)
+    std::istream& operator>>(std::istream& stream, Transport& transport)
     {
         return transport_map.from_stream(stream, &transport);
     }
@@ -81,6 +83,53 @@ namespace cc::platform::pubsub::grpc
     void Options::add_commands()
     {
         this->add_command(
+            "get_replay_policies",
+            {},
+            "List all replay policies currently in effect.",
+            std::bind(&Options::get_replay_policies, this));
+
+        this->add_command(
+            "get_replay_policy",
+            {"TOPIC"},
+            "Show the current replay policy for the specified TOPIC, if any",
+            std::bind(&Options::get_replay_policy, this));
+
+        this->add_command(
+            "enable_replay",
+            {"TOPIC", "[MAPPING_KEYS ...]"},
+            "Enable replay on TOPIC. Following this, the lastest message "
+            "published on this topic is cached in memory and replayed to "
+            "future subscribers. If one or more MAPPING_KEYS are provided, "
+            "messages are mapped by the corresponding key/value attributes, "
+            "and thus multiple messages may be replayed.",
+            std::bind(&Options::enable_topic_replay, this));
+
+        this->add_command(
+            "disable_replay",
+            {"TOPIC", "[MAPPING_KEYS ...]"},
+            "Disable replay on TOPIC.",
+            std::bind(&Options::disable_topic_replay, this));
+
+        this->add_command(
+            "clear_replay",
+            {"TOPIC", "[MAPPING_KEYS ...]"},
+            "Disable replay on TOPIC.",
+            std::bind(&Options::clear_replay_policies, this));
+
+        this->add_command(
+            "replay",
+            {"[TOPIC]"},
+            "Replay the latest message(s) published on TOPIC. "
+            "If no TOPIC is specified, replay all cached messages.",
+            std::bind(&Options::replay, this));
+
+        this->add_command(
+            "collect_topics",
+            {"[verbose]"},
+            "Listen for message topics, printing only new ones as they appear.",
+            std::bind(&Options::monitor_topics, this));
+
+        this->add_command(
             "publish",
             {"TOPIC", "[", "VALUE", "|", "[KEY VALUE]", "...", "]"},
             "Build and publish a message on the specified TOPIC. "
@@ -109,12 +158,75 @@ namespace cc::platform::pubsub::grpc
             "Subscribe to and listen for messages on the specified topics. "
             "If no topics are given, subscribe to all messsages.",
             std::bind(&Options::monitor, this));
+    }
 
-        this->add_command(
-            "collect_topics",
-            {"[verbose]"},
-            "Listen for message topics, printing only new ones as they appear.",
-            std::bind(&Options::monitor_topics, this));
+    void Options::get_replay_policies()
+    {
+        for (const auto& [topic, policy] : this->relay_control()->get_replay_policies())
+        {
+            core::str::format(std::cout, "%24s: %s\n", topic, policy);
+        }
+    }
+
+    void Options::get_replay_policy()
+    {
+        std::string topic = this->get_arg("TOPIC");
+        if (auto policy = this->relay_control()->get_replay_policy(topic))
+        {
+            std::cout << policy.value()
+                      << std::endl;
+        }
+    }
+
+    void Options::enable_topic_replay()
+    {
+        std::string topic = this->get_arg("TOPIC");
+        ReplayPolicy policy{
+            .replay_latest = true,
+            .mapping_keys = this->remaining_args(),
+        };
+        this->relay_control()->assign_replay_policy(topic, policy);
+    }
+
+    void Options::disable_topic_replay()
+    {
+        std::string topic = this->get_arg("TOPIC");
+        this->relay_control()->unassign_replay_policy(topic);
+    }
+
+    void Options::clear_replay_policies()
+    {
+        this->relay_control()->clear_replay_policies();
+    }
+
+    void Options::replay()
+    {
+        Snapshot snapshot;
+        if (auto topic = this->next_arg())
+        {
+            if (auto payloads = this->relay_control()->replay_topic(*topic))
+            {
+                snapshot.insert_or_assign(*topic, *payloads);
+            }
+        }
+        else
+        {
+            snapshot = this->relay_control()->replay_all();
+        }
+
+        for (const auto& [topic, payloads] : snapshot)
+        {
+            std::cout << topic
+                      << ":"
+                      << std::endl;
+
+            for (const core::types::Value& payload : payloads)
+            {
+                std::cout << "  - "
+                          << payload
+                          << std::endl;
+            }
+        }
     }
 
     void Options::publish()
@@ -185,7 +297,7 @@ namespace cc::platform::pubsub::grpc
         this->subscriber()->subscribe(
             this->signal_handle,
             topics,
-            [&](const Topic &topic, const core::types::Value &message) {
+            [&](const Topic& topic, const core::types::Value& message) {
                 this->on_message(topic, message);
             });
     }
@@ -197,8 +309,8 @@ namespace cc::platform::pubsub::grpc
     }
 
     void Options::on_message(
-        const Topic &topic,
-        const core::types::Value &payload) const
+        const Topic& topic,
+        const core::types::Value& payload) const
     {
         std::cout << "["
                   << topic
@@ -243,7 +355,7 @@ namespace cc::platform::pubsub::grpc
         this->subscriber()->subscribe(
             this->signal_handle,
             {},
-            [&](const Topic &topic, const core::types::Value &message) {
+            [&](const Topic& topic, const core::types::Value& message) {
                 this->on_message_topic(topic, message);
             });
     }
@@ -254,8 +366,8 @@ namespace cc::platform::pubsub::grpc
         this->subscriber()->deinitialize();
     }
 
-    void Options::on_message_topic(const std::string &topic,
-                                   const core::types::Value &message)
+    void Options::on_message_topic(const std::string& topic,
+                                   const core::types::Value& message)
     {
         if (!this->seen_topics_.count(topic))
         {
@@ -275,6 +387,31 @@ namespace cc::platform::pubsub::grpc
         }
     }
 
+    std::shared_ptr<pubsub::ControlInterface> Options::relay_control()
+    {
+        if (!this->relay_control_)
+        {
+            switch (this->transport_)
+            {
+            case Transport::GRPC:
+                if (auto client = pubsub::grpc::Client::create_shared(this->host))
+                {
+                    this->relay_control_ = client;
+                    this->subscriber_ = client;
+                    this->publisher_ = client;
+                }
+                break;
+
+            default:
+                throwf(core::exception::InvalidArgument,
+                       "Relay control functions are not available with %s transport",
+                       this->transport_);
+                break;
+            }
+        }
+        return this->relay_control_;
+    }
+
     std::shared_ptr<pubsub::Subscriber> Options::subscriber()
     {
         if (!this->subscriber_)
@@ -288,6 +425,7 @@ namespace cc::platform::pubsub::grpc
             case Transport::GRPC:
                 if (auto client = pubsub::grpc::Client::create_shared(this->host))
                 {
+                    this->relay_control_ = client;
                     this->subscriber_ = client;
                     this->publisher_ = client;
                 }
@@ -311,6 +449,7 @@ namespace cc::platform::pubsub::grpc
             case Transport::GRPC:
                 if (auto client = pubsub::grpc::Client::create_shared(this->host))
                 {
+                    this->relay_control_ = client;
                     this->subscriber_ = client;
                     this->publisher_ = client;
                 }
@@ -321,4 +460,4 @@ namespace cc::platform::pubsub::grpc
         return this->publisher_;
     }
 
-}  // namespace cc::platform::pubsub::grpc
+}  // namespace cc::platform::pubsub

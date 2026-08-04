@@ -7,96 +7,90 @@
 
 #include "relay-grpc-client.h++"
 #include "protobuf-variant-types.h++"
-#include "protobuf-message.h++"
+#include "protobuf-relay-types.h++"
 #include "protobuf-inline.h++"
 
 namespace cc::platform::pubsub::grpc
 {
-    void ClientImpl::initialize()
+    ReplayPolicyMap Client::get_replay_policies() const
     {
-        ClientBase::initialize();
-        Publisher::initialize();
-        Subscriber::initialize();
+        return cc::protobuf::decoded<ReplayPolicyMap>(
+            this->call_check(&Stub::GetReplayPolicies));
     }
 
-    void ClientImpl::deinitialize()
+    std::optional<ReplayPolicy> Client::get_replay_policy(
+        const Topic& topic) const
     {
-        Subscriber::deinitialize();
-        Publisher::deinitialize();
-        ClientBase::deinitialize();
+        pubsub::protobuf::Topics request;
+        request.add_topics(topic);
+
+        auto policy_map = cc::protobuf::decoded<ReplayPolicyMap>(
+            this->call_check(
+                &Stub::GetReplayPolicies,
+                request));
+
+        return policy_map.get_opt(topic);
     }
 
-    bool ClientImpl::write(const std::string &topic,
-                           const core::types::Value &value)
+    void Client::assign_replay_policy(
+        const std::string& topic,
+        const ReplayPolicy& policy)
     {
-        cc::platform::pubsub::protobuf::Publication msg;
-        msg.set_topic(topic);
-        cc::protobuf::encode(value, msg.mutable_value());
-        return this->writer_->Write(msg);
+        pubsub::protobuf::ReplayPolicyMap request;
+        auto& map = *request.mutable_map();
+        cc::protobuf::encode(policy, &map[topic]);
+
+        this->call_check(
+            &Stub::AssignReplayPolicies,
+            request);
     }
 
-    void ClientImpl::start_writer()
+    void Client::unassign_replay_policy(
+        const Topic& topic)
     {
-        if (!this->writer_)
+        pubsub::protobuf::Topics request;
+        request.add_topics(topic);
+        this->call_check(
+            &Stub::UnassignReplayPolicies,
+            request);
+    }
+
+    void Client::clear_replay_policies()
+    {
+        this->call_check(
+            &Stub::UnassignReplayPolicies);
+    }
+
+    Snapshot Client::replay_all()
+    {
+        return this->call_replay({});
+    }
+
+    std::optional<Payloads> Client::replay_topic(
+        const Topic& topic)
+    {
+        return this->call_replay({topic}).get_opt(topic);
+    }
+
+    Snapshot Client::call_replay(const std::vector<Topic> &topics) const
+    {
+        pubsub::protobuf::Filters request;
+        cc::protobuf::assign_repeated(topics, request.mutable_topics());
+        request.set_replay(pubsub::protobuf::ReplayControl::REPLAY_ONLY);
+
+        Snapshot snapshot;
+        ::grpc::ClientContext context;
+        if (auto reader = this->stub->Subscriber(&context, request))
         {
-            this->writer_context_ = std::make_unique<::grpc::ClientContext>();
-            this->writer_context_->set_wait_for_ready(true);
-            this->writer_response_ = std::make_unique<::google::protobuf::Empty>();
-            this->writer_ = this->stub->Publisher(
-                this->writer_context_.get(),
-                this->writer_response_.get());
+            pubsub::protobuf::Publication msg;
+            while (reader->Read(&msg))
+            {
+                cc::protobuf::decode(
+                    msg.value(),
+                    &snapshot[msg.topic()].emplace_back());
+            }
         }
-        pubsub::Publisher::start_writer();
+        return snapshot;
     }
 
-    void ClientImpl::stop_writer()
-    {
-        pubsub::Publisher::stop_writer();
-
-        if (this->writer_)
-        {
-            this->writer_->WritesDone();
-            this->writer_status_ = this->writer_->Finish();
-            this->writer_.reset();
-            this->writer_context_.reset();
-        }
-    }
-
-    void ClientImpl::start_reader()
-    {
-        if (!this->reader_thread_.joinable())
-        {
-            this->reader_ = this->create_reader({});
-            this->reader_thread_ = std::thread(&This::read_worker, this);
-        }
-        pubsub::Subscriber::start_reader();
-    }
-
-    void ClientImpl::stop_reader()
-    {
-        pubsub::Subscriber::stop_reader();
-        if (this->reader_thread_.joinable())
-        {
-            this->reader_->close();
-            this->reader_thread_.join();
-        }
-    }
-
-    Reader::ptr ClientImpl::create_reader(
-        const std::vector<std::string> &topics)
-    {
-        cc::platform::pubsub::protobuf::Filters filters;
-        cc::protobuf::assign_repeated(topics, filters.mutable_topics());
-        return Reader::create_shared(this->stub, filters);
-    }
-
-    void ClientImpl::read_worker()
-    {
-        while (const auto &message_data = this->reader_->get())
-        {
-            pubsub::signal_publication.emit(
-                message_data->first,
-                message_data->second);
-        }
-    }
 }  // namespace cc::platform::pubsub::grpc

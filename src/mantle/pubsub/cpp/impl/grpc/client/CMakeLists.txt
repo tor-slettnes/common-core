@@ -11,7 +11,7 @@ set(TARGET cc_relay_grpc_client)
 
 ### Static/shared library dependencies, either from this build or provided by the system.
 set(LIB_DEPS
-  cc_relay_common
+  cc_relay_protobuf
   cc_core_messaging_grpc_client)
 
 set(PROTO_DEPS
@@ -20,6 +20,7 @@ set(PROTO_DEPS
 
 ### Source files
 set(SOURCES
+  relay-grpc-base-client.c++
   relay-grpc-client.c++
   relay-grpc-reader.c++
 )

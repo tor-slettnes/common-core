@@ -11,7 +11,7 @@ set(TARGET cc_relay_grpc_service)
 
 ### Static/shared library dependencies, either from this build or provided by the system.
 set(LIB_DEPS
-  cc_relay_common
+  cc_relay_protobuf
   cc_core_messaging_grpc_server
   cc_core_io_protobuf
 )

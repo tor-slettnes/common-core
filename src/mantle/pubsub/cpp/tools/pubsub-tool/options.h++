@@ -6,12 +6,13 @@
 //==============================================================================
 
 #pragma once
+#include "relay-control.h++"
 #include "relay-publisher.h++"
 #include "relay-subscriber.h++"
 #include "argparse/command.h++"
 #include "types/filesystem.h++"
 
-namespace cc::platform::pubsub::grpc
+namespace cc::platform::pubsub
 {
     enum class Transport
     {
@@ -34,6 +35,13 @@ namespace cc::platform::pubsub::grpc
         void add_options() override;
         void add_commands();
 
+        void get_replay_policies();
+        void get_replay_policy();
+        void enable_topic_replay();
+        void disable_topic_replay();
+        void clear_replay_policies();
+        void replay();
+
         void publish();
         void listen_topics();
         void on_monitor_start() override;
@@ -51,6 +59,7 @@ namespace cc::platform::pubsub::grpc
             const core::types::Value &message);
 
     protected:
+        std::shared_ptr<pubsub::ControlInterface> relay_control();
         std::shared_ptr<pubsub::Subscriber> subscriber();
         std::shared_ptr<pubsub::Publisher> publisher();
 
@@ -61,6 +70,7 @@ namespace cc::platform::pubsub::grpc
         bool verbose_;
         Transport transport_;
         fs::path input_file_;
+        std::shared_ptr<pubsub::ControlInterface> relay_control_;
         std::shared_ptr<pubsub::Subscriber> subscriber_;
         std::shared_ptr<pubsub::Publisher> publisher_;
         pubsub::TopicSet seen_topics_;
