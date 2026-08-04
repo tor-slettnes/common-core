@@ -216,15 +216,9 @@ namespace cc::platform::pubsub
 
         for (const auto& [topic, payloads] : snapshot)
         {
-            std::cout << topic
-                      << ":"
-                      << std::endl;
-
             for (const core::types::Value& payload : payloads)
             {
-                std::cout << "  - "
-                          << payload
-                          << std::endl;
+                this->on_message(topic, payload);
             }
         }
     }
