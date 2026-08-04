@@ -77,7 +77,7 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
-from typing import Iterator, Sequence
+from typing import Iterator, Sequence, Mapping
 import asyncio
 import inspect
 
