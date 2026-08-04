@@ -68,7 +68,7 @@ async def safe_await(function    : Callable,
             log_call('Invoking %s'%(description,))
 
         result = function(*args, **kwargs)
-        if asyncio.iscoroutine(result):
+        if inspect.iscoroutine(result):
             result = await result
 
         if log_call:
@@ -134,7 +134,7 @@ def invoke_maybe_async(function: Callable,
     '''
 
     result = function(*args, **kwargs)
-    if asyncio.iscoroutine(result):
+    if inspect.iscoroutine(result):
         return async_tasks.add_coroutine(result)
     else:
         return None
@@ -154,7 +154,7 @@ def invoke_background(function: Callable,
     The invocation itself and any encountered exceptions are logged vi via the
     respective callables `log_call` and `log_failure`.
     '''
-    if asyncio.iscoroutinefunction(function):
+    if inspect.iscoroutinefunction(function):
         return async_tasks.add_coroutine(
             coroutine = function(*args, **kwargs),
             log_failure = log_failure)

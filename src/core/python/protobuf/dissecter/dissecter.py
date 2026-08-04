@@ -10,7 +10,7 @@ from typing import Callable, Sequence, Mapping
 from enum import IntEnum
 from functools import wraps
 from typing import Container, Callable
-import asyncio
+import inspect
 import dataclasses
 import json
 
@@ -48,7 +48,7 @@ class MessageDissecter:
         derive `MessageDissecter`.
         '''
 
-        if asyncio.iscoroutinefunction(method):
+        if inspect.iscoroutinefunction(method):
             @wraps(method)
             async def wrapper(self, *args, **kwargs):
                 response = await method(self, *args, **kwargs)

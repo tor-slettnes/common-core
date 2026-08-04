@@ -79,6 +79,7 @@ __author__ = 'Tor Slettnes'
 ### Standard Python modules
 from typing import Iterator, Sequence
 import asyncio
+import inspect
 
 ### Common Core modules
 from cc.core.decorators import override
@@ -197,7 +198,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
                 msg = decodePublication(msg)
                 try:
                     result = callback(msg)
-                    if asyncio.iscoroutine(result):
+                    if inspect.iscoroutine(result):
                         await result
                 except Exception as e:
                     self.logger.error(
