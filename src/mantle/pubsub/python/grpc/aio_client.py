@@ -89,7 +89,14 @@ from cc.protobuf.dissecter import decode_message
 from cc.messaging.grpc.client import AsyncMixIn
 
 ### Pub/Sub modules
-from ..protobuf import  MessageTuple, decodePublication
+from ..protobuf import (
+    MessageTuple,
+    TopicName,
+    TopicsInput,
+    ReplayPolicy,
+    ReplayPolicyMapInput,
+    decodePublication,
+)
 from .base_client import BaseClient,  Subscription
 
 

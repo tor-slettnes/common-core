@@ -82,7 +82,14 @@ from cc.core.roundrobin import Queue
 from cc.protobuf.dissecter import decode_message
 
 ### Pub/Sub module
-from ..protobuf import MessageTuple, decodePublication
+from ..protobuf import (
+    MessageTuple,
+    TopicName,
+    TopicsInput,
+    ReplayPolicy,
+    ReplayPolicyMapInput,
+    decodePublication,
+)
 from .base_client import BaseClient, Subscription
 
 #-------------------------------------------------------------------------------
