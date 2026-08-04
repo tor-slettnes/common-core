@@ -280,26 +280,10 @@ namespace cc::core::types
         ///     \sa end().
         inline std::optional<T> get() override
         {
-            return this->get(true);
-        }
-
-        /// @brief
-        ///     Get an item from the queue
-        ///
-        /// @param[in] wait
-        ///     If the queue is empty, block until an item is availble,
-        ///     or the queue is closed.
-        ///
-        /// @return
-        ///     An optional container with the value from the beinning of the queue
-        ///     if available, otherwise empty.
-        inline std::optional<T> get(bool wait)
-        {
             std::optional<T> value;
             {
                 std::unique_lock<std::mutex> lock(this->mtx);
-                while (wait &&
-                       this->queue.empty() &&
+                while (this->queue.empty() &&
                        !this->closed_ &&
                        !platform::signal_shutdown.emitted())
                 {

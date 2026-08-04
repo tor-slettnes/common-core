@@ -140,7 +140,11 @@ namespace cc::platform::pubsub::grpc
                 }
             }
 
-            if (request->replay() != pubsub::protobuf::ReplayControl::REPLAY_ONLY)
+            if (request->replay() == pubsub::protobuf::ReplayControl::REPLAY_ONLY)
+            {
+                queue.close();
+            }
+            else
             {
                 queue.initialize();
             }
