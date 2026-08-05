@@ -96,24 +96,28 @@ namespace cc::platform::pubsub
 
         this->add_command(
             "enable_replay",
-            {"TOPIC", "[MAPPING_KEYS ...]"},
+            {"TOPIC", "[KEY_PATH ...]"},
             "Enable replay on TOPIC. Following this, the lastest message "
             "published on this topic is cached in memory and replayed to "
-            "future subscribers. If one or more MAPPING_KEYS are provided, "
-            "messages are mapped by the corresponding key/value attributes, "
-            "and thus multiple messages may be replayed.",
+            "future subscribers. If provided, each KEY_PATH should be a "
+            "hierarchial path to nested values expected to be present in "
+            "each published message, using \"/\" as hierarcy separator. "
+            "These corresponding values are then combined into a mapping "
+            "key, by which the message is mapped and retained in the "
+            "server's replay cache, possibly resulting in multiple "
+            "messages being replayed.",
             std::bind(&Options::enable_topic_replay, this));
 
         this->add_command(
             "disable_replay",
-            {"TOPIC", "[MAPPING_KEYS ...]"},
+            {"TOPIC"},
             "Disable replay on TOPIC.",
             std::bind(&Options::disable_topic_replay, this));
 
         this->add_command(
             "clear_replay",
-            {"TOPIC", "[MAPPING_KEYS ...]"},
-            "Disable replay on TOPIC.",
+            {},
+            "Remove all replay policies.",
             std::bind(&Options::clear_replay_policies, this));
 
         this->add_command(
@@ -181,10 +185,17 @@ namespace cc::platform::pubsub
     void Options::enable_topic_replay()
     {
         std::string topic = this->get_arg("TOPIC");
-        ReplayPolicy policy{
-            .replay_latest = true,
-            .mapping_keys = this->remaining_args(),
-        };
+        ReplayPolicy policy;
+
+        policy.replay_latest = true;
+        std::size_t nkeys = std::distance(this->current_arg, this->args.end());
+        policy.key_paths.reserve(nkeys);
+
+        for (const std::string &arg: this->remaining_args())
+        {
+            policy.key_paths.push_back(core::str::split(arg, KEY_PATH_DELIMITER));
+        }
+
         this->relay_control()->assign_replay_policy(topic, policy);
     }
 

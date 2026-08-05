@@ -146,18 +146,25 @@ namespace cc::core::types
     }
 
     Value TaggedValueList::get(
+        uint index,
+        const Value &fallback) const noexcept
+    {
+        return this->try_get(index).value_or(fallback);
+    }
+
+    Value TaggedValueList::get(
+        int index,
+        const Value &fallback) const noexcept
+    {
+        return this->try_get(index).value_or(fallback);
+    }
+
+    Value TaggedValueList::get(
         const Tag &tag,
         const Value &fallback,
         bool ignoreCase) const noexcept
     {
-        if (auto it = this->find(tag, ignoreCase); it != this->end())
-        {
-            return it->second;
-        }
-        else
-        {
-            return fallback;
-        }
+        return this->try_get(tag, ignoreCase).value_or(fallback);
     }
 
     Value TaggedValueList::get_nonempty(
@@ -165,34 +172,20 @@ namespace cc::core::types
         const Value &fallback,
         bool ignoreCase) const noexcept
     {
-        if (const auto &value = this->get(tag, {}, ignoreCase))
-        {
-            if (value.has_nonempty_value())
-            {
-                return value;
-            }
-        }
-        return fallback;
+        return this->try_get_nonempty(tag, ignoreCase).value_or(fallback);
     }
 
-    Value TaggedValueList::get_any(
+    Value TaggedValueList::get_any_of(
         const std::vector<std::string> &candidates,
         const Value &fallback,
         bool ignoreCase) const noexcept
     {
-        for (const Tag &candidate : candidates)
-        {
-            if (const auto &value = this->get(candidate, ignoreCase))
-            {
-                return value;
-            }
-        }
-        return fallback;
+        return this->try_get_any_of(candidates, ignoreCase).value_or(fallback);
     }
 
-    Value TaggedValueList::get(
-        uint index,
-        const Value &fallback) const noexcept
+
+    std::optional<Value> TaggedValueList::try_get(
+        uint index) const noexcept
     {
         try
         {
@@ -200,13 +193,12 @@ namespace cc::core::types
         }
         catch (const std::out_of_range &)
         {
-            return fallback;
+            return {};
         }
     }
 
-    Value TaggedValueList::get(
-        int index,
-        const Value &fallback) const noexcept
+    std::optional<Value> TaggedValueList::try_get(
+        int index) const noexcept
     {
         try
         {
@@ -216,8 +208,51 @@ namespace cc::core::types
         }
         catch (const std::out_of_range &)
         {
-            return fallback;
+            return {};
         }
+    }
+
+
+    std::optional<Value> TaggedValueList::try_get(
+        const Tag &tag,
+        bool ignoreCase) const noexcept
+    {
+        if (auto it = this->find(tag, ignoreCase); it != this->end())
+        {
+            return it->second;
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    std::optional<Value> TaggedValueList::try_get_nonempty(
+        const Tag &tag,
+        bool ignoreCase) const noexcept
+    {
+        if (const auto &value = this->try_get(tag, ignoreCase))
+        {
+            if (value->has_nonempty_value())
+            {
+                return value;
+            }
+        }
+        return {};
+    }
+
+    std::optional<Value> TaggedValueList::try_get_any_of(
+        const std::vector<std::string> &candidates,
+        bool ignoreCase) const noexcept
+    {
+        for (const Tag &candidate : candidates)
+        {
+            if (const auto &value = this->try_get(candidate, ignoreCase))
+            {
+                return value;
+            }
+        }
+        return {};
     }
 
     TagList TaggedValueList::tags() const noexcept

@@ -59,6 +59,16 @@ namespace cc::core::types
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
+        Value get_any_of(
+            const std::vector<std::string> &candidates,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
+
+        Value get_nested(
+            const std::vector<std::string> &path,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
+
         ValueListPtr get_valuelist_ptr(
             const std::string &key,
             bool ignoreCase = false) const noexcept;
@@ -71,10 +81,31 @@ namespace cc::core::types
             const std::string &key,
             bool ignoreCase = false) const noexcept;
 
-        Value get_any(
-            const std::vector<std::string> &candidates,
-            const Value &fallback = {},
+        /// @brief
+        ///   Obtain a optional container to the value specified by `key`, if found.
+        /// @param[in] key
+        ///   Mapping key
+        /// @param[in] ignoreCase
+        ///   If `true` and the exact key is not found, try again with a
+        ///   case-insensitive search.
+        /// @returns
+        ///   The mapped value if found, otherwise an empty optional container.
+        std::optional<Value> try_get(
+            const std::string &key,
             bool ignoreCase = false) const noexcept;
+
+        std::optional<Value> try_get_nonempty(
+            const std::string &key,
+            bool ignoreCase = false) const noexcept;
+
+        std::optional<Value> try_get_any_of(
+            const std::vector<std::string> &candidates,
+            bool ignoreCase = false) const noexcept;
+
+        std::optional<Value> try_get_nested(
+            const std::vector<std::string> &path,
+            bool ignoreCase = false) const noexcept;
+
 
         Value extract_value(const std::string &key,
                             const Value &fallback = {}) noexcept;

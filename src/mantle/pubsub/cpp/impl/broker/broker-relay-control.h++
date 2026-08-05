@@ -19,7 +19,7 @@ namespace cc::platform::pubsub
         using This = RelayControl;
         using Super = ControlInterface;
 
-        using MappingKey = std::vector<Topic>;
+        using MappingKey = std::vector<std::string>;
 
     public:
         using ReplayMap = core::types::ValueMap<MappingKey, core::types::Value>;

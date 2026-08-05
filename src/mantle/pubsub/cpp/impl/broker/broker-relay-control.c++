@@ -93,10 +93,10 @@ namespace cc::platform::pubsub
         if (auto* policy = this->policy_map.get_ptr(topic))
         {
             MappingKey mapping_key;
-            mapping_key.reserve(policy->mapping_keys.size());
-            for (const std::string& subkey : policy->mapping_keys)
+            mapping_key.reserve(policy->key_paths.size());
+            for (const std::vector<std::string>& key_path : policy->key_paths)
             {
-                mapping_key.push_back(payload.get(subkey).as_string());
+                mapping_key.push_back(payload.get_nested(key_path).as_string());
             }
             return mapping_key;
         }

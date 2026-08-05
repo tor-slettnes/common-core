@@ -191,12 +191,9 @@ namespace cc::core::types
             const Value &fallback = {}) const noexcept;
 
         Value get(
-            const uint index,
-            const Value &fallback = {}) const noexcept;
-
-        Value get(
-            const int index,
-            const Value &fallback = {}) const noexcept;
+            const std::string &key,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
 
         Value get(
             const char *key,
@@ -204,19 +201,54 @@ namespace cc::core::types
             bool ignoreCase = false) const noexcept;
 
         Value get(
-            const std::string &key,
-            const Value &fallback = {},
-            bool ignoreCase = false) const noexcept;
+            const int index,
+            const Value &fallback = {}) const noexcept;
+
+        Value get(
+            const uint index,
+            const Value &fallback = {}) const noexcept;
 
         Value get_nonempty(
             const std::string &key,
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
-        Value get_any(
+        Value get_any_of(
             const std::vector<std::string> &candidates,
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
+
+        Value get_nested(
+            const std::vector<std::string> &path,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
+
+        std::optional<Value> try_get(
+            const std::string &key,
+            bool ignoreCase = false) const noexcept;
+
+        std::optional<Value> try_get(
+            const char *key,
+            bool ignoreCase = false) const noexcept;
+
+        std::optional<Value> try_get(
+            const int index) const noexcept;
+
+        std::optional<Value> try_get(
+            const uint index) const noexcept;
+
+        std::optional<Value> try_get_nonempty(
+            const std::string &key,
+            bool ignoreCase = false) const noexcept;
+
+        std::optional<Value> try_get_any_of(
+            const std::vector<std::string> &candidates,
+            bool ignoreCase = false) const noexcept;
+
+        std::optional<Value> try_get_nested(
+            const std::vector<std::string> &path,
+            bool ignoreCase = false) const noexcept;
+
 
         Value &operator[](const char *key);
         Value &operator[](const std::string &key);

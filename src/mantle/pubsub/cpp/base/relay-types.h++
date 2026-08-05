@@ -23,16 +23,21 @@ namespace cc::platform::pubsub
     using MessageSource = core::types::Getter<MessageItem>;
     using MessageHandler = std::function<void(Topic, Payload)>;
 
+    using KeyPath = std::vector<std::string>;
+    using KeyPaths = std::vector<KeyPath>;
+
     struct ReplayPolicy
     {
         bool replay_latest;
-        std::vector<std::string> mapping_keys;
+        KeyPaths key_paths;
     };
     std::ostream& operator<<(std::ostream& stream, const ReplayPolicy& policy);
 
     using ReplayPolicyMap = core::types::ValueMap<Topic, ReplayPolicy>;
     using Payloads = std::vector<Payload>;
     using Snapshot = core::types::ValueMap<Topic, Payloads>;
+
+    constexpr auto KEY_PATH_DELIMITER = "/";
 
     //--------------------------------------------------------------------------
     // Signals

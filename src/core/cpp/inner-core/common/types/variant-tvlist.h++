@@ -65,6 +65,10 @@ namespace cc::core::types
         /// Get the last value
         Value back(const Value &fallback = {}) const noexcept;
 
+        /// Get the value at the specified index, or a default value if not in range
+        Value get(uint index, const Value &fallback = {}) const noexcept;
+        Value get(int index, const Value &fallback = {}) const noexcept;
+
         /// Get the first value with the specified tag, or a default value if not found.
         Value get(
             const Tag &tag,
@@ -76,14 +80,28 @@ namespace cc::core::types
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
-        Value get_any(
+        Value get_any_of(
             const std::vector<std::string> &candidates,
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
-        /// Get the value at the specified index, or a default value if not in range
-        Value get(uint index, const Value &fallback = {}) const noexcept;
-        Value get(int index, const Value &fallback = {}) const noexcept;
+        /// Get the value at the specified index
+        std::optional<Value> try_get(uint index) const noexcept;
+        std::optional<Value> try_get(int index) const noexcept;
+
+        /// Get the first value with the specified tag
+        std::optional<Value> try_get(
+            const Tag &tag,
+            bool ignoreCase = false) const noexcept;
+
+        std::optional<Value> try_get_nonempty(
+            const Tag &tag,
+            bool ignoreCase = false) const noexcept;
+
+        std::optional<Value> try_get_any_of(
+            const std::vector<std::string> &candidates,
+            bool ignoreCase = false) const noexcept;
+
 
         /// Return the tag for each item
         TagList tags() const noexcept;

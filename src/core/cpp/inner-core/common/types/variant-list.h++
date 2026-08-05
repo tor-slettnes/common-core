@@ -36,6 +36,8 @@ namespace cc::core::types
         Value back(const Value &fallback = {}) const noexcept;
         Value get(uint index, const Value &fallback = {}) const noexcept;
         Value get(int index, const Value &fallback = {}) const noexcept;
+        std::optional<Value> try_get(uint index) const noexcept;
+        std::optional<Value> try_get(int index) const noexcept;
 
         TaggedValueList as_tvlist() const noexcept;
 

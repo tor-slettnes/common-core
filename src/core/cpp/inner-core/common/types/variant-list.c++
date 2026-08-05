@@ -9,7 +9,7 @@
 
 namespace cc::core::types
 {
-    Value ValueList::front(const Value &fallback) const noexcept
+    Value ValueList::front(const Value& fallback) const noexcept
     {
         if (!this->empty())
         {
@@ -21,7 +21,7 @@ namespace cc::core::types
         }
     }
 
-    Value ValueList::back(const Value &fallback) const noexcept
+    Value ValueList::back(const Value& fallback) const noexcept
     {
         if (!this->empty())
         {
@@ -33,30 +33,39 @@ namespace cc::core::types
         }
     }
 
-    Value ValueList::get(uint index, const Value &fallback) const noexcept
+    Value ValueList::get(uint index, const Value& fallback) const noexcept
+    {
+        return this->try_get(index).value_or(fallback);
+    }
+
+    Value ValueList::get(int index, const Value& fallback) const noexcept
+    {
+        return this->try_get(index).value_or(fallback);
+    }
+
+    std::optional<Value> ValueList::try_get(uint index) const noexcept
     {
         try
         {
             return this->at(index);
         }
-        catch (const std::out_of_range &)
+        catch (const std::out_of_range&)
         {
-            return fallback;
+            return {};
         }
-
     }
 
-    Value ValueList::get(int index, const Value &fallback) const noexcept
+    std::optional<Value> ValueList::try_get(int index) const noexcept
     {
         try
         {
             return index >= 0
-                       ? this->at(index)
-                       : this->at(this->size() + index);
+                     ? this->at(index)
+                     : this->at(this->size() + index);
         }
-        catch (const std::out_of_range &)
+        catch (const std::out_of_range&)
         {
-            return fallback;
+            return {};
         }
     }
 
@@ -64,7 +73,7 @@ namespace cc::core::types
     {
         TaggedValueList tvlist;
         tvlist.reserve(this->size());
-        for (const auto &value : *this)
+        for (const auto& value : *this)
         {
             tvlist.push_back({nulltag, value});
         }
@@ -76,7 +85,7 @@ namespace cc::core::types
         ValueList filtered;
         filtered.reserve(this->size());
 
-        for (const auto &value : *this)
+        for (const auto& value : *this)
         {
             if (value.has_nonempty_value())
             {
@@ -92,20 +101,20 @@ namespace cc::core::types
     {
         ValueList copy;
         copy.reserve(this->size());
-        for (const auto &value: *this)
+        for (const auto& value : *this)
         {
             copy.push_back(value.deepcopy());
         }
         return copy;
     }
 
-    ValueList &ValueList::extend(const ValueList &other)
+    ValueList& ValueList::extend(const ValueList& other)
     {
         this->insert(this->end(), other.begin(), other.end());
         return *this;
     }
 
-    ValueList &ValueList::extend(ValueList &&other)
+    ValueList& ValueList::extend(ValueList&& other)
     {
         this->reserve(this->size() + other.size());
         for (auto it = other.begin(); it != other.end(); it++)
@@ -115,17 +124,17 @@ namespace cc::core::types
         return *this;
     }
 
-    ValueList::iterator ValueList::append(const Value &value)
+    ValueList::iterator ValueList::append(const Value& value)
     {
         return this->insert(this->end(), value);
     }
 
-    ValueList::iterator ValueList::append(Value &&value)
+    ValueList::iterator ValueList::append(Value&& value)
     {
         return this->insert(this->end(), std::move(value));
     }
 
-    ValueList::AppendResult ValueList::append_if(bool condition, const Value &value)
+    ValueList::AppendResult ValueList::append_if(bool condition, const Value& value)
     {
         return {
             condition ? this->insert(this->end(), value) : this->end(),
@@ -133,7 +142,7 @@ namespace cc::core::types
         };
     }
 
-    ValueList::AppendResult ValueList::append_if(bool condition, Value &&value)
+    ValueList::AppendResult ValueList::append_if(bool condition, Value&& value)
     {
         return {
             condition ? this->insert(this->end(), std::move(value)) : this->end(),
@@ -141,21 +150,21 @@ namespace cc::core::types
         };
     }
 
-    ValueList::AppendResult ValueList::append_if_value(const Value &value)
+    ValueList::AppendResult ValueList::append_if_value(const Value& value)
     {
         return this->append_if(value.has_nonempty_value(), value);
     }
 
-    ValueList::AppendResult ValueList::append_if_value(Value &&value)
+    ValueList::AppendResult ValueList::append_if_value(Value&& value)
     {
         return this->append_if(value.has_nonempty_value(), std::move(value));
     }
 
-    void ValueList::to_stream(std::ostream &stream) const
+    void ValueList::to_stream(std::ostream& stream) const
     {
         stream << "[";
         bool comma = false;
-        for (const Value &element : *this)
+        for (const Value& element : *this)
         {
             if (comma)
             {
@@ -169,6 +178,5 @@ namespace cc::core::types
         }
         stream << "]";
     }
-
 
 }  // namespace cc::core::types

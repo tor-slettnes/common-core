@@ -6,16 +6,24 @@
 //==============================================================================
 
 #include "relay-types.h++"
+#include "string/misc.h++"
 #include "string/format.h++"
 
 namespace cc::platform::pubsub
 {
-    std::ostream &operator<<(std::ostream& stream, const ReplayPolicy& policy)
+    std::ostream& operator<<(std::ostream& stream, const ReplayPolicy& policy)
     {
+        std::vector<std::string> key_paths;
+        key_paths.reserve(policy.key_paths.size());
+        for (const auto& path : policy.key_paths)
+        {
+            key_paths.push_back(core::str::join(path, KEY_PATH_DELIMITER));
+        }
+
         core::str::format(stream,
-                          "{replay_latest=%b, mapping_keys=%s}",
+                          "{replay=%b, key_paths=%s}",
                           policy.replay_latest,
-                          policy.mapping_keys);
+                          key_paths);
         return stream;
     }
 

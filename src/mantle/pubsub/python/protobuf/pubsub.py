@@ -12,7 +12,11 @@ from typing import Sequence, Mapping
 from cc.core.types import Variant
 
 ## Pub/Sub modules
-from .pubsub_types_pb2 import Publication, ReplayPolicy, ReplayPolicyMap, Topics
+from .pubsub_types_pb2 import (
+    Publication, Topics,
+    ReplayPolicy, ReplayPolicyMap, KeyPath,
+)
+
 from cc.protobuf.variant import Value, encodeValue, decodeValue
 
 MessageTuple         = namedtuple('MessageTuple', ('topic', 'value'))
@@ -55,6 +59,27 @@ def decodePublication(msg: Publication) -> MessageTuple:
                         value = decodeValue(msg.value))
 
 
+def encodeKeyPath(key_path: KeyPath|Sequence[str]|str,
+                  path_delimiter: str = "/") -> KeyPath:
+
+    if isinstance(key_path, KeyPath):
+        return key_path
+
+    elif isinstance(key_path, str):
+        return KeyPath(elements = key_path.split(path_delimiter))
+
+    elif isinstance(key_path, Sequence):
+        return KeyPath(elements = key_path)
+
+    else:
+        raise TypeError(
+            "Invalid `key_path` input; expected `%s' or a sequence, got %s: %s"%(
+                KeyPath.__qualname__,
+                type(key_path).__qualname__,
+                key_path,
+            ))
+
+
 def encodeReplayPolicy(policy: ReplayPolicyInput|None) -> ReplayPolicy:
     if isinstance(policy, ReplayPolicy):
         return policy
@@ -62,16 +87,16 @@ def encodeReplayPolicy(policy: ReplayPolicyInput|None) -> ReplayPolicy:
     elif isinstance(policy, str):
         return ReplayPolicy(
             replay_latest = True,
-            mapping_keys = [policy]
+            key_paths = [encodeKeyPath(policy)],
         )
 
     elif isinstance(policy, Sequence):
         return ReplayPolicy(
             replay_latest = True,
-            mapping_keys = policy,
+            key_paths = [encodeKeyPath(path) for path in policy],
         )
 
-    elif isinstance(policy, None):
+    elif policy is None:
         return ReplayPolicy(
             replay_latest = True,
         )

@@ -107,8 +107,8 @@ class Client (BaseClient):
     @override
     def assign_replay_policy(self,
                              topic: TopicName,
-                             mapping_keys: Sequence[str]|None = None):
-        self.call_assign_replay_policies({topic: mapping_keys})
+                             key_paths: Sequence[str]|None = None):
+        self.call_assign_replay_policies({topic: key_paths})
 
     @override
     def unassign_replay_policies(self, topics: TopicsInput):

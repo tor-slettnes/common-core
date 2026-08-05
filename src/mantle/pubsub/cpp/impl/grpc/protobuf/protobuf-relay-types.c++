@@ -11,25 +11,33 @@
 namespace cc::protobuf
 {
     //--------------------------------------------------------------------------
+    // KeyPath
+    void encode(const cc::platform::pubsub::KeyPath &native,
+                cc::platform::pubsub::protobuf::KeyPath *proto)
+    {
+        protobuf::assign_repeated(native, proto->mutable_elements());
+    }
+
+    void decode(const cc::platform::pubsub::protobuf::KeyPath &proto,
+                cc::platform::pubsub::KeyPath *native)
+    {
+        protobuf::assign_to_vector(proto.elements(), native);
+    }
+
+    //--------------------------------------------------------------------------
     // ReplayPolicy
     void encode(const cc::platform::pubsub::ReplayPolicy& native,
                 cc::platform::pubsub::protobuf::ReplayPolicy* proto)
     {
         proto->set_replay_latest(native.replay_latest);
-
-        protobuf::assign_repeated(
-            native.mapping_keys,
-            proto->mutable_mapping_keys());
+        encode_vector(native.key_paths, proto->mutable_key_paths());
     }
 
     void decode(const cc::platform::pubsub::protobuf::ReplayPolicy& proto,
                 cc::platform::pubsub::ReplayPolicy* native)
     {
         native->replay_latest = proto.replay_latest();
-
-        protobuf::assign_to_vector(
-            proto.mapping_keys(),
-            &native->mapping_keys);
+        decode_to_vector(proto.key_paths(), &native->key_paths);
     }
 
     //--------------------------------------------------------------------------
