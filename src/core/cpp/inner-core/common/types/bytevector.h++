@@ -86,7 +86,7 @@ namespace cc::core::types
         template <class T>
         static inline ByteVector pack(const T &value)
         {
-            std::uint8_t *ptr = (std::uint8_t *)&value;
+            auto *ptr = reinterpret_cast<const std::uint8_t *>(&value);
             return ByteVector(ptr, ptr + sizeof(T));
         }
 

@@ -386,7 +386,8 @@ namespace cc::core
             const std::string &format);
 
         std::optional<Duration> try_to_duration(
-            const std::string_view &text);
+            const std::string_view &text,
+            double multiplier = 1.0);
 
         //--------------------------------------------------------------------------
         // Timepoint conversions

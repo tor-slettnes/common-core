@@ -373,7 +373,211 @@ namespace cc::core::types
         return this->holdsAnyOf<ValueListPtr, TaggedValueListPtr>();
     }
 
+    //--------------------------------------------------------------------------
+    // Getters with fallback values
+
     bool Value::as_bool(bool fallback) const noexcept
+    {
+        return this->try_as_bool().value_or(fallback);
+    }
+
+    char Value::as_char(char fallback) const noexcept
+    {
+        return this->try_as_char().value_or(fallback);
+    }
+
+    /// Return value as an unsigned integer
+    unsigned short Value::as_ushort(unsigned short fallback) const noexcept
+    {
+        return this->try_as_ushort().value_or(fallback);
+    }
+
+    unsigned int Value::as_uint(unsigned int fallback) const noexcept
+    {
+        return this->try_as_uint().value_or(fallback);
+    }
+
+    unsigned long Value::as_ulong(unsigned long fallback) const noexcept
+    {
+        return this->try_as_ulong().value_or(fallback);
+    }
+
+    std::uint8_t Value::as_uint8(std::uint8_t fallback) const noexcept
+    {
+        return this->try_as_uint8().value_or(fallback);
+    }
+
+    std::uint16_t Value::as_uint16(std::uint16_t fallback) const noexcept
+    {
+        return this->try_as_uint16().value_or(fallback);
+    }
+
+    std::uint32_t Value::as_uint32(std::uint32_t fallback) const noexcept
+    {
+        return this->try_as_uint32().value_or(fallback);
+    }
+
+    std::uint64_t Value::as_uint64(std::uint64_t fallback) const noexcept
+    {
+        return this->try_as_uint64().value_or(fallback);
+    }
+
+    largest_uint Value::as_largest_uint(largest_uint fallback) const noexcept
+    {
+        return this->try_as_largest_uint().value_or(fallback);
+    }
+
+    /// Return value as a signed integer
+    short Value::as_sshort(short fallback) const noexcept
+    {
+        return this->try_as_sshort().value_or(fallback);
+    }
+
+    int Value::as_sint(int fallback) const noexcept
+    {
+        return this->try_as_sint().value_or(fallback);
+    }
+
+    long Value::as_slong(long fallback) const noexcept
+    {
+        return this->try_as_slong().value_or(fallback);
+    }
+
+    std::int8_t Value::as_sint8(std::int8_t fallback) const noexcept
+    {
+        return this->try_as_sint8().value_or(fallback);
+    }
+    std::int16_t Value::as_sint16(std::int16_t fallback) const noexcept
+    {
+        return this->try_as_sint16().value_or(fallback);
+    }
+
+    std::int32_t Value::as_sint32(std::int32_t fallback) const noexcept
+    {
+        return this->try_as_sint32().value_or(fallback);
+    }
+
+    std::int64_t Value::as_sint64(std::int64_t fallback) const noexcept
+    {
+        return this->try_as_sint64().value_or(fallback);
+    }
+
+    largest_sint Value::as_largest_sint(largest_sint fallback) const noexcept
+    {
+        return this->try_as_largest_sint().value_or(fallback);
+    }
+
+    /// Return value as a floating point number
+    largest_real Value::as_real(largest_real fallback) const noexcept
+    {
+        return this->try_as_real().value_or(fallback);
+    }
+
+    largest_real Value::as_imag(largest_real fallback) const noexcept
+    {
+        return this->try_as_imag().value_or(fallback);
+    }
+
+    float Value::as_float(float fallback) const noexcept
+    {
+        return this->numeric_cast<float>(fallback);
+    }
+
+    double Value::as_double(double fallback) const noexcept
+    {
+        return this->numeric_cast<double>(fallback);
+    }
+
+    complex Value::as_complex(const complex& fallback) const noexcept
+    {
+        return this->try_as_complex().value_or(fallback);
+    }
+
+    std::string Value::as_string() const noexcept
+    {
+        if (auto* str = this->get_if<std::string>())
+        {
+            return *str;
+        }
+        else
+        {
+            std::ostringstream out;
+            out << *this;
+            return out.str();
+        }
+    }
+
+    ByteVector Value::as_bytevector(const ByteVector& fallback) const noexcept
+    {
+        return this->try_as_bytevector().value_or(fallback);
+    }
+
+    dt::TimePoint Value::as_timepoint(
+        bool assume_local,
+        const dt::TimePoint& fallback) const noexcept
+    {
+        return this->try_as_timepoint(assume_local).value_or(fallback);
+    }
+
+    dt::TimePoint Value::as_timepoint(
+        const std::optional<int>& decimal_exponent,
+        bool assume_local,
+        const dt::TimePoint& fallback) const noexcept
+    {
+        return this->try_as_timepoint(decimal_exponent, assume_local).value_or(fallback);
+    }
+
+    dt::Duration Value::as_duration(const dt::Duration& fallback) const noexcept
+    {
+        return this->try_as_duration().value_or(fallback);
+    }
+
+    dt::Duration Value::as_duration(double multiplier,
+                                    const dt::Duration& fallback) const noexcept
+    {
+        return this->try_as_duration(multiplier).value_or(fallback);
+    }
+
+    dt::Duration Value::as_duration(int decimal_exponent,
+                                    const dt::Duration& fallback) const noexcept
+    {
+        return this->try_as_duration(decimal_exponent).value_or(fallback);
+    }
+
+    ValueList Value::as_valuelist() const noexcept
+    {
+        return this->as_valuelist({});
+    }
+
+    ValueList Value::as_valuelist(const ValueList& fallback) const noexcept
+    {
+        return this->try_as_valuelist().value_or(fallback);
+    }
+
+    TaggedValueList Value::as_tvlist() const noexcept
+    {
+        return this->as_tvlist({});
+    }
+
+    TaggedValueList Value::as_tvlist(const TaggedValueList& fallback) const noexcept
+    {
+        return this->try_as_tvlist().value_or(fallback);
+    }
+
+    KeyValueMap Value::as_kvmap() const noexcept
+    {
+        return this->as_kvmap({});
+    }
+
+    KeyValueMap Value::as_kvmap(const KeyValueMap& fallback) const noexcept
+    {
+        return this->try_as_kvmap().value_or(fallback);
+    }
+
+    //--------------------------------------------------------------------------
+    // Getters with optional return values
+
+    std::optional<bool> Value::try_as_bool() const noexcept
     {
         switch (this->type())
         {
@@ -408,19 +612,24 @@ namespace cc::core::types
             case '9':
                 return true;
             default:
-                return fallback;
+                return {};
             }
+
+        case ValueType::UINT:
+        case ValueType::SINT:
+        case ValueType::REAL:
+            return this->try_numeric_cast<bool>();
 
         case ValueType::COMPLEX:
             return (this->as_real() != 0.0) || (this->as_imag() != 0.0);
 
         case ValueType::STRING:
-            return str::convert_to<bool>(this->get<std::string>(), fallback);
+            return str::try_convert_to<bool>(this->get<std::string>());
 
         case ValueType::BYTEVECTOR:
-            for (auto& b : this->get<ByteVector>())
+            for (auto& byte : this->get<ByteVector>())
             {
-                if (b > 0)
+                if (byte > 0)
                 {
                     return true;
                 }
@@ -443,16 +652,16 @@ namespace cc::core::types
             return this->get<KeyValueMapPtr>()->size() > 0;
 
         default:
-            return this->numeric_cast<bool>(fallback ? 1 : 0);
+            return {};
         }
     }
 
-    char Value::as_char(char fallback) const noexcept
+    std::optional<char> Value::try_as_char() const noexcept
     {
         switch (this->type())
         {
         case ValueType::NONE:
-            return fallback;
+            return {};
 
         case ValueType::CHAR:
             return this->get<char>();
@@ -461,101 +670,118 @@ namespace cc::core::types
             return this->get<bool>() ? 't' : 'f';
 
         case ValueType::STRING:
-        {
-            const std::string& s = this->get<std::string>();
-            return s.size() ? s.front() : fallback;
-        }
+            if (this->get<std::string>().size() > 0)
+            {
+                return this->get<std::string>().front();
+            }
+            else
+            {
+                return {};
+            }
 
         case ValueType::BYTEVECTOR:
-        {
-            const ByteVector& b = this->get<ByteVector>();
-            if (b.size() == sizeof(char))
-                return *(const char*)(b.data());
+            if (this->get<ByteVector>().size() == sizeof(char))
+            {
+                return static_cast<const char>(this->get<ByteVector>().front());
+            }
             else
-                return fallback;
-        }
+            {
+                return {};
+            }
 
         default:
-            return this->numeric_cast<char>(fallback);
+            return this->try_numeric_cast<char>();
         }
     }
 
     /// Return value as an unsigned integer
-    unsigned short Value::as_ushort(unsigned short fallback) const noexcept
+    std::optional<unsigned short> Value::try_as_ushort() const noexcept
     {
-        return this->numeric_cast<ushort>(fallback);
+        return this->try_numeric_cast<ushort>();
     }
-    unsigned int Value::as_uint(unsigned int fallback) const noexcept
+
+    std::optional<unsigned int> Value::try_as_uint() const noexcept
     {
-        return this->numeric_cast<uint>(fallback);
+        return this->try_numeric_cast<uint>();
     }
-    unsigned long Value::as_ulong(unsigned long fallback) const noexcept
+
+    std::optional<unsigned long> Value::try_as_ulong() const noexcept
     {
-        return this->numeric_cast<ulong>(fallback);
+        return this->try_numeric_cast<ulong>();
     }
-    std::uint8_t Value::as_uint8(std::uint8_t fallback) const noexcept
+
+    std::optional<std::uint8_t> Value::try_as_uint8() const noexcept
     {
-        return this->numeric_cast<std::uint8_t>(fallback);
+        return this->try_numeric_cast<std::uint8_t>();
     }
-    std::uint16_t Value::as_uint16(std::uint16_t fallback) const noexcept
+
+    std::optional<std::uint16_t> Value::try_as_uint16() const noexcept
     {
-        return this->numeric_cast<std::uint16_t>(fallback);
+        return this->try_numeric_cast<std::uint16_t>();
     }
-    std::uint32_t Value::as_uint32(std::uint32_t fallback) const noexcept
+
+    std::optional<std::uint32_t> Value::try_as_uint32() const noexcept
     {
-        return this->numeric_cast<std::uint32_t>(fallback);
+        return this->try_numeric_cast<std::uint32_t>();
     }
-    std::uint64_t Value::as_uint64(std::uint64_t fallback) const noexcept
+
+    std::optional<std::uint64_t> Value::try_as_uint64() const noexcept
     {
-        return this->numeric_cast<std::uint64_t>(fallback);
+        return this->try_numeric_cast<std::uint64_t>();
     }
-    largest_uint Value::as_largest_uint(largest_uint fallback) const noexcept
+
+    std::optional<largest_uint> Value::try_as_largest_uint() const noexcept
     {
-        return this->numeric_cast<largest_uint>(fallback);
+        return this->try_numeric_cast<largest_uint>();
     }
 
     /// Return value as a signed integer
-    short Value::as_sshort(short fallback) const noexcept
+    std::optional<short> Value::try_as_sshort() const noexcept
     {
-        return this->numeric_cast<short>(fallback);
-    }
-    int Value::as_sint(int fallback) const noexcept
-    {
-        return this->numeric_cast<int>(fallback);
-    }
-    long Value::as_slong(long fallback) const noexcept
-    {
-        return this->numeric_cast<long>(fallback);
-    }
-    std::int8_t Value::as_sint8(std::int8_t fallback) const noexcept
-    {
-        return this->numeric_cast<std::int8_t>(fallback);
-    }
-    std::int16_t Value::as_sint16(std::int16_t fallback) const noexcept
-    {
-        return this->numeric_cast<std::int16_t>(fallback);
-    }
-    std::int32_t Value::as_sint32(std::int32_t fallback) const noexcept
-    {
-        return this->numeric_cast<std::int32_t>(fallback);
-    }
-    std::int64_t Value::as_sint64(std::int64_t fallback) const noexcept
-    {
-        return this->numeric_cast<std::int64_t>(fallback);
+        return this->try_numeric_cast<short>();
     }
 
-    largest_sint Value::as_largest_sint(largest_sint fallback) const noexcept
+    std::optional<int> Value::try_as_sint() const noexcept
     {
-        return this->numeric_cast<largest_sint>(fallback);
+        return this->try_numeric_cast<int>();
     }
 
-    /// Return value as a floating point number
-    largest_real Value::as_real(largest_real fallback) const noexcept
+    std::optional<long> Value::try_as_slong() const noexcept
     {
-        return this->numeric_cast<largest_real>(fallback);
+        return this->try_numeric_cast<long>();
     }
 
-    largest_real Value::as_imag(largest_real fallback) const noexcept
+    std::optional<std::int8_t> Value::try_as_sint8() const noexcept
+    {
+        return this->try_numeric_cast<std::int8_t>();
+    }
+
+    std::optional<std::int16_t> Value::try_as_sint16() const noexcept
+    {
+        return this->try_numeric_cast<std::int16_t>();
+    }
+
+    std::optional<std::int32_t> Value::try_as_sint32() const noexcept
+    {
+        return this->try_numeric_cast<std::int32_t>();
+    }
+
+    std::optional<std::int64_t> Value::try_as_sint64() const noexcept
+    {
+        return this->try_numeric_cast<std::int64_t>();
+    }
+
+    std::optional<largest_sint> Value::try_as_largest_sint() const noexcept
+    {
+        return this->try_numeric_cast<largest_sint>();
+    }
+
+    std::optional<largest_real> Value::try_as_real() const noexcept
+    {
+        return this->try_numeric_cast<largest_real>();
+    }
+
+    std::optional<largest_real> Value::try_as_imag() const noexcept
     {
         switch (this->type())
         {
@@ -568,18 +794,18 @@ namespace cc::core::types
             return this->get<complex>().imag();
 
         default:
-            return fallback;
+            return {};
         }
     }
 
-    float Value::as_float(float fallback) const noexcept
+    std::optional<float> Value::try_as_float() const noexcept
     {
-        return this->numeric_cast<float>(fallback);
+        return this->try_numeric_cast<float>();
     }
 
-    double Value::as_double(double fallback) const noexcept
+    std::optional<double> Value::try_as_double() const noexcept
     {
-        return this->numeric_cast<double>(fallback);
+        return this->try_numeric_cast<double>();
     }
 
     std::optional<complex> Value::try_as_complex() const noexcept
@@ -618,8 +844,8 @@ namespace cc::core::types
             if (auto tvlist = this->get_tvlist_ptr())
             {
                 if ((tvlist->size() == 2) &&
-                    tvlist->get(0).is_numeric() &&
-                    tvlist->get(1).is_numeric())
+                    tvlist->front().is_numeric() &&
+                    tvlist->back().is_numeric())
                 {
                     return complex(tvlist->front().as_real(),
                                    tvlist->back().as_real());
@@ -639,31 +865,12 @@ namespace cc::core::types
         return {};
     }
 
-    complex Value::as_complex(const complex& fallback) const noexcept
-    {
-        return this->try_as_complex().value_or(fallback);
-    }
-
-    std::string Value::as_string() const noexcept
-    {
-        if (auto* str = this->get_if<std::string>())
-        {
-            return *str;
-        }
-        else
-        {
-            std::ostringstream out;
-            out << *this;
-            return out.str();
-        }
-    }
-
-    ByteVector Value::as_bytevector(const ByteVector& fallback) const noexcept
+    std::optional<ByteVector> Value::try_as_bytevector() const noexcept
     {
         switch (this->type())
         {
         case ValueType::NONE:
-            return fallback;
+            return {};
 
         case ValueType::BOOL:
             return ByteVector::pack(this->get<bool>());
@@ -695,51 +902,44 @@ namespace cc::core::types
         case ValueType::BYTEVECTOR:
             return this->get<ByteVector>();
 
-            //    case ValueType::POINTER:
-            //        return ByteVector::pack(this->get<void*>());
-
         default:
-            return fallback;
+            return {};
         }
     }
 
-    dt::TimePoint Value::as_timepoint(const dt::TimePoint& fallback) const noexcept
+    std::optional<dt::TimePoint> Value::try_as_timepoint(bool assume_local) const noexcept
     {
-        return this->as_timepoint({}, true, fallback);
+        return this->as_timepoint({}, assume_local);
     }
 
-    dt::TimePoint Value::as_timepoint(std::optional<int> multiplier_decimal_exponent,
-                                      bool assume_local,
-                                      const dt::TimePoint& fallback) const noexcept
+    std::optional<dt::TimePoint> Value::try_as_timepoint(
+        const std::optional<int>& decimal_exponent,
+        bool assume_local) const noexcept
     {
         switch (this->type())
         {
-        case ValueType::NONE:
-            return fallback;
-
-        case ValueType::BOOL:
-            return fallback;
-
         case ValueType::TIMEPOINT:
             return this->get<dt::TimePoint>();
 
+        case ValueType::DURATION:
+            return dt::TimePoint(this->get<dt::Duration>());
+
         case ValueType::STRING:
-            return dt::to_timepoint(
+            return dt::try_to_timepoint(
                 this->get<std::string>(),
                 assume_local,
-                fallback,
-                multiplier_decimal_exponent);
+                decimal_exponent);
 
         case ValueType::UINT:
         case ValueType::SINT:
             return dt::int_to_timepoint(
                 this->as_sint64(),
-                multiplier_decimal_exponent);
+                decimal_exponent);
 
         case ValueType::REAL:
             return dt::double_to_timepoint(
                 this->as_double(),
-                multiplier_decimal_exponent);
+                decimal_exponent);
 
         case ValueType::BYTEVECTOR:
             try
@@ -748,21 +948,18 @@ namespace cc::core::types
             }
             catch (const std::out_of_range&)
             {
-                return fallback;
+                return {};
             }
 
         default:
-            return dt::TimePoint(this->as_duration(fallback.time_since_epoch()));
+            return {};
         }
     }
 
-    dt::Duration Value::as_duration(const dt::Duration& fallback) const noexcept
+    std::optional<dt::Duration> Value::try_as_duration() const noexcept
     {
         switch (this->type())
         {
-        case ValueType::NONE:
-            return fallback;
-
         case ValueType::REAL:
         case ValueType::COMPLEX:
         case ValueType::UINT:
@@ -770,7 +967,7 @@ namespace cc::core::types
             return dt::to_duration(this->as_real());
 
         case ValueType::STRING:
-            return dt::try_to_duration(this->get<std::string>()).value_or(fallback);
+            return dt::try_to_duration(this->get<std::string>());
 
         case ValueType::BYTEVECTOR:
             try
@@ -779,7 +976,7 @@ namespace cc::core::types
             }
             catch (const std::out_of_range&)
             {
-                return fallback;
+                return {};
             }
 
         case ValueType::TIMEPOINT:
@@ -789,12 +986,12 @@ namespace cc::core::types
             return this->get<dt::Duration>();
 
         default:
-            return fallback;
+            return {};
         }
     }
 
-    dt::Duration Value::as_duration(double multiplier,
-                                    const dt::Duration& fallback) const noexcept
+    std::optional<dt::Duration> Value::try_as_duration(
+        double multiplier) const noexcept
     {
         switch (this->type())
         {
@@ -804,17 +1001,38 @@ namespace cc::core::types
         case ValueType::SINT:
             return dt::to_duration(this->as_real(), multiplier);
 
+        case ValueType::STRING:
+            return dt::try_to_duration(this->get<std::string>(), multiplier);
+
         default:
-            return this->as_duration(fallback);
+            return this->try_as_duration();
         }
     }
 
-    ValueList Value::as_valuelist() const noexcept
+    std::optional<dt::Duration> Value::try_as_duration(
+        int decimal_exponent) const noexcept
     {
-        return this->as_valuelist({});
+        switch (this->type())
+        {
+        case ValueType::UINT:
+        case ValueType::SINT:
+            return dt::int_to_duration(this->as_sint64(), decimal_exponent);
+
+        case ValueType::REAL:
+        case ValueType::COMPLEX:
+            return dt::to_duration(this->as_real(),
+                                   std::pow(10, decimal_exponent));
+
+        case ValueType::STRING:
+            return dt::try_to_duration(this->get<std::string>(),
+                                       std::pow(10, decimal_exponent));
+
+        default:
+            return this->try_as_duration();
+        }
     }
 
-    ValueList Value::as_valuelist(const ValueList& fallback) const noexcept
+    std::optional<ValueList> Value::try_as_valuelist() const noexcept
     {
         switch (this->type())
         {
@@ -828,19 +1046,14 @@ namespace cc::core::types
             return this->get<KeyValueMapPtr>()->values();
 
         case ValueType::COMPLEX:
-            return {this->as_real(), this->as_imag()};
+            return ValueList({this->as_real(), this->as_imag()});
 
         default:
-            return fallback;
+            return {};
         }
     }
 
-    TaggedValueList Value::as_tvlist() const noexcept
-    {
-        return this->as_tvlist({});
-    }
-
-    TaggedValueList Value::as_tvlist(const TaggedValueList& fallback) const noexcept
+    std::optional<TaggedValueList> Value::try_as_tvlist() const noexcept
     {
         switch (this->type())
         {
@@ -854,22 +1067,17 @@ namespace cc::core::types
             return *this->get<TaggedValueListPtr>();
 
         case ValueType::COMPLEX:
-            return {
+            return TaggedValueList({
                 {REAL_PART, this->as_real()},
                 {IMAG_PART, this->as_imag()},
-            };
+            });
 
         default:
-            return fallback;
+            return {};
         }
     }
 
-    KeyValueMap Value::as_kvmap() const noexcept
-    {
-        return this->as_kvmap({});
-    }
-
-    KeyValueMap Value::as_kvmap(const KeyValueMap& fallback) const noexcept
+    std::optional<KeyValueMap> Value::try_as_kvmap() const noexcept
     {
         switch (this->type())
         {
@@ -880,15 +1088,18 @@ namespace cc::core::types
             return this->get<TaggedValueListPtr>()->as_kvmap();
 
         case ValueType::COMPLEX:
-            return {
+            return KeyValueMap({
                 {REAL_PART, this->as_real()},
                 {IMAG_PART, this->as_imag()},
-            };
+            });
 
         default:
-            return fallback;
+            return {};
         }
     }
+
+    //--------------------------------------------------------------------------
+    // Non-converting getters
 
     const std::string& Value::get_string() const
     {
@@ -1241,7 +1452,7 @@ namespace cc::core::types
         Value value = *this;
         for (const std::string& element : path)
         {
-            if (const auto &next = value.try_get(element))
+            if (const auto& next = value.try_get(element))
             {
                 value = next.value();
             }

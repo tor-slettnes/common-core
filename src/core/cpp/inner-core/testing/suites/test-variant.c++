@@ -23,6 +23,8 @@ namespace cc::core::types
         EXPECT_EQ(Value(42).as_uint(), 42);
         EXPECT_EQ(Value(3.141592653589793238).as_double(), 3.141592653589793238);
         EXPECT_EQ(Value("Some string").as_string(), "Some string");
+        EXPECT_EQ(Value(5000).as_duration(-3), Value(5).as_duration());
+        EXPECT_EQ(Value(5000).as_duration(0.001), Value(5).as_duration());
     }
 
     TEST(Variant, ConstructList)

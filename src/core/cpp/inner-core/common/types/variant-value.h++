@@ -35,36 +35,36 @@ namespace cc::core::types
         Value(std::int16_t value);
         Value(std::int32_t value);
         Value(std::int64_t value);
-        Value(const char *cstring);
-        Value(const std::vector<Byte> &bytes);
-        Value(const std::string_view &view);
+        Value(const char* cstring);
+        Value(const std::vector<Byte>& bytes);
+        Value(const std::string_view& view);
 
-        Value(const ValueListPtr &list);
-        Value(const ValueList &list);
-        Value(ValueList &&list);
+        Value(const ValueListPtr& list);
+        Value(const ValueList& list);
+        Value(ValueList&& list);
 
-        Value(const TaggedValueListPtr &tvlist);
-        Value(const TaggedValueList &tvlist);
-        Value(TaggedValueList &&tvlist);
+        Value(const TaggedValueListPtr& tvlist);
+        Value(const TaggedValueList& tvlist);
+        Value(TaggedValueList&& tvlist);
 
-        Value(const KeyValueMapPtr &kvmap);
-        Value(const KeyValueMap &kvmap);
-        Value(KeyValueMap &&kvmap);
+        Value(const KeyValueMapPtr& kvmap);
+        Value(const KeyValueMap& kvmap);
+        Value(KeyValueMap&& kvmap);
 
         // Additional constructor to allow std::optional values
         template <class T>
-        Value(const std::optional<T> &opt)
+        Value(const std::optional<T>& opt)
             : Value(opt ? Value(*opt) : Value())
         {
         }
 
         template <class T>
-        Value(std::optional<T> &&opt)
+        Value(std::optional<T>&& opt)
             : Value(opt ? Value(std::move(*opt)) : Value())
         {
         }
 
-        virtual bool operator==(const Value &other) const;
+        virtual bool operator==(const Value& other) const;
         void clear();
         void reset();
 
@@ -75,7 +75,7 @@ namespace cc::core::types
         operator bool() const noexcept;
         bool has_type() const noexcept;
         bool has_nonempty_value() const noexcept;
-        const Value &nonempty_value() const noexcept;
+        const Value& nonempty_value() const noexcept;
 
         bool is_simple() const noexcept;
         bool is_bool() const noexcept;
@@ -123,51 +123,103 @@ namespace cc::core::types
         largest_real as_imag(largest_real fallback = 0.0) const noexcept;
         float as_float(float fallback = 0.0) const noexcept;
         double as_double(double fallback = 0.0) const noexcept;
-        std::optional<complex> try_as_complex() const noexcept;
-        complex as_complex(const complex &fallback = {0.0, 0.0}) const noexcept;
+        complex as_complex(const complex& fallback = {0.0, 0.0}) const noexcept;
         std::string as_string() const noexcept;
-        ByteVector as_bytevector(const ByteVector &fallback = {}) const noexcept;
-        dt::TimePoint as_timepoint(const dt::TimePoint &fallback = {}) const noexcept;
-        dt::TimePoint as_timepoint(std::optional<int> multiplier_decimal_exponent,
-                                   bool assume_local = true,
-                                   const dt::TimePoint &fallback = {}) const noexcept;
-        dt::Duration as_duration(const dt::Duration &fallback = {}) const noexcept;
-        dt::Duration as_duration(double multiplier,
-                                 const dt::Duration &fallback = {}) const noexcept;
+        ByteVector as_bytevector(const ByteVector& fallback = {}) const noexcept;
+
+        dt::TimePoint as_timepoint(
+            bool assume_local = true,
+            const dt::TimePoint& fallback = {}) const noexcept;
+
+        dt::TimePoint as_timepoint(
+            const std::optional<int> &decimal_exponent,
+            bool assume_local = true,
+            const dt::TimePoint& fallback = {}) const noexcept;
+
+        dt::Duration as_duration(
+            const dt::Duration& fallback = {}) const noexcept;
+
+        dt::Duration as_duration(
+            int decimal_exponent,
+            const dt::Duration& fallback = {}) const noexcept;
+
+        dt::Duration as_duration(
+            double multiplier,
+            const dt::Duration& fallback = {}) const noexcept;
 
         ValueList as_valuelist() const noexcept;
-        ValueList as_valuelist(const ValueList &fallback) const noexcept;
+        ValueList as_valuelist(const ValueList& fallback) const noexcept;
 
         TaggedValueList as_tvlist() const noexcept;
-        TaggedValueList as_tvlist(const TaggedValueList &fallback) const noexcept;
+        TaggedValueList as_tvlist(const TaggedValueList& fallback) const noexcept;
 
         KeyValueMap as_kvmap() const noexcept;
-        KeyValueMap as_kvmap(const KeyValueMap &fallback) const noexcept;
+        KeyValueMap as_kvmap(const KeyValueMap& fallback) const noexcept;
+
+        std::optional<bool> try_as_bool() const noexcept;
+        std::optional<char> try_as_char() const noexcept;
+        std::optional<unsigned short> try_as_ushort() const noexcept;
+        std::optional<unsigned int> try_as_uint() const noexcept;
+        std::optional<unsigned long> try_as_ulong() const noexcept;
+        std::optional<std::uint8_t> try_as_uint8() const noexcept;
+        std::optional<std::uint16_t> try_as_uint16() const noexcept;
+        std::optional<std::uint32_t> try_as_uint32() const noexcept;
+        std::optional<std::uint64_t> try_as_uint64() const noexcept;
+        std::optional<largest_uint> try_as_largest_uint() const noexcept;
+        std::optional<short> try_as_sshort() const noexcept;
+        std::optional<int> try_as_sint() const noexcept;
+        std::optional<long> try_as_slong() const noexcept;
+        std::optional<std::int8_t> try_as_sint8() const noexcept;
+        std::optional<std::int16_t> try_as_sint16() const noexcept;
+        std::optional<std::int32_t> try_as_sint32() const noexcept;
+        std::optional<std::int64_t> try_as_sint64() const noexcept;
+        std::optional<largest_sint> try_as_largest_sint() const noexcept;
+        std::optional<largest_real> try_as_real() const noexcept;
+        std::optional<largest_real> try_as_imag() const noexcept;
+        std::optional<float> try_as_float() const noexcept;
+        std::optional<double> try_as_double() const noexcept;
+        std::optional<complex> try_as_complex() const noexcept;
+        std::optional<ByteVector> try_as_bytevector() const noexcept;
+
+        std::optional<dt::TimePoint> try_as_timepoint(
+            bool assume_local = true) const noexcept;
+
+        std::optional<dt::TimePoint> try_as_timepoint(
+            const std::optional<int> &decimal_exponent,
+            bool assume_local = true) const noexcept;
+
+        std::optional<dt::Duration> try_as_duration() const noexcept;
+        std::optional<dt::Duration> try_as_duration(double multiplier) const noexcept;
+        std::optional<dt::Duration> try_as_duration(int decimal_exponent) const noexcept;
+
+        std::optional<ValueList> try_as_valuelist() const noexcept;
+        std::optional<TaggedValueList> try_as_tvlist() const noexcept;
+        std::optional<KeyValueMap> try_as_kvmap() const noexcept;
 
         /// @return
         ///    Constant reference to the contained string if applicable,
         ///    otherwise to a static empty string.
-        const std::string &get_string() const;
+        const std::string& get_string() const;
 
         /// @return
         ///    Constant reference to the contained byte vector if applicable,
         ///    otherwise to a static empty byte vector.
-        const ByteVector &get_bytevector() const;
+        const ByteVector& get_bytevector() const;
 
         /// @return
         ///    Constant reference to the contained ValueList if applicable,
         ///    otherwise to a static empty ValueList.
-        const ValueList &get_valuelist() const;
+        const ValueList& get_valuelist() const;
 
         /// @return
         ///    Constant reference to the contained TaggedValueList if applicable,
         ///    otherwise to a static empty TaggedValueList.
-        const TaggedValueList &get_tvlist() const;
+        const TaggedValueList& get_tvlist() const;
 
         /// @return
         ///    Constant reference to the contained KeyValueMap if applicable,
         ///    otherwise to a static empty TaggedValueList.
-        const KeyValueMap &get_kvmap() const;
+        const KeyValueMap& get_kvmap() const;
 
         /// @return
         ///    `shared_ptr` reference to the contained ValueList if applicable,
@@ -185,50 +237,50 @@ namespace cc::core::types
         KeyValueMapPtr get_kvmap_ptr() const noexcept;
 
         Value front(
-            const Value &fallback = {}) const noexcept;
+            const Value& fallback = {}) const noexcept;
 
         Value back(
-            const Value &fallback = {}) const noexcept;
+            const Value& fallback = {}) const noexcept;
 
         Value get(
-            const std::string &key,
-            const Value &fallback = {},
+            const std::string& key,
+            const Value& fallback = {},
             bool ignoreCase = false) const noexcept;
 
         Value get(
-            const char *key,
-            const Value &fallback = {},
+            const char* key,
+            const Value& fallback = {},
             bool ignoreCase = false) const noexcept;
 
         Value get(
             const int index,
-            const Value &fallback = {}) const noexcept;
+            const Value& fallback = {}) const noexcept;
 
         Value get(
             const uint index,
-            const Value &fallback = {}) const noexcept;
+            const Value& fallback = {}) const noexcept;
 
         Value get_nonempty(
-            const std::string &key,
-            const Value &fallback = {},
+            const std::string& key,
+            const Value& fallback = {},
             bool ignoreCase = false) const noexcept;
 
         Value get_any_of(
-            const std::vector<std::string> &candidates,
-            const Value &fallback = {},
+            const std::vector<std::string>& candidates,
+            const Value& fallback = {},
             bool ignoreCase = false) const noexcept;
 
         Value get_nested(
-            const std::vector<std::string> &path,
-            const Value &fallback = {},
+            const std::vector<std::string>& path,
+            const Value& fallback = {},
             bool ignoreCase = false) const noexcept;
 
         std::optional<Value> try_get(
-            const std::string &key,
+            const std::string& key,
             bool ignoreCase = false) const noexcept;
 
         std::optional<Value> try_get(
-            const char *key,
+            const char* key,
             bool ignoreCase = false) const noexcept;
 
         std::optional<Value> try_get(
@@ -238,29 +290,28 @@ namespace cc::core::types
             const uint index) const noexcept;
 
         std::optional<Value> try_get_nonempty(
-            const std::string &key,
+            const std::string& key,
             bool ignoreCase = false) const noexcept;
 
         std::optional<Value> try_get_any_of(
-            const std::vector<std::string> &candidates,
+            const std::vector<std::string>& candidates,
             bool ignoreCase = false) const noexcept;
 
         std::optional<Value> try_get_nested(
-            const std::vector<std::string> &path,
+            const std::vector<std::string>& path,
             bool ignoreCase = false) const noexcept;
 
-
-        Value &operator[](const char *key);
-        Value &operator[](const std::string &key);
-        Value &operator[](const uint index);
-        Value &operator[](const int index);
+        Value& operator[](const char* key);
+        Value& operator[](const std::string& key);
+        Value& operator[](const uint index);
+        Value& operator[](const int index);
 
         Value deepcopy() const;
 
     public:
         /// Send a readable representation of this value to an output stream
-        void to_stream(std::ostream &stream) const override;
-        void to_literal_stream(std::ostream &stream) const override;
+        void to_stream(std::ostream& stream) const override;
+        void to_literal_stream(std::ostream& stream) const override;
 
     public:
         /// Parse and return a new Value instance from a literal string.
@@ -274,26 +325,26 @@ namespace cc::core::types
         ///  - `%base64string`    becomes a ByteVector instance
         ///  - `2020-01-01T00:00:00.000` becomes a dt::TimePoint instance
         ///  - `00:00:00.000`    becomes a dt::Duration instance
-        static Value from_literal(const std::string_view &literal);
+        static Value from_literal(const std::string_view& literal);
 
     public:
         // Convencience wrapper around std::get<T>(*this)
         template <class T>
-        inline const T &get() const;
+        inline const T& get() const;
 
         template <class T>
-        inline std::optional<T> try_get() const; 
-
-        // Convencience wrapper around std::get_if<T>(*this)
-        template <class T>
-        inline const T *get_if() const;
+        inline std::optional<T> try_get() const;
 
         // Convencience wrapper around std::get_if<T>(*this)
         template <class T>
-        inline const T *get_if_nonempty() const;
+        inline const T* get_if() const;
+
+        // Convencience wrapper around std::get_if<T>(*this)
+        template <class T>
+        inline const T* get_if_nonempty() const;
 
         template <class T>
-        inline T &emplace_from(const Value &other);
+        inline T& emplace_from(const Value& other);
 
         /// Returns true if the value type is contained in any of the provdied
         /// template arguments.
@@ -314,17 +365,17 @@ namespace cc::core::types
 
         /// Convert value to a desired value via istream `>>' operator
         template <class T>
-        T convert_to(const T &fallback = {}) const;
+        T convert_to(const T& fallback = {}) const;
 
         template <class T>
-        static Value create_from(const T &input);
+        static Value create_from(const T& input);
     };
 
     //--------------------------------------------------------------------------
     // Non-member functions
 
     template <class T>
-    Value operator<<(Value &value, const T &input);
+    Value operator<<(Value& value, const T& input);
 
     //--------------------------------------------------------------------------
     // Non-member contents

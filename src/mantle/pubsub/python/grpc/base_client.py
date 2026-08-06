@@ -145,7 +145,7 @@ class BaseClient (GenericClient):
 
         This call returns immediately, even if the Pub/Sub Relay is unreachable.
         If the queue is full, the oldest item already in the queue is discarded.
-        If you need guaranteed, invoke (and await) `publish()` command instead.
+        If you need guaranteeed delivery, use `publish()` instead.
 
         @param topic
             Message topic, used by subscribers to filter and/or process messages

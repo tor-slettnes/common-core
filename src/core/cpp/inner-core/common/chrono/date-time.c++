@@ -643,8 +643,9 @@ namespace cc::core
                      : try_to_duration(input).value_or(dt::Duration::zero());
         }
 
-        std::optional<Duration> try_to_duration(const std::string_view &input,
-                                                const std::string &format)
+        std::optional<Duration> try_to_duration(
+            const std::string_view &input,
+            const std::string &format)
         {
             if (auto tp = try_to_timepoint(input, format, false))
             {
@@ -656,7 +657,9 @@ namespace cc::core
             }
         }
 
-        std::optional<Duration> try_to_duration(const std::string_view &input)
+        std::optional<Duration> try_to_duration(
+            const std::string_view &input,
+            double multiplier)
         {
             static const std::regex rx(
                 "([+-])?"                          // (1) +/-
@@ -723,9 +726,9 @@ namespace cc::core
                     return {};
                 }
             }
-            else if (auto seconds = str::try_convert_to<double>(input))
+            else if (auto scalar = str::try_convert_to<double>(input))
             {
-                return to_duration(seconds.value());
+                return to_duration(scalar.value(), multiplier);
             }
             else
             {

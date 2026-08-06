@@ -92,18 +92,18 @@ namespace cc::platform::pubsub
     {
         if (auto* policy = this->policy_map.get_ptr(topic))
         {
-            MappingKey mapping_key;
-            mapping_key.reserve(policy->key_paths.size());
-            for (const std::vector<std::string>& key_path : policy->key_paths)
+            if (policy->replay_latest)
             {
-                mapping_key.push_back(payload.get_nested(key_path).as_string());
+                MappingKey mapping_key;
+                mapping_key.reserve(policy->key_paths.size());
+                for (const std::vector<std::string>& key_path : policy->key_paths)
+                {
+                    mapping_key.push_back(payload.get_nested(key_path).as_string());
+                }
+                return mapping_key;
             }
-            return mapping_key;
         }
-        else
-        {
-            return {};
-        }
+        return {};
     }
 
     void RelayControl::on_message(const std::string& topic,
