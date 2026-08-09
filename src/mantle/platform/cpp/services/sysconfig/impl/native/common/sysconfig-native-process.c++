@@ -20,8 +20,8 @@ namespace cc::platform::sysconfig::native
     }
 
     InvocationResult ProcessProvider::invoke_sync(
-        const core::platform::Invocation &invocation,
-        const std::string &input)
+        const core::platform::Invocation& invocation,
+        const std::string& input)
     {
         return core::platform::process->invoke_capture(
             invocation.argv,
@@ -30,8 +30,8 @@ namespace cc::platform::sysconfig::native
     }
 
     PID ProcessProvider::invoke_async(
-        const core::platform::Invocation &invocation,
-        const std::string &input)
+        const core::platform::Invocation& invocation,
+        const std::string& input)
     {
         core::platform::FileDescriptor fdin, fdout, fderr;
         PID pid = core::platform::process->invoke_async_pipe(
@@ -50,7 +50,7 @@ namespace cc::platform::sysconfig::native
 
     InvocationResult ProcessProvider::invoke_finish(
         PID pid,
-        const std::string &input)
+        const std::string& input)
     {
         InvocationResult result;
         if (auto nh = this->process_map.extract(pid))

@@ -16,9 +16,9 @@ namespace cc::core::logging
     //--------------------------------------------------------------------------
     /// @class SinkFactory
 
-    SinkFactory::SinkFactory(const SinkType &sink_type,
-                             const std::string &description,
-                             const CreatorFunction &creator,
+    SinkFactory::SinkFactory(const SinkType& sink_type,
+                             const std::string& description,
+                             const CreatorFunction& creator,
                              DefaultOption default_option)
         : sink_type_(sink_type),
           description_(description),
@@ -33,7 +33,7 @@ namespace cc::core::logging
         sink_factories.erase(this->sink_type());
     }
 
-    Sink::ptr SinkFactory::create_sink(const SinkID &sink_id)
+    Sink::ptr SinkFactory::create_sink(const SinkID& sink_id)
     {
         Sink::ptr sink = this->creator()(sink_id);
         sink->set_sink_type(this->sink_type());
@@ -72,7 +72,7 @@ namespace cc::core::logging
     }
 
     status::Level SinkFactory::default_threshold(
-        const types::KeyValueMap &settings) const
+        const types::KeyValueMap& settings) const
     {
         return settings
             .try_convert_to<status::Level>("threshold")
@@ -87,9 +87,9 @@ namespace cc::core::logging
     //--------------------------------------------------------------------------
     /// SinkCustomization
 
-    SinkCustomization::SinkCustomization(const SinkID &sink_id,
-                                         SinkFactory *factory,
-                                         const types::KeyValueMap &settings)
+    SinkCustomization::SinkCustomization(const SinkID& sink_id,
+                                         SinkFactory* factory,
+                                         const types::KeyValueMap& settings)
         : sink_id(sink_id),
           factory(factory),
           settings(settings)
@@ -126,7 +126,7 @@ namespace cc::core::logging
         {
             return (this->explicit_threshold.value() != status::Level::NONE);
         }
-        else if (const core::types::Value &setting = this->settings.get("enabled"))
+        else if (const core::types::Value& setting = this->settings.get("enabled"))
         {
             return setting.as_bool();
         }
@@ -154,10 +154,10 @@ namespace cc::core::logging
         {
             types::Value sink_defaults = sink_map->get("_default_");
 
-            for (const auto &[sink_id, sink_specs_value] : *sink_map)
+            for (const auto& [sink_id, sink_specs_value] : *sink_map)
             {
                 std::string sink_type = sink_specs_value.get("type", sink_id).as_string();
-                if (logging::SinkFactory *factory =
+                if (logging::SinkFactory* factory =
                         logging::sink_factories.get(sink_type, nullptr))
                 {
                     consumed_sink_types.insert(sink_type);
@@ -173,7 +173,7 @@ namespace cc::core::logging
 
         // We now add sink factories that wasn't yet mentioned, with sink IDs
         // matching the sink type name (e.g. "stderr").
-        for (const auto &[sink_type, factory] : logging::sink_factories)
+        for (const auto& [sink_type, factory] : logging::sink_factories)
         {
             if (consumed_sink_types.count(sink_type) == 0)
             {
@@ -188,7 +188,7 @@ namespace cc::core::logging
     {
         types::ValueMap<SinkID, Sink::ptr> active_map;
 
-        for (const auto &[id, customization] : *this)
+        for (const auto& [id, customization] : *this)
         {
             if (Sink::ptr sink = customization->activate())
             {

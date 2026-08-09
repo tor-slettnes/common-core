@@ -69,14 +69,14 @@ namespace cc::grpc
         template <class ResponseT, class RequestT>
         using gRPCMethod =
             ::grpc::Status (T::Stub::*)(
-                ::grpc::ClientContext *,
-                const RequestT &req,
-                ResponseT *resp);
+                ::grpc::ClientContext*,
+                const RequestT& req,
+                ResponseT* resp);
 
     public:
         template <class... Args>
-        ClientWrapper(const std::string &host,
-                      Args &&...args)
+        ClientWrapper(const std::string& host,
+                      Args&&... args)
             : ClientBase(T::service_full_name(),
                          host,
                          std::forward<Args>(args)...),
@@ -102,9 +102,9 @@ namespace cc::grpc
 
         template <class ResponseT, class RequestT>
         inline Status call_sync(
-            const gRPCMethod<ResponseT, RequestT> &method,
-            const RequestT &request,
-            ResponseT *response,
+            const gRPCMethod<ResponseT, RequestT>& method,
+            const RequestT& request,
+            ResponseT* response,
             std::optional<bool> wait_for_ready = {},
             std::optional<core::dt::Duration> request_timeout = {}) const noexcept
         {
@@ -142,10 +142,10 @@ namespace cc::grpc
 
         template <class ResponseT, class RequestT>
         inline Status call_sync(
-            const std::string &methodname,
-            const gRPCMethod<ResponseT, RequestT> &method,
-            const RequestT &request,
-            ResponseT *response,
+            const std::string& methodname,
+            const gRPCMethod<ResponseT, RequestT>& method,
+            const RequestT& request,
+            ResponseT* response,
             std::optional<bool> wait_for_ready = {},
             std::optional<core::dt::Duration> request_timeout = {}) const noexcept
         {
@@ -164,9 +164,9 @@ namespace cc::grpc
 
         template <class ResponseT, class RequestT>
         inline Status call_sync(
-            const std::string &methodname,
-            const gRPCMethod<ResponseT, RequestT> &method,
-            const RequestT &request,
+            const std::string& methodname,
+            const gRPCMethod<ResponseT, RequestT>& method,
+            const RequestT& request,
             std::optional<bool> wait_for_ready = {},
             std::optional<core::dt::Duration> request_timeout = {}) const noexcept
         {
@@ -191,8 +191,8 @@ namespace cc::grpc
 
         template <class ResponseT, class RequestT>
         inline ResponseT call_check(
-            const gRPCMethod<ResponseT, RequestT> &method,
-            const RequestT &request = {},
+            const gRPCMethod<ResponseT, RequestT>& method,
+            const RequestT& request = {},
             std::optional<bool> wait_for_ready = {},
             std::optional<core::dt::Duration> request_timeout = {}) const
         {
@@ -220,9 +220,9 @@ namespace cc::grpc
 
         template <class ResponseT, class RequestT>
         inline ResponseT call_check(
-            const std::string &methodname,
-            const gRPCMethod<ResponseT, RequestT> &method,
-            const RequestT &request = {},
+            const std::string& methodname,
+            const gRPCMethod<ResponseT, RequestT>& method,
+            const RequestT& request = {},
             std::optional<bool> wait_for_ready = {},
             std::optional<core::dt::Duration> request_timeout = {}) const
         {

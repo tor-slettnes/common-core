@@ -59,7 +59,7 @@ namespace cc::platform::pubsub::grpc
         ::grpc::Status Subscriber(
             ::grpc::ServerContext* context,
             const platform::pubsub::protobuf::Filters* request,
-            MessageWriter *writer) override;
+            MessageWriter* writer) override;
 
     private:
         std::shared_ptr<ControlInterface> relay_control;

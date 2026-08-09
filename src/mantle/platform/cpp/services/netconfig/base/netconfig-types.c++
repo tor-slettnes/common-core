@@ -9,12 +9,12 @@
 
 namespace cc::platform::netconfig
 {
-    void SystemData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void SystemData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if(this->hostname.size(), "hostname", this->hostname);
     }
 
-    void AddressData::to_stream(std::ostream &stream) const
+    void AddressData::to_stream(std::ostream& stream) const
     {
         if (!this->address.empty())
         {
@@ -22,7 +22,7 @@ namespace cc::platform::netconfig
         }
     }
 
-    void AddressData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void AddressData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->extend({
             {"address", this->address},
@@ -39,7 +39,7 @@ namespace cc::platform::netconfig
         this->searches.clear();
     }
 
-    void IPConfigData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void IPConfigData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if(this->method,
                           "method",
@@ -61,12 +61,12 @@ namespace cc::platform::netconfig
                        this->searches.size());
     }
 
-    void WiredConnectionData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void WiredConnectionData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append("auto_negotiate", this->auto_negotiate);
     }
 
-    void WEP_Data::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void WEP_Data::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if(this->auth_alg,
                           "auth_alg",
@@ -82,12 +82,12 @@ namespace cc::platform::netconfig
         tvlist->append_if(this->key_type, "key_type", this->key_type);
     }
 
-    void WPA_Data::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void WPA_Data::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append("psk", core::str::obfuscated(this->psk));
     }
 
-    void EAP_Data::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void EAP_Data::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if(this->auth_alg,
                           "auth_alg",
@@ -157,22 +157,22 @@ namespace cc::platform::netconfig
         return static_cast<AuthenticationType>(auth.index());
     }
 
-    WEP_Data *WirelessConnectionData::auth_wep()
+    WEP_Data* WirelessConnectionData::auth_wep()
     {
         return std::get_if<WEP_Data>(&this->auth);
     }
 
-    WPA_Data *WirelessConnectionData::auth_wpa()
+    WPA_Data* WirelessConnectionData::auth_wpa()
     {
         return std::get_if<WPA_Data>(&this->auth);
     }
 
-    EAP_Data *WirelessConnectionData::auth_eap()
+    EAP_Data* WirelessConnectionData::auth_eap()
     {
         return std::get_if<EAP_Data>(&this->auth);
     }
 
-    void WirelessConnectionData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void WirelessConnectionData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if(!this->ssid.empty(), "ssid", this->ssid.as_string());
         tvlist->append_if(this->mode, "ap_mode", core::str::convert_from(this->mode));
@@ -211,12 +211,12 @@ namespace cc::platform::netconfig
         return static_cast<ConnectionType>(specific_data.index());
     }
 
-    WiredConnectionData *ConnectionData::wired_data()
+    WiredConnectionData* ConnectionData::wired_data()
     {
         return std::get_if<WiredConnectionData>(&this->specific_data);
     }
 
-    WirelessConnectionData *ConnectionData::wifi_data()
+    WirelessConnectionData* ConnectionData::wifi_data()
     {
         return std::get_if<WirelessConnectionData>(&this->specific_data);
     }
@@ -228,7 +228,7 @@ namespace cc::platform::netconfig
                (this->ip6config.method != METHOD_NONE);
     }
 
-    void ConnectionData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void ConnectionData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if(!this->id.empty(), "id", this->id);
         tvlist->append_if(!this->uuid.empty(), "uuid", this->uuid);
@@ -261,7 +261,7 @@ namespace cc::platform::netconfig
         return this->id;
     }
 
-    void ActiveConnectionData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void ActiveConnectionData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->extend({
             {"id", this->id},
@@ -352,7 +352,7 @@ namespace cc::platform::netconfig
 
     WirelessBandSelection AccessPointData::band() const
     {
-        for (const auto &[band, range] : AccessPointData::frequency_ranges)
+        for (const auto& [band, range] : AccessPointData::frequency_ranges)
         {
             if ((this->frequency >= range.first) && (this->frequency < range.second))
             {
@@ -362,7 +362,7 @@ namespace cc::platform::netconfig
         return BAND_ANY;
     }
 
-    void AccessPointData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void AccessPointData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if(!this->ssid.empty(), "ssid", this->ssid.as_string());
         tvlist->append_if(this->frequency != 0, "frequency", this->frequency);
@@ -377,12 +377,12 @@ namespace cc::platform::netconfig
         tvlist->append_if(this->lastSeen != core::dt::epoch, "lastSeen", this->lastSeen);
     }
 
-    void WiredDeviceData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void WiredDeviceData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if(this->speed, "speed", this->speed);
     }
 
-    void WirelessDeviceData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void WirelessDeviceData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if(this->mode,
                           "ap_mode",
@@ -406,12 +406,12 @@ namespace cc::platform::netconfig
         return this->interface;
     }
 
-    const WiredDeviceData *DeviceData::wired_data() const
+    const WiredDeviceData* DeviceData::wired_data() const
     {
         return std::get_if<WiredDeviceData>(&this->specific_data);
     }
 
-    const WirelessDeviceData *DeviceData::wifi_data() const
+    const WirelessDeviceData* DeviceData::wifi_data() const
     {
         return std::get_if<WirelessDeviceData>(&this->specific_data);
     }
@@ -429,7 +429,7 @@ namespace cc::platform::netconfig
         }
     }
 
-    void DeviceData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void DeviceData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if(this->type,
                           "type",
@@ -488,7 +488,7 @@ namespace cc::platform::netconfig
         }
     }
 
-    void GlobalData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void GlobalData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if(this->state,
                           "state",
@@ -511,17 +511,17 @@ namespace cc::platform::netconfig
                        core::str::convert_from(this->wireless_band_selection));
     }
 
-    std::istream &operator>>(std::istream &stream, WirelessBandSelection &band)
+    std::istream& operator>>(std::istream& stream, WirelessBandSelection& band)
     {
         return band_selection_map.from_stream(stream, &band);
     }
 
-    std::ostream &operator<<(std::ostream &stream, WirelessBandSelection band)
+    std::ostream& operator<<(std::ostream& stream, WirelessBandSelection band)
     {
         return band_selection_map.to_stream(stream, band, static_cast<uint>(band));
     }
 
-    std::ostream &operator<<(std::ostream &stream, IPConfigMethod method)
+    std::ostream& operator<<(std::ostream& stream, IPConfigMethod method)
     {
         if (method != METHOD_NONE)
         {
@@ -530,7 +530,7 @@ namespace cc::platform::netconfig
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, KeyManagement key_mgmt)
+    std::ostream& operator<<(std::ostream& stream, KeyManagement key_mgmt)
     {
         if (key_mgmt != KEY_EMPTY)
         {
@@ -539,12 +539,12 @@ namespace cc::platform::netconfig
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, AuthenticationProtocol auth_proto)
+    std::ostream& operator<<(std::ostream& stream, AuthenticationProtocol auth_proto)
     {
         return auth_proto_map.to_stream(stream, auth_proto, static_cast<uint>(auth_proto));
     }
 
-    std::ostream &operator<<(std::ostream &stream, AuthenticationAlgorithm auth_alg)
+    std::ostream& operator<<(std::ostream& stream, AuthenticationAlgorithm auth_alg)
     {
         if (auth_alg != AUTH_ALG_NONE)
         {
@@ -553,7 +553,7 @@ namespace cc::platform::netconfig
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, AuthenticationType auth_type)
+    std::ostream& operator<<(std::ostream& stream, AuthenticationType auth_type)
     {
         if (auth_type != AUTH_TYPE_NONE)
         {
@@ -562,7 +562,7 @@ namespace cc::platform::netconfig
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, EAP_Type eap_type)
+    std::ostream& operator<<(std::ostream& stream, EAP_Type eap_type)
     {
         if (eap_type != EAP_NONE)
         {
@@ -571,7 +571,7 @@ namespace cc::platform::netconfig
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, EAP_Phase2 eap_phase2)
+    std::ostream& operator<<(std::ostream& stream, EAP_Phase2 eap_phase2)
     {
         if (eap_phase2 != Phase2_NONE)
         {
@@ -580,7 +580,7 @@ namespace cc::platform::netconfig
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, FAST_Provisioning provisioning)
+    std::ostream& operator<<(std::ostream& stream, FAST_Provisioning provisioning)
     {
         if (provisioning != Provisioning_NONE)
         {
@@ -589,7 +589,7 @@ namespace cc::platform::netconfig
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, ConnectionType conn_type)
+    std::ostream& operator<<(std::ostream& stream, ConnectionType conn_type)
     {
         if (conn_type != CONN_TYPE_UNKNOWN)
         {
@@ -598,7 +598,7 @@ namespace cc::platform::netconfig
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, AuthenticationData auth_data)
+    std::ostream& operator<<(std::ostream& stream, AuthenticationData auth_data)
     {
         switch (static_cast<AuthenticationType>(auth_data.index()))
         {
@@ -620,7 +620,7 @@ namespace cc::platform::netconfig
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, ConnectionSpecificData conn_data)
+    std::ostream& operator<<(std::ostream& stream, ConnectionSpecificData conn_data)
     {
         switch (static_cast<ConnectionType>(conn_data.index()))
         {
@@ -638,7 +638,7 @@ namespace cc::platform::netconfig
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, DeviceSpecificData dev_data)
+    std::ostream& operator<<(std::ostream& stream, DeviceSpecificData dev_data)
     {
         switch (static_cast<NMDeviceType>(dev_data.index()))
         {
@@ -903,7 +903,7 @@ namespace cc::platform::netconfig
 
 }  // namespace cc::platform::netconfig
 
-std::ostream &operator<<(std::ostream &stream, NM80211Mode mode)
+std::ostream& operator<<(std::ostream& stream, NM80211Mode mode)
 {
     if (mode != NM_802_11_MODE_UNKNOWN)
     {
@@ -919,7 +919,7 @@ std::ostream &operator<<(std::ostream &stream, NM80211Mode mode)
     return stream;
 }
 
-std::ostream &operator<<(std::ostream &stream, NMState state)
+std::ostream& operator<<(std::ostream& stream, NMState state)
 {
     if (state != NM_STATE_UNKNOWN)
     {
@@ -935,7 +935,7 @@ std::ostream &operator<<(std::ostream &stream, NMState state)
     return stream;
 }
 
-std::ostream &operator<<(std::ostream &stream, NMWepKeyType key_type)
+std::ostream& operator<<(std::ostream& stream, NMWepKeyType key_type)
 {
     if (key_type != NM_WEP_KEY_TYPE_UNKNOWN)
     {
@@ -951,7 +951,7 @@ std::ostream &operator<<(std::ostream &stream, NMWepKeyType key_type)
     return stream;
 }
 
-std::ostream &operator<<(std::ostream &stream, NMDeviceType dev_type)
+std::ostream& operator<<(std::ostream& stream, NMDeviceType dev_type)
 {
     if (dev_type != NM_DEVICE_TYPE_UNKNOWN)
     {
@@ -967,7 +967,7 @@ std::ostream &operator<<(std::ostream &stream, NMDeviceType dev_type)
     return stream;
 }
 
-std::ostream &operator<<(std::ostream &stream, NMDeviceState dev_state)
+std::ostream& operator<<(std::ostream& stream, NMDeviceState dev_state)
 {
     if (dev_state != NM_DEVICE_STATE_UNKNOWN)
     {
@@ -983,7 +983,7 @@ std::ostream &operator<<(std::ostream &stream, NMDeviceState dev_state)
     return stream;
 }
 
-std::ostream &operator<<(std::ostream &stream, NMDeviceStateReason dev_state_reason)
+std::ostream& operator<<(std::ostream& stream, NMDeviceStateReason dev_state_reason)
 {
     if (dev_state_reason != NM_DEVICE_STATE_REASON_NONE)
     {
@@ -999,7 +999,7 @@ std::ostream &operator<<(std::ostream &stream, NMDeviceStateReason dev_state_rea
     return stream;
 }
 
-std::ostream &operator<<(std::ostream &stream, NMActiveConnectionState state)
+std::ostream& operator<<(std::ostream& stream, NMActiveConnectionState state)
 {
     if (state != NM_ACTIVE_CONNECTION_STATE_UNKNOWN)
     {
@@ -1015,7 +1015,7 @@ std::ostream &operator<<(std::ostream &stream, NMActiveConnectionState state)
     return stream;
 }
 
-std::ostream &operator<<(std::ostream &stream, NMActiveConnectionStateReason reason)
+std::ostream& operator<<(std::ostream& stream, NMActiveConnectionStateReason reason)
 {
     if (reason != NM_ACTIVE_CONNECTION_STATE_REASON_UNKNOWN)
     {
@@ -1031,7 +1031,7 @@ std::ostream &operator<<(std::ostream &stream, NMActiveConnectionStateReason rea
     return stream;
 }
 
-std::ostream &operator<<(std::ostream &stream, NMConnectivityState state)
+std::ostream& operator<<(std::ostream& stream, NMConnectivityState state)
 {
     if (state != NM_CONNECTIVITY_UNKNOWN)
     {

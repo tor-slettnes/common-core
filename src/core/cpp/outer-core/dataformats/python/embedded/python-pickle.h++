@@ -10,6 +10,6 @@
 
 namespace cc::python
 {
-    ContainerObject unpickle(const core::types::ByteVector &bytes);
-    core::types::ByteVector pickle(const SimpleObject &object);
+    ContainerObject unpickle(const core::types::ByteVector& bytes);
+    core::types::ByteVector pickle(const SimpleObject& object);
 };  // namespace cc::python

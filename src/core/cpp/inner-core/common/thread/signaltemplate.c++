@@ -18,7 +18,7 @@ namespace cc::core::signal
     /// @class BaseSignal
     /// @brief Abstract base for VoidSignal, DataSignal<T> and MappingSignal<T>
 
-    BaseSignal::BaseSignal(const std::string &name, bool caching)
+    BaseSignal::BaseSignal(const std::string& name, bool caching)
         : name_(name),
           caching_(caching)
     {
@@ -40,8 +40,8 @@ namespace cc::core::signal
         return platform::symbols->uuid();
     }
 
-    bool BaseSignal::safe_invoke(const std::string &receiver,
-                                 const std::function<void()> &f)
+    bool BaseSignal::safe_invoke(const std::string& receiver,
+                                 const std::function<void()>& f)
     {
         try
         {
@@ -64,10 +64,10 @@ namespace cc::core::signal
         }
     }
 
-    std::size_t BaseSignal::collect_futures(Futures &futures)
+    std::size_t BaseSignal::collect_futures(Futures& futures)
     {
         std::size_t count = 0;
-        for (std::future<bool> &future : futures)
+        for (std::future<bool>& future : futures)
         {
             count += future.get();
         }
@@ -78,26 +78,26 @@ namespace cc::core::signal
     /// @class VoidSignal
     /// @brief Signal without data
 
-    VoidSignal::VoidSignal(const std::string &id)
+    VoidSignal::VoidSignal(const std::string& id)
         : Super(id, false),
           BinaryEvent(false)
     {
     }
 
-    Handle VoidSignal::connect(const Slot &slot)
+    Handle VoidSignal::connect(const Slot& slot)
     {
         Handle handle(this->unique_handle());
         this->connect(handle, slot);
         return handle;
     }
 
-    void VoidSignal::connect(const Handle &handle, const Slot &slot)
+    void VoidSignal::connect(const Handle& handle, const Slot& slot)
     {
         std::scoped_lock lck(this->signal_mtx_);
         this->slots_[handle] = slot;
     }
 
-    void VoidSignal::disconnect(const Handle &handle)
+    void VoidSignal::disconnect(const Handle& handle)
     {
         std::scoped_lock lck(this->signal_mtx_);
         this->slots_.erase(handle);
@@ -111,7 +111,7 @@ namespace cc::core::signal
         std::size_t count = 0;
 
         std::scoped_lock lck(this->signal_mtx_);
-        for (const auto &[receiver, method] : this->slots_)
+        for (const auto& [receiver, method] : this->slots_)
         {
             count += this->callback(receiver, method);
         }
@@ -129,7 +129,7 @@ namespace cc::core::signal
         return this->slots_.size();
     }
 
-    bool VoidSignal::callback(const std::string &receiver, const Slot &method)
+    bool VoidSignal::callback(const std::string& receiver, const Slot& method)
     {
         return this->safe_invoke(receiver, method);
     }
@@ -145,7 +145,7 @@ namespace cc::core::signal
         Futures futures;
         this->signal_mtx_.lock();
         futures.reserve(this->slots_.size());
-        for (const auto &[receiver, method] : this->slots_)
+        for (const auto& [receiver, method] : this->slots_)
         {
             futures.push_back(std::async(&AsyncVoidSignal::callback, this, receiver, method));
         }
@@ -153,7 +153,7 @@ namespace cc::core::signal
         return this->collect_futures(futures);
     }
 
-    std::ostream &operator<<(std::ostream &stream, MappingAction action)
+    std::ostream& operator<<(std::ostream& stream, MappingAction action)
     {
         static const std::unordered_map<MappingAction, std::string> names = {
             {MAP_NONE, "MAP_NONE"},
@@ -166,7 +166,7 @@ namespace cc::core::signal
         {
             stream << names.at(action);
         }
-        catch (const std::out_of_range &)
+        catch (const std::out_of_range&)
         {
             stream << str::format("(Invalid MappingAction %d)",
                                   static_cast<uint>(action));

@@ -10,19 +10,18 @@
 
 #include <avro.h>
 
-
 #include <string>
 #include <stdexcept>
 
 namespace cc::avro
 {
-    inline std::runtime_error error(const std::string &context)
+    inline std::runtime_error error(const std::string& context)
     {
         return std::runtime_error(
             core::str::join({context, avro_strerror()}, ": "));
     }
 
-    inline int checkstatus(int status, const std::string &context = {})
+    inline int checkstatus(int status, const std::string& context = {})
     {
         if (status != 0)
         {
@@ -32,7 +31,7 @@ namespace cc::avro
     }
 
     template <class PT>
-    static PT *checkstatus(PT *pointer, const std::string &context = {})
+    static PT* checkstatus(PT* pointer, const std::string& context = {})
     {
         if (pointer == nullptr)
         {
@@ -40,4 +39,4 @@ namespace cc::avro
         }
         return pointer;
     }
-} // namespace cc::avro
+}  // namespace cc::avro

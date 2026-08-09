@@ -35,7 +35,7 @@ namespace cc::platform::vfs
         bool inside_target = false;
     };
 
-    std::ostream &operator<<(std::ostream &stream, const OperationFlags &flags);
+    std::ostream& operator<<(std::ostream& stream, const OperationFlags& flags);
 
     //==========================================================================
     // File information
@@ -62,23 +62,23 @@ namespace cc::platform::vfs
     class Path : public core::types::Listable
     {
     public:
-        Path(const ContextName &context = {}, const fs::path &path = {});
+        Path(const ContextName& context = {}, const fs::path& path = {});
         operator bool() const noexcept;
-        Path &operator/=(const fs::path &relpath);
-        Path &operator+=(const fs::path &relpath);
-        bool operator==(const Path &other) const;
+        Path& operator/=(const fs::path& relpath);
+        Path& operator+=(const fs::path& relpath);
+        bool operator==(const Path& other) const;
 
         Path remove_filename() const;
         fs::path filename() const;
 
-        void to_literal_stream(std::ostream &stream) const override;
-        void to_stream(std::ostream &stream) const override;
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        void to_literal_stream(std::ostream& stream) const override;
+        void to_stream(std::ostream& stream) const override;
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
 
         void check_relative() const;
-        static void check_relative(const ContextName &context,
-                                   const fs::path &relpath,
-                                   const fs::path &abspath = {});
+        static void check_relative(const ContextName& context,
+                                   const fs::path& relpath,
+                                   const fs::path& abspath = {});
 
     public:
         ContextName context;
@@ -87,14 +87,14 @@ namespace cc::platform::vfs
 
     using Paths = std::vector<Path>;
 
-    Path operator/(const Path &lhs, const fs::path &rhs);
+    Path operator/(const Path& lhs, const fs::path& rhs);
 
     //==========================================================================
     // I/O streams
     using UniqueReader = std::unique_ptr<std::istream>;
     using UniqueWriter = std::unique_ptr<std::ostream>;
 
-} // namespace cc::platform::vfs
+}  // namespace cc::platform::vfs
 
 namespace std
 {
@@ -103,7 +103,7 @@ namespace std
     template <>
     struct hash<cc::platform::vfs::Path>
     {
-        inline std::size_t operator()(const cc::platform::vfs::Path &vpath) const
+        inline std::size_t operator()(const cc::platform::vfs::Path& vpath) const
         {
             return std::hash<std::string>()(vpath.context) ^
                    std::hash<std::string>()(vpath.relpath);
@@ -115,8 +115,8 @@ namespace std
     template <>
     struct less<cc::platform::vfs::Path>
     {
-        inline bool operator()(const cc::platform::vfs::Path &lhs,
-                               const cc::platform::vfs::Path &rhs) const
+        inline bool operator()(const cc::platform::vfs::Path& lhs,
+                               const cc::platform::vfs::Path& rhs) const
         {
             if (lhs.context != rhs.context)
             {
@@ -128,16 +128,16 @@ namespace std
             }
         }
     };
-} // namespace std
+}  // namespace std
 
 namespace std::filesystem
 {
-    cc::core::types::TaggedValueList &operator<<(
-        cc::core::types::TaggedValueList &tvlist,
-        const space_info &volinfo);
+    cc::core::types::TaggedValueList& operator<<(
+        cc::core::types::TaggedValueList& tvlist,
+        const space_info& volinfo);
 
-    std::ostream &operator<<(
-        std::ostream &stream,
-        const space_info &volinfo);
+    std::ostream& operator<<(
+        std::ostream& stream,
+        const space_info& volinfo);
 
-} // namespace std::filesystem
+}  // namespace std::filesystem

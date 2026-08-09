@@ -33,13 +33,13 @@ namespace cc::platform::pubsub
 
         ReplayPolicyMap get_replay_policies() const override;
         std::optional<ReplayPolicy> get_replay_policy(
-            const Topic &topic) const override;
+            const Topic& topic) const override;
 
         void clear_replay_policies() override;
 
         void assign_replay_policy(
             const std::string& topic,
-            const ReplayPolicy &policy) override;
+            const ReplayPolicy& policy) override;
 
         void unassign_replay_policy(
             const Topic& topic) override;

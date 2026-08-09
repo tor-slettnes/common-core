@@ -10,8 +10,8 @@
 namespace cc::dds
 {
     RTIDistributedLogger::RTIDistributedLogger(
-        const std::string &sink_id,
-        const std::string &application_id,
+        const std::string& sink_id,
+        const std::string& application_id,
         int domain_id)
         : MessageSink(sink_id),
           dist_logger_(nullptr)
@@ -48,11 +48,11 @@ namespace cc::dds
         Super::close();
     }
 
-    bool RTIDistributedLogger::handle_message(const core::logging::Message::ptr &message)
+    bool RTIDistributedLogger::handle_message(const core::logging::Message::ptr& message)
     {
         if (this->dist_logger_)
         {
-            if (const int *level = RTIDistributedLogger::levelmap.get_ptr(message->level()))
+            if (const int* level = RTIDistributedLogger::levelmap.get_ptr(message->level()))
             {
                 timespec ts = core::dt::to_timespec(message->timepoint());
                 std::string text = this->formatted(message);

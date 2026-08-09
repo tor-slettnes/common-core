@@ -20,9 +20,9 @@ namespace cc::demo::dds
         using Super = cc::dds::Service<CC::Demo::DemoServiceService>;
 
     public:
-        Service(const ::dds::rpc::Server &server,
+        Service(const ::dds::rpc::Server& server,
                 int domain_id,
-                const std::shared_ptr<API> &api);
+                const std::shared_ptr<API>& api);
     };
 
 }  // namespace cc::demo::dds

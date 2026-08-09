@@ -14,20 +14,19 @@
 namespace cc::platform::netconfig::dbus
 {
     AccessPoint::AccessPoint(
-        cc::dbus::ProxyContainer *container,
-        const cc::dbus::ConnectionPtr &connection,
-        const cc::dbus::ServiceName &servicename,
-        const cc::dbus::ObjectPath &objectpath)
+        cc::dbus::ProxyContainer* container,
+        const cc::dbus::ConnectionPtr& connection,
+        const cc::dbus::ServiceName& servicename,
+        const cc::dbus::ObjectPath& objectpath)
         : MappedDataWrapper<AccessPointData>(
               container,
               connection,
               servicename,
               objectpath,
               NM_DBUS_INTERFACE_ACCESS_POINT,
+              {},
               {
-    },
-              {
-                  {"Ssid", DATASLOT(static_cast<core::types::Bytes *>(&this->ssid))},
+                  {"Ssid", DATASLOT(static_cast<core::types::Bytes*>(&this->ssid))},
                   {"Frequency", DATASLOT(&this->frequency)},
                   {"Flags", DATASLOT(&this->flags)},
                   {"WpaFlags", DATASLOT(&this->wpa_flags)},
@@ -43,12 +42,12 @@ namespace cc::platform::netconfig::dbus
     }
 
     std::shared_ptr<AccessPoint> AccessPoint::get_by_ssid(
-        const core::types::Bytes &ssid,
+        const core::types::Bytes& ssid,
         bool required)
     {
         std::shared_ptr<AccessPoint> best = {};
 
-        for (const auto &[path, candidate] : dbus::container.instances<AccessPoint>())
+        for (const auto& [path, candidate] : dbus::container.instances<AccessPoint>())
         {
             if ((candidate->ssid == ssid) &&
                 (!best || best->strength < candidate->strength))
@@ -83,7 +82,7 @@ namespace cc::platform::netconfig::dbus
     }
 
     void AccessPoint::on_property_lastseen(
-        const Glib::VariantBase &change)
+        const Glib::VariantBase& change)
     {
         int seconds = cc::glib::variant_cast<int>(change);
         std::chrono::duration uptime = core::steady::Clock::now().time_since_epoch();
@@ -124,4 +123,4 @@ namespace cc::platform::netconfig::dbus
         }
     }
 
-} // namespace cc::platform::netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

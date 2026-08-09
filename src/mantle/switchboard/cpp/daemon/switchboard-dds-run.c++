@@ -14,7 +14,7 @@ namespace cc::platform::switchboard::dds
 {
     void run_dds_service(
         std::shared_ptr<switchboard::Provider> api_provider,
-        const std::string &identity,
+        const std::string& identity,
         int domain_id)
     {
         // A server provides the execution environment for one or more RPC services

@@ -11,8 +11,8 @@
 
 namespace cc::demo::zmq
 {
-    RequestHandler::RequestHandler(const std::shared_ptr<API> &provider,
-                                   const std::string &interface_name)
+    RequestHandler::RequestHandler(const std::shared_ptr<API>& provider,
+                                   const std::string& interface_name)
         : Super(interface_name),
           provider(provider)
     {
@@ -28,29 +28,29 @@ namespace cc::demo::zmq
     }
 
     void RequestHandler::say_hello(
-        const cc::demo::protobuf::Greeting &request,
-        ::google::protobuf::Empty *)
+        const cc::demo::protobuf::Greeting& request,
+        ::google::protobuf::Empty*)
     {
         this->provider->say_hello(cc::protobuf::decoded<Greeting>(request));
     }
 
     void RequestHandler::get_current_time(
-        const ::google::protobuf::Empty &,
-        cc::demo::protobuf::TimeData *response)
+        const ::google::protobuf::Empty&,
+        cc::demo::protobuf::TimeData* response)
     {
         cc::protobuf::encode(this->provider->get_current_time(), response);
     }
 
     void RequestHandler::start_ticking(
-        const ::google::protobuf::Empty &,
-        ::google::protobuf::Empty *)
+        const ::google::protobuf::Empty&,
+        ::google::protobuf::Empty*)
     {
         this->provider->start_ticking();
     }
 
     void RequestHandler::stop_ticking(
-        const ::google::protobuf::Empty &,
-        ::google::protobuf::Empty *)
+        const ::google::protobuf::Empty&,
+        ::google::protobuf::Empty*)
     {
         this->provider->stop_ticking();
     }

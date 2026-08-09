@@ -16,7 +16,7 @@ namespace cc::core::platform
         using Super = UserProvider;
 
     protected:
-        PosixUserProvider(const std::string &provider_name = "PosixUserProvider");
+        PosixUserProvider(const std::string& provider_name = "PosixUserProvider");
 
     public:
         UserName get_username(UID uid) const override;

@@ -22,8 +22,8 @@ namespace cc::platform::sysconfig
         TSYNC_NTP    // Synchronization via NTP
     };
 
-    std::ostream &operator<<(std::ostream &stream, TimeSync sync);
-    std::istream &operator>>(std::istream &stream, TimeSync &sync);
+    std::ostream& operator<<(std::ostream& stream, TimeSync sync);
+    std::istream& operator>>(std::istream& stream, TimeSync& sync);
 
     //==========================================================================
     // TimeConfig
@@ -34,7 +34,7 @@ namespace cc::platform::sysconfig
         std::vector<std::string> servers;       // Synchronization services
     };
 
-    std::ostream &operator<<(std::ostream &stream, const TimeConfig &tc);
+    std::ostream& operator<<(std::ostream& stream, const TimeConfig& tc);
 
     //==========================================================================
     // TimeInterface
@@ -52,11 +52,11 @@ namespace cc::platform::sysconfig
         // Time configuration
 
         // Current timestamp
-        virtual void set_current_time(const core::dt::TimePoint &tp) = 0;
+        virtual void set_current_time(const core::dt::TimePoint& tp) = 0;
         virtual core::dt::TimePoint get_current_time() const = 0;
 
         // Get or set time configuration
-        virtual void set_time_config(const TimeConfig &config) = 0;
+        virtual void set_time_config(const TimeConfig& config) = 0;
         virtual TimeConfig get_time_config() const = 0;
     };
 

@@ -23,7 +23,7 @@ namespace cc::protobuf
     // Message (de)serialization
 
     /// Convert a ProtoBuf message to a printable string.
-    std::string to_string(const google::protobuf::Message &msg,
+    std::string to_string(const google::protobuf::Message& msg,
                           bool single_line)
     {
         std::string repr;
@@ -34,8 +34,8 @@ namespace cc::protobuf
     }
 
     /// Convert a protobuf message to a serialized byte array
-    void to_bytes(const google::protobuf::Message &msg,
-                  core::types::ByteVector *bytes)
+    void to_bytes(const google::protobuf::Message& msg,
+                  core::types::ByteVector* bytes)
     {
         std::size_t size = msg.ByteSizeLong();
         bytes->resize(size);
@@ -43,7 +43,7 @@ namespace cc::protobuf
     }
 
     /// Convert a protobuf message to a serialized byte array
-    core::types::ByteVector to_bytes(const google::protobuf::Message &msg)
+    core::types::ByteVector to_bytes(const google::protobuf::Message& msg)
     {
         ByteVector bytes;
         to_bytes(msg, &bytes);
@@ -54,17 +54,17 @@ namespace cc::protobuf
 /// Additional convenience operators for ProtoBuf messages
 namespace google::protobuf
 {
-    bool operator==(const Message &left, const Message &right)
+    bool operator==(const Message& left, const Message& right)
     {
         return MessageDifferencer::Equivalent(left, right);
     }
 
-    bool operator!=(const Message &left, const Message &right)
+    bool operator!=(const Message& left, const Message& right)
     {
         return !MessageDifferencer::Equivalent(left, right);
     }
 
-    std::ostream &operator<<(std::ostream &stream, const Message &msg)
+    std::ostream& operator<<(std::ostream& stream, const Message& msg)
     {
         // return stream << cc::protobuf::to_string(msg);
         return stream << cc::protobuf::to_value(msg);

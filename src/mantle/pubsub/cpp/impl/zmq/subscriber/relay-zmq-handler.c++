@@ -18,7 +18,7 @@ namespace cc::platform::pubsub::zmq
     {
     }
 
-    void Handler::handle(const cc::zmq::MessageParts &parts)
+    void Handler::handle(const cc::zmq::MessageParts& parts)
     {
         if (parts.size() >= 2)
         {

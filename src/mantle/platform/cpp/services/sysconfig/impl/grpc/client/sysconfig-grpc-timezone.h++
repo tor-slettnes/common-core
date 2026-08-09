@@ -17,7 +17,7 @@ namespace cc::platform::sysconfig::grpc
         using Super = TimeZoneInterface;
 
     public:
-        TimeZoneProvider(const std::shared_ptr<Client> &client);
+        TimeZoneProvider(const std::shared_ptr<Client>& client);
 
         void initialize() override;
 
@@ -28,26 +28,26 @@ namespace cc::platform::sysconfig::grpc
         TimeZoneAreas list_timezone_areas() const override;
 
         TimeZoneCountries list_timezone_countries(
-            const TimeZoneArea &area) override;
+            const TimeZoneArea& area) override;
 
         TimeZoneRegions list_timezone_regions(
-            const TimeZoneLocationFilter &filter) override;
+            const TimeZoneLocationFilter& filter) override;
 
         TimeZoneCanonicalSpecs list_timezone_specs(
-            const TimeZoneLocationFilter &filter) const override;
+            const TimeZoneLocationFilter& filter) const override;
 
         TimeZoneCanonicalSpec get_timezone_spec(
-            const TimeZoneCanonicalName &zone) const override;
+            const TimeZoneCanonicalName& zone) const override;
 
         TimeZoneInfo get_timezone_info(
-            const TimeZoneCanonicalName &canonical_zone = {},
-            const core::dt::TimePoint &timepoint = {}) const override;
+            const TimeZoneCanonicalName& canonical_zone = {},
+            const core::dt::TimePoint& timepoint = {}) const override;
 
         TimeZoneInfo set_timezone(
-            const TimeZoneCanonicalName &zone) override;
+            const TimeZoneCanonicalName& zone) override;
 
         TimeZoneInfo set_timezone(
-            const TimeZoneLocation &location) override;
+            const TimeZoneLocation& location) override;
 
     private:
         std::shared_ptr<Client> client;

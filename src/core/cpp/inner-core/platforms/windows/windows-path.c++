@@ -24,13 +24,13 @@ typedef unsigned int pid_t;
 
 namespace cc::core::platform
 {
-    WindowsPathProvider::WindowsPathProvider(const std::string &programpath)
+    WindowsPathProvider::WindowsPathProvider(const std::string& programpath)
         : Super("WindowsPathProvider", programpath)
     {
     }
 
     FileStats PosixPathProvider::get_stats(
-        const fs::path &path,
+        const fs::path& path,
         bool dereference) const
     {
         // TODO: Implement better version for Windows
@@ -38,14 +38,14 @@ namespace cc::core::platform
     }
 
     bool WindowsPathProvider::is_readable(
-        const fs::path &path,
+        const fs::path& path,
         bool real_uid) const
     {
         return _access(path.c_str(), R_OK) == 0;
     }
 
     bool WindowsPathProvider::is_writable(
-        const fs::path &path,
+        const fs::path& path,
         bool real_uid) const
     {
         return _access(path.c_str(), W_OK) == 0;
@@ -81,7 +81,6 @@ namespace cc::core::platform
         return fs::path("C:\\TEMP") / ORGANIZATION;
     }
 
-
     fs::path WindowsPathProvider::default_config_folder() const noexcept
     {
         return (this->fs_root() / Super::default_config_folder());
@@ -104,9 +103,9 @@ namespace cc::core::platform
         return path;
     }
 
-    fs::path WindowsPathProvider::mktemp(const fs::path &folder,
-                                         const std::string &prefix,
-                                         const std::string &suffix)
+    fs::path WindowsPathProvider::mktemp(const fs::path& folder,
+                                         const std::string& prefix,
+                                         const std::string& suffix)
     {
         fs::path path = folder;
         path /= prefix + "XXXXXX";
@@ -122,9 +121,9 @@ namespace cc::core::platform
         return path;
     }
 
-    fs::path WindowsPathProvider::mktempdir(const fs::path &folder,
-                                            const std::string &prefix,
-                                            const std::string &suffix)
+    fs::path WindowsPathProvider::mktempdir(const fs::path& folder,
+                                            const std::string& prefix,
+                                            const std::string& suffix)
     {
         throw std::invalid_argument("mktempdir() is not implemented on this platform");
     }
@@ -135,11 +134,11 @@ namespace cc::core::platform
     }
 
     bool WindowsPathProvider::filename_match(
-        const fs::path &mask,
-        const fs::path &filename,
+        const fs::path& mask,
+        const fs::path& filename,
         bool match_leading_period,
         bool ignore_case) const
     {
         return PathMatchSpec(filename.c_str(), mask.c_str());
     }
-} // namespace cc::core::platform
+}  // namespace cc::core::platform

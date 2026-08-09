@@ -10,8 +10,8 @@
 namespace cc::zmq
 {
     ExtendedPublisher::ExtendedPublisher(
-        const std::string &address,
-        const std::string &channel_name,
+        const std::string& address,
+        const std::string& channel_name,
         Role role = Role::HOST)
     {
     }

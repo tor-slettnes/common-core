@@ -11,15 +11,15 @@ namespace cc::protobuf
 {
     void encode_quantity(double value,
                          int decimal_exponent,
-                         quantities::Scalar *scalar)
+                         quantities::Scalar* scalar)
     {
         scalar->set_value(value);
         scalar->set_decimal_exponent(decimal_exponent);
     }
 
     void encode_quantity(double value,
-                         quantities::Scalar *scalar)
+                         quantities::Scalar* scalar)
     {
         scalar->set_value(value);
     }
-} // namespace cc::protobuf
+}  // namespace cc::protobuf

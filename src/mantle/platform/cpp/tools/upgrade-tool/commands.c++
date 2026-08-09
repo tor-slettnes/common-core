@@ -98,7 +98,7 @@ namespace cc::platform::upgrade
             std::exit(-1);
         }
 
-        for (const auto &src : upgrade::upgrade->scan(source))
+        for (const auto& src : upgrade::upgrade->scan(source))
         {
             std::cout << src << std::endl;
         }
@@ -106,7 +106,7 @@ namespace cc::platform::upgrade
 
     void Options::list_sources()
     {
-        for (const auto &src : upgrade::upgrade->list_sources())
+        for (const auto& src : upgrade::upgrade->list_sources())
         {
             std::cout << src << std::endl;
         }
@@ -114,7 +114,7 @@ namespace cc::platform::upgrade
 
     void Options::list_available()
     {
-        for (const auto &package_info : upgrade::upgrade->list_available())
+        for (const auto& package_info : upgrade::upgrade->list_available())
         {
             std::cout << *package_info << std::endl;
         }
@@ -163,7 +163,7 @@ namespace cc::platform::upgrade
         upgrade::upgrade->finalize();
     }
 
-    vfs::Path Options::vfspath(const std::string &path)
+    vfs::Path Options::vfspath(const std::string& path)
     {
         std::vector<std::string> parts = core::str::split(path, ":", 1, true);
         return {parts.at(0),

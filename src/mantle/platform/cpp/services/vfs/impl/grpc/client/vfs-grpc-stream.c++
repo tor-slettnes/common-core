@@ -19,7 +19,7 @@ namespace cc::platform::vfs::grpc
         return this->status().ok() ? 0 : -1;
     }
 
-    void ClientBuffer::set_status(const cc::grpc::Status &status)
+    void ClientBuffer::set_status(const cc::grpc::Status& status)
     {
         this->status_ = status;
     }
@@ -32,12 +32,12 @@ namespace cc::platform::vfs::grpc
     //==========================================================================
     /// @class ClientInputBuffer
 
-    ClientInputBuffer::ClientInputBuffer(Reader &&reader)
+    ClientInputBuffer::ClientInputBuffer(Reader&& reader)
         : reader(std::move(reader))
     {
     }
 
-    bool ClientInputBuffer::read_some(BufferType *buffer)
+    bool ClientInputBuffer::read_some(BufferType* buffer)
     {
         platform::vfs::protobuf::FileChunk msg;
         if (this->reader->Read(&msg))
@@ -57,8 +57,8 @@ namespace cc::platform::vfs::grpc
     /// @class ClientOutputBuffer
 
     ClientOutputBuffer::ClientOutputBuffer(
-        Writer &&writer,
-        const vfs::Path &vpath)
+        Writer&& writer,
+        const vfs::Path& vpath)
         : writer(std::move(writer)),
           vpath(vpath),
           total_written(0)
@@ -73,7 +73,7 @@ namespace cc::platform::vfs::grpc
                    this->vpath);
     }
 
-    bool ClientOutputBuffer::write_some(const BufferType &data)
+    bool ClientOutputBuffer::write_some(const BufferType& data)
     {
         platform::vfs::protobuf::FileChunk msg;
         cc::protobuf::encode(this->vpath, msg.mutable_path());
@@ -101,8 +101,8 @@ namespace cc::platform::vfs::grpc
     //==========================================================================
     /// @class ClientInputStream
 
-    ClientInputStream::ClientInputStream(const std::unique_ptr<ClientStub> &stub,
-                                         const Path &vpath)
+    ClientInputStream::ClientInputStream(const std::unique_ptr<ClientStub>& stub,
+                                         const Path& vpath)
         : cxt(std::make_unique<::grpc::ClientContext>()),
           input_buffer(
               stub->ReadFile(
@@ -121,8 +121,8 @@ namespace cc::platform::vfs::grpc
 
     /// @class ClientOutputStream
 
-    ClientOutputStream::ClientOutputStream(const std::unique_ptr<ClientStub> &stub,
-                                           const Path &vpath)
+    ClientOutputStream::ClientOutputStream(const std::unique_ptr<ClientStub>& stub,
+                                           const Path& vpath)
         : cxt(std::make_unique<::grpc::ClientContext>()),
           output_buffer(
               stub->WriteFile(cxt.get(), &empty),

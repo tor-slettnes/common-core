@@ -9,7 +9,7 @@
 
 namespace cc::python
 {
-    SimpleObject::SimpleObject(PyObject *cobj, bool borrowed)
+    SimpleObject::SimpleObject(PyObject* cobj, bool borrowed)
         : cobj(cobj)
     {
         if (borrowed)
@@ -18,7 +18,7 @@ namespace cc::python
         }
     }
 
-    SimpleObject::SimpleObject(const SimpleObject &other)
+    SimpleObject::SimpleObject(const SimpleObject& other)
         : cobj(other.cobj)
     {
         Py_XINCREF(this->cobj);
@@ -29,17 +29,17 @@ namespace cc::python
         Py_XDECREF(this->cobj);
     }
 
-    void SimpleObject::to_stream(std::ostream &stream) const
+    void SimpleObject::to_stream(std::ostream& stream) const
     {
         SimpleObject::write_to_stream(stream, this->cobj, false);
     }
 
-    void SimpleObject::to_literal_stream(std::ostream &stream) const
+    void SimpleObject::to_literal_stream(std::ostream& stream) const
     {
         SimpleObject::write_to_stream(stream, this->cobj, true);
     }
 
-    SimpleObject &SimpleObject::operator=(const SimpleObject &other) noexcept
+    SimpleObject& SimpleObject::operator=(const SimpleObject& other) noexcept
     {
         Py_XDECREF(this->cobj);
         this->cobj = other.cobj;
@@ -52,7 +52,7 @@ namespace cc::python
         return this->cobj != nullptr;
     }
 
-    PyObject *SimpleObject::acquire() const
+    PyObject* SimpleObject::acquire() const
     {
         if (this->cobj)
         {
@@ -61,7 +61,7 @@ namespace cc::python
         return this->cobj;
     }
 
-    PyObject *SimpleObject::borrow() const
+    PyObject* SimpleObject::borrow() const
     {
         return this->cobj;
     }
@@ -71,7 +71,7 @@ namespace cc::python
 #if PY_VERSION_HEX >= 0x030B0000
         if (this->cobj)
         {
-            PyObject *type_name = PyType_GetName(Py_TYPE(this->cobj));
+            PyObject* type_name = PyType_GetName(Py_TYPE(this->cobj));
             return SimpleObject(type_name).as_string().value();
         }
         else
@@ -220,7 +220,7 @@ namespace cc::python
         if (this->cobj && PyComplex_Check(this->cobj))
         {
             return core::types::complex(PyComplex_RealAsDouble(this->cobj),
-                                  PyComplex_ImagAsDouble(this->cobj));
+                                        PyComplex_ImagAsDouble(this->cobj));
         }
         else
         {
@@ -233,7 +233,7 @@ namespace cc::python
         if (this->cobj && PyUnicode_Check(this->cobj))
         {
             if (Py_ssize_t size = 0;
-                const char *data = PyUnicode_AsUTF8AndSize(this->cobj, &size))
+                const char* data = PyUnicode_AsUTF8AndSize(this->cobj, &size))
             {
                 return std::string(data, size);
             }
@@ -243,7 +243,7 @@ namespace cc::python
 
     std::optional<core::types::ByteVector> SimpleObject::as_bytevector() const
     {
-        char *bytes = nullptr;
+        char* bytes = nullptr;
         Py_ssize_t size = 0;
 
         if (this->cobj && PyBytes_Check(this->cobj))
@@ -295,11 +295,11 @@ namespace cc::python
 
             for (int c = 0; c < size; c++)
             {
-                PyObject *item = PyList_GetItem(this->cobj, c);
+                PyObject* item = PyList_GetItem(this->cobj, c);
                 if (PyTuple_Check(item) && (PyTuple_Size(item) == 2))
                 {
                     core::types::Tag tag;
-                    PyObject *tag_obj = PyTuple_GetItem(item, 0);
+                    PyObject* tag_obj = PyTuple_GetItem(item, 0);
                     if (PyUnicode_Check(tag_obj))
                     {
                         tag = SimpleObject(tag_obj, true).as_string();
@@ -313,7 +313,7 @@ namespace cc::python
                         return {};
                     }
 
-                    PyObject *value_obj = PyTuple_GetItem(item, 1);
+                    PyObject* value_obj = PyTuple_GetItem(item, 1);
                     core::types::Value value = SimpleObject(value_obj, true).as_value();
 
                     tvlist.emplace_back(tag, value);
@@ -354,21 +354,21 @@ namespace cc::python
         }
     }
 
-    PyObject *SimpleObject::pystring_from_string(const std::string &string)
+    PyObject* SimpleObject::pystring_from_string(const std::string& string)
     {
         return PyUnicode_DecodeUTF8(string.data(), string.size(), nullptr);
     }
 
-    PyObject *SimpleObject::pybytes_from_bytes(const core::types::ByteVector &bytes)
+    PyObject* SimpleObject::pybytes_from_bytes(const core::types::ByteVector& bytes)
     {
         return PyBytes_FromStringAndSize(
-            reinterpret_cast<const char *>(bytes.data()),
+            reinterpret_cast<const char*>(bytes.data()),
             bytes.size());
     }
 
-    PyObject *SimpleObject::pytuple_from_values(const core::types::ValueList &values)
+    PyObject* SimpleObject::pytuple_from_values(const core::types::ValueList& values)
     {
-        PyObject *tuple = PyTuple_New(values.size());
+        PyObject* tuple = PyTuple_New(values.size());
         for (uint c = 0; c < values.size(); c++)
         {
             PyTuple_SET_ITEM(tuple, c, SimpleObject::pyobj_from_value(values.at(c)));
@@ -376,9 +376,9 @@ namespace cc::python
         return tuple;
     }
 
-    PyObject *SimpleObject::pytuple_from_objects(const Vector &objects)
+    PyObject* SimpleObject::pytuple_from_objects(const Vector& objects)
     {
-        PyObject *tuple = PyTuple_New(objects.size());
+        PyObject* tuple = PyTuple_New(objects.size());
         for (uint c = 0; c < objects.size(); c++)
         {
             // PyList_SET_ITEM steals reference, so acquire a new one.
@@ -387,9 +387,9 @@ namespace cc::python
         return tuple;
     }
 
-    PyObject *SimpleObject::pylist_from_values(const core::types::ValueList &values)
+    PyObject* SimpleObject::pylist_from_values(const core::types::ValueList& values)
     {
-        PyObject *list = PyList_New(values.size());
+        PyObject* list = PyList_New(values.size());
         for (uint c = 0; c < values.size(); c++)
         {
             // PyList_SET_ITEM steals newly allocated value
@@ -398,16 +398,16 @@ namespace cc::python
         return list;
     }
 
-    PyObject *SimpleObject::pylist_from_tagged_values(const core::types::TaggedValueList &tvlist)
+    PyObject* SimpleObject::pylist_from_tagged_values(const core::types::TaggedValueList& tvlist)
     {
-        PyObject *list = PyList_New(tvlist.size());
+        PyObject* list = PyList_New(tvlist.size());
         for (uint c = 0; c < tvlist.size(); c++)
         {
-            const auto &[tag, value] = tvlist.at(c);
-            PyObject *tag_obj =
+            const auto& [tag, value] = tvlist.at(c);
+            PyObject* tag_obj =
                 tag ? PyUnicode_DecodeUTF8(tag->data(), tag->size(), nullptr)
                     : (Py_INCREF(Py_None), Py_None);
-            PyObject *value_obj = SimpleObject::pyobj_from_value(value);
+            PyObject* value_obj = SimpleObject::pyobj_from_value(value);
             PyList_SET_ITEM(list, c, PyTuple_Pack(2, tag_obj, value_obj));
             Py_DECREF(tag_obj);
             Py_DECREF(value_obj);
@@ -415,10 +415,10 @@ namespace cc::python
         return list;
     }
 
-    PyObject *SimpleObject::pydict_from_kvmap(const core::types::KeyValueMap &kvmap)
+    PyObject* SimpleObject::pydict_from_kvmap(const core::types::KeyValueMap& kvmap)
     {
-        PyObject *dict = PyDict_New();
-        for (const auto &[key, value] : kvmap)
+        PyObject* dict = PyDict_New();
+        for (const auto& [key, value] : kvmap)
         {
             SimpleObject key_obj(PyUnicode_DecodeUTF8(key.data(), key.size(), nullptr));
             SimpleObject value_obj(SimpleObject::pyobj_from_value(value));
@@ -427,10 +427,10 @@ namespace cc::python
         return dict;
     }
 
-    PyObject *SimpleObject::pydict_from_objects(const Map &kvmap)
+    PyObject* SimpleObject::pydict_from_objects(const Map& kvmap)
     {
-        PyObject *dict = PyDict_New();
-        for (const auto &[key, value] : kvmap)
+        PyObject* dict = PyDict_New();
+        for (const auto& [key, value] : kvmap)
         {
             SimpleObject key_obj(PyUnicode_DecodeUTF8(key.data(), key.size(), nullptr));
             PyDict_SetItem(dict, key_obj.borrow(), value.borrow());
@@ -438,8 +438,7 @@ namespace cc::python
         return dict;
     }
 
-
-    PyObject *SimpleObject::pyobj_from_value(const core::types::Value &value)
+    PyObject* SimpleObject::pyobj_from_value(const core::types::Value& value)
     {
         switch (value.type())
         {
@@ -483,16 +482,16 @@ namespace cc::python
         }
     }
 
-    std::ostream &SimpleObject::write_to_stream(
-        std::ostream &stream,
-        PyObject *obj,
+    std::ostream& SimpleObject::write_to_stream(
+        std::ostream& stream,
+        PyObject* obj,
         bool literal)
     {
         if (obj)
         {
-            PyObject *pystr = literal ? PyObject_Repr(obj) : PyObject_Str(obj);
+            PyObject* pystr = literal ? PyObject_Repr(obj) : PyObject_Str(obj);
             Py_ssize_t size = 0;
-            const char *data = PyUnicode_AsUTF8AndSize(pystr, &size);
+            const char* data = PyUnicode_AsUTF8AndSize(pystr, &size);
             stream.write(data, size);
             Py_DECREF(pystr);
         }
@@ -518,7 +517,7 @@ namespace cc::python
 
 }  // namespace cc::python
 
-std::ostream &operator<<(std::ostream &stream, PyObject *obj)
+std::ostream& operator<<(std::ostream& stream, PyObject* obj)
 {
     return cc::python::SimpleObject::write_to_stream(stream, obj, false);
 }

@@ -18,8 +18,8 @@ namespace cc::zmq
                                    public MessageHandler
     {
     protected:
-        ProtoBufMessageHandler(const std::optional<core::types::ByteVector> &filter = {},
-                               const std::weak_ptr<Subscriber> &subscriber = {})
+        ProtoBufMessageHandler(const std::optional<core::types::ByteVector>& filter = {},
+                               const std::weak_ptr<Subscriber>& subscriber = {})
             : ProtoBufMessageBase<ProtoT>(),
               MessageHandler(this->type_name(),
                              filter.value_or(this->default_filter()),
@@ -28,7 +28,7 @@ namespace cc::zmq
         }
 
     private:
-        void handle(const MessageParts &parts) override
+        void handle(const MessageParts& parts) override
         {
             if (parts.size())
             {
@@ -41,7 +41,7 @@ namespace cc::zmq
         }
 
     protected:
-        virtual void handle_message(const ProtoT &message) = 0;
+        virtual void handle_message(const ProtoT& message) = 0;
     };
 
 }  // namespace cc::zmq

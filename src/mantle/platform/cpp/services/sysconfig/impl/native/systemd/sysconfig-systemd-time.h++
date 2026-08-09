@@ -22,7 +22,7 @@ namespace cc::platform::sysconfig::native
 
     protected:
         // Current timestamp
-        void set_current_time(const core::dt::TimePoint &tp) override;
+        void set_current_time(const core::dt::TimePoint& tp) override;
         void set_ntp(bool ntp);
         bool get_ntp() const;
 
@@ -31,6 +31,5 @@ namespace cc::platform::sysconfig::native
 
     private:
         bool is_systemd_init() const;
-
     };
-}  // namespace cc::platform::sysconfig::systemd
+}  // namespace cc::platform::sysconfig::native

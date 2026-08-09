@@ -15,7 +15,7 @@ namespace cc::platform::vfs
     {
     public:
         RemoteContext(
-            const std::weak_ptr<ProviderInterface> &provider);
+            const std::weak_ptr<ProviderInterface>& provider);
 
     public:
         void add_ref() override;

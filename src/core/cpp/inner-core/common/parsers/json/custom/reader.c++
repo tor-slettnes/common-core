@@ -18,17 +18,17 @@ namespace cc::core::json
     {
     }
 
-    types::Value CustomReader::decoded(const std::string_view &text) const
+    types::Value CustomReader::decoded(const std::string_view& text) const
     {
         return This::parse_input(std::make_shared<parsers::StringInput>(text));
     }
 
-    types::Value CustomReader::read_stream(std::istream &stream) const
+    types::Value CustomReader::read_stream(std::istream& stream) const
     {
         return This::parse_input(std::make_shared<parsers::StreamInput>(stream));
     }
 
-    types::Value CustomReader::parse_input(const parsers::Input::ptr &input)
+    types::Value CustomReader::parse_input(const parsers::Input::ptr& input)
     {
         TokenParser parser(input);
         types::Value value = This::parse_value(&parser);
@@ -36,12 +36,12 @@ namespace cc::core::json
         return value;
     }
 
-    types::Value CustomReader::parse_value(TokenParser *parser)
+    types::Value CustomReader::parse_value(TokenParser* parser)
     {
         return This::next_value(parser).second;
     }
 
-    types::KeyValueMapPtr CustomReader::parse_object(TokenParser *parser)
+    types::KeyValueMapPtr CustomReader::parse_object(TokenParser* parser)
     {
         auto map = types::KeyValueMap::create_shared();
         TokenParser::TokenPair tp = parser->next_of(TokenParser::TI_QUOTED_STRING,
@@ -63,7 +63,7 @@ namespace cc::core::json
         return map;
     }
 
-    types::ValueListPtr CustomReader::parse_array(TokenParser *parser)
+    types::ValueListPtr CustomReader::parse_array(TokenParser* parser)
     {
         auto list = types::ValueList::create_shared();
 
@@ -82,8 +82,8 @@ namespace cc::core::json
     }
 
     TokenParser::TokenPair CustomReader::next_value(
-        TokenParser *parser,
-        const TokenParser::TokenMask &endtokens)
+        TokenParser* parser,
+        const TokenParser::TokenMask& endtokens)
     {
         static const std::uint64_t value_mask =
             (TokenParser::TI_MAP_OPEN |

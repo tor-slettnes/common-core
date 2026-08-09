@@ -12,7 +12,7 @@
 
 namespace cc::core::logging
 {
-    std::ostream &operator<<(std::ostream &stream, const ColumnSpec &spec)
+    std::ostream& operator<<(std::ostream& stream, const ColumnSpec& spec)
     {
         if (spec.column_name && (spec.column_name.value() != spec.field_name))
         {
@@ -23,8 +23,8 @@ namespace cc::core::logging
         return stream;
     }
 
-    types::TaggedValueList &operator<<(types::TaggedValueList &tvlist,
-                                       const ColumnSpec &spec)
+    types::TaggedValueList& operator<<(types::TaggedValueList& tvlist,
+                                       const ColumnSpec& spec)
     {
         tvlist.append("field_name", spec.field_name);
         tvlist.append_if_value("column_name", spec.column_name);
@@ -33,10 +33,10 @@ namespace cc::core::logging
         return tvlist;
     }
 
-    types::ValueList &operator<<(types::ValueList &valuelist,
-                                 const ColumnSpecs &specs)
+    types::ValueList& operator<<(types::ValueList& valuelist,
+                                 const ColumnSpecs& specs)
     {
-        for (const ColumnSpec &spec : specs)
+        for (const ColumnSpec& spec : specs)
         {
             valuelist.push_back(
                 types::TaggedValueList::create_shared_from(spec));
@@ -47,14 +47,14 @@ namespace cc::core::logging
     //--------------------------------------------------------------------------
     // TabularData
 
-    TabularData::TabularData(const ColumnSpecs &columns)
+    TabularData::TabularData(const ColumnSpecs& columns)
         : columns_(columns)
     {
     }
 
-    void TabularData::load_level_map(const core::types::KeyValueMap &settings)
+    void TabularData::load_level_map(const core::types::KeyValueMap& settings)
     {
-        for (const auto &[key, value] : settings.get(SETTING_LEVEL_MAP).get_kvmap())
+        for (const auto& [key, value] : settings.get(SETTING_LEVEL_MAP).get_kvmap())
         {
             if (auto level = core::str::try_convert_to<core::status::Level>(key))
             {
@@ -63,14 +63,14 @@ namespace cc::core::logging
         }
     }
 
-    void TabularData::load_columns(const types::KeyValueMap &settings)
+    void TabularData::load_columns(const types::KeyValueMap& settings)
     {
         if (auto column_list = settings.get(SETTING_COLUMNS).get_valuelist_ptr())
         {
             ColumnSpecs specs;
             specs.reserve(column_list->size());
 
-            for (const core::types::Value &column_data : *column_list)
+            for (const core::types::Value& column_data : *column_list)
             {
                 if (auto spec = this->column_spec(column_data))
                 {
@@ -81,22 +81,22 @@ namespace cc::core::logging
         }
     }
 
-    const TabularData::LevelMap &TabularData::level_map() const
+    const TabularData::LevelMap& TabularData::level_map() const
     {
         return this->level_map_;
     }
 
-    void TabularData::set_level_map(const LevelMap &level_map)
+    void TabularData::set_level_map(const LevelMap& level_map)
     {
         this->level_map_ = level_map;
     }
 
-    const ColumnSpecs &TabularData::columns() const
+    const ColumnSpecs& TabularData::columns() const
     {
         return this->columns_;
     }
 
-    void TabularData::set_columns(const ColumnSpecs &columns)
+    void TabularData::set_columns(const ColumnSpecs& columns)
     {
         this->columns_ = columns;
     }
@@ -105,7 +105,7 @@ namespace cc::core::logging
     {
         std::vector<std::string> names;
         names.reserve(this->columns().size());
-        for (const ColumnSpec &spec : this->columns())
+        for (const ColumnSpec& spec : this->columns())
         {
             names.push_back(spec.column_name.value_or(spec.field_name));
         }
@@ -113,7 +113,7 @@ namespace cc::core::logging
     }
 
     std::optional<ColumnSpec> TabularData::column_spec(
-        const types::Value &column_data) const
+        const types::Value& column_data) const
     {
         if (const core::types::ValueListPtr colspec = column_data.get_valuelist_ptr())
         {
@@ -142,14 +142,14 @@ namespace cc::core::logging
                                            bool use_local_time) const
     {
         types::ValueList row;
-        for (const core::logging::ColumnSpec &spec : this->columns())
+        for (const core::logging::ColumnSpec& spec : this->columns())
         {
             row.push_back(this->column_data(spec, item, use_local_time));
         }
         return row;
     }
 
-    types::Value TabularData::column_data(const logging::ColumnSpec &spec,
+    types::Value TabularData::column_data(const logging::ColumnSpec& spec,
                                           types::Loggable::ptr item,
                                           bool use_local_time) const
     {
@@ -172,7 +172,7 @@ namespace cc::core::logging
         return item->get_field_as_value(spec.field_name);
     }
 
-    types::Value TabularData::time_value(const dt::TimePoint &tp,
+    types::Value TabularData::time_value(const dt::TimePoint& tp,
                                          types::ValueType value_type,
                                          bool use_local_time) const
     {
@@ -196,7 +196,7 @@ namespace cc::core::logging
     types::Value TabularData::level_value(status::Level level,
                                           types::ValueType value_type) const
     {
-        if (const types::Value &mapped_level = this->level_map().get(level))
+        if (const types::Value& mapped_level = this->level_map().get(level))
         {
             return mapped_level;
         }

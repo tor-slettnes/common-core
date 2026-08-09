@@ -16,7 +16,7 @@
 namespace cc::demo::grpc
 {
     using ClientImplBase = cc::grpc::SignalClient<cc::demo::grpc::Demo,
-                                                    cc::demo::protobuf::Signal>;
+                                                  cc::demo::protobuf::Signal>;
 
     class ClientImpl : public demo::API,
                        public ClientImplBase,
@@ -26,9 +26,9 @@ namespace cc::demo::grpc
 
     protected:
         template <class... Args>
-        ClientImpl(const std::string &identity,
-                   const std::string &host = "",
-                   Args &&...args)
+        ClientImpl(const std::string& identity,
+                   const std::string& host = "",
+                   Args&&... args)
             : demo::API(identity, "gRPC Client"),
               ClientImplBase(host, std::forward<Args>(args)...)
         {
@@ -40,7 +40,7 @@ namespace cc::demo::grpc
         // We keep our implementation methods private because they will
         // only be invoked via our (abstract) base API.
 
-        void say_hello(const Greeting &greeting) override;
+        void say_hello(const Greeting& greeting) override;
         TimeData get_current_time() override;
         void start_ticking() override;
         void stop_ticking() override;

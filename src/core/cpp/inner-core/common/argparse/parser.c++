@@ -44,23 +44,23 @@ namespace cc::core::argparse
             std::bind(&Parser::help_description, this, _1));
     }
 
-    void Parser::describe(const std::string &description)
+    void Parser::describe(const std::string& description)
     {
         this->description = description;
     }
 
-    void Parser::add(const OptionPtr &option)
+    void Parser::add(const OptionPtr& option)
     {
         this->options.emplace_back(option);
     }
 
-    void Parser::add_help_section(const std::string &section,
-                                  const std::function<void(std::ostream &out)> &method)
+    void Parser::add_help_section(const std::string& section,
+                                  const std::function<void(std::ostream& out)>& method)
     {
         this->help_sections.insert_or_assign(section, method);
     }
 
-    void Parser::help_all(std::ostream &out)
+    void Parser::help_all(std::ostream& out)
     {
         this->help_usage(out);
         out << std::endl;
@@ -69,23 +69,23 @@ namespace cc::core::argparse
         this->help_description(out);
     }
 
-    void Parser::help_section_list(std::ostream &out)
+    void Parser::help_section_list(std::ostream& out)
     {
         out << "Available help sections (use --help=SECTION to show):" << std::endl;
-        for (const auto &[section, method] : this->help_sections)
+        for (const auto& [section, method] : this->help_sections)
         {
             out << "    " << section << std::endl;
         }
     }
 
-    void Parser::help_usage(std::ostream &out)
+    void Parser::help_usage(std::ostream& out)
     {
         std::string intro = "Usage:";
         std::vector<std::string> words;
         bool has_misc_options = false;
         bool has_command = false;
 
-        for (const OptionPtr &opt : this->options)
+        for (const OptionPtr& opt : this->options)
         {
             if (!has_command && opt->argname.has_value())
             {
@@ -111,16 +111,16 @@ namespace cc::core::argparse
             << str::wrap(words, (uint)intro.length(), (uint)intro.length() + 1, this->wrap_column);
     }
 
-    void Parser::help_options(std::ostream &out)
+    void Parser::help_options(std::ostream& out)
     {
         out << "Options:" << std::endl;
         this->help_options_partial(out, true);
         this->help_options_partial(out, false);
     }
 
-    void Parser::help_options_partial(std::ostream &out, bool named)
+    void Parser::help_options_partial(std::ostream& out, bool named)
     {
-        for (const OptionPtr &opt : this->options)
+        for (const OptionPtr& opt : this->options)
         {
             if (opt->is_named() == named)
             {
@@ -140,7 +140,7 @@ namespace cc::core::argparse
         }
     }
 
-    void Parser::help_description(std::ostream &out)
+    void Parser::help_description(std::ostream& out)
     {
         if (this->description.size())
         {
@@ -148,15 +148,15 @@ namespace cc::core::argparse
         }
     }
 
-    void Parser::help(const std::string &section,
-                      std::ostream &out)
+    void Parser::help(const std::string& section,
+                      std::ostream& out)
     {
         HelpMethod method;
         try
         {
             method = this->help_sections.at(str::tolower(section));
         }
-        catch (const std::out_of_range &)
+        catch (const std::out_of_range&)
         {
             throwf(core::exception::InvalidArgument,
                    "No such help section",
@@ -165,7 +165,7 @@ namespace cc::core::argparse
         method(out);
     }
 
-    void Parser::parse_args(const ArgList &args)
+    void Parser::parse_args(const ArgList& args)
     {
         ParseState state(this->options);
         ArgList::const_iterator it = args.begin();
@@ -183,9 +183,9 @@ namespace cc::core::argparse
         this->assign_defaults(&state);
     }
 
-    bool Parser::parse_short(ArgList::const_iterator *args_iter,
-                             const ArgList::const_iterator &args_end,
-                             ParseState *state)
+    bool Parser::parse_short(ArgList::const_iterator* args_iter,
+                             const ArgList::const_iterator& args_end,
+                             ParseState* state)
     {
         static const std::regex re("-([^-].*)");
         std::smatch matches;
@@ -254,9 +254,9 @@ namespace cc::core::argparse
         }
     }
 
-    bool Parser::parse_long(ArgList::const_iterator *args_iter,
-                            const ArgList::const_iterator &args_end,
-                            ParseState *state)
+    bool Parser::parse_long(ArgList::const_iterator* args_iter,
+                            const ArgList::const_iterator& args_end,
+                            ParseState* state)
     {
         static const std::regex re("--([^=[:space:]]+)(=(.*))?");
         std::smatch matches;
@@ -329,10 +329,10 @@ namespace cc::core::argparse
         }
     }
 
-    bool Parser::parse_arg(ArgList::const_iterator *args_iter,
-                           ParseState *state)
+    bool Parser::parse_arg(ArgList::const_iterator* args_iter,
+                           ParseState* state)
     {
-        const OptionPtr &opt = this->next_positional(state);
+        const OptionPtr& opt = this->next_positional(state);
         opt->assign_argument(**args_iter);
         (*args_iter)++;
         return true;
@@ -340,7 +340,7 @@ namespace cc::core::argparse
 
     OptionPtr Parser::get_shortopt(ShortOpt shortopt, bool required) const
     {
-        for (const OptionPtr &opt : this->options)
+        for (const OptionPtr& opt : this->options)
         {
             for (char candidate : opt->shortopts)
             {
@@ -359,11 +359,11 @@ namespace cc::core::argparse
         return {};
     }
 
-    OptionPtr Parser::get_longopt(const LongOpt &longopt, bool required) const
+    OptionPtr Parser::get_longopt(const LongOpt& longopt, bool required) const
     {
-        for (const OptionPtr &opt : this->options)
+        for (const OptionPtr& opt : this->options)
         {
-            for (const std::string &candidate : opt->longopts)
+            for (const std::string& candidate : opt->longopts)
             {
                 if (candidate == longopt)
                 {
@@ -380,7 +380,7 @@ namespace cc::core::argparse
         return {};
     }
 
-    const OptionPtr &Parser::next_positional(ParseState *state) const
+    const OptionPtr& Parser::next_positional(ParseState* state) const
     {
         // Is this our first argument?
         if (state->current_unnamed == this->options.end())
@@ -414,12 +414,12 @@ namespace cc::core::argparse
         throw std::invalid_argument("Too many arguments");
     }
 
-    void Parser::assign_defaults(ParseState *state)
+    void Parser::assign_defaults(ParseState* state)
     {
         // Find the next unnamed/positional option
-        for (const OptionPtr &opt : this->options)
+        for (const OptionPtr& opt : this->options)
         {
-            uint &encounters = state->encounters[opt.get()];
+            uint& encounters = state->encounters[opt.get()];
             auto [minrepeats, maxrepeats] = opt->repeats;
 
             if (opt->is_named() && opt->has_default())
@@ -452,12 +452,12 @@ namespace cc::core::argparse
     //==========================================================================
     // ParseState methods
 
-    Parser::ParseState::ParseState(const OptionList &options)
+    Parser::ParseState::ParseState(const OptionList& options)
         : current_unnamed(options.end())
     {
     }
 
-    bool Parser::ParseState::add_encounter(const OptionPtr &opt, bool allowskip)
+    bool Parser::ParseState::add_encounter(const OptionPtr& opt, bool allowskip)
     {
         auto [minrepeats, maxrepeats] = opt->repeats;
 

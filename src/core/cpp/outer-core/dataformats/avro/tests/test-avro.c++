@@ -91,7 +91,6 @@ namespace cc::avro
         EXPECT_EQ(
             core::dt::to_milliseconds(kvmap.get("my_timestamp").as_timepoint()),
             avro_feedback->get("my_timestamp").get(SchemaField_VariantValue).as_sint64());
-
     }
 
     TEST(AvroTest, VariantFromAvro)

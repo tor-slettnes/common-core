@@ -19,8 +19,8 @@ namespace cc::platform::multilogger::zmq
         using Super = cc::zmq::ProtoBufServer;
 
     protected:
-        Server(const std::shared_ptr<API> &provider,
-               const std::string &bind_address = "");
+        Server(const std::shared_ptr<API>& provider,
+               const std::string& bind_address = "");
     };
 
 }  // namespace cc::platform::multilogger::zmq

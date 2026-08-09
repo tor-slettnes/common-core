@@ -19,9 +19,9 @@ namespace cc::python
 
     public:
         // Exception(PyObject *exc, bool borrowed = false);
-        Exception(const std::string &text,
-                  const std::string &symbol = {},
-                  const core::types::KeyValueMap &attributes = {});
+        Exception(const std::string& text,
+                  const std::string& symbol = {},
+                  const core::types::KeyValueMap& attributes = {});
         std::string text() const noexcept override;
         core::types::ValueList args() const noexcept;
     };

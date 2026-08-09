@@ -26,15 +26,15 @@ namespace cc::core::argparse
         class ParseState
         {
         public:
-            ParseState(const OptionList &options);
-            bool add_encounter(const OptionPtr &option, bool allowskip);
+            ParseState(const OptionList& options);
+            bool add_encounter(const OptionPtr& option, bool allowskip);
 
         public:
-            std::unordered_map<const BaseOption *, uint> encounters;
+            std::unordered_map<const BaseOption*, uint> encounters;
             OptionList::const_iterator current_unnamed;
         };
 
-        using HelpMethod = std::function<void(std::ostream &)>;
+        using HelpMethod = std::function<void(std::ostream&)>;
         using SectionMap = std::map<std::string, HelpMethod>;
 
     public:
@@ -57,24 +57,24 @@ namespace cc::core::argparse
         /// @param[in] description
         ///     Optional text explaining the program's function.
 
-        void describe(const std::string &description);
+        void describe(const std::string& description);
 
         /// @brief Add an already-constructed option.
         /// @param[in] option
         ///     Option instance
         ///
         /// @note The option is referenced via pointer, so must remain in scope during parsing.
-        void add(const OptionPtr &option);
+        void add(const OptionPtr& option);
 
     private:
         /// Instantiate a new option, keeping track on it for subsequent deletion
         template <class Type, class Storage = Target<Type>>
-        inline void add(const KeyList &keys,
-                        const std::optional<std::string> &argname,
-                        const std::string &helptext,
+        inline void add(const KeyList& keys,
+                        const std::optional<std::string>& argname,
+                        const std::string& helptext,
                         Storage target,
-                        const std::optional<Type> &constValue,
-                        const std::optional<Type> &defaultValue,
+                        const std::optional<Type>& constValue,
+                        const std::optional<Type>& defaultValue,
                         RepeatSpec repeats)
         {
             this->options.push_back(std::make_shared<Option<Type>>(
@@ -83,8 +83,8 @@ namespace cc::core::argparse
 
     public:
         /// Simple callback without arguments if encountered
-        inline void add_void(const KeyList &keys,
-                             const std::string &helptext,
+        inline void add_void(const KeyList& keys,
+                             const std::string& helptext,
                              std::function<void()> callback)
         {
             this->add<bool, std::function<void()>>(
@@ -93,8 +93,8 @@ namespace cc::core::argparse
 
         /// Simple boolean switch
         template <class Storage = Target<bool>>
-        inline void add_flag(const KeyList &keys,
-                             const std::string &helptext,
+        inline void add_flag(const KeyList& keys,
+                             const std::string& helptext,
                              Storage target,
                              std::optional<bool> defaultValue = {})
         {
@@ -104,11 +104,11 @@ namespace cc::core::argparse
 
         /// Named option with constant value if encountered, default value otherwise
         template <class Type, class Storage = Target<Type>>
-        inline void add_const(const KeyList &keys,
-                              const std::string &helptext,
+        inline void add_const(const KeyList& keys,
+                              const std::string& helptext,
                               Storage target,
-                              const Type &constValue,
-                              const std::optional<Type> &defaultValue = {})
+                              const Type& constValue,
+                              const std::optional<Type>& defaultValue = {})
         {
             this->add<Type, Storage>(
                 keys, {}, helptext, target, constValue, defaultValue, defaultValue ? ExactlyOne : AtMostOne);
@@ -116,11 +116,11 @@ namespace cc::core::argparse
 
         /// Named option with argument, default value if not encountered
         template <class Type = std::string, class Storage = Target<Type>>
-        inline void add_opt(const KeyList &keys,
-                            const std::string &argname,
-                            const std::string &helptext,
+        inline void add_opt(const KeyList& keys,
+                            const std::string& argname,
+                            const std::string& helptext,
                             Storage target,
-                            const Type &defaultValue,
+                            const Type& defaultValue,
                             bool required = true)
         {
             this->add<Type, Storage>(
@@ -129,11 +129,11 @@ namespace cc::core::argparse
 
         /// Named option with argument, default value if not encountered
         template <class Type = std::string, class Storage = Target<Type>>
-        inline void add_opt(const KeyList &keys,
-                            const std::string &argname,
-                            const std::string &helptext,
+        inline void add_opt(const KeyList& keys,
+                            const std::string& argname,
+                            const std::string& helptext,
                             Storage target,
-                            const std::optional<Type> &defaultValue = {})
+                            const std::optional<Type>& defaultValue = {})
         {
             this->add<Type, Storage>(
                 keys, argname, helptext, target, {}, defaultValue, defaultValue ? ExactlyOne : AtMostOne);
@@ -141,22 +141,21 @@ namespace cc::core::argparse
 
         /// Named option with argument, default value if not encountered
         template <class Type = std::string, class Storage = Target<Type>>
-        inline void add_opt(const KeyList &keys,
-                            const std::string &argname,
-                            const std::string &helptext,
+        inline void add_opt(const KeyList& keys,
+                            const std::string& argname,
+                            const std::string& helptext,
                             Storage target,
-                            const RepeatSpec &repeat_spec)
+                            const RepeatSpec& repeat_spec)
         {
             this->add<Type, Storage>(
                 keys, argname, helptext, target, {}, {}, repeat_spec);
         }
 
-
         /// Named argument, no default
         template <class Type = std::string, class Storage = Target<Type>>
-        inline void add_arg(const KeyList &keys,
-                            const std::string &argname,
-                            const std::string &helptext,
+        inline void add_arg(const KeyList& keys,
+                            const std::string& argname,
+                            const std::string& helptext,
                             Storage target)
         {
             this->add<Type, Storage>(
@@ -165,10 +164,10 @@ namespace cc::core::argparse
 
         /// Unnamed argument, with default value if not encountered
         template <class Type = std::string, class Storage = Target<Type>>
-        inline void add_arg(const std::string &argname,
-                            const std::string &helptext,
+        inline void add_arg(const std::string& argname,
+                            const std::string& helptext,
                             Storage target,
-                            const Type &defaultValue)
+                            const Type& defaultValue)
         {
             this->add<Type, Storage>(
                 {}, argname, helptext, target, {}, defaultValue, AtMostOne);
@@ -176,8 +175,8 @@ namespace cc::core::argparse
 
         /// Unnamed argument, no default
         template <class Type = std::string, class Storage = Target<Type>>
-        inline void add_arg(const std::string &argname,
-                            const std::string &helptext,
+        inline void add_arg(const std::string& argname,
+                            const std::string& helptext,
                             Storage target,
                             RepeatSpec repeats = {1, 1})
         {
@@ -185,19 +184,19 @@ namespace cc::core::argparse
                 {}, argname, helptext, target, {}, {}, repeats);
         }
 
-        void add_help_section(const std::string &section,
-                              const std::function<void(std::ostream &out)> &method);
+        void add_help_section(const std::string& section,
+                              const std::function<void(std::ostream& out)>& method);
 
-        virtual void help_all(std::ostream &out);
-        void help_section_list(std::ostream &out);
-        void help_usage(std::ostream &out);
-        void help_options(std::ostream &out);
-        void help_options_partial(std::ostream &out, bool named);
-        virtual void help_description(std::ostream &out);
+        virtual void help_all(std::ostream& out);
+        void help_section_list(std::ostream& out);
+        void help_usage(std::ostream& out);
+        void help_options(std::ostream& out);
+        void help_options_partial(std::ostream& out, bool named);
+        virtual void help_description(std::ostream& out);
 
         /// Print usage
-        virtual void help(const std::string &section = "all",
-                          std::ostream &out = std::cout);
+        virtual void help(const std::string& section = "all",
+                          std::ostream& out = std::cout);
 
         /// @brief Parse a vector of strings
         /// @param args
@@ -212,7 +211,7 @@ namespace cc::core::argparse
         ///     Argument could not be converted to the desired type
         /// @exception std::out_of_range
         ///     Argument is not within supported range for the desired value type
-        void parse_args(const ArgList &args);
+        void parse_args(const ArgList& args);
 
     private:
         ///
@@ -251,9 +250,9 @@ namespace cc::core::argparse
         /// If \p args_iter does not point to a short option string, it is
         /// left intact, and this function returns false.
 
-        bool parse_short(ArgList::const_iterator *args_iter,
-                         const ArgList::const_iterator &args_end,
-                         ParseState *state);
+        bool parse_short(ArgList::const_iterator* args_iter,
+                         const ArgList::const_iterator& args_end,
+                         ParseState* state);
 
         /// @brief
         ///     Parse a long option string starting with two dashes
@@ -290,9 +289,9 @@ namespace cc::core::argparse
         /// If \p args_iter does not point to a short option string, it is
         /// left intact, and the function returns false.
         ///
-        bool parse_long(ArgList::const_iterator *args_iter,
-                        const ArgList::const_iterator &args_end,
-                        ParseState *state);
+        bool parse_long(ArgList::const_iterator* args_iter,
+                        const ArgList::const_iterator& args_end,
+                        ParseState* state);
 
         ///
         /// @brief
@@ -320,20 +319,20 @@ namespace cc::core::argparse
         /// Process the next input argument as an unnamed (a.k.a. positional)
         /// argument, then advance \p args_iter to the next input argument.
 
-        bool parse_arg(ArgList::const_iterator *args_iter,
-                       ParseState *state);
+        bool parse_arg(ArgList::const_iterator* args_iter,
+                       ParseState* state);
 
         /// Fill in default values for missing arguments.
-        void assign_defaults(ParseState *state);
+        void assign_defaults(ParseState* state);
 
         /// Look up Option by short option key
         OptionPtr get_shortopt(ShortOpt shortopt, bool required = false) const;
 
         /// Look up Option by long option name
-        OptionPtr get_longopt(const LongOpt &longopt, bool required = false) const;
+        OptionPtr get_longopt(const LongOpt& longopt, bool required = false) const;
 
         /// Look up the next argument
-        const OptionPtr &next_positional(ParseState *state) const;
+        const OptionPtr& next_positional(ParseState* state) const;
 
     public:
         SectionMap help_sections;

@@ -27,20 +27,20 @@ namespace cc::core::logging
         void initialize();
         void deinitialize();
 
-        void add_sinks(const SinkMap &sinks);
+        void add_sinks(const SinkMap& sinks);
 
-        Sink::ptr add_sink(const Sink::ptr &sink);
-        Sink::ptr add_sink(const SinkID &sink_id,
-                                   const Sink::ptr &sink);
+        Sink::ptr add_sink(const Sink::ptr& sink);
+        Sink::ptr add_sink(const SinkID& sink_id,
+                           const Sink::ptr& sink);
 
-        bool remove_sink(const SinkID &sink_id);
-        bool remove_sink(const Sink::ptr &sink);
+        bool remove_sink(const SinkID& sink_id);
+        bool remove_sink(const Sink::ptr& sink);
 
-        Sink::ptr get_sink(const SinkID &sink_id) const;
-        const SinkMap &sinks() const;
+        Sink::ptr get_sink(const SinkID& sink_id) const;
+        const SinkMap& sinks() const;
 
-        bool is_applicable(const types::Loggable &item) const;
-        virtual void submit(const types::Loggable::ptr &item);
+        bool is_applicable(const types::Loggable& item) const;
+        virtual void submit(const types::Loggable::ptr& item);
 
     protected:
         SinkMap sinks_;

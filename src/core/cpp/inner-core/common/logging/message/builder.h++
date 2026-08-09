@@ -62,16 +62,16 @@ namespace cc::core::logging
         /// @param[in] thread_id
         ///     Identity of thread in which the message originated
 
-        MessageBuilder(Dispatcher *dispatcher,
+        MessageBuilder(Dispatcher* dispatcher,
                        status::Level level,
                        Scope::ptr scope,
-                       const dt::TimePoint &tp,
-                       const fs::path &path,
-                       const uint &lineno,
-                       const std::string &function,
+                       const dt::TimePoint& tp,
+                       const fs::path& path,
+                       const uint& lineno,
+                       const std::string& function,
                        pid_t thread_id = platform::process
-                                             ? platform::process->thread_id()
-                                             : 0);
+                                           ? platform::process->thread_id()
+                                           : 0);
 
     public:
         std::string text() const noexcept override;
@@ -79,39 +79,38 @@ namespace cc::core::logging
         void dispatch();
 
         template <class T>
-        inline MessageBuilder &operator<<(const T &value)
+        inline MessageBuilder& operator<<(const T& value)
         {
             if (this->is_applicable())
             {
-                *static_cast<std::ostringstream *>(this) << value;
+                *static_cast<std::ostringstream*>(this) << value;
             }
             return *this;
         }
 
         template <class... Args>
-        inline MessageBuilder &add(const Args &...args)
+        inline MessageBuilder& add(const Args&... args)
         {
             if (this->is_applicable())
-                (*static_cast<std::ostringstream *>(this) << ... << args);
+                (*static_cast<std::ostringstream*>(this) << ... << args);
             return *this;
         }
 
         template <class... Args>
-        inline MessageBuilder &format(const std::string &fmt, const Args &...args)
+        inline MessageBuilder& format(const std::string& fmt, const Args&... args)
         {
             if (this->is_applicable())
             {
-                str::format(*static_cast<std::ostringstream *>(this), fmt, args...);
+                str::format(*static_cast<std::ostringstream*>(this), fmt, args...);
             }
             return *this;
         }
 
     private:
         std::error_code path_error;
-        Dispatcher *dispatcher_;
+        Dispatcher* dispatcher_;
         bool is_applicable_;
     };
-
 
     using MessagePtr = std::shared_ptr<MessageBuilder>;
 }  // namespace cc::core::logging

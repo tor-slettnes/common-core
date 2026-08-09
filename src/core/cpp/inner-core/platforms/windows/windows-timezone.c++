@@ -15,20 +15,20 @@ namespace cc::core::platform
     {
     }
 
-    std::tm WindowsTimeZoneProvider::gmtime(const std::time_t &time) const
+    std::tm WindowsTimeZoneProvider::gmtime(const std::time_t& time) const
     {
         std::tm dt;
         gmtime_s(&dt, &time);
         return dt;
     }
 
-    std::tm WindowsTimeZoneProvider::localtime(const std::time_t &time, const std::string &timezone) const
+    std::tm WindowsTimeZoneProvider::localtime(const std::time_t& time, const std::string& timezone) const
     {
         // TODO: Support `timezone` argument
         return localtime(time);
     }
 
-    std::tm WindowsTimeZoneProvider::localtime(const time_t &time) const
+    std::tm WindowsTimeZoneProvider::localtime(const time_t& time) const
     {
         // SYSTEMTIME utctime = systemtime_encode(gmtime(time));
         // SYSTEMTIME localtime;
@@ -40,13 +40,13 @@ namespace cc::core::platform
         return dt;
     }
 
-    dt::TimeZoneInfo WindowsTimeZoneProvider::tzinfo(const std::string &timezone, const std::time_t &time) const
+    dt::TimeZoneInfo WindowsTimeZoneProvider::tzinfo(const std::string& timezone, const std::time_t& time) const
     {
         // TODO: Support `timezone` argument
         return tzinfo(time);
     }
 
-    dt::TimeZoneInfo WindowsTimeZoneProvider::tzinfo(const std::time_t &time) const
+    dt::TimeZoneInfo WindowsTimeZoneProvider::tzinfo(const std::time_t& time) const
     {
         TIME_ZONE_INFORMATION info;
         uint dstflag = GetTimeZoneInformation(&info);
@@ -63,7 +63,7 @@ namespace cc::core::platform
         };
     }
 
-    std::string WindowsTimeZoneProvider::filter_uppercase(const std::string &input) const
+    std::string WindowsTimeZoneProvider::filter_uppercase(const std::string& input) const
     {
         std::stringstream result;
         for (unsigned char c : input)
@@ -76,7 +76,7 @@ namespace cc::core::platform
         return result.str();
     }
 
-    std::string WindowsTimeZoneProvider::utf8encode(const std::wstring &wstr) const
+    std::string WindowsTimeZoneProvider::utf8encode(const std::wstring& wstr) const
     {
         if (wstr.empty())
         {
@@ -108,7 +108,7 @@ namespace cc::core::platform
         return target;
     }
 
-    std::tm WindowsTimeZoneProvider::systemtime_decode(const SYSTEMTIME &st) const
+    std::tm WindowsTimeZoneProvider::systemtime_decode(const SYSTEMTIME& st) const
     {
         std::tm dt;
         dt.tm_sec = st.wSecond;
@@ -123,7 +123,7 @@ namespace cc::core::platform
         return dt;
     }
 
-    SYSTEMTIME WindowsTimeZoneProvider::systemtime_encode(const std::tm &dt) const
+    SYSTEMTIME WindowsTimeZoneProvider::systemtime_encode(const std::tm& dt) const
     {
         SYSTEMTIME st;
         st.wYear = dt.tm_year + dt::TM_YEAR_OFFSET;

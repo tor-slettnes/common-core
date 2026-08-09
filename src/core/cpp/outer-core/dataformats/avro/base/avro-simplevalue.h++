@@ -28,10 +28,10 @@ namespace cc::avro
         SimpleValue(std::int64_t input);
         SimpleValue(float input);
         SimpleValue(double input);
-        SimpleValue(const char *input);
-        SimpleValue(const std::string &input);
-        SimpleValue(const std::string_view &input);
-        SimpleValue(const core::types::Bytes &bytes);
+        SimpleValue(const char* input);
+        SimpleValue(const std::string& input);
+        SimpleValue(const std::string_view& input);
+        SimpleValue(const core::types::Bytes& bytes);
 
         std::optional<int> get_int() const;
         std::optional<long> get_long() const;
@@ -50,4 +50,4 @@ namespace cc::avro
             return static_cast<EnumType>(enumvalue);
         }
     };
-}
+}  // namespace cc::avro

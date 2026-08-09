@@ -23,26 +23,26 @@ namespace cc::demo::zmq
         using Super = cc::zmq::ProtoBufRequestHandler;
 
     protected:
-        RequestHandler(const std::shared_ptr<API> &provider,
-                       const std::string &interface_name = DEMO_INTERFACE);
+        RequestHandler(const std::shared_ptr<API>& provider,
+                       const std::string& interface_name = DEMO_INTERFACE);
 
         void initialize() override;
 
         void say_hello(
-            const cc::demo::protobuf::Greeting &request,
-            ::google::protobuf::Empty *);
+            const cc::demo::protobuf::Greeting& request,
+            ::google::protobuf::Empty*);
 
         void get_current_time(
-            const ::google::protobuf::Empty &,
-            cc::demo::protobuf::TimeData *response);
+            const ::google::protobuf::Empty&,
+            cc::demo::protobuf::TimeData* response);
 
         void start_ticking(
-            const ::google::protobuf::Empty &,
-            ::google::protobuf::Empty *);
+            const ::google::protobuf::Empty&,
+            ::google::protobuf::Empty*);
 
         void stop_ticking(
-            const ::google::protobuf::Empty &,
-            ::google::protobuf::Empty *);
+            const ::google::protobuf::Empty&,
+            ::google::protobuf::Empty*);
 
     private:
         std::shared_ptr<API> provider;

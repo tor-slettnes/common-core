@@ -22,18 +22,18 @@ namespace cc::core::logging
     {
         std::scoped_lock<std::mutex> lck(this->mtx_);
         SinkMap sinks = std::move(this->sinks_);
-        for (const auto &[sink_id, sink] : sinks)
+        for (const auto& [sink_id, sink] : sinks)
         {
             sink->close();
         }
     }
 
-    void Dispatcher::add_sinks(const SinkMap &sinks)
+    void Dispatcher::add_sinks(const SinkMap& sinks)
     {
         this->sinks_.insert(sinks.begin(), sinks.end());
     }
 
-    Sink::ptr Dispatcher::add_sink(const Sink::ptr &sink)
+    Sink::ptr Dispatcher::add_sink(const Sink::ptr& sink)
     {
         if (sink)
         {
@@ -45,19 +45,19 @@ namespace cc::core::logging
         }
     }
 
-    Sink::ptr Dispatcher::add_sink(const SinkID &sink_id,
-                                   const Sink::ptr &sink)
+    Sink::ptr Dispatcher::add_sink(const SinkID& sink_id,
+                                   const Sink::ptr& sink)
     {
         auto [it, inserted] = this->sinks_.emplace(sink_id, sink);
         return it->second;
     }
 
-    bool Dispatcher::remove_sink(const SinkID &sink_id)
+    bool Dispatcher::remove_sink(const SinkID& sink_id)
     {
         return this->sinks_.erase(sink_id);
     }
 
-    bool Dispatcher::remove_sink(const Sink::ptr &sink)
+    bool Dispatcher::remove_sink(const Sink::ptr& sink)
     {
         for (auto it = this->sinks_.begin(); it != this->sinks_.end(); it++)
         {
@@ -70,19 +70,19 @@ namespace cc::core::logging
         return false;
     }
 
-    Sink::ptr Dispatcher::get_sink(const SinkID &sink_id) const
+    Sink::ptr Dispatcher::get_sink(const SinkID& sink_id) const
     {
         return this->sinks_.get(sink_id);
     }
 
-    const SinkMap &Dispatcher::sinks() const
+    const SinkMap& Dispatcher::sinks() const
     {
         return this->sinks_;
     }
 
-    bool Dispatcher::is_applicable(const types::Loggable &item) const
+    bool Dispatcher::is_applicable(const types::Loggable& item) const
     {
-        for (const auto &[sink_id, sink] : this->sinks())
+        for (const auto& [sink_id, sink] : this->sinks())
         {
             if (sink->is_applicable(item))
             {
@@ -92,10 +92,10 @@ namespace cc::core::logging
         return false;
     }
 
-    void Dispatcher::submit(const types::Loggable::ptr &item)
+    void Dispatcher::submit(const types::Loggable::ptr& item)
     {
         std::scoped_lock<std::mutex> lck(this->mtx_);
-        for (const auto &[sink_id, sink] : this->sinks())
+        for (const auto& [sink_id, sink] : this->sinks())
         {
             if (sink->is_applicable(*item))
             {

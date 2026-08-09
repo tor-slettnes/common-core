@@ -24,19 +24,19 @@ namespace cc::platform::switchboard
         {STATE_FAILED, "FAILED"},
     };
 
-    std::ostream &operator<<(std::ostream &stream, State state)
+    std::ostream& operator<<(std::ostream& stream, State state)
     {
         return state_names.to_stream(stream, state);
     };
 
-    std::istream &operator>>(std::istream &stream, State &state)
+    std::istream& operator>>(std::istream& stream, State& state)
     {
         return state_names.from_stream(stream, &state, STATE_UNSET);
     }
 
     StateSet::StateSet(StateMask mask)
     {
-        for (const auto &[state, _] : state_names)
+        for (const auto& [state, _] : state_names)
         {
             if ((state & mask) != 0x00)
             {
@@ -55,9 +55,9 @@ namespace cc::platform::switchboard
         return mask;
     }
 
-    void StateSet::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void StateSet::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
-        for (const auto &[state, name] : state_names)
+        for (const auto& [state, name] : state_names)
         {
             if (this->count(state))
             {
@@ -87,12 +87,12 @@ namespace cc::platform::switchboard
         {EH_REVERT, "REVERT"},
     };
 
-    std::ostream &operator<<(std::ostream &stream, ExceptionHandling eh)
+    std::ostream& operator<<(std::ostream& stream, ExceptionHandling eh)
     {
         return exceptionhandling_names.to_stream(stream, eh);
     };
 
-    std::istream &operator>>(std::istream &stream, ExceptionHandling &eh)
+    std::istream& operator>>(std::istream& stream, ExceptionHandling& eh)
     {
         return exceptionhandling_names.from_stream(stream, &eh, EH_DEFAULT);
     }
@@ -106,12 +106,12 @@ namespace cc::platform::switchboard
         {InvocationStyle::INDIRECT, "INDIRECT"},
     };
 
-    std::ostream &operator<<(std::ostream &stream, InvocationStyle style)
+    std::ostream& operator<<(std::ostream& stream, InvocationStyle style)
     {
         return invocationstyle_names.to_stream(stream, style);
     }
 
-    std::istream &operator>>(std::istream &stream, InvocationStyle &style)
+    std::istream& operator>>(std::istream& stream, InvocationStyle& style)
     {
         return invocationstyle_names.from_stream(
             stream,
@@ -129,12 +129,12 @@ namespace cc::platform::switchboard
         {CascadeStyle::WAIT_RECURSIVE, "WAIT_RECURSIVE"},
     };
 
-    std::ostream &operator<<(std::ostream &stream, CascadeStyle style)
+    std::ostream& operator<<(std::ostream& stream, CascadeStyle style)
     {
         return cascadestyle_names.to_stream(stream, style);
     }
 
-    std::istream &operator>>(std::istream &stream, CascadeStyle &style)
+    std::istream& operator>>(std::istream& stream, CascadeStyle& style)
     {
         return cascadestyle_names.from_stream(
             stream,
@@ -151,12 +151,12 @@ namespace cc::platform::switchboard
         {DependencyPolarity::TOGGLE, "TOGGLE"},
     };
 
-    std::ostream &operator<<(std::ostream &stream, DependencyPolarity dir)
+    std::ostream& operator<<(std::ostream& stream, DependencyPolarity dir)
     {
         return depdir_names.to_stream(stream, dir);
     }
 
-    std::istream &operator>>(std::istream &stream, DependencyPolarity &dir)
+    std::istream& operator>>(std::istream& stream, DependencyPolarity& dir)
     {
         return depdir_names.from_stream(stream, &dir);
     }
@@ -169,7 +169,7 @@ namespace cc::platform::switchboard
     {
     }
 
-    SwitchSelection::SwitchSelection(const std::string &switch_name,
+    SwitchSelection::SwitchSelection(const std::string& switch_name,
                                      bool with_ancestors)
         : patterns({switch_name}),
           is_regex(false),
@@ -177,7 +177,7 @@ namespace cc::platform::switchboard
     {
     }
 
-    SwitchSelection::SwitchSelection(const std::vector<std::string> &patterns,
+    SwitchSelection::SwitchSelection(const std::vector<std::string>& patterns,
                                      bool is_regex,
                                      bool with_ancestors)
         : patterns(patterns),
@@ -187,18 +187,18 @@ namespace cc::platform::switchboard
         if (is_regex)
         {
             this->regex_patterns.reserve(patterns.size());
-            for (const std::string &pattern : patterns)
+            for (const std::string& pattern : patterns)
             {
                 this->regex_patterns.emplace_back(pattern);
             }
         }
     }
 
-    bool SwitchSelection::matches(const SwitchName &switch_name) const
+    bool SwitchSelection::matches(const SwitchName& switch_name) const
     {
         if (this->is_regex)
         {
-            for (const std::regex &rx : this->regex_patterns)
+            for (const std::regex& rx : this->regex_patterns)
             {
                 if (std::regex_match(switch_name, rx))
                 {
@@ -208,7 +208,7 @@ namespace cc::platform::switchboard
         }
         else
         {
-            for (const std::string &pattern : this->patterns)
+            for (const std::string& pattern : this->patterns)
             {
                 if (core::platform::path->filename_match(pattern, switch_name, true))
                 {
@@ -219,7 +219,7 @@ namespace cc::platform::switchboard
         return false;
     }
 
-    void SwitchSelection::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void SwitchSelection::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append("patterns",
                        core::types::ValueList::create_shared_from(this->patterns));
@@ -229,7 +229,7 @@ namespace cc::platform::switchboard
     //==========================================================================
     // Localization
 
-    void Localization::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void Localization::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if_value("description", this->description);
         tvlist->append_if_value("activate_text", this->activate_text);
@@ -238,7 +238,7 @@ namespace cc::platform::switchboard
         if (!this->state_texts.empty())
         {
             core::types::TaggedValueList texts;
-            for (const auto &[state, text] : this->state_texts)
+            for (const auto& [state, text] : this->state_texts)
             {
                 texts.append_if_value(state_names.try_to_string(state), text);
             }
@@ -246,7 +246,7 @@ namespace cc::platform::switchboard
         }
     }
 
-    bool operator==(const Localization &lhs, const Localization &rhs)
+    bool operator==(const Localization& lhs, const Localization& rhs)
     {
         return ((lhs.description == rhs.description) &&
                 (lhs.activate_text == rhs.activate_text) &&
@@ -254,7 +254,7 @@ namespace cc::platform::switchboard
                 (lhs.state_texts == rhs.state_texts));
     }
 
-    bool operator!=(const Localization &lhs, const Localization &rhs)
+    bool operator!=(const Localization& lhs, const Localization& rhs)
     {
         return !(lhs == rhs);
     }
@@ -262,7 +262,7 @@ namespace cc::platform::switchboard
     //==========================================================================
     // Specification
 
-    bool operator==(const Specification &lhs, const Specification &rhs)
+    bool operator==(const Specification& lhs, const Specification& rhs)
     {
         return ((lhs.primary == rhs.primary) &&
                 (lhs.aliases == rhs.aliases) &&
@@ -271,12 +271,12 @@ namespace cc::platform::switchboard
                 (lhs.localizations == rhs.localizations));
     }
 
-    bool operator!=(const Specification &lhs, const Specification &rhs)
+    bool operator!=(const Specification& lhs, const Specification& rhs)
     {
         return !(lhs == rhs);
     }
 
-    void Specification::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void Specification::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         if (!this->aliases.empty())
         {
@@ -291,7 +291,7 @@ namespace cc::platform::switchboard
         if (!this->localizations.empty())
         {
             core::types::TaggedValueList localizations;
-            for (const auto &[language, localization] : this->localizations)
+            for (const auto& [language, localization] : this->localizations)
             {
                 localizations.append_if_value(language, localization.as_kvmap());
             }
@@ -301,7 +301,7 @@ namespace cc::platform::switchboard
         if (!this->interceptors.empty())
         {
             core::types::ValueList interceptors;
-            for (const auto &[key, interceptor] : this->interceptors)
+            for (const auto& [key, interceptor] : this->interceptors)
             {
                 interceptors.push_back(interceptor->as_tvlist());
             }
@@ -311,7 +311,7 @@ namespace cc::platform::switchboard
         if (!this->dependencies.empty())
         {
             core::types::KeyValueMap dependencies;
-            for (const auto &[predecessor_name, spec] : this->dependencies)
+            for (const auto& [predecessor_name, spec] : this->dependencies)
             {
                 dependencies.insert_or_assign(predecessor_name, spec->as_kvmap());
             }
@@ -322,7 +322,7 @@ namespace cc::platform::switchboard
     //==========================================================================
     /// @class Status
 
-    void Status::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void Status::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append("current_state", state_names.try_to_string(this->current_state));
         tvlist->append("settled_state", state_names.try_to_string(this->settled_state));
@@ -338,7 +338,7 @@ namespace cc::platform::switchboard
         }
     }
 
-    bool operator==(const Status &lhs, const Status &rhs)
+    bool operator==(const Status& lhs, const Status& rhs)
     {
         return ((lhs.current_state == rhs.current_state) &&
                 (lhs.settled_state == rhs.settled_state) &&
@@ -347,7 +347,7 @@ namespace cc::platform::switchboard
                 (lhs.attributes == rhs.attributes));
     }
 
-    bool operator!=(const Status &lhs, const Status &rhs)
+    bool operator!=(const Status& lhs, const Status& rhs)
     {
         return !(lhs == rhs);
     }
@@ -355,7 +355,7 @@ namespace cc::platform::switchboard
     //==========================================================================
     // DependencyStatus
 
-    void DependencyStatus::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void DependencyStatus::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->emplace_back("spec", this->dependency->as_tvlist());
         tvlist->emplace_back("status", this->status->as_tvlist());
@@ -374,7 +374,7 @@ namespace cc::platform::switchboard
             tvlist->emplace_back("dependency_statuses", statuses);
 
             statuses->reserve(this->dependency_statuses.size());
-            for (const auto &[switch_name, dep_status] : this->dependency_statuses)
+            for (const auto& [switch_name, dep_status] : this->dependency_statuses)
             {
                 statuses->emplace_back(switch_name, dep_status->as_tvlist());
             }

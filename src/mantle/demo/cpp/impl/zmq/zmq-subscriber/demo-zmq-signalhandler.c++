@@ -23,7 +23,7 @@ namespace cc::demo::zmq
     {
         this->add_handler(
             cc::demo::protobuf::Signal::kSignalGreeting,
-            [&](const cc::demo::protobuf::Signal &signal) {
+            [&](const cc::demo::protobuf::Signal& signal) {
                 signal_greeting.emit(
                     static_cast<core::signal::MappingAction>(signal.mapping_action()),
                     signal.mapping_key(),
@@ -32,7 +32,7 @@ namespace cc::demo::zmq
 
         this->add_handler(
             cc::demo::protobuf::Signal::kSignalTime,
-            [](const cc::demo::protobuf::Signal &signal) {
+            [](const cc::demo::protobuf::Signal& signal) {
                 signal_time.emit(
                     cc::protobuf::decoded<TimeData>(signal.signal_time()));
             });
@@ -40,7 +40,7 @@ namespace cc::demo::zmq
         Super::initialize();
     }
 
-    void SignalHandler::handle_message(const cc::demo::protobuf::Signal &message)
+    void SignalHandler::handle_message(const cc::demo::protobuf::Signal& message)
     {
         log_debug("Handling received ProtoBuf message: ", message);
         Super::handle_message(message);

@@ -11,15 +11,15 @@
 
 namespace cc::zmq
 {
-    MessageWriter::MessageWriter(const std::shared_ptr<Publisher> &publisher,
-                                 const std::optional<Header> &header)
+    MessageWriter::MessageWriter(const std::shared_ptr<Publisher>& publisher,
+                                 const std::optional<Header>& header)
         : publisher_(publisher),
           header_(header)
     {
         log_trace("Created ZMQ writer with header: ", header);
     }
 
-    const std::optional<Header> &MessageWriter::header() const noexcept
+    const std::optional<Header>& MessageWriter::header() const noexcept
     {
         return this->header_;
     }
@@ -29,7 +29,7 @@ namespace cc::zmq
         return this->publisher_.lock();
     }
 
-    void MessageWriter::write(const core::types::ByteVector &bytes)
+    void MessageWriter::write(const core::types::ByteVector& bytes)
     {
         if (auto publisher = this->publisher())
         {

@@ -19,17 +19,17 @@ namespace cc::platform::upgrade::native
         using Super = PackageIndex;
 
     public:
-        VFSPackageIndex(const core::SettingsStore::ptr &settings,
-                        const vfs::Path &vfs_path);
+        VFSPackageIndex(const core::SettingsStore::ptr& settings,
+                        const vfs::Path& vfs_path);
 
     public:
-        PackageSource package_source(const std::string &package_name) const override;
+        PackageSource package_source(const std::string& package_name) const override;
         PackageCatalogue scan() override;
 
     private:
         PackageInfo::ptr scan_file(
-            const vfs::Location &location,
-            const fs::path &package_name);
+            const vfs::Location& location,
+            const fs::path& package_name);
 
     private:
         vfs::Path vfs_path;

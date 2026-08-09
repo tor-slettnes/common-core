@@ -12,13 +12,13 @@ namespace cc::core::logging
     //==========================================================================
     // Scope
 
-    Scope::Scope(const std::string &name, status::Level threshold)
+    Scope::Scope(const std::string& name, status::Level threshold)
         : name(name),
           threshold(threshold)
     {
     }
 
-    Scope::ptr Scope::create(const std::string &name, status::Level threshold)
+    Scope::ptr Scope::create(const std::string& name, status::Level threshold)
     {
         auto [it, inserted] = scopes.try_emplace(name);
         if (inserted)
@@ -45,9 +45,9 @@ namespace cc::core::logging
 
     status::Level Scope::effective_threshold() const
     {
-        return This::universal_threshold          ? This::universal_threshold.value()
-               : (this->threshold != Level::NONE) ? this->threshold
-                                                  : This::default_threshold;
+        return This::universal_threshold        ? This::universal_threshold.value()
+             : (this->threshold != Level::NONE) ? this->threshold
+                                                : This::default_threshold;
     }
 
     bool Scope::is_applicable(status::Level level) const
@@ -62,4 +62,4 @@ namespace cc::core::logging
     status::Level Scope::default_threshold = status::Level::DEBUG;
     std::optional<status::Level> Scope::universal_threshold = {};
 
-} // namespace cc::core::logging
+}  // namespace cc::core::logging

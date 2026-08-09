@@ -27,7 +27,7 @@ namespace cc::demo::zmq
 
         demo::signal_time.connect(
             TYPE_NAME_FULL(This),
-            [=](const TimeData &timedata) {
+            [=](const TimeData& timedata) {
                 auto msg = this->create_signal_message();
                 cc::protobuf::encode(timedata, msg.mutable_signal_time());
                 this->write(msg);
@@ -42,8 +42,8 @@ namespace cc::demo::zmq
         demo::signal_greeting.connect(
             TYPE_NAME_FULL(This),
             [=](core::signal::MappingAction action,  // action
-                const std::string &key,              // key
-                const Greeting &greeting)            // payload
+                const std::string& key,              // key
+                const Greeting& greeting)            // payload
             {
                 auto msg = this->create_signal_message(action, key);
                 cc::protobuf::encode(greeting, msg.mutable_signal_greeting());

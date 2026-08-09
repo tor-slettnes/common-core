@@ -13,12 +13,12 @@ namespace cc::platform::vfs
     //==========================================================================
     // Public API
 
-    fs::path localPath(const Path &vpath)
+    fs::path localPath(const Path& vpath)
     {
         return get_context(vpath.context)->localPath(vpath.relpath);
     }
 
-    Path getParentPath(const Path &vpath)
+    Path getParentPath(const Path& vpath)
     {
         fs::path tempPath = vpath.relpath;
         tempPath.remove_filename();
@@ -31,7 +31,7 @@ namespace cc::platform::vfs
         ContextMap map = get_contexts();
         ContextList list;
         list.reserve(map.size());
-        for (const auto &[name, ref] : map)
+        for (const auto& [name, ref] : map)
             list.push_back(ref);
         return list;
     }
@@ -51,22 +51,22 @@ namespace cc::platform::vfs
         return get_contexts(true);
     }
 
-    Context::ptr get_context(const std::string &name, bool required)
+    Context::ptr get_context(const std::string& name, bool required)
     {
         return vfs->get_context(name, required);
     }
 
-    Context::ptr open_context(const std::string &name, bool required)
+    Context::ptr open_context(const std::string& name, bool required)
     {
         return vfs->open_context(name, required);
     }
 
-    void close_context(const Context::ptr &cxt)
+    void close_context(const Context::ptr& cxt)
     {
         return vfs->close_context(cxt);
     }
 
-    void close_context(const std::string &name)
+    void close_context(const std::string& name)
     {
         if (auto cxt = vfs::get_context(name, false))
         {
@@ -74,17 +74,17 @@ namespace cc::platform::vfs
         }
     }
 
-    bool exists(const Path &vpath)
+    bool exists(const Path& vpath)
     {
         return (vfs::get_file_info(vpath, false).type != fs::file_type::none);
     }
 
-    VolumeInfo get_volume_info(const Path &vpath)
+    VolumeInfo get_volume_info(const Path& vpath)
     {
         return vfs->get_volume_info(vpath, {});
     }
 
-    FileInfo get_file_info(const Path &vpath,
+    FileInfo get_file_info(const Path& vpath,
                            bool with_attributes,
                            bool dereference)
     {
@@ -96,7 +96,7 @@ namespace cc::platform::vfs
             });
     }
 
-    Directory get_directory(const Path &vpath,
+    Directory get_directory(const Path& vpath,
                             bool with_attributes,
                             bool dereference,
                             bool include_hidden)
@@ -110,7 +110,7 @@ namespace cc::platform::vfs
             });
     }
 
-    DirectoryList list(const Path &vpath,
+    DirectoryList list(const Path& vpath,
                        bool with_attributes,
                        bool dereference,
                        bool include_hidden)
@@ -125,9 +125,9 @@ namespace cc::platform::vfs
     }
 
     Directory locate(
-        const Path &root,
-        const std::vector<fs::path> &filename_masks,
-        const core::types::TaggedValueList &attribute_filters,
+        const Path& root,
+        const std::vector<fs::path>& filename_masks,
+        const core::types::TaggedValueList& attribute_filters,
         bool with_attributes,
         bool include_hidden,
         bool ignore_case)
@@ -143,8 +143,8 @@ namespace cc::platform::vfs
             });
     }
 
-    void copy(const Path &source,
-              const Path &target,
+    void copy(const Path& source,
+              const Path& target,
               bool force,
               bool dereference,
               bool merge,
@@ -165,8 +165,8 @@ namespace cc::platform::vfs
             });
     }
 
-    void copy(const Paths &sources,
-              const Path &target,
+    void copy(const Paths& sources,
+              const Path& target,
               bool force,
               bool dereference,
               bool merge,
@@ -186,8 +186,8 @@ namespace cc::platform::vfs
             });
     }
 
-    void move(const Path &source,
-              const Path &target,
+    void move(const Path& source,
+              const Path& target,
               bool force,
               bool with_attributes,
               bool inside_target)
@@ -202,8 +202,8 @@ namespace cc::platform::vfs
             });
     }
 
-    void move(const Paths &sources,
-              const Path &target,
+    void move(const Paths& sources,
+              const Path& target,
               bool force,
               bool with_attributes)
     {
@@ -217,7 +217,7 @@ namespace cc::platform::vfs
             });
     }
 
-    void remove(const Path &vpath,
+    void remove(const Path& vpath,
                 bool force,
                 bool with_attributes)
     {
@@ -225,7 +225,7 @@ namespace cc::platform::vfs
         return remove(paths, force, with_attributes);
     }
 
-    void remove(const Paths &vpaths,
+    void remove(const Paths& vpaths,
                 bool force,
                 bool with_attributes)
     {
@@ -237,7 +237,7 @@ namespace cc::platform::vfs
             });
     }
 
-    void create_folder(const Path &vpath,
+    void create_folder(const Path& vpath,
                        bool force)
     {
         return vfs->create_folder(
@@ -247,18 +247,18 @@ namespace cc::platform::vfs
             });
     }
 
-    UniqueReader read_file(const Path &vpath)
+    UniqueReader read_file(const Path& vpath)
     {
         return vfs->read_file(vpath);
     }
 
-    UniqueWriter write_file(const Path &vpath)
+    UniqueWriter write_file(const Path& vpath)
     {
         return vfs->write_file(vpath);
     }
 
-    void download(const Path &remote,
-                  const fs::path &local)
+    void download(const Path& remote,
+                  const fs::path& local)
     {
         auto istream = vfs->read_file(remote);
         auto ostream = std::make_unique<std::ofstream>(local);
@@ -271,8 +271,8 @@ namespace cc::platform::vfs
         }
     }
 
-    void upload(const fs::path &local,
-                const Path &remote)
+    void upload(const fs::path& local,
+                const Path& remote)
     {
         auto istream = std::make_unique<std::ifstream>(local);
         auto ostream = vfs->write_file(remote);
@@ -285,12 +285,12 @@ namespace cc::platform::vfs
         }
     }
 
-    core::types::KeyValueMap get_attributes(const Path &vpath)
+    core::types::KeyValueMap get_attributes(const Path& vpath)
     {
         return vfs->get_attributes(vpath);
     }
 
-    core::types::Value getAttribute(const Path &vpath,
+    core::types::Value getAttribute(const Path& vpath,
                                     const std::string attribute,
                                     const core::types::Value fallback)
     {
@@ -298,20 +298,20 @@ namespace cc::platform::vfs
         return attributes.get(attribute, fallback);
     }
 
-    void set_attributes(const Path &vpath,
-                        const core::types::KeyValueMap &attributes)
+    void set_attributes(const Path& vpath,
+                        const core::types::KeyValueMap& attributes)
     {
         return vfs->set_attributes(vpath, attributes);
     }
 
-    void setAttribute(const Path &vpath,
-                      const std::string &key,
-                      const core::types::Value &value)
+    void setAttribute(const Path& vpath,
+                      const std::string& key,
+                      const core::types::Value& value)
     {
         return vfs->set_attributes(vpath, {{key, value}});
     }
 
-    void clear_attributes(const Path &vpath)
+    void clear_attributes(const Path& vpath)
     {
         return vfs->clear_attributes(vpath);
     }

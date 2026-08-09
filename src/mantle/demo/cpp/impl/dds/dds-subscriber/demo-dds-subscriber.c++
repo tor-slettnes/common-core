@@ -17,7 +17,7 @@
 
 namespace cc::demo::dds
 {
-    Subscriber::Subscriber(const std::string &channel_name, int domain_id)
+    Subscriber::Subscriber(const std::string& channel_name, int domain_id)
         : Super(channel_name, domain_id),
           time_reader(this->create_reader<CC::Demo::TimeData>(
               CC::Demo::TIMEDATA_TOPIC,    // topic_name
@@ -33,7 +33,7 @@ namespace cc::demo::dds
     }
 
     void Subscriber::on_time_update(core::signal::MappingAction action,
-                                    const CC::Demo::TimeData &time_data)
+                                    const CC::Demo::TimeData& time_data)
     {
         // We have received a time update from a remote publisher.
         // Emit this update locally via `demo::signal_time`, declared in
@@ -43,7 +43,7 @@ namespace cc::demo::dds
     }
 
     void Subscriber::on_greeting_update(core::signal::MappingAction action,
-                                        const CC::Demo::Greeting &greeting)
+                                        const CC::Demo::Greeting& greeting)
     {
         // We have received a time update from a remote publisher.
         // Emit this update locally via `demo::signal_time`, declared

@@ -26,14 +26,14 @@ namespace cc::dds
         using Super = core::logging::MessageSink;
 
     protected:
-        DDSLogger(const std::string &sink_id,
-                  const std::string &channel_name = core::platform::path->exec_name(),
+        DDSLogger(const std::string& sink_id,
+                  const std::string& channel_name = core::platform::path->exec_name(),
                   int domain_id = 0);
 
     protected:
         void open() override;
         void close() override;
-        bool handle_message(const core::logging::Message::ptr &message) override;
+        bool handle_message(const core::logging::Message::ptr& message) override;
 
     private:
         DataWriterPtr<CC::Status::LogMessage> log_writer;
@@ -45,7 +45,7 @@ namespace cc::dds
     inline static core::logging::SinkFactory dds_factory(
         "dds",
         "Enable logging over DDS [Default: %default]",
-        [](const core::logging::SinkID &sink_id) -> core::logging::Sink::ptr {
+        [](const core::logging::SinkID& sink_id) -> core::logging::Sink::ptr {
             return DDSLogger::create_shared(sink_id);
         });
 }  // namespace cc::dds

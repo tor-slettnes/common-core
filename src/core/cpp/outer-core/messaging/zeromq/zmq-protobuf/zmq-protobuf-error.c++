@@ -16,19 +16,19 @@
 
 namespace cc::zmq
 {
-    ProtoBufError::ProtoBufError(const cc::protobuf::request_reply::StatusCode &code,
-                                 const core::status::Error &error)
+    ProtoBufError::ProtoBufError(const cc::protobuf::request_reply::StatusCode& code,
+                                 const core::status::Error& error)
         : Super(error),
           status_code_(code)
     {
     }
 
-    bool ProtoBufError::equivalent(const Event &other) const noexcept
+    bool ProtoBufError::equivalent(const Event& other) const noexcept
     {
-        if (auto *that = dynamic_cast<const ProtoBufError*>(&other))
+        if (auto* that = dynamic_cast<const ProtoBufError*>(&other))
         {
             return Super::equivalent(other) &&
-                (this->status_code() == that->status_code());
+                   (this->status_code() == that->status_code());
         }
         else
         {
@@ -85,7 +85,7 @@ namespace cc::zmq
         return fields;
     }
 
-    core::types::Value ProtoBufError::get_field_as_value(const std::string &field_name) const
+    core::types::Value ProtoBufError::get_field_as_value(const std::string& field_name) const
     {
         if (field_name == STATUS_FIELD_CODE)
         {

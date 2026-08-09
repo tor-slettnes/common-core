@@ -15,7 +15,7 @@ namespace cc::core::logging
     //--------------------------------------------------------------------------
     // CSVFileSink
 
-    CSVFileSink::CSVFileSink(const std::string &sink_id)
+    CSVFileSink::CSVFileSink(const std::string& sink_id)
         : Super(sink_id),
           TabularData(),
           RotatingPath(sink_id, ".csv"),
@@ -24,7 +24,7 @@ namespace cc::core::logging
         this->stream.exceptions(std::ios::failbit);
     }
 
-    void CSVFileSink::load_settings(const types::KeyValueMap &settings)
+    void CSVFileSink::load_settings(const types::KeyValueMap& settings)
     {
         Super::load_settings(settings);
         this->load_rotation(settings);
@@ -32,9 +32,9 @@ namespace cc::core::logging
         this->load_csv_settings(settings);
     }
 
-    void CSVFileSink::load_csv_settings(const types::KeyValueMap &settings)
+    void CSVFileSink::load_csv_settings(const types::KeyValueMap& settings)
     {
-        if (const core::types::Value &value = settings.get(SETTING_COL_SEP))
+        if (const core::types::Value& value = settings.get(SETTING_COL_SEP))
         {
             this->set_separator(value.as_string());
         }
@@ -52,7 +52,7 @@ namespace cc::core::logging
         this->close_file();
     }
 
-    void CSVFileSink::open_file(const dt::TimePoint &tp)
+    void CSVFileSink::open_file(const dt::TimePoint& tp)
     {
         RotatingPath::open_file(tp);
 
@@ -74,7 +74,7 @@ namespace cc::core::logging
         }
     }
 
-    bool CSVFileSink::handle_item(const types::Loggable::ptr &loggable)
+    bool CSVFileSink::handle_item(const types::Loggable::ptr& loggable)
     {
         if (this->stream.good())
         {
@@ -112,17 +112,17 @@ namespace cc::core::logging
         this->stream << std::endl;
     }
 
-    const std::string &CSVFileSink::separator() const
+    const std::string& CSVFileSink::separator() const
     {
         return this->separator_;
     }
 
-    void CSVFileSink::set_separator(const std::string &separator)
+    void CSVFileSink::set_separator(const std::string& separator)
     {
         this->separator_ = separator;
     }
 
-    std::string CSVFileSink::protect_separator(std::string &&field) const
+    std::string CSVFileSink::protect_separator(std::string&& field) const
     {
         if (field.find(this->separator()) != std::string::npos)
         {

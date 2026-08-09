@@ -13,7 +13,7 @@ namespace cc::platform::switchboard
     //==========================================================================
     // Operators
 
-    bool operator==(const Dependency &lhs, const Dependency &rhs)
+    bool operator==(const Dependency& lhs, const Dependency& rhs)
     {
         return ((lhs.predecessor_name() == rhs.predecessor_name()) &&
                 (lhs.trigger_states() == rhs.trigger_states()) &&
@@ -22,17 +22,17 @@ namespace cc::platform::switchboard
                 (lhs.sufficient() == rhs.sufficient()));
     }
 
-    bool operator!=(const Dependency &lhs, const Dependency &rhs)
+    bool operator!=(const Dependency& lhs, const Dependency& rhs)
     {
         return !(lhs == rhs);
     }
 
-    bool operator==(const DependencyRef &lhs, const DependencyRef &rhs)
+    bool operator==(const DependencyRef& lhs, const DependencyRef& rhs)
     {
         return core::types::equivalent(lhs, rhs);
     }
 
-    bool operator!=(const DependencyRef &lhs, const DependencyRef &rhs)
+    bool operator!=(const DependencyRef& lhs, const DependencyRef& rhs)
     {
         return !(lhs == rhs);
     }
@@ -41,9 +41,9 @@ namespace cc::platform::switchboard
     /// @class Dependency
 
     Dependency::Dependency(
-        const std::weak_ptr<Provider> &provider,
-        const SwitchName &predecessor_name,
-        const StateSet &trigger_states,
+        const std::weak_ptr<Provider>& provider,
+        const SwitchName& predecessor_name,
+        const StateSet& trigger_states,
         DependencyPolarity polarity,
         bool hard,
         bool sufficient)
@@ -73,7 +73,7 @@ namespace cc::platform::switchboard
         }
     }
 
-    const SwitchName &Dependency::predecessor_name() const
+    const SwitchName& Dependency::predecessor_name() const
     {
         return this->predecessor_name_;
     }
@@ -190,7 +190,7 @@ namespace cc::platform::switchboard
         }
     }
 
-    void Dependency::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void Dependency::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->extend({
             {"predecessor", this->predecessor_name()},

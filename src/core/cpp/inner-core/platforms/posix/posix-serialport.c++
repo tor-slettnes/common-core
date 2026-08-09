@@ -14,7 +14,7 @@
 namespace cc::core::platform
 {
     PosixSerialPort::PosixSerialPort(
-        const std::string &device,
+        const std::string& device,
         BaudRate speed)
         : Super(device, speed),
           fd_(-1)
@@ -74,7 +74,7 @@ namespace cc::core::platform
         return (this->fd_ >= 0);
     }
 
-    void PosixSerialPort::write(const std::string &text)
+    void PosixSerialPort::write(const std::string& text)
     {
         if (int fd = this->fd_; this->fd_ >= 0)
         {
@@ -199,13 +199,13 @@ namespace cc::core::platform
     /// @class PosixSerialPortProvider
 
     PosixSerialPortProvider::PosixSerialPortProvider(
-        const std::string &implementation)
+        const std::string& implementation)
         : SerialPortProvider(implementation)
     {
     }
 
     SerialPortProvider::SerialPortPtr PosixSerialPortProvider::serialport(
-        const std::string &device,
+        const std::string& device,
         SerialPort::BaudRate speed)
     {
         return std::make_shared<PosixSerialPort>(device, speed);

@@ -49,8 +49,8 @@ namespace cc::core::json
     public:
         TokenParser(parsers::Input::ptr input);
 
-        TokenPair next_of(const TokenMask &expected,
-                          const TokenMask &endtokens = TI_NONE);
+        TokenPair next_of(const TokenMask& expected,
+                          const TokenMask& endtokens = TI_NONE);
 
     protected:
         TokenPair next_token();
@@ -67,7 +67,7 @@ namespace cc::core::json
 
     private:
         template <class T, class... Args>
-        TokenPair parse_numeric(Args &&...args);
+        TokenPair parse_numeric(Args&&... args);
 
     protected:
         parsers::Input::ptr input;
@@ -76,4 +76,4 @@ namespace cc::core::json
         static const SymbolMapping symbol_map;
         std::list<std::string> indentation_stack;
     };
-} // namespace cc::core::json
+}  // namespace cc::core::json

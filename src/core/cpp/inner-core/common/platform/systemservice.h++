@@ -19,8 +19,8 @@ namespace cc::core::platform
 
     protected:
         SystemServiceProvider(
-            const std::string &provider_name,
-            const std::string &service_name);
+            const std::string& provider_name,
+            const std::string& service_name);
 
     public:
         virtual std::string service_name() const noexcept;

@@ -9,7 +9,7 @@
 
 namespace Glib
 {
-    std::ostream &operator<<(std::ostream &stream, const VariantBase &obj)
+    std::ostream& operator<<(std::ostream& stream, const VariantBase& obj)
     {
         if (obj)
         {

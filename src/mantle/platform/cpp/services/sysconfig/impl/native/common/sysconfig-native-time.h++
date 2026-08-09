@@ -16,7 +16,7 @@ namespace cc::platform::sysconfig::native
         using Super = TimeConfigInterface;
 
     public:
-        TimeConfigProvider(const std::string &name = "TimeConfigProvider");
+        TimeConfigProvider(const std::string& name = "TimeConfigProvider");
 
         void initialize() override;
         void deinitialize() override;
@@ -24,10 +24,10 @@ namespace cc::platform::sysconfig::native
     protected:
         // Current timestamp
         core::dt::TimePoint get_current_time() const override;
-        void set_current_time(const core::dt::TimePoint &tp) override;
+        void set_current_time(const core::dt::TimePoint& tp) override;
 
         // Get or set time configuration
-        void set_time_config(const TimeConfig &config) override;
+        void set_time_config(const TimeConfig& config) override;
         TimeConfig get_time_config() const override;
 
     private:

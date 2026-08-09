@@ -14,10 +14,10 @@
 namespace cc::platform::netconfig::dbus
 {
     Connection::Connection(
-        cc::dbus::ProxyContainer *container,
-        const cc::dbus::ConnectionPtr &connection,
-        const cc::dbus::ServiceName &servicename,
-        const cc::dbus::ObjectPath &objectpath)
+        cc::dbus::ProxyContainer* container,
+        const cc::dbus::ConnectionPtr& connection,
+        const cc::dbus::ServiceName& servicename,
+        const cc::dbus::ObjectPath& objectpath)
         : MappedDataWrapper<ConnectionData>(
               container,
               connection,
@@ -32,7 +32,7 @@ namespace cc::platform::netconfig::dbus
     }
 
     std::shared_ptr<Connection> Connection::get_by_key(
-        const Key &key,
+        const Key& key,
         bool required)
     {
         if (auto ref = lookup<Connection>(key, false))
@@ -47,10 +47,10 @@ namespace cc::platform::netconfig::dbus
     }
 
     std::shared_ptr<Connection> Connection::get_by_id(
-        const std::string &id,
+        const std::string& id,
         bool required)
     {
-        for (const auto &[path, ref] : dbus::container.instances<Connection>())
+        for (const auto& [path, ref] : dbus::container.instances<Connection>())
         {
             if (ref->id == id)
             {
@@ -117,7 +117,7 @@ namespace cc::platform::netconfig::dbus
         Super::set_ready();
     }
 
-    void Connection::on_signal_updated(const Glib::VariantContainerBase &parameters)
+    void Connection::on_signal_updated(const Glib::VariantContainerBase& parameters)
     {
         if (this->ready)
         {
@@ -140,7 +140,7 @@ namespace cc::platform::netconfig::dbus
 
     const core::types::ByteVector Connection::ssid() const
     {
-        if (auto *wireless = std::get_if<WirelessConnectionData>(&this->specific_data))
+        if (auto* wireless = std::get_if<WirelessConnectionData>(&this->specific_data))
         {
             return wireless->ssid;
         }
@@ -157,11 +157,11 @@ namespace cc::platform::netconfig::dbus
         {
             ref = lookup<Device>(this->interface, true);
         }
-        else if (auto *wired = this->wired_data())
+        else if (auto* wired = this->wired_data())
         {
             ref = WiredDevice::first();
         }
-        else if (auto *wifi = this->wifi_data())
+        else if (auto* wifi = this->wifi_data())
         {
             if (auto ap = AccessPoint::get_by_ssid(wifi->ssid, false))
             {
@@ -181,7 +181,7 @@ namespace cc::platform::netconfig::dbus
         return ref->objectpath;
     }
 
-    void Connection::replace(const ConnectionData &data)
+    void Connection::replace(const ConnectionData& data)
     {
         auto inputs = Glib::VariantContainerBase::create_tuple({
             connection::build_settings_container(data),
@@ -191,7 +191,7 @@ namespace cc::platform::netconfig::dbus
 
     void Connection::remove_duplicates()
     {
-        for (const auto &[path, candidate] : this->container->instances<Connection>())
+        for (const auto& [path, candidate] : this->container->instances<Connection>())
         {
             if ((candidate.get() != this) && (candidate->id == this->id))
             {

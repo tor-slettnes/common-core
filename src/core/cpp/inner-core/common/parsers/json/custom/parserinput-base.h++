@@ -25,4 +25,4 @@ namespace cc::core::parsers
         virtual void init_token(char c) = 0;
         virtual void append_to_token(char c) = 0;
     };
-}  // namespace cc::core::parser
+}  // namespace cc::core::parsers

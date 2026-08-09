@@ -31,38 +31,38 @@ namespace cc::platform::upgrade::native
     protected:
         void initialize() override;
         void deinitialize() override;
-        PackageCatalogue scan(const PackageSource &source) override;
+        PackageCatalogue scan(const PackageSource& source) override;
         PackageSources list_sources() const override;
-        PackageCatalogue list_available(const PackageSource &source) const override;
-        PackageInfo::ptr best_available(const PackageSource &source) const override;
-        PackageInfo::ptr install(const PackageSource &source) override;
+        PackageCatalogue list_available(const PackageSource& source) const override;
+        PackageInfo::ptr best_available(const PackageSource& source) const override;
+        PackageInfo::ptr install(const PackageSource& source) override;
         void finalize() override;
-        bool remove_index(const PackageSource &source);
+        bool remove_index(const PackageSource& source);
 
     protected:
         // Package indices
         std::vector<PackageIndex::ptr> indices() const;
-        PackageIndex::ptr get_index(const PackageSource &source) const;
-        PackageIndex::ptr get_or_add_index(const PackageSource &source);
+        PackageIndex::ptr get_index(const PackageSource& source) const;
+        PackageIndex::ptr get_or_add_index(const PackageSource& source);
 
         // Package handlers
-        PackageHandler::ptr get_handler(const PackageSource &source) const;
+        PackageHandler::ptr get_handler(const PackageSource& source) const;
 
         // Signalling
         void emit_best_available() const;
 
     private:
-        void scan_source(const PackageSource &source);
+        void scan_source(const PackageSource& source);
 
         void on_vfs_context(
             core::signal::MappingAction action,
-            const vfs::ContextName &name,
-            const vfs::Context::ptr &context);
+            const vfs::ContextName& name,
+            const vfs::Context::ptr& context);
 
         void on_vfs_context_in_use(
             core::signal::MappingAction action,
-            const vfs::ContextName &name,
-            const vfs::Context::ptr &context);
+            const vfs::ContextName& name,
+            const vfs::Context::ptr& context);
 
     private:
         std::shared_ptr<core::SettingsStore> settings;

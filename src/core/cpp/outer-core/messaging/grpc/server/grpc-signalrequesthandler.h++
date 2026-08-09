@@ -35,9 +35,9 @@ namespace cc::grpc
         template <class SignalT,
                   class SignalQueueT,
                   class SignalFilterT = cc::protobuf::signal::Filter>
-        inline ::grpc::Status stream_signals(::grpc::ServerContext *cxt,
-                                             const SignalFilterT *req,
-                                             ::grpc::ServerWriter<SignalT> *writer)
+        inline ::grpc::Status stream_signals(::grpc::ServerContext* cxt,
+                                             const SignalFilterT* req,
+                                             ::grpc::ServerWriter<SignalT>* writer)
         {
             std::string who = this->servicename(true);
             try

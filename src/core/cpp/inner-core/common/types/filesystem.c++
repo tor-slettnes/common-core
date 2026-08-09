@@ -22,13 +22,13 @@ namespace std::filesystem
         {file_type::unknown, "unknown"},
     };
 
-    std::ostream &operator<<(std::ostream &stream, const file_type &type)
+    std::ostream& operator<<(std::ostream& stream, const file_type& type)
     {
         try
         {
             stream << typenames.at(type);
         }
-        catch (const std::out_of_range &)
+        catch (const std::out_of_range&)
         {
             stream << typenames.at(file_type::unknown);
         }

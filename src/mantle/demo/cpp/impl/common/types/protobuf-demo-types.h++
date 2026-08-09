@@ -15,20 +15,19 @@ namespace cc::protobuf
     //--------------------------------------------------------------------------
     // Greeting
 
-    void encode(const cc::demo::Greeting &greeting,
-                cc::demo::protobuf::Greeting *msg);
+    void encode(const cc::demo::Greeting& greeting,
+                cc::demo::protobuf::Greeting* msg);
 
-    void decode(const cc::demo::protobuf::Greeting &msg,
-                cc::demo::Greeting *greeting);
-
+    void decode(const cc::demo::protobuf::Greeting& msg,
+                cc::demo::Greeting* greeting);
 
     //--------------------------------------------------------------------------
     // TimeData
 
-    void encode(const cc::demo::TimeData &timedata,
-                cc::demo::protobuf::TimeData *msg);
+    void encode(const cc::demo::TimeData& timedata,
+                cc::demo::protobuf::TimeData* msg);
 
-    void decode(const cc::demo::protobuf::TimeData &msg,
-                cc::demo::TimeData *timedata);
-  // namespace cc::protobuf
-}
+    void decode(const cc::demo::protobuf::TimeData& msg,
+                cc::demo::TimeData* timedata);
+    // namespace cc::protobuf
+}  // namespace cc::protobuf

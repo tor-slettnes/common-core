@@ -31,7 +31,7 @@ namespace cc::core::platform
 
         /// @brief Demangle a type/class name, i.e. `typeid(Class).name`
         virtual std::string cpp_demangle(
-            const std::string &abiname,
+            const std::string& abiname,
             bool stem_only) const noexcept = 0;
     };
 

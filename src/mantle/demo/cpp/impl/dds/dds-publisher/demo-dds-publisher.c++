@@ -13,7 +13,7 @@
 
 namespace cc::demo::dds
 {
-    Publisher::Publisher(const std::string &channel_name, int domain_id)
+    Publisher::Publisher(const std::string& channel_name, int domain_id)
         : Super(channel_name, domain_id),
           time_writer(this->create_writer<CC::Demo::TimeData>(
               CC::Demo::TIMEDATA_TOPIC,
@@ -61,7 +61,7 @@ namespace cc::demo::dds
         signal_time.disconnect(TYPE_NAME_FULL(This));
     }
 
-    void Publisher::on_time_update(const TimeData &time_data)
+    void Publisher::on_time_update(const TimeData& time_data)
     {
         logf_trace("Received time update; publishing over DDS: %s", time_data);
         auto encoded_time = idl::encoded<CC::Demo::TimeData>(time_data);
@@ -69,8 +69,8 @@ namespace cc::demo::dds
     }
 
     void Publisher::on_greeting_update(core::signal::MappingAction mapping_action,
-                                       const std::string &identity,
-                                       const Greeting &greeting)
+                                       const std::string& identity,
+                                       const Greeting& greeting)
     {
         logf_trace("Received greeting %s from %r; publishing over DDS: %s",
                    mapping_action,

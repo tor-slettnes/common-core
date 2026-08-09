@@ -20,8 +20,8 @@ namespace cc::core::logging
     //--------------------------------------------------------------------------
     /// @class Sink
 
-    Sink::Sink(const SinkID &sink_id,
-               const std::optional<Loggable::ContractID> &contract_id)
+    Sink::Sink(const SinkID& sink_id,
+               const std::optional<Loggable::ContractID>& contract_id)
         : is_open_(false),
           sink_id_(sink_id),
           contract_id_(contract_id),
@@ -29,9 +29,9 @@ namespace cc::core::logging
     {
     }
 
-    void Sink::load_settings(const types::KeyValueMap &settings)
+    void Sink::load_settings(const types::KeyValueMap& settings)
     {
-        if (const core::types::Value &contract_id = settings.get(SETTING_CONTRACT_ID))
+        if (const core::types::Value& contract_id = settings.get(SETTING_CONTRACT_ID))
         {
             this->set_contract_id(contract_id.as_string());
         }
@@ -52,12 +52,12 @@ namespace cc::core::logging
         return this->sink_type_;
     }
 
-    void Sink::set_sink_type(const SinkType &sink_type)
+    void Sink::set_sink_type(const SinkType& sink_type)
     {
         this->sink_type_ = sink_type;
     }
 
-    void Sink::set_contract_id(const std::optional<Loggable::ContractID> &contract_id)
+    void Sink::set_contract_id(const std::optional<Loggable::ContractID>& contract_id)
     {
         this->contract_id_ = contract_id;
     }
@@ -77,7 +77,7 @@ namespace cc::core::logging
         return this->threshold_;
     }
 
-    bool Sink::is_applicable(const types::Loggable &loggable) const
+    bool Sink::is_applicable(const types::Loggable& loggable) const
     {
         if (this->contract_id() &&
             (this->contract_id().value() != loggable.contract_id()))
@@ -85,7 +85,7 @@ namespace cc::core::logging
             return false;
         }
 
-        if (auto *event = dynamic_cast<const status::Event *>(&loggable))
+        if (auto* event = dynamic_cast<const status::Event*>(&loggable))
         {
             if (event->level() < this->threshold())
             {
@@ -111,7 +111,7 @@ namespace cc::core::logging
         this->is_open_ = false;
     }
 
-    bool Sink::capture(const types::Loggable::ptr &loggable)
+    bool Sink::capture(const types::Loggable::ptr& loggable)
     {
         if (this->is_open() && this->is_applicable(*loggable))
         {
@@ -123,7 +123,7 @@ namespace cc::core::logging
         }
     }
 
-    bool Sink::try_handle_item(const types::Loggable::ptr &loggable)
+    bool Sink::try_handle_item(const types::Loggable::ptr& loggable)
     {
         try
         {

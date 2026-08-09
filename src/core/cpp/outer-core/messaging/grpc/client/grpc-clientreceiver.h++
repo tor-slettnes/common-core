@@ -29,14 +29,14 @@ namespace cc::grpc
         using This = ClientReceiver<ServiceT, MessageT, RequestT>;
 
     protected:
-        using Handler = std::function<void(const MessageT &)>;
+        using Handler = std::function<void(const MessageT&)>;
         using UniqueReader = std::unique_ptr<::grpc::ClientReader<MessageT>>;
 
         using StreamerMethod =
-            UniqueReader (ServiceT::Stub::*)(::grpc::ClientContext *, const RequestT &req);
+            UniqueReader (ServiceT::Stub::*)(::grpc::ClientContext*, const RequestT& req);
 
     public:
-        ClientReceiver(const Handler &handler)
+        ClientReceiver(const Handler& handler)
             : handler(handler),
               keepalive(true)
         {
@@ -47,9 +47,9 @@ namespace cc::grpc
             return this->receive_thread.joinable();
         }
 
-        void start(const StreamerMethod &method,
-                   typename ServiceT::Stub *stub,
-                   const RequestT &request = {})
+        void start(const StreamerMethod& method,
+                   typename ServiceT::Stub* stub,
+                   const RequestT& request = {})
         {
             this->keepalive = true;
             if (!this->receive_thread.joinable())
@@ -74,13 +74,13 @@ namespace cc::grpc
         }
 
     private:
-        void keep_streaming(const StreamerMethod &method,
-                            typename ServiceT::Stub *stub,
-                            const RequestT &request = {})
+        void keep_streaming(const StreamerMethod& method,
+                            typename ServiceT::Stub* stub,
+                            const RequestT& request = {})
         {
             while (this->keepalive)
             {
-                auto &cxt = this->cxt = std::make_shared<::grpc::ClientContext>();
+                auto& cxt = this->cxt = std::make_shared<::grpc::ClientContext>();
                 cxt->set_wait_for_ready(true);
                 try
                 {
@@ -104,7 +104,7 @@ namespace cc::grpc
             }
         }
 
-        void stream(const UniqueReader &reader)
+        void stream(const UniqueReader& reader)
         {
             MessageT msg;
             logf_info("Connected to gRPC service: %s",
@@ -141,7 +141,7 @@ namespace cc::grpc
         using Signal = core::signal::DataSignal<SignalT>;
 
     public:
-        ClientSignalReceiver(Signal *signal)
+        ClientSignalReceiver(Signal* signal)
             : Super(std::bind(&Signal::emit, signal, std::placeholders::_1))
         {
         }

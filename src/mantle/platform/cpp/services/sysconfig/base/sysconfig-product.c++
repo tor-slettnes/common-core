@@ -14,7 +14,7 @@ namespace cc::platform::sysconfig
     //==========================================================================
     // Data types
 
-    Version Version::from_string(const std::string &version_string)
+    Version Version::from_string(const std::string& version_string)
     {
         const std::regex rx{"(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:-(\\d+))?.*"};
 
@@ -32,7 +32,7 @@ namespace cc::platform::sysconfig
         return version;
     }
 
-    Version Version::from_value(const core::types::Value &value)
+    Version Version::from_value(const core::types::Value& value)
     {
         if (core::types::ValueListPtr list = value.get_valuelist_ptr())
         {
@@ -70,19 +70,19 @@ namespace cc::platform::sysconfig
                (this->build_number > 0);
     }
 
-    bool Version::operator==(const Version &other) const
+    bool Version::operator==(const Version& other) const
     {
         return (this->major == other.major) &&
                (this->minor == other.minor) &&
                (this->patch == other.patch);
     }
 
-    bool Version::operator!=(const Version &other) const
+    bool Version::operator!=(const Version& other) const
     {
         return !this->operator==(other);
     }
 
-    bool Version::operator<(const Version &other) const
+    bool Version::operator<(const Version& other) const
     {
         return (this->major != other.major) ? (this->major < other.major)
              : (this->minor != other.minor) ? (this->minor < other.minor)
@@ -90,12 +90,12 @@ namespace cc::platform::sysconfig
                                             : (this->build_number < other.build_number);
     }
 
-    bool Version::operator>(const Version &other) const
+    bool Version::operator>(const Version& other) const
     {
         return other.operator<(*this);
     }
 
-    void Version::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void Version::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append_if(
             !this->printable_version.empty(),
@@ -112,7 +112,7 @@ namespace cc::platform::sysconfig
             this->build_number);
     }
 
-    void Version::to_stream(std::ostream &stream) const
+    void Version::to_stream(std::ostream& stream) const
     {
         if (!this->printable_version.empty())
         {
@@ -128,12 +128,12 @@ namespace cc::platform::sysconfig
         }
     }
 
-    void Version::to_literal_stream(std::ostream &stream) const
+    void Version::to_literal_stream(std::ostream& stream) const
     {
         this->as_tvlist().to_stream(stream);
     }
 
-    void ProductInfo::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void ProductInfo::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->extend({
             {"product_name", this->product_name},
@@ -146,7 +146,7 @@ namespace cc::platform::sysconfig
         if (!this->component_versions.empty())
         {
             core::types::TaggedValueList component_map;
-            for (const auto &[component, version] : this->component_versions)
+            for (const auto& [component, version] : this->component_versions)
             {
                 component_map.append(component, version.as_tvlist());
             }
@@ -157,7 +157,7 @@ namespace cc::platform::sysconfig
         if (!this->subsystem_info.empty())
         {
             core::types::ValueList subsystems;
-            for (const ProductInfo &subsystem : this->subsystem_info)
+            for (const ProductInfo& subsystem : this->subsystem_info)
             {
                 subsystems.append(subsystem.as_tvlist());
             }

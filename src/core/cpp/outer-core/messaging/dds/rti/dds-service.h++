@@ -27,10 +27,10 @@ namespace cc::dds
 
     protected:
         template <class RequestHandler>
-        Service(const ::dds::rpc::Server &server,
-                const std::string &channel_name,
+        Service(const ::dds::rpc::Server& server,
+                const std::string& channel_name,
                 int domain_id,
-                const std::shared_ptr<RequestHandler> &request_handler)
+                const std::shared_ptr<RequestHandler>& request_handler)
             : Endpoint("service", channel_name, domain_id),
               ServiceType(request_handler, server, this->service_params())
         {

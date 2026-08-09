@@ -13,12 +13,10 @@
 
 #include "cc/platform/vfs/grpc/vfs_service.grpc.pb.h"
 
-
 namespace cc::platform::vfs
 {
     using namespace cc::platform::vfs;
 }
-
 
 namespace cc::platform::vfs::grpc
 {

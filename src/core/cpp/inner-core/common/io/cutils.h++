@@ -12,7 +12,7 @@
 namespace cc::core::io
 {
     template <class T, std::enable_if_t<std::is_integral_v<T>, bool> = true>
-    T checkstatus(T status, const std::string &context = {})
+    T checkstatus(T status, const std::string& context = {})
     {
         if (status < 0)
         {
@@ -22,7 +22,7 @@ namespace cc::core::io
     }
 
     template <class PT>
-    PT *checkstatus(PT *pointer, const std::string &context = {})
+    PT* checkstatus(PT* pointer, const std::string& context = {})
     {
         if (pointer == nullptr)
         {
@@ -31,4 +31,4 @@ namespace cc::core::io
         return pointer;
     }
 
-} // namespace cc::core::io
+}  // namespace cc::core::io

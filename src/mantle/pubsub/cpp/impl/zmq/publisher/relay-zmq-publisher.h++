@@ -27,8 +27,8 @@ namespace cc::platform::pubsub::zmq
         using Super = cc::zmq::Publisher;
 
     protected:
-        Publisher(const std::string &bind_address = "",
-                  const std::string &channel_name = PRODUCER_CHANNEL,
+        Publisher(const std::string& bind_address = "",
+                  const std::string& channel_name = PRODUCER_CHANNEL,
                   Role role = Role::SATELLITE);
 
     public:
@@ -38,8 +38,8 @@ namespace cc::platform::pubsub::zmq
     protected:
         void start_writer() override;
         void stop_writer() override;
-        bool write(const std::string &topic,
-                   const core::types::Value &payload) override;
+        bool write(const std::string& topic,
+                   const core::types::Value& payload) override;
 
     private:
         std::shared_ptr<SignalWriter> signal_writer;

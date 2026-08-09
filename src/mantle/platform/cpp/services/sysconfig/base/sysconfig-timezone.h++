@@ -33,8 +33,8 @@ namespace cc::platform::sysconfig
         TimeZoneCountryName name;  // English name, e.g. "United States" or "Germany"
     };
 
-    bool operator<(const TimeZoneCountry &lhs, const TimeZoneCountry &rhs);
-    std::ostream &operator<<(std::ostream &stream, const TimeZoneCountry &country);
+    bool operator<(const TimeZoneCountry& lhs, const TimeZoneCountry& rhs);
+    std::ostream& operator<<(std::ostream& stream, const TimeZoneCountry& country);
     using TimeZoneCountries = std::vector<TimeZoneCountry>;
 
     //======================================================================
@@ -47,7 +47,7 @@ namespace cc::platform::sysconfig
     };
 
     using TimeZoneLocations = std::vector<TimeZoneLocation>;
-    std::ostream &operator<<(std::ostream &stream, const TimeZoneLocation &location);
+    std::ostream& operator<<(std::ostream& stream, const TimeZoneLocation& location);
 
     //======================================================================
     // Time Zone Area + Country filter
@@ -57,7 +57,7 @@ namespace cc::platform::sysconfig
         TimeZoneArea area;
         TimeZoneCountry country;
     };
-    std::ostream &operator<<(std::ostream &stream, const TimeZoneLocationFilter &filter);
+    std::ostream& operator<<(std::ostream& stream, const TimeZoneLocationFilter& filter);
 
     //======================================================================
     // TimeZoneCanonicalSpec
@@ -81,7 +81,7 @@ namespace cc::platform::sysconfig
         std::int32_t longitude = 0;  // Seconds east of Prime Meridian
     };
 
-    std::ostream &operator<<(std::ostream &stream, const TimeZoneCanonicalSpec &spec);
+    std::ostream& operator<<(std::ostream& stream, const TimeZoneCanonicalSpec& spec);
 
     using TimeZoneCanonicalSpecs = std::vector<TimeZoneCanonicalSpec>;
 
@@ -108,35 +108,35 @@ namespace cc::platform::sysconfig
         virtual TimeZoneAreas list_timezone_areas() const = 0;
 
         virtual TimeZoneCountries list_timezone_countries(
-            const TimeZoneArea &area = {}) = 0;
+            const TimeZoneArea& area = {}) = 0;
 
         virtual TimeZoneRegions list_timezone_regions(
-            const TimeZoneLocationFilter &filter = {}) = 0;
+            const TimeZoneLocationFilter& filter = {}) = 0;
 
         /// Obtain information about available time zones
         virtual TimeZoneCanonicalSpecs list_timezone_specs(
-            const TimeZoneLocationFilter &filter = {}) const = 0;
+            const TimeZoneLocationFilter& filter = {}) const = 0;
 
         /// Return geographic information about a specific canonical timezone. If no
         /// zone name is specified, return info about the currently configured zone.
         virtual TimeZoneCanonicalSpec get_timezone_spec(
-            const TimeZoneCanonicalName &zone = {}) const = 0;
+            const TimeZoneCanonicalName& zone = {}) const = 0;
 
         /// Get information about the currently applied timezone, including time
         /// offsets from UTC and whether Daylight Savings / Summer Time is currently
         /// in effect.
         virtual TimeZoneInfo get_timezone_info(
-            const TimeZoneCanonicalName &canonical_zone = {},
-            const core::dt::TimePoint &timepoint = {}) const = 0;
+            const TimeZoneCanonicalName& canonical_zone = {},
+            const core::dt::TimePoint& timepoint = {}) const = 0;
 
         /// Set the system time zone to the specified canonical name.
         /// Return the resulting applied zone
         virtual TimeZoneInfo set_timezone(
-            const TimeZoneCanonicalName &zonename) = 0;
+            const TimeZoneCanonicalName& zonename) = 0;
 
         /// Set the system timezone based on country and region, if applicable.
         virtual TimeZoneInfo set_timezone(
-            const TimeZoneLocation &location) = 0;
+            const TimeZoneLocation& location) = 0;
     };
 
     //==========================================================================

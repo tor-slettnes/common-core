@@ -21,17 +21,16 @@ namespace cc::platform::multilogger::zmq
         : public cc::zmq::ProtoBufMessageWriter<cc::platform::multilogger::protobuf::Loggable>,
           public core::types::enable_create_shared_from_this<ClientWriter>
     {
-        using This  = ClientWriter;
+        using This = ClientWriter;
         using Super = cc::zmq::ProtoBufMessageWriter<cc::platform::multilogger::protobuf::Loggable>;
 
     protected:
-        ClientWriter(const std::shared_ptr<cc::zmq::Publisher> &publisher);
+        ClientWriter(const std::shared_ptr<cc::zmq::Publisher>& publisher);
 
     public:
-        void write(const core::types::Loggable::ptr &loggable);
+        void write(const core::types::Loggable::ptr& loggable);
 
     private:
         std::shared_ptr<cc::zmq::Publisher> publisher;
     };
-}
-
+}  // namespace cc::platform::multilogger::zmq

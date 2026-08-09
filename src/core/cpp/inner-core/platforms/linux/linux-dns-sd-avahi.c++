@@ -58,10 +58,10 @@ namespace cc::core::platform
     }
 
     void AvahiServiceDiscoveryProvider::add_service(
-        const std::string &name,
-        const std::string &type,
+        const std::string& name,
+        const std::string& type,
         uint port,
-        const AttributeMap &attributes)
+        const AttributeMap& attributes)
     {
         if (!this->client)
         {
@@ -79,9 +79,9 @@ namespace cc::core::platform
     }
 
     void AvahiServiceDiscoveryProvider::add_service_subtype(
-        const std::string &name,
-        const std::string &type,
-        const std::string &subtype)
+        const std::string& name,
+        const std::string& type,
+        const std::string& subtype)
     {
     }
 
@@ -126,11 +126,11 @@ namespace cc::core::platform
     }
 
     void AvahiServiceDiscoveryProvider::add_service_info(
-        const ServiceInfo &service_info)
+        const ServiceInfo& service_info)
     {
         this->create_entry_group();
 
-        AvahiStringList *strings = This::avahi_string_list(service_info.attributes);
+        AvahiStringList* strings = This::avahi_string_list(service_info.attributes);
 
         int status = avahi_entry_group_add_service_strlst(
             this->group,                        // group
@@ -156,11 +156,11 @@ namespace cc::core::platform
     }
 
     void AvahiServiceDiscoveryProvider::client_callback(
-        AvahiClient *client,
+        AvahiClient* client,
         AvahiClientState state,
-        void *userdata)
+        void* userdata)
     {
-        auto instance = reinterpret_cast<AvahiServiceDiscoveryProvider *>(userdata);
+        auto instance = reinterpret_cast<AvahiServiceDiscoveryProvider*>(userdata);
 
         switch (state)
         {
@@ -199,11 +199,11 @@ namespace cc::core::platform
     }
 
     void AvahiServiceDiscoveryProvider::entry_group_callback(
-        AvahiEntryGroup *group,
+        AvahiEntryGroup* group,
         AvahiEntryGroupState state,
-        void *userdata)
+        void* userdata)
     {
-        auto instance = reinterpret_cast<AvahiServiceDiscoveryProvider *>(userdata);
+        auto instance = reinterpret_cast<AvahiServiceDiscoveryProvider*>(userdata);
 
         switch (state)
         {
@@ -230,20 +230,20 @@ namespace cc::core::platform
         }
     }
 
-    AvahiStringList *AvahiServiceDiscoveryProvider::avahi_string_list(
-        const AttributeMap &attributes)
+    AvahiStringList* AvahiServiceDiscoveryProvider::avahi_string_list(
+        const AttributeMap& attributes)
     {
         std::vector<std::string> strings;
         strings.reserve(attributes.size());
 
-        for (const auto &[key, value] : attributes)
+        for (const auto& [key, value] : attributes)
         {
-            std::string &s = strings.emplace_back(key + "=" + value);
+            std::string& s = strings.emplace_back(key + "=" + value);
         }
 
         // We use an old-fashioned C array instead of `std::vector<>`,
         // because if there are no elements, `vector<>::data()` returns `nullptr`.
-        const char *c_strings[attributes.size()];
+        const char* c_strings[attributes.size()];
         for (uint c = 0; c < strings.size(); c++)
         {
             c_strings[c] = strings.at(c).c_str();

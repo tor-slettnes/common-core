@@ -44,7 +44,7 @@ namespace cc::core::types
         return this->closed_;
     }
 
-    bool BlockingQueueBase::pushable(std::unique_lock<std::mutex> *lock)
+    bool BlockingQueueBase::pushable(std::unique_lock<std::mutex>* lock)
     {
         if ((this->maxsize_ == 0) || (this->size() < this->maxsize_))
         {

@@ -17,19 +17,19 @@ namespace cc::zmq
         using This = PyPickleMessageHandler;
 
     protected:
-        PyPickleMessageHandler(const std::weak_ptr<Subscriber> &subscriber,
-                               const std::optional<Filter> &filter = {});
+        PyPickleMessageHandler(const std::weak_ptr<Subscriber>& subscriber,
+                               const std::optional<Filter>& filter = {});
 
     private:
-        void handle(const core::types::ByteVector &bytes) override;
+        void handle(const core::types::ByteVector& bytes) override;
 
     protected:
         // Subclasses should either of the following two methods to handle
         // received messages; either as an unpickled Python object or further
         // decoded as a variant value.
 
-        virtual void handle_message(const python::ContainerObject &object);
-        virtual void handle_message(const core::types::Value &value) {}
+        virtual void handle_message(const python::ContainerObject& object);
+        virtual void handle_message(const core::types::Value& value) {}
     };
 
 }  // namespace cc::zmq

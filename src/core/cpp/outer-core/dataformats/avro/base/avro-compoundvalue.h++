@@ -19,8 +19,8 @@ namespace cc::avro
 
     public:
         CompoundValue(avro_schema_t schema, bool take_schema);
-        CompoundValue(const std::string &json_schema);
-        CompoundValue(const SchemaWrapper &wrapper);
+        CompoundValue(const std::string& json_schema);
+        CompoundValue(const SchemaWrapper& wrapper);
 
     public:
         ~CompoundValue();
@@ -28,17 +28,18 @@ namespace cc::avro
     public:
         avro_value_t get_field_by_index(
             int index,
-            const std::optional<std::string> &expected_name = {}) const;
+            const std::optional<std::string>& expected_name = {}) const;
 
         avro_value_t get_field_by_name(
-            const std::string &name,
-            const std::optional<std::size_t> &expected_index = {}) const;
+            const std::string& name,
+            const std::optional<std::size_t>& expected_index = {}) const;
 
-        void set_from_value(const core::types::Value &value);
-        void set_from_serialized(const core::types::Bytes &bytes);
+        void set_from_value(const core::types::Value& value);
+        void set_from_serialized(const core::types::Bytes& bytes);
+
     protected:
         avro_schema_t schema;
         bool take_schema;
-        avro_value_iface_t *iface;
+        avro_value_iface_t* iface;
     };
 }  // namespace cc::avro

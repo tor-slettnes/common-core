@@ -14,8 +14,8 @@ namespace cc::protobuf
     //==========================================================================
     // Variant Value encoding
 
-    void encode(const core::types::Value &value,
-                variant::Value *msg) noexcept
+    void encode(const core::types::Value& value,
+                variant::Value* msg) noexcept
     {
         switch (value.type())
         {
@@ -69,8 +69,8 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const variant::Value &msg,
-                core::types::Value *value) noexcept
+    void decode(const variant::Value& msg,
+                core::types::Value* value) noexcept
     {
         switch (msg.value_case())
         {
@@ -127,8 +127,8 @@ namespace cc::protobuf
     //==========================================================================
     // TaggedValue encoding/decoding
 
-    void encode(const core::types::TaggedValue &tv,
-                variant::TaggedValue *msg) noexcept
+    void encode(const core::types::TaggedValue& tv,
+                variant::TaggedValue* msg) noexcept
     {
         if (tv.first)
         {
@@ -137,8 +137,8 @@ namespace cc::protobuf
         encode(tv.second, msg->mutable_value());
     }
 
-    void decode(const variant::TaggedValue &msg,
-                core::types::TaggedValue *tv) noexcept
+    void decode(const variant::TaggedValue& msg,
+                core::types::TaggedValue* tv) noexcept
     {
         if (msg.tag().length() > 0)
         {
@@ -147,17 +147,17 @@ namespace cc::protobuf
         decode(msg.value(), &tv->second);
     }
 
-    void encode(const core::types::Tag &tag,
-                const core::types::Value &value,
-                variant::TaggedValue *msg) noexcept
+    void encode(const core::types::Tag& tag,
+                const core::types::Value& value,
+                variant::TaggedValue* msg) noexcept
     {
         msg->set_tag(tag.value_or(""));
         encode(value, msg->mutable_value());
     }
 
-    void decode(const variant::TaggedValue &msg,
-                std::string *tag,
-                core::types::Value *value) noexcept
+    void decode(const variant::TaggedValue& msg,
+                std::string* tag,
+                core::types::Value* value) noexcept
     {
         *tag = msg.tag();
         decode(msg.value(), value);
@@ -166,33 +166,33 @@ namespace cc::protobuf
     //==========================================================================
     // TaggedValueList encoding/decoding
 
-    void encode(const core::types::TaggedValueList &tvlist,
-                variant::TaggedValueList *msg) noexcept
+    void encode(const core::types::TaggedValueList& tvlist,
+                variant::TaggedValueList* msg) noexcept
     {
         encode(tvlist, msg->mutable_items());
     }
 
-    void decode(const variant::TaggedValueList &msg,
-                core::types::TaggedValueList *tvlist) noexcept
+    void decode(const variant::TaggedValueList& msg,
+                core::types::TaggedValueList* tvlist) noexcept
     {
         decode(msg.items(), tvlist);
     }
 
-    void encode(const core::types::TaggedValueList &tvlist,
-                RepeatedTaggedValue *msgs) noexcept
+    void encode(const core::types::TaggedValueList& tvlist,
+                RepeatedTaggedValue* msgs) noexcept
     {
         msgs->Reserve(msgs->size() + tvlist.size());
-        for (const auto &tv : tvlist)
+        for (const auto& tv : tvlist)
         {
             encode(tv, msgs->Add());
         }
     }
 
-    void decode(const RepeatedTaggedValue &msgs,
-                core::types::TaggedValueList *tvlist) noexcept
+    void decode(const RepeatedTaggedValue& msgs,
+                core::types::TaggedValueList* tvlist) noexcept
     {
         tvlist->reserve(tvlist->size() + msgs.size());
-        for (const auto &msg : msgs)
+        for (const auto& msg : msgs)
         {
             decode(msg, &tvlist->emplace_back());
         }
@@ -201,31 +201,31 @@ namespace cc::protobuf
     //==========================================================================
     // KeyValueMap encoding/decoding
 
-    void encode(const core::types::KeyValueMap &map,
-                variant::KeyValueMap *msg) noexcept
+    void encode(const core::types::KeyValueMap& map,
+                variant::KeyValueMap* msg) noexcept
     {
         encode(map, msg->mutable_map());
     }
 
-    void decode(const variant::KeyValueMap &msg,
-                core::types::KeyValueMap *map) noexcept
+    void decode(const variant::KeyValueMap& msg,
+                core::types::KeyValueMap* map) noexcept
     {
         decode(msg.map(), map);
     }
 
-    void encode(const core::types::KeyValueMap &map,
-                google::protobuf::Map<std::string, variant::Value> *msg) noexcept
+    void encode(const core::types::KeyValueMap& map,
+                google::protobuf::Map<std::string, variant::Value>* msg) noexcept
     {
-        for (const auto &[key, value] : map)
+        for (const auto& [key, value] : map)
         {
             encode(value, &(*msg)[key]);
         }
     }
 
-    void decode(const google::protobuf::Map<std::string, variant::Value> &msg,
-                core::types::KeyValueMap *map) noexcept
+    void decode(const google::protobuf::Map<std::string, variant::Value>& msg,
+                core::types::KeyValueMap* map) noexcept
     {
-        for (const auto &[key, value] : msg)
+        for (const auto& [key, value] : msg)
         {
             decode(value, &(*map)[key]);
         }
@@ -234,33 +234,33 @@ namespace cc::protobuf
     //==========================================================================
     // ValueList encoding/decoding
 
-    void encode(const core::types::ValueList &list,
-                variant::ValueList *msg) noexcept
+    void encode(const core::types::ValueList& list,
+                variant::ValueList* msg) noexcept
     {
         encode(list, msg->mutable_items());
     }
 
-    void decode(const variant::ValueList &msg,
-                core::types::ValueList *list) noexcept
+    void decode(const variant::ValueList& msg,
+                core::types::ValueList* list) noexcept
     {
         decode(msg.items(), list);
     }
 
-    void encode(const core::types::ValueList &list,
-                RepeatedValue *msgs) noexcept
+    void encode(const core::types::ValueList& list,
+                RepeatedValue* msgs) noexcept
     {
         msgs->Reserve(msgs->size() + list.size());
-        for (const core::types::Value &value : list)
+        for (const core::types::Value& value : list)
         {
             encode(value, msgs->Add());
         }
     }
 
-    void decode(const RepeatedValue &msgs,
-                core::types::ValueList *list) noexcept
+    void decode(const RepeatedValue& msgs,
+                core::types::ValueList* list) noexcept
     {
         list->reserve(list->size() + msgs.size());
-        for (const auto &msg : msgs)
+        for (const auto& msg : msgs)
         {
             decode(msg, &list->emplace_back());
         }

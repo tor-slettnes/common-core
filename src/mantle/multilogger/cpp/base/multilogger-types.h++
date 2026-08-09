@@ -16,9 +16,9 @@
 
 namespace cc::platform::multilogger
 {
-    using core::types::Loggable;
     using core::logging::SinkID;
     using core::logging::SinkType;
+    using core::types::Loggable;
 
     struct SinkSpec
     {
@@ -35,7 +35,7 @@ namespace cc::platform::multilogger
         core::logging::ColumnSpecs columns;
     };
 
-    std::ostream &operator<<(std::ostream &stream, const SinkSpec &spec);
+    std::ostream& operator<<(std::ostream& stream, const SinkSpec& spec);
 
     using SinkIDs = std::vector<SinkID>;
     using SinkTypes = std::vector<SinkType>;
@@ -52,6 +52,6 @@ namespace cc::platform::multilogger
         std::set<std::string> applications;
     };
 
-    std::ostream &operator<<(std::ostream &stream, const ListenerSpec &spec);
+    std::ostream& operator<<(std::ostream& stream, const ListenerSpec& spec);
 
 }  // namespace cc::platform::multilogger

@@ -23,8 +23,8 @@ namespace cc::platform::vfs
         using ptr = std::shared_ptr<Context>;
 
     public:
-        Context(const ContextName &name = {},
-                const fs::path &root = {},
+        Context(const ContextName& name = {},
+                const fs::path& root = {},
                 bool writable = false,
                 bool removable = false,
                 const std::string title = {});
@@ -32,14 +32,14 @@ namespace cc::platform::vfs
         virtual void add_ref() = 0;
         virtual void del_ref() = 0;
 
-        virtual fs::path localPath(const fs::path &relpath = {}) const;
-        virtual Path virtualPath(const fs::path &relpath = {}) const;
+        virtual fs::path localPath(const fs::path& relpath = {}) const;
+        virtual Path virtualPath(const fs::path& relpath = {}) const;
 
     protected:
-        virtual void to_stream(std::ostream &stream) const override;
+        virtual void to_stream(std::ostream& stream) const override;
 
     private:
-        void check_jail(const fs::path &relpath) const;
+        void check_jail(const fs::path& relpath) const;
 
     public:
         ContextName name;
@@ -48,7 +48,6 @@ namespace cc::platform::vfs
         bool removable;
         std::string title;
     };
-
 
     using ContextMap = core::types::ValueMap<ContextName, std::shared_ptr<Context>>;
 

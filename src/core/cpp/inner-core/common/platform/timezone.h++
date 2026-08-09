@@ -20,11 +20,11 @@ namespace cc::core::platform
         using Super::Super;
 
     public:
-        virtual std::tm gmtime(const std::time_t &time) const = 0;
-        virtual std::tm localtime(const std::time_t &time, const std::string &timezone) const = 0;
-        virtual std::tm localtime(const time_t &time) const = 0;
-        virtual dt::TimeZoneInfo tzinfo(const std::string &timezone, const std::time_t &time) const = 0;
-        virtual dt::TimeZoneInfo tzinfo(const std::time_t &time) const = 0;
+        virtual std::tm gmtime(const std::time_t& time) const = 0;
+        virtual std::tm localtime(const std::time_t& time, const std::string& timezone) const = 0;
+        virtual std::tm localtime(const time_t& time) const = 0;
+        virtual dt::TimeZoneInfo tzinfo(const std::string& timezone, const std::time_t& time) const = 0;
+        virtual dt::TimeZoneInfo tzinfo(const std::time_t& time) const = 0;
 
         // virtual std::string get_configured_zone() const = 0;
         // virtual void set_configured_zone() = 0;

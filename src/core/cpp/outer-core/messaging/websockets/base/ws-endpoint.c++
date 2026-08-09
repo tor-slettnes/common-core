@@ -12,9 +12,9 @@
 namespace cc::ws
 {
     Endpoint::Endpoint(
-        const std::string &address,
-        const std::string &endpoint_type,
-        const std::string &channel_name)
+        const std::string& address,
+        const std::string& endpoint_type,
+        const std::string& channel_name)
         : messaging::Endpoint("WebSockets", endpoint_type, channel_name)
     {
         this->split_address(address,
@@ -26,29 +26,29 @@ namespace cc::ws
     std::string Endpoint::scheme() const
     {
         return !this->scheme_.empty()
-            ? this->scheme_
-            : this->setting(Super::SCHEME_OPTION, DEFAULT_SCHEME).as_string();
+                 ? this->scheme_
+                 : this->setting(Super::SCHEME_OPTION, DEFAULT_SCHEME).as_string();
     }
 
     std::string Endpoint::interface() const
     {
         return !this->interface_.empty()
-            ? this->interface_
-            : this->setting(Super::BIND_OPTION, DEFAULT_INTERFACE).as_string();
+                 ? this->interface_
+                 : this->setting(Super::BIND_OPTION, DEFAULT_INTERFACE).as_string();
     }
 
     uint Endpoint::port() const
     {
         return this->port_
-            ? this->port_
-            : this->setting(Super::PORT_OPTION, DEFAULT_PORT).as_uint();
+                 ? this->port_
+                 : this->setting(Super::PORT_OPTION, DEFAULT_PORT).as_uint();
     }
 
     void Endpoint::split_address(
-        const std::string &address,
-        std::string *scheme,
-        std::string *host,
-        uint *port)
+        const std::string& address,
+        std::string* scheme,
+        std::string* host,
+        uint* port)
     {
         static const std::regex rx(
             "(?:(\\w*)://)?"                       // (1) scheme

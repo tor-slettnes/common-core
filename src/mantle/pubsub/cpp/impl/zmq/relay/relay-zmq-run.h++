@@ -12,6 +12,6 @@
 namespace cc::platform::pubsub::zmq
 {
     void run_zmq_listeners(
-        const std::string &producer_interface,
-        const std::string &consumer_interface);
+        const std::string& producer_interface,
+        const std::string& consumer_interface);
 }

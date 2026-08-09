@@ -12,21 +12,21 @@ namespace cc::platform::multilogger::grpc
     const std::string SETTING_HOST = "host";
     const std::string DEFAULT_HOST = "localhost";
 
-    ClientSink::ClientSink(const std::string &sink_id)
+    ClientSink::ClientSink(const std::string& sink_id)
         : Super(sink_id),
           host_(DEFAULT_HOST)
     {
     }
 
-    void ClientSink::load_settings(const core::types::KeyValueMap &settings)
+    void ClientSink::load_settings(const core::types::KeyValueMap& settings)
     {
         Super::load_settings(settings);
         this->load_client_settings(settings);
     }
 
-    void ClientSink::load_client_settings(const core::types::KeyValueMap &settings)
+    void ClientSink::load_client_settings(const core::types::KeyValueMap& settings)
     {
-        if (const core::types::Value &value = settings.get(SETTING_HOST))
+        if (const core::types::Value& value = settings.get(SETTING_HOST))
         {
             this->set_host(value.as_string());
         }
@@ -37,7 +37,7 @@ namespace cc::platform::multilogger::grpc
         return this->host_;
     }
 
-    void ClientSink::set_host(const std::string &address)
+    void ClientSink::set_host(const std::string& address)
     {
         this->host_ = address;
     }
@@ -47,8 +47,8 @@ namespace cc::platform::multilogger::grpc
         if (!this->client_)
         {
             this->client_ = grpc::ClientImpl::create_shared(
-                this->host(),   // host
-                true);          // wait_for_ready
+                this->host(),  // host
+                true);         // wait_for_ready
         }
         Super::open();
     }
@@ -63,7 +63,7 @@ namespace cc::platform::multilogger::grpc
         }
     }
 
-    bool ClientSink::handle_item(const core::types::Loggable::ptr &loggable)
+    bool ClientSink::handle_item(const core::types::Loggable::ptr& loggable)
     {
         if (std::shared_ptr<ClientImpl> client = this->client_)
         {

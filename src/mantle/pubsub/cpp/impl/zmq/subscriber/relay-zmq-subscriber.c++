@@ -10,8 +10,8 @@
 
 namespace cc::platform::pubsub::zmq
 {
-    Subscriber::Subscriber(const std::string &host_address,
-                           const std::string &channel_name,
+    Subscriber::Subscriber(const std::string& host_address,
+                           const std::string& channel_name,
                            Role role)
         : cc::zmq::Subscriber(host_address, channel_name, role)
     {

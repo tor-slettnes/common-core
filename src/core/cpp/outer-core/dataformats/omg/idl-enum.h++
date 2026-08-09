@@ -21,7 +21,7 @@ namespace cc::idl
         core::types::SymbolMap<T> map;
         auto tc = rti::topic::dynamic_type<T>::get();
 
-        for (const auto &member : tc.members())
+        for (const auto& member : tc.members())
         {
             map.insert_or_assign(static_cast<T>(member.ordinal()), member.name());
         }
@@ -29,14 +29,14 @@ namespace cc::idl
     }
 
     template <class T, std::enable_if_t<std::is_enum_v<T>, bool> = true>
-    std::optional<T> enum_value(const std::string &name)
+    std::optional<T> enum_value(const std::string& name)
     {
         try
         {
             auto tc = rti::topic::dynamic_type<T>::get();
             return static_cast<T>(tc.member(name).ordinal());
         }
-        catch (const dds::core::PreconditionNotMetError &)
+        catch (const dds::core::PreconditionNotMetError&)
         {
             return {};
         }
@@ -50,7 +50,7 @@ namespace cc::idl
             auto tc = rti::topic::dynamic_type<T>::get();
             return tc.member(tc.find_member_by_ordinal(static_cast<int32_t>(value))).name();
         }
-        catch (const dds::core::PreconditionNotMetError &)
+        catch (const dds::core::PreconditionNotMetError&)
         {
             return {};
         }
@@ -64,7 +64,7 @@ namespace cc::idl
             auto tc = rti::topic::dynamic_type<T>::get();
             return tc.member(tc.find_member_by_ordinal(value)).name();
         }
-        catch (const dds::core::PreconditionNotMetError &)
+        catch (const dds::core::PreconditionNotMetError&)
         {
             return {};
         }

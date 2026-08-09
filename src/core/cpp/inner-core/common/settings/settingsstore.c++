@@ -22,18 +22,18 @@ namespace cc::core
     constexpr auto JSON_SUFFIX = ".json";
     constexpr auto YAML_SUFFIX = ".yaml";
 
-    SettingsStore::SettingsStore(const types::PathList &filenames,
-                                 const types::PathList &directories)
+    SettingsStore::SettingsStore(const types::PathList& filenames,
+                                 const types::PathList& directories)
         : directories_(directories)
     {
-        for (const auto &filename : filenames)
+        for (const auto& filename : filenames)
         {
             this->load(filename);
         }
     }
 
-    SettingsStore::SettingsStore(const fs::path &filename,
-                                 const types::PathList &directories)
+    SettingsStore::SettingsStore(const fs::path& filename,
+                                 const types::PathList& directories)
         : directories_(directories)
     {
         this->load(filename);
@@ -51,18 +51,18 @@ namespace cc::core
         return this->load(this->filenames_, false);
     }
 
-    bool SettingsStore::load(const std::vector<fs::path> &filenames,
+    bool SettingsStore::load(const std::vector<fs::path>& filenames,
                              bool update_filenames)
     {
         bool success = false;
-        for (const fs::path &filename : filenames)
+        for (const fs::path& filename : filenames)
         {
             success |= this->load(filename, update_filenames);
         }
         return success;
     }
 
-    bool SettingsStore::load(const fs::path &filename,
+    bool SettingsStore::load(const fs::path& filename,
                              bool update_filenames)
     {
         bool success = false;
@@ -79,7 +79,7 @@ namespace cc::core
         {
             // Iterate through directory list,
             // giving preference to values from earlier file occurences
-            for (const fs::path &folder : this->directories_)
+            for (const fs::path& folder : this->directories_)
             {
                 success |= this->load_from(folder / filename);
             }
@@ -88,13 +88,13 @@ namespace cc::core
         return success;
     }
 
-    bool SettingsStore::load_from(const fs::path &abspath)
+    bool SettingsStore::load_from(const fs::path& abspath)
     {
         bool success = false;
         if (!This::settings_suffixes().count(abspath.extension()) &&
             fs::is_directory(abspath))
         {
-            for (auto &pi : fs::directory_iterator(abspath))
+            for (auto& pi : fs::directory_iterator(abspath))
             {
                 if (This::settings_suffixes().count(pi.path().extension()))
                 {
@@ -104,7 +104,7 @@ namespace cc::core
         }
         else
         {
-            for (const fs::path &extendedname : This::extended_paths(abspath))
+            for (const fs::path& extendedname : This::extended_paths(abspath))
             {
                 success |= this->load_from_file(extendedname);
             }
@@ -113,7 +113,7 @@ namespace cc::core
         return success;
     }
 
-    bool SettingsStore::load_from_file(const fs::path &abspath)
+    bool SettingsStore::load_from_file(const fs::path& abspath)
     {
         types::Value value;
 
@@ -128,15 +128,15 @@ namespace cc::core
                 value = json::reader.read_file(abspath);
             }
         }
-        catch (const fs::filesystem_error &)
+        catch (const fs::filesystem_error&)
         {
             return false;
         }
-        catch (const std::system_error &)
+        catch (const std::system_error&)
         {
             return false;
         }
-        catch (const std::exception &e)
+        catch (const std::exception& e)
         {
             str::format(std::cerr,
                         "\nFailed to load settings from %s: %s\n",
@@ -171,7 +171,7 @@ namespace cc::core
         }
     }
 
-    void SettingsStore::save_to(const fs::path &filename,
+    void SettingsStore::save_to(const fs::path& filename,
                                 bool delta_only,
                                 bool use_temp_file) const
     {
@@ -197,7 +197,7 @@ namespace cc::core
         }
     }
 
-    void SettingsStore::write_to(const fs::path &path,
+    void SettingsStore::write_to(const fs::path& path,
                                  bool delta_only) const
     {
         if (delta_only)
@@ -247,11 +247,11 @@ namespace cc::core
         return this->filepaths_;
     }
 
-    types::Value SettingsStore::extract_value(const types::ValueList &path,
-                                              const types::Value &fallback) const noexcept
+    types::Value SettingsStore::extract_value(const types::ValueList& path,
+                                              const types::Value& fallback) const noexcept
     {
         types::Value value = KeyValueMap::create_shared(*this);
-        for (const types::Value &element : path)
+        for (const types::Value& element : path)
         {
             if (element.is_string() && value.is_kvmap())
             {
@@ -270,22 +270,22 @@ namespace cc::core
     }
 
     std::pair<SettingsStore::iterator, bool>
-    SettingsStore::insert_value(const std::vector<std::string> &path,
-                                const types::Value &value,
+    SettingsStore::insert_value(const std::vector<std::string>& path,
+                                const types::Value& value,
                                 bool save)
     {
-        types::KeyValueMap *current = this;
+        types::KeyValueMap* current = this;
         std::pair<SettingsStore::iterator, bool> result = {{}, false};
         if (path.size())
         {
             for (auto path_it = path.begin(); path_it != path.end() - 1; path_it++)
             {
-                types::Value &next_value = (*current)[*path_it];
+                types::Value& next_value = (*current)[*path_it];
                 if (next_value.type() != types::ValueType::KVMAP)
                 {
                     next_value = types::KeyValueMap::create_shared();
                 }
-                if (auto *next_map = std::get_if<types::KeyValueMapPtr>(&next_value))
+                if (auto* next_map = std::get_if<types::KeyValueMapPtr>(&next_value))
                 {
                     current = next_map->get();
                 }
@@ -301,12 +301,12 @@ namespace cc::core
         return result;
     }
 
-    void SettingsStore::append_path(const fs::path &path,
-                                    types::PathList *list)
+    void SettingsStore::append_path(const fs::path& path,
+                                    types::PathList* list)
     {
         if (std::none_of(list->begin(),
                          list->end(),
-                         [&](const fs::path &candidate) {
+                         [&](const fs::path& candidate) {
                              return candidate == path;
                          }))
         {
@@ -314,7 +314,7 @@ namespace cc::core
         }
     }
 
-    std::vector<fs::path> SettingsStore::extended_paths(const fs::path &path)
+    std::vector<fs::path> SettingsStore::extended_paths(const fs::path& path)
     {
         std::vector<fs::path> paths = {path};
 

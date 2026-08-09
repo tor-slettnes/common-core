@@ -17,7 +17,7 @@
 namespace cc::core::types
 {
     TaggedValueList::const_iterator TaggedValueList::find(
-        const Tag &tag,
+        const Tag& tag,
         bool ignoreCase) const noexcept
     {
         if (tag.has_value())
@@ -37,7 +37,7 @@ namespace cc::core::types
     }
 
     TaggedValueList::iterator TaggedValueList::find(
-        const Tag &tag,
+        const Tag& tag,
         bool ignoreCase) noexcept
     {
         if (tag.has_value())
@@ -56,12 +56,12 @@ namespace cc::core::types
         return this->end();
     }
 
-    Value &TaggedValueList::at(const Tag &tag)
+    Value& TaggedValueList::at(const Tag& tag)
     {
-        return const_cast<Value &>(const_cast<const TaggedValueList *>(this)->at(tag));
+        return const_cast<Value&>(const_cast<const TaggedValueList*>(this)->at(tag));
     }
 
-    const Value &TaggedValueList::at(const Tag &tag) const
+    const Value& TaggedValueList::at(const Tag& tag) const
     {
         if (auto it = this->find(tag); it != this->end())
         {
@@ -73,13 +73,13 @@ namespace cc::core::types
         }
     }
 
-    Value &TaggedValueList::operator[](const Tag &tag) noexcept
+    Value& TaggedValueList::operator[](const Tag& tag) noexcept
     {
         try
         {
             return this->at(tag);
         }
-        catch (const std::out_of_range &)
+        catch (const std::out_of_range&)
         {
             // auto lck = std::scoped_lock(this->mtx);
             return this->emplace_back(tag, nullvalue).second;
@@ -88,7 +88,7 @@ namespace cc::core::types
 
     bool TaggedValueList::is_tagged() const noexcept
     {
-        for (const auto &[t, v] : *this)
+        for (const auto& [t, v] : *this)
         {
             if (t.has_value())
             {
@@ -102,11 +102,11 @@ namespace cc::core::types
     {
         std::unordered_set<std::string> tags;
 
-        for (const auto &[t, v] : *this)
+        for (const auto& [t, v] : *this)
         {
             if (t.has_value())
             {
-                const std::string &tag = t.value();
+                const std::string& tag = t.value();
                 if (tags.count(tag))
                 {
                     return false;
@@ -121,7 +121,7 @@ namespace cc::core::types
         return true;
     }
 
-    Value TaggedValueList::front(const Value &fallback) const noexcept
+    Value TaggedValueList::front(const Value& fallback) const noexcept
     {
         if (!this->empty())
         {
@@ -133,7 +133,7 @@ namespace cc::core::types
         }
     }
 
-    Value TaggedValueList::back(const Value &fallback) const noexcept
+    Value TaggedValueList::back(const Value& fallback) const noexcept
     {
         if (!this->empty())
         {
@@ -147,42 +147,41 @@ namespace cc::core::types
 
     Value TaggedValueList::get(
         uint index,
-        const Value &fallback) const noexcept
+        const Value& fallback) const noexcept
     {
         return this->try_get(index).value_or(fallback);
     }
 
     Value TaggedValueList::get(
         int index,
-        const Value &fallback) const noexcept
+        const Value& fallback) const noexcept
     {
         return this->try_get(index).value_or(fallback);
     }
 
     Value TaggedValueList::get(
-        const Tag &tag,
-        const Value &fallback,
+        const Tag& tag,
+        const Value& fallback,
         bool ignoreCase) const noexcept
     {
         return this->try_get(tag, ignoreCase).value_or(fallback);
     }
 
     Value TaggedValueList::get_nonempty(
-        const Tag &tag,
-        const Value &fallback,
+        const Tag& tag,
+        const Value& fallback,
         bool ignoreCase) const noexcept
     {
         return this->try_get_nonempty(tag, ignoreCase).value_or(fallback);
     }
 
     Value TaggedValueList::get_any_of(
-        const std::vector<std::string> &candidates,
-        const Value &fallback,
+        const std::vector<std::string>& candidates,
+        const Value& fallback,
         bool ignoreCase) const noexcept
     {
         return this->try_get_any_of(candidates, ignoreCase).value_or(fallback);
     }
-
 
     std::optional<Value> TaggedValueList::try_get(
         uint index) const noexcept
@@ -191,7 +190,7 @@ namespace cc::core::types
         {
             return this->at(index).second;
         }
-        catch (const std::out_of_range &)
+        catch (const std::out_of_range&)
         {
             return {};
         }
@@ -206,15 +205,14 @@ namespace cc::core::types
                      ? this->at(index).second
                      : this->at(this->size() + index).second;
         }
-        catch (const std::out_of_range &)
+        catch (const std::out_of_range&)
         {
             return {};
         }
     }
 
-
     std::optional<Value> TaggedValueList::try_get(
-        const Tag &tag,
+        const Tag& tag,
         bool ignoreCase) const noexcept
     {
         if (auto it = this->find(tag, ignoreCase); it != this->end())
@@ -228,10 +226,10 @@ namespace cc::core::types
     }
 
     std::optional<Value> TaggedValueList::try_get_nonempty(
-        const Tag &tag,
+        const Tag& tag,
         bool ignoreCase) const noexcept
     {
-        if (const auto &value = this->try_get(tag, ignoreCase))
+        if (const auto& value = this->try_get(tag, ignoreCase))
         {
             if (value->has_nonempty_value())
             {
@@ -242,12 +240,12 @@ namespace cc::core::types
     }
 
     std::optional<Value> TaggedValueList::try_get_any_of(
-        const std::vector<std::string> &candidates,
+        const std::vector<std::string>& candidates,
         bool ignoreCase) const noexcept
     {
-        for (const Tag &candidate : candidates)
+        for (const Tag& candidate : candidates)
         {
-            if (const auto &value = this->try_get(candidate, ignoreCase))
+            if (const auto& value = this->try_get(candidate, ignoreCase))
             {
                 return value;
             }
@@ -259,7 +257,7 @@ namespace cc::core::types
     {
         std::vector<Tag> tags;
         tags.reserve(this->size());
-        for (const auto &[t, v] : *this)
+        for (const auto& [t, v] : *this)
         {
             tags.push_back(t);
         }
@@ -275,7 +273,7 @@ namespace cc::core::types
     {
         auto values = std::make_shared<ValueList>();
         values->reserve(this->size());
-        for (const auto &[t, v] : *this)
+        for (const auto& [t, v] : *this)
         {
             values->push_back(v);
         }
@@ -288,7 +286,7 @@ namespace cc::core::types
         TaggedValueList filtered;
         filtered.reserve(this->size());
 
-        for (const auto &tv : *this)
+        for (const auto& tv : *this)
         {
             if (tv.first && !tv.first.value().empty())
             {
@@ -306,7 +304,7 @@ namespace cc::core::types
         TaggedValueList filtered;
         filtered.reserve(this->size());
 
-        for (const auto &tv : *this)
+        for (const auto& tv : *this)
         {
             if (tv.second.has_nonempty_value())
             {
@@ -322,7 +320,7 @@ namespace cc::core::types
     {
         TaggedValueList copy;
         copy.reserve(this->size());
-        for (const auto &[tag, value] : *this)
+        for (const auto& [tag, value] : *this)
         {
             copy.emplace_back(tag, value.deepcopy());
         }
@@ -337,7 +335,7 @@ namespace cc::core::types
     KeyValueMapPtr TaggedValueList::as_kvmap_ptr() const noexcept
     {
         auto kvmap = std::make_shared<KeyValueMap>();
-        for (const auto &[tag, value] : *this)
+        for (const auto& [tag, value] : *this)
         {
             if (tag.has_value())
             {
@@ -347,13 +345,13 @@ namespace cc::core::types
         return kvmap;
     }
 
-    TaggedValueList &TaggedValueList::extend(const TaggedValueList &other)
+    TaggedValueList& TaggedValueList::extend(const TaggedValueList& other)
     {
         this->insert(this->end(), other.begin(), other.end());
         return *this;
     }
 
-    TaggedValueList &TaggedValueList::extend(TaggedValueList &&other)
+    TaggedValueList& TaggedValueList::extend(TaggedValueList&& other)
     {
         this->reserve(this->size() + other.size());
         for (auto it = other.begin(); it != other.end(); it++)
@@ -363,7 +361,7 @@ namespace cc::core::types
         return *this;
     }
 
-    TaggedValueList &TaggedValueList::update(const TaggedValueList &other)
+    TaggedValueList& TaggedValueList::update(const TaggedValueList& other)
     {
         this->reserve(this->size() + other.size());
         for (auto input_it = other.begin(); input_it != other.end(); input_it++)
@@ -381,7 +379,7 @@ namespace cc::core::types
         return *this;
     }
 
-    TaggedValueList &TaggedValueList::update(TaggedValueList &&other)
+    TaggedValueList& TaggedValueList::update(TaggedValueList&& other)
     {
         this->reserve(this->size() + other.size());
         for (auto input_it = other.begin(); input_it != other.end(); input_it++)
@@ -399,7 +397,7 @@ namespace cc::core::types
         return *this;
     }
 
-    TaggedValueList &TaggedValueList::merge(TaggedValueList &other)
+    TaggedValueList& TaggedValueList::merge(TaggedValueList& other)
     {
         // auto lck = std::scoped_lock(this->mtx);
         this->reserve(this->size() + other.size());
@@ -420,33 +418,33 @@ namespace cc::core::types
         return *this;
     }
 
-    TaggedValueList &TaggedValueList::merge(TaggedValueList &&other)
+    TaggedValueList& TaggedValueList::merge(TaggedValueList&& other)
     {
         return this->merge(other);
     }
 
     TaggedValueList::iterator TaggedValueList::append(
-        const TaggedValue &tv)
+        const TaggedValue& tv)
     {
         return this->insert(this->end(), tv);
     }
 
     TaggedValueList::iterator TaggedValueList::append(
-        const Value &value)
+        const Value& value)
     {
         return this->insert(this->end(), TaggedValue(nulltag, value));
     }
 
     TaggedValueList::iterator TaggedValueList::append(
-        const Tag &tag,
-        const Value &value)
+        const Tag& tag,
+        const Value& value)
     {
         return this->insert(this->end(), TaggedValue(tag, value));
     }
 
     TaggedValueList::AppendResult TaggedValueList::append_if(
         bool condition,
-        const TaggedValue &tv)
+        const TaggedValue& tv)
     {
         return {
             condition ? this->append(tv) : this->end(),
@@ -456,7 +454,7 @@ namespace cc::core::types
 
     TaggedValueList::AppendResult TaggedValueList::append_if(
         bool condition,
-        const Value &value)
+        const Value& value)
     {
         return {
             condition ? this->append(value) : this->end(),
@@ -466,8 +464,8 @@ namespace cc::core::types
 
     TaggedValueList::AppendResult TaggedValueList::append_if(
         bool condition,
-        const Tag &tag,
-        const Value &value)
+        const Tag& tag,
+        const Value& value)
     {
         return {
             condition ? this->append(tag, value) : this->end(),
@@ -476,38 +474,38 @@ namespace cc::core::types
     }
 
     TaggedValueList::AppendResult TaggedValueList::append_if_value(
-        const TaggedValue &tv)
+        const TaggedValue& tv)
     {
         return this->append_if(tv.second.has_nonempty_value(), tv);
     }
 
     TaggedValueList::AppendResult TaggedValueList::append_if_value(
-        const Value &value)
+        const Value& value)
     {
         return this->append_if(value.has_nonempty_value(), value);
     }
 
     TaggedValueList::AppendResult TaggedValueList::append_if_value(
-        const Tag &tag,
-        const Value &value)
+        const Tag& tag,
+        const Value& value)
     {
         return this->append_if(value.has_nonempty_value(), tag, value);
     }
 
-    void TaggedValueList::to_stream(std::ostream &stream) const
+    void TaggedValueList::to_stream(std::ostream& stream) const
     {
         this->to_stream(stream, "[", ", ", "]");
     }
 
-    void TaggedValueList::to_stream(std::ostream &stream,
-                                    const std::string &prefix,
-                                    const std::string &infix,
-                                    const std::string &postfix) const
+    void TaggedValueList::to_stream(std::ostream& stream,
+                                    const std::string& prefix,
+                                    const std::string& infix,
+                                    const std::string& postfix) const
     {
         // auto lck = std::scoped_lock(this->mtx);
         stream << prefix;
         bool comma = false;
-        for (const auto &[tag, value] : *this)
+        for (const auto& [tag, value] : *this)
         {
             if (comma)
             {

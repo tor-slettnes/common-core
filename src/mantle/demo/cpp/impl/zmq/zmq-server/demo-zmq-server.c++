@@ -10,9 +10,9 @@
 
 namespace cc::demo::zmq
 {
-    Server::Server(const std::shared_ptr<API> &provider,
-                   const std::string &bind_address,
-                   const std::string &channel_name)
+    Server::Server(const std::shared_ptr<API>& provider,
+                   const std::string& bind_address,
+                   const std::string& channel_name)
         : Super(bind_address,
                 channel_name,
                 {

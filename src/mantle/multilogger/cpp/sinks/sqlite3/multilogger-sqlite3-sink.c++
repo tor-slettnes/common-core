@@ -16,7 +16,7 @@ namespace cc::platform::multilogger
     //--------------------------------------------------------------------------
     // SQLiteSink
 
-    SQLiteSink::SQLiteSink(const std::string &sink_id)
+    SQLiteSink::SQLiteSink(const std::string& sink_id)
         : Super(sink_id),
           TabularData(),
           RotatingPath(sink_id, ".db"),
@@ -31,7 +31,7 @@ namespace cc::platform::multilogger
         this->flush();
     }
 
-    void SQLiteSink::load_settings(const core::types::KeyValueMap &settings)
+    void SQLiteSink::load_settings(const core::types::KeyValueMap& settings)
     {
         Super::load_settings(settings);
         this->load_columns(settings);
@@ -40,19 +40,19 @@ namespace cc::platform::multilogger
         this->load_level_map(settings);
     }
 
-    void SQLiteSink::load_db_settings(const core::types::KeyValueMap &settings)
+    void SQLiteSink::load_db_settings(const core::types::KeyValueMap& settings)
     {
-        if (const core::types::Value &value = settings.get(SETTING_TABLE_NAME))
+        if (const core::types::Value& value = settings.get(SETTING_TABLE_NAME))
         {
             this->set_table_name(value.as_string());
         }
 
-        if (const core::types::Value &value = settings.get(SETTING_BATCH_SIZE))
+        if (const core::types::Value& value = settings.get(SETTING_BATCH_SIZE))
         {
             this->set_batch_size(value.as_uint());
         }
 
-        if (const core::types::Value &value = settings.get(SETTING_BATCH_TIMEOUT))
+        if (const core::types::Value& value = settings.get(SETTING_BATCH_TIMEOUT))
         {
             this->set_batch_timeout(std::chrono::seconds(value.as_uint()));
         }
@@ -63,7 +63,7 @@ namespace cc::platform::multilogger
         return this->table_name_;
     }
 
-    void SQLiteSink::set_table_name(const std::string &name)
+    void SQLiteSink::set_table_name(const std::string& name)
     {
         this->table_name_ = name;
     }
@@ -73,7 +73,7 @@ namespace cc::platform::multilogger
         return this->batch_size_;
     }
 
-    void SQLiteSink::set_batch_size(const std::size_t &size)
+    void SQLiteSink::set_batch_size(const std::size_t& size)
     {
         this->batch_size_ = size;
     }
@@ -83,7 +83,7 @@ namespace cc::platform::multilogger
         return this->batch_timeout_;
     }
 
-    void SQLiteSink::set_batch_timeout(const core::dt::Duration &timeout)
+    void SQLiteSink::set_batch_timeout(const core::dt::Duration& timeout)
     {
         this->batch_timeout_ = timeout;
     }
@@ -105,7 +105,7 @@ namespace cc::platform::multilogger
         this->close_file();
     }
 
-    void SQLiteSink::open_file(const core::dt::TimePoint &tp)
+    void SQLiteSink::open_file(const core::dt::TimePoint& tp)
     {
         RotatingPath::open_file(tp);
         try
@@ -132,7 +132,7 @@ namespace cc::platform::multilogger
     {
         std::vector<cc::db::SQLite3::ColumnSpec> db_columns;
         db_columns.reserve(this->columns().size());
-        for (const auto &log_column : this->columns())
+        for (const auto& log_column : this->columns())
         {
             db_columns.push_back({
                 .name = log_column.column_name.value_or(log_column.field_name),
@@ -148,7 +148,7 @@ namespace cc::platform::multilogger
         this->placeholders = this->db.get_placeholders(this->table_name());
     }
 
-    bool SQLiteSink::handle_item(const core::types::Loggable::ptr &item)
+    bool SQLiteSink::handle_item(const core::types::Loggable::ptr& item)
     {
         this->check_rotation(item->timepoint());
         this->pending_rows.push_back(this->row_data(item, this->use_local_time()));

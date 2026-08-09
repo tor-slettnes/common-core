@@ -15,7 +15,7 @@ namespace cc::platform::vfs::local
     constexpr auto SETTING_PARTITION_EXCLUDE = "exclude-types";
     constexpr auto SETTING_REMOVABLE_ROOT_DEFAULT = "/mnt/removable";
 
-    LinuxProvider::LinuxProvider(const std::string &name,
+    LinuxProvider::LinuxProvider(const std::string& name,
                                  core::platform::ProviderPriority priority)
         : Super(name, priority)
     {
@@ -60,7 +60,7 @@ namespace cc::platform::vfs::local
         this->monitor.start();
     }
 
-    void LinuxProvider::processEvent(const volume::Event &event)
+    void LinuxProvider::processEvent(const volume::Event& event)
     {
         SignalHandler handler = nullptr;
 
@@ -70,7 +70,7 @@ namespace cc::platform::vfs::local
                           .at(event.deviceType())
                           .at(event.actionType());
         }
-        catch (const std::out_of_range &e)
+        catch (const std::out_of_range& e)
         {
             logf_debug("Unhandled volume event: %s", event);
         }
@@ -82,7 +82,7 @@ namespace cc::platform::vfs::local
         }
     }
 
-    void LinuxProvider::on_disk_added(const volume::Event &event)
+    void LinuxProvider::on_disk_added(const volume::Event& event)
     {
         auto di = volume::DiskInfo(event);
         if (di.removable)
@@ -92,7 +92,7 @@ namespace cc::platform::vfs::local
         this->disks.emplace(di.serial, di);
     }
 
-    void LinuxProvider::on_disk_removed(const volume::Event &event)
+    void LinuxProvider::on_disk_removed(const volume::Event& event)
     {
         auto di = volume::DiskInfo(event);
         if (di.removable)
@@ -102,7 +102,7 @@ namespace cc::platform::vfs::local
         this->disks.erase(di.serial);
     }
 
-    void LinuxProvider::on_disk_changed(const volume::Event &event)
+    void LinuxProvider::on_disk_changed(const volume::Event& event)
     {
         auto di = volume::DiskInfo(event);
         if (di.removable)
@@ -111,7 +111,7 @@ namespace cc::platform::vfs::local
         }
     }
 
-    void LinuxProvider::on_disk_online(const volume::Event &event)
+    void LinuxProvider::on_disk_online(const volume::Event& event)
     {
         auto di = volume::DiskInfo(event);
         if (di.removable)
@@ -120,7 +120,7 @@ namespace cc::platform::vfs::local
         }
     }
 
-    void LinuxProvider::on_disk_offline(const volume::Event &event)
+    void LinuxProvider::on_disk_offline(const volume::Event& event)
     {
         auto di = volume::DiskInfo(event);
         if (di.removable)
@@ -129,7 +129,7 @@ namespace cc::platform::vfs::local
         }
     }
 
-    void LinuxProvider::on_partition_added(const volume::Event &event)
+    void LinuxProvider::on_partition_added(const volume::Event& event)
     {
         auto pi = volume::PartitionInfo(event);
         logf_trace("%s added", pi);
@@ -148,7 +148,7 @@ namespace cc::platform::vfs::local
                 .as_valuelist();
 
         bool validType = true;
-        for (const auto &type : excludeTypes)
+        for (const auto& type : excludeTypes)
         {
             if (type.as_string() == pi.type)
             {
@@ -165,32 +165,32 @@ namespace cc::platform::vfs::local
         }
     }
 
-    void LinuxProvider::on_partition_removed(const volume::Event &event)
+    void LinuxProvider::on_partition_removed(const volume::Event& event)
     {
         auto pi = volume::PartitionInfo(event);
         logf_trace("%s removed", pi);
         this->unregister_partition(pi);
     }
 
-    void LinuxProvider::on_partition_changed(const volume::Event &event)
+    void LinuxProvider::on_partition_changed(const volume::Event& event)
     {
         auto pi = volume::PartitionInfo(event);
         logf_trace("%s changed", pi);
     }
 
-    void LinuxProvider::on_partition_online(const volume::Event &event)
+    void LinuxProvider::on_partition_online(const volume::Event& event)
     {
         auto pi = volume::PartitionInfo(event);
         logf_trace("%s online", pi);
     }
 
-    void LinuxProvider::on_partition_offline(const volume::Event &event)
+    void LinuxProvider::on_partition_offline(const volume::Event& event)
     {
         auto pi = volume::PartitionInfo(event);
         logf_trace("%s offline", pi);
     }
 
-    void LinuxProvider::register_partition(const volume::PartitionInfo &pi)
+    void LinuxProvider::register_partition(const volume::PartitionInfo& pi)
     {
         auto cxt = std::make_shared<RemovableContext>(
             pi.sysname,
@@ -206,12 +206,12 @@ namespace cc::platform::vfs::local
         this->addContext(pi.sysname, cxt);
     }
 
-    void LinuxProvider::unregister_partition(const volume::PartitionInfo &pi)
+    void LinuxProvider::unregister_partition(const volume::PartitionInfo& pi)
     {
         this->removeContext(pi.sysname);
     }
 
-    std::string LinuxProvider::newContextName(const std::string &basename)
+    std::string LinuxProvider::newContextName(const std::string& basename)
     {
         std::string suffix;
         for (int attempt = 1;

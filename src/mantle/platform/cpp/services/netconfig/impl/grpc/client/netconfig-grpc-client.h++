@@ -13,7 +13,7 @@
 namespace cc::platform::netconfig::grpc
 {
     using ClientBaseImpl = cc::grpc::SignalClient<platform::netconfig::grpc::NetConfig,
-                                                    platform::netconfig::protobuf::Signal>;
+                                                  platform::netconfig::protobuf::Signal>;
 
     class Client : public ClientBaseImpl,
                    public core::types::enable_create_shared<Client>

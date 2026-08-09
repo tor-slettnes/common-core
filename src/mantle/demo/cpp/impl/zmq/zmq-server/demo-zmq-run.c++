@@ -16,7 +16,7 @@ namespace cc::demo::zmq
 
     void run_zmq_service(
         std::shared_ptr<demo::API> api_provider,
-        const std::string &bind_address)
+        const std::string& bind_address)
     {
         // Instantiate Publisher to relay asynchronous events over ZeroMQ
         auto zmq_publisher = demo::zmq::Publisher::create_shared(
@@ -33,7 +33,6 @@ namespace cc::demo::zmq
         zmq_publisher->initialize();
         zmq_server->initialize();
 
-
         //======================================================================
         // Run
 
@@ -44,7 +43,6 @@ namespace cc::demo::zmq
                 log_info("ZMQ service is shutting down");
                 zmq_server->stop();
             });
-
 
         zmq_server->run();
 

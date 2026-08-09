@@ -10,13 +10,13 @@
 
 namespace cc::core::logging
 {
-    MessageBuilder::MessageBuilder(Dispatcher *dispatcher,
+    MessageBuilder::MessageBuilder(Dispatcher* dispatcher,
                                    status::Level level,
                                    Scope::ptr scope,
-                                   const dt::TimePoint &tp,
-                                   const fs::path &path,
-                                   const uint &lineno,
-                                   const std::string &function,
+                                   const dt::TimePoint& tp,
+                                   const fs::path& path,
+                                   const uint& lineno,
+                                   const std::string& function,
                                    pid_t thread_id)
         : Message({},                                                         // text
                   level,                                                      // level

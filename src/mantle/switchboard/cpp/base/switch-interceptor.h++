@@ -29,8 +29,8 @@ namespace cc::platform::switchboard
     };
 
     extern const core::types::SymbolMap<InterceptorPhase> interceptor_phase_names;
-    std::ostream &operator<<(std::ostream &stream, InterceptorPhase ep);
-    std::istream &operator>>(std::istream &stream, InterceptorPhase &ep);
+    std::ostream& operator<<(std::ostream& stream, InterceptorPhase ep);
+    std::istream& operator>>(std::istream& stream, InterceptorPhase& ep);
 
     //==========================================================================
     // Invocation signatures
@@ -45,16 +45,16 @@ namespace cc::platform::switchboard
     {
         using This = Interceptor;
 
-        friend bool operator==(const Interceptor &lhs, const Interceptor &rhs);
-        friend bool operator!=(const Interceptor &lhs, const Interceptor &rhs);
-        friend bool operator==(const InterceptorRef &lhs, const InterceptorRef &rhs);
-        friend bool operator!=(const InterceptorRef &lhs, const InterceptorRef &rhs);
+        friend bool operator==(const Interceptor& lhs, const Interceptor& rhs);
+        friend bool operator!=(const Interceptor& lhs, const Interceptor& rhs);
+        friend bool operator==(const InterceptorRef& lhs, const InterceptorRef& rhs);
+        friend bool operator!=(const InterceptorRef& lhs, const InterceptorRef& rhs);
 
     protected:
-        Interceptor(const InterceptorName &name,
-                    const InterceptorOwner &owner = {},
-                    const Invocation &invocation = {},
-                    const StateSet &state_transitions = ACTIVATION_STATES,
+        Interceptor(const InterceptorName& name,
+                    const InterceptorOwner& owner = {},
+                    const Invocation& invocation = {},
+                    const StateSet& state_transitions = ACTIVATION_STATES,
                     InterceptorPhase phase = PHASE_NORMAL,
                     bool asynchronous = false,
                     bool rerun = false,
@@ -75,8 +75,8 @@ namespace cc::platform::switchboard
         ExceptionHandling on_error() const;
 
     public:
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
-        void set_invocation(const Invocation &invocation);
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void set_invocation(const Invocation& invocation);
 
     public:
         bool applicable(State state);

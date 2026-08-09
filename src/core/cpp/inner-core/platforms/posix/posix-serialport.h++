@@ -25,14 +25,14 @@ namespace cc::core::platform
 
     public:
         PosixSerialPort(
-            const std::string &device,
+            const std::string& device,
             BaudRate speed);
 
         void open() override;
         void close() override;
         bool is_open() const override;
 
-        void write(const std::string &text) override;
+        void write(const std::string& text) override;
         std::optional<char> readchar() override;
         std::string readline() override;
 
@@ -56,11 +56,11 @@ namespace cc::core::platform
 
     protected:
         PosixSerialPortProvider(
-            const std::string &implementation = "PosixSerialPortProvider");
+            const std::string& implementation = "PosixSerialPortProvider");
 
     public:
         SerialPortPtr serialport(
-            const std::string &device,
+            const std::string& device,
             SerialPort::BaudRate speed) override;
     };
 

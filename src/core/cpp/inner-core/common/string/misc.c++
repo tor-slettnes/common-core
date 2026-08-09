@@ -15,7 +15,7 @@
 #include <cwchar>
 #include <utility>  // std::move()
 
-std::string operator""_u(const char *str, std::size_t len)
+std::string operator""_u(const char* str, std::size_t len)
 {
     return cc::core::str::to_unicode_text(std::string(str, len));
 }
@@ -23,35 +23,35 @@ std::string operator""_u(const char *str, std::size_t len)
 namespace cc::core::str
 {
 
-    void toupper(std::string *s, const std::locale &loc)
+    void toupper(std::string* s, const std::locale& loc)
     {
-        for (auto &c : *s)
+        for (auto& c : *s)
         {
             c = std::toupper(c, loc);
         }
     }
 
-    void tolower(std::string *s, const std::locale &loc)
+    void tolower(std::string* s, const std::locale& loc)
     {
-        for (auto &c : *s)
+        for (auto& c : *s)
         {
             c = std::tolower(c, loc);
         }
     }
 
-    std::string toupper(std::string s, const std::locale &loc)
+    std::string toupper(std::string s, const std::locale& loc)
     {
         toupper(&s, loc);
         return s;
     }
 
-    std::string tolower(std::string s, const std::locale &loc)
+    std::string tolower(std::string s, const std::locale& loc)
     {
         tolower(&s, loc);
         return s;
     }
 
-    std::string obfuscated(const std::string_view &s)
+    std::string obfuscated(const std::string_view& s)
     {
         static const std::string bullet = "\u2022";
         std::stringstream ss;
@@ -62,19 +62,19 @@ namespace cc::core::str
         return ss.str();
     }
 
-    std::string from_wstring(const std::wstring &wstr, const std::locale &loc)
+    std::string from_wstring(const std::wstring& wstr, const std::locale& loc)
     {
         return from_wstring(wstr.data(), wstr.size(), loc);
     }
 
-    std::string from_wstring(const wchar_t *from, std::size_t size, const std::locale &loc)
+    std::string from_wstring(const wchar_t* from, std::size_t size, const std::locale& loc)
     {
-        auto &f = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(loc);
+        auto& f = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(loc);
 
         std::mbstate_t mb;
         std::string to(size * f.max_length(), '\0');
-        const wchar_t *from_next = from;
-        char *to_next = to.data();
+        const wchar_t* from_next = from;
+        char* to_next = to.data();
 
         std::codecvt_base::result result = f.out(
             mb,                     // state
@@ -101,19 +101,19 @@ namespace cc::core::str
         // return conv.to_bytes(wstr);
     }
 
-    std::wstring to_wstring(const std::string &str, const std::locale &loc)
+    std::wstring to_wstring(const std::string& str, const std::locale& loc)
     {
         return to_wstring(str.data(), str.size(), loc);
     }
 
-    std::wstring to_wstring(const char *from, std::size_t size, const std::locale &loc)
+    std::wstring to_wstring(const char* from, std::size_t size, const std::locale& loc)
     {
-        auto &f = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(loc);
+        auto& f = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(loc);
 
         std::mbstate_t mb;
         std::wstring to(size, '\0');
-        const char *from_next = from;
-        wchar_t *to_next = to.data();
+        const char* from_next = from;
+        wchar_t* to_next = to.data();
 
         std::codecvt_base::result result = f.in(
             mb,                     // state
@@ -141,7 +141,7 @@ namespace cc::core::str
         // return conv.from_bytes(from, from+size);
     }
 
-    std::string wrap(const std::vector<std::string> &words,
+    std::string wrap(const std::vector<std::string>& words,
                      size_t start_column,
                      size_t left_margin,
                      size_t right_margin)
@@ -150,7 +150,7 @@ namespace cc::core::str
         size_t current_column = start_column;
         uint spaces = 0;
 
-        for (const std::string &word : words)
+        for (const std::string& word : words)
         {
             if (current_column > left_margin &&
                 current_column + spaces + word.length() > right_margin)
@@ -177,7 +177,7 @@ namespace cc::core::str
         return ss.str();
     }
 
-    std::string wrap(const std::string &input,
+    std::string wrap(const std::string& input,
                      size_t start_column,
                      size_t left_margin,
                      size_t right_margin,
@@ -185,7 +185,7 @@ namespace cc::core::str
     {
         std::stringstream ss;
 
-        for (const std::string &line : split(input, NEWLINE, 0, true))
+        for (const std::string& line : split(input, NEWLINE, 0, true))
         {
             ss << wrap(split(line, " ", 0, keep_empties),
                        start_column,
@@ -196,8 +196,8 @@ namespace cc::core::str
         return ss.str();
     }
 
-    std::vector<std::string> split(const std::string &string,
-                                   const std::string &delimiter,
+    std::vector<std::string> split(const std::string& string,
+                                   const std::string& delimiter,
                                    uint maxsplits,
                                    bool keep_empties)
     {
@@ -230,14 +230,14 @@ namespace cc::core::str
     }
 
     std::vector<std::string> splitlines(
-        const std::string &string,
+        const std::string& string,
         uint maxsplits,
         bool keep_empties)
     {
         std::vector<std::string> parts;
         size_t start = 0;
         uint splits = 0;
-        const char *ch = string.data();
+        const char* ch = string.data();
         char last = '\0';
 
         for (size_t pos = 0;
@@ -270,23 +270,23 @@ namespace cc::core::str
         return parts;
     }
 
-    std::string join(const std::vector<std::string> &vector,
-                     const std::string &delimiter,
+    std::string join(const std::vector<std::string>& vector,
+                     const std::string& delimiter,
                      bool keep_empties,
                      bool quoted)
     {
         return join(vector.begin(), vector.end(), delimiter, keep_empties, quoted);
     }
 
-    std::string quoted(const std::string_view &input)
+    std::string quoted(const std::string_view& input)
     {
         std::stringstream out;
         out << std::quoted(input);
         return out.str();
     }
 
-    std::string unquoted(const std::string_view &input,
-                         const std::unordered_set<char> &quote_chars)
+    std::string unquoted(const std::string_view& input,
+                         const std::unordered_set<char>& quote_chars)
     {
         if ((input.size() >= 2) &&
             quote_chars.count(input.front()) &&
@@ -296,7 +296,7 @@ namespace cc::core::str
             std::optional<char> escape;
             char quote = input.front();
             out.reserve(input.size() - 2);
-            for (auto it = input.begin()+1; it != input.end()-1; it++)
+            for (auto it = input.begin() + 1; it != input.end() - 1; it++)
             {
                 char c = *it;
                 if (escape && (c != quote))
@@ -325,8 +325,8 @@ namespace cc::core::str
     }
 
     std::string escaped(
-        const std::string_view &input,
-        const std::unordered_set<char> &extra_escapes)
+        const std::string_view& input,
+        const std::unordered_set<char>& extra_escapes)
     {
         std::stringstream out;
         escape(out, input, extra_escapes);
@@ -334,9 +334,9 @@ namespace cc::core::str
     }
 
     void escape(
-        std::ostream &out,
-        const std::string_view &input,
-        const std::unordered_set<char> &extra_escapes)
+        std::ostream& out,
+        const std::string_view& input,
+        const std::unordered_set<char>& extra_escapes)
     {
         static const std::unordered_map<char, std::string> escape_map = {
             {'\0', "\\0"},
@@ -376,15 +376,15 @@ namespace cc::core::str
         out.flags(original_flags);
     }
 
-    std::string unescaped(const std::string_view &input)
+    std::string unescaped(const std::string_view& input)
     {
         std::stringstream out;
         unescape(out, input);
         return out.str();
     }
 
-    void unescape(std::ostream &out,
-                  const std::string_view &input)
+    void unescape(std::ostream& out,
+                  const std::string_view& input)
     {
         std::stringstream ord;
         std::size_t digitsRemaining = 0;
@@ -469,7 +469,7 @@ namespace cc::core::str
 
     /// Escape and quote a string
     std::string to_literal(
-        const std::string_view &input)
+        const std::string_view& input)
     {
         std::stringstream out;
         to_literal(out, input);
@@ -477,8 +477,8 @@ namespace cc::core::str
     }
 
     void to_literal(
-        std::ostream &out,
-        const std::string_view &input)
+        std::ostream& out,
+        const std::string_view& input)
     {
         out << '"';
         escape(out, input, {'"'});
@@ -487,7 +487,7 @@ namespace cc::core::str
 
     /// Escape and quote a string
     std::string from_literal(
-        const std::string &input)
+        const std::string& input)
     {
         std::stringstream out;
         from_literal(out, input);
@@ -495,11 +495,11 @@ namespace cc::core::str
     }
 
     void from_literal(
-        std::ostream &out,
-        const std::string_view &input)
+        std::ostream& out,
+        const std::string_view& input)
     {
-        const char *begin = input.data();
-        const char *end = begin + input.size();
+        const char* begin = input.data();
+        const char* end = begin + input.size();
 
         if ((begin != end) && (*begin == '"'))
         {
@@ -516,7 +516,7 @@ namespace cc::core::str
     }
 
     std::string url_decoded(
-        const std::string &encoded_url)
+        const std::string& encoded_url)
     {
         std::string output;
         output.reserve(encoded_url.size());
@@ -555,9 +555,9 @@ namespace cc::core::str
         return output;
     }
 
-    std::size_t substitute(const std::string &original,
-                           const std::string &replacement,
-                           std::string *string)
+    std::size_t substitute(const std::string& original,
+                           const std::string& replacement,
+                           std::string* string)
     {
         std::size_t substitutions = 0;
         if (original.length() > 0)
@@ -573,8 +573,8 @@ namespace cc::core::str
         return substitutions;
     }
 
-    bool startswith(const std::string &input,
-                    const std::string &substring,
+    bool startswith(const std::string& input,
+                    const std::string& substring,
                     bool ignore_case)
     {
         if (ignore_case)
@@ -587,8 +587,8 @@ namespace cc::core::str
         }
     }
 
-    bool endswith(const std::string &input,
-                  const std::string &substring,
+    bool endswith(const std::string& input,
+                  const std::string& substring,
                   bool ignore_case)
     {
         if (input.length() < substring.length())
@@ -609,7 +609,7 @@ namespace cc::core::str
         }
     }
 
-    bool is_valid_symbol(const std::string &input)
+    bool is_valid_symbol(const std::string& input)
     {
         return (
             (input.size() > 0) &&
@@ -622,21 +622,21 @@ namespace cc::core::str
                 }));
     }
 
-    bool is_unicode_text(const std::string &input)
+    bool is_unicode_text(const std::string& input)
     {
         return (input.compare(0, UNICODE_BOM.length(), UNICODE_BOM) == 0);
     }
 
     std::string to_unicode_text(
-        const std::string &input)
+        const std::string& input)
     {
         return is_unicode_text(input)
-                   ? input
-                   : (UNICODE_BOM + input);
+                 ? input
+                 : (UNICODE_BOM + input);
     }
 
-    std::string stem(const std::string &string,
-                     const std::string &separator)
+    std::string stem(const std::string& string,
+                     const std::string& separator)
     {
         if (std::string::size_type last = string.rfind(separator);
             last != std::string::npos)
@@ -649,12 +649,12 @@ namespace cc::core::str
         }
     }
 
-    std::string strip(const std::string &string,
-                      const std::set<char> &lstrip,
-                      const std::set<char> &rstrip)
+    std::string strip(const std::string& string,
+                      const std::set<char>& lstrip,
+                      const std::set<char>& rstrip)
     {
-        const char *start = string.data();
-        const char *end = string.data() + string.size();
+        const char* start = string.data();
+        const char* end = string.data() + string.size();
 
         while (start != end && lstrip.count(*start) > 0)
         {
@@ -670,7 +670,7 @@ namespace cc::core::str
     }
 
     std::string common_prefix(
-        const std::vector<std::string> &strings)
+        const std::vector<std::string>& strings)
     {
         if (std::size_t common_length = common_prefix_length(strings))
         {
@@ -683,7 +683,7 @@ namespace cc::core::str
     }
 
     std::size_t common_prefix_length(
-        const std::vector<std::string> &strings)
+        const std::vector<std::string>& strings)
     {
         if (!strings.empty())
         {
@@ -691,7 +691,7 @@ namespace cc::core::str
             for (uint pos = 0; common_char >= 0; pos++)
             {
                 common_char = -1;
-                for (const std::string &s : strings)
+                for (const std::string& s : strings)
                 {
                     if ((pos < s.length()) &&
                         ((common_char < 0) || (common_char == s.at(pos))))
@@ -709,8 +709,8 @@ namespace cc::core::str
     }
 
     [[nodiscard]] std::string common_prefix(
-        const std::vector<std::string> &strings,
-        const std::string &delimiter)
+        const std::vector<std::string>& strings,
+        const std::string& delimiter)
     {
         if (std::size_t common_length = common_prefix_length(strings, delimiter))
         {
@@ -723,13 +723,13 @@ namespace cc::core::str
     }
 
     [[nodiscard]] std::size_t common_prefix_length(
-        const std::vector<std::string> &strings,
-        const std::string &delimiter)
+        const std::vector<std::string>& strings,
+        const std::string& delimiter)
     {
         std::vector<std::string> common_words;
         bool first = true;
 
-        for (const std::string &string : strings)
+        for (const std::string& string : strings)
         {
             auto words = split(string, delimiter, common_words.size());
             if (first)
@@ -759,7 +759,7 @@ namespace cc::core::str
             common_words.begin(),
             common_words.end(),
             0,
-            [&](std::size_t total_size, const std::string &word) -> std::size_t {
+            [&](std::size_t total_size, const std::string& word) -> std::size_t {
                 return total_size + word.size() + delimiter.size();
             });
     }

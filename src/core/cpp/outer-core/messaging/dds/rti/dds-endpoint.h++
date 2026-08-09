@@ -24,8 +24,8 @@ namespace cc::dds
 
     protected:
         // Inherit constructor
-        Endpoint(const std::string &endpoint_type,
-                 const std::string &channel_name,
+        Endpoint(const std::string& endpoint_type,
+                 const std::string& channel_name,
                  int domain_id);
 
         template <class QoS>

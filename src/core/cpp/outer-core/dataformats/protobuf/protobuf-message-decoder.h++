@@ -23,7 +23,7 @@ namespace cc::protobuf
         /// @param[in] enums_as_strings
         ///     Whether to convert `enum` values to strings rather than unsigned
         ///     integers.
-        MessageDecoder(const google::protobuf::Message &msg,
+        MessageDecoder(const google::protobuf::Message& msg,
                        bool enums_as_strings = true);
 
         /// Convert the ProtoBuf message to a `core::types::Value` variant.
@@ -39,35 +39,35 @@ namespace cc::protobuf
         core::types::TaggedValueListPtr to_tvlist() const;
 
         core::types::Value field_to_value(
-            const google::protobuf::FieldDescriptor &fd) const;
+            const google::protobuf::FieldDescriptor& fd) const;
 
         core::types::Value single_field_to_value(
-            const google::protobuf::FieldDescriptor &fd) const;
+            const google::protobuf::FieldDescriptor& fd) const;
 
         core::types::Value indexed_field_to_value(
-            const google::protobuf::FieldDescriptor &fd,
+            const google::protobuf::FieldDescriptor& fd,
             int repeat_index) const;
 
         core::types::ValueListPtr repeated_field_to_valuelist(
-            const google::protobuf::FieldDescriptor &fd) const;
+            const google::protobuf::FieldDescriptor& fd) const;
 
         core::types::TaggedValueListPtr mapped_field_to_tvlist(
-            const google::protobuf::FieldDescriptor &fd) const;
+            const google::protobuf::FieldDescriptor& fd) const;
 
         core::types::Value message_to_value(
-            const google::protobuf::Message &msg) const;
+            const google::protobuf::Message& msg) const;
 
     private:
-        const google::protobuf::Message &msg;
-        const google::protobuf::Reflection *reflection;
-        const google::protobuf::Descriptor *descriptor;
+        const google::protobuf::Message& msg;
+        const google::protobuf::Reflection* reflection;
+        const google::protobuf::Descriptor* descriptor;
         bool enums_as_strings;
     };
 
     //--------------------------------------------------------------------------
     // to_value() method
 
-    core::types::Value to_value(const google::protobuf::Message &msg,
+    core::types::Value to_value(const google::protobuf::Message& msg,
                                 bool enums_as_strings = true);
 
-} // namespace cc::protobuf
+}  // namespace cc::protobuf

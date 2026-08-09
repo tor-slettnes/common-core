@@ -195,9 +195,9 @@ namespace cc::platform::sysconfig
     void Options::get_time()
     {
         FlagMap flags;
-        bool &local = flags["local"];
-        bool &utc = flags["utc"];
-        bool &epoch = flags["epoch"];
+        bool& local = flags["local"];
+        bool& utc = flags["utc"];
+        bool& epoch = flags["epoch"];
         this->get_flags(&flags);
 
         std::string format =
@@ -240,7 +240,7 @@ namespace cc::platform::sysconfig
 
     void Options::list_timezone_areas()
     {
-        for (const sysconfig::TimeZoneArea &area :
+        for (const sysconfig::TimeZoneArea& area :
              sysconfig::timezone->list_timezone_areas())
         {
             std::cout << area << std::endl;
@@ -250,7 +250,7 @@ namespace cc::platform::sysconfig
     void Options::list_timezone_countries()
     {
         std::string area = this->next_arg().value_or("");
-        for (const sysconfig::TimeZoneCountry &country :
+        for (const sysconfig::TimeZoneCountry& country :
              sysconfig::timezone->list_timezone_countries(area))
         {
             std::cout << country << std::endl;
@@ -270,7 +270,7 @@ namespace cc::platform::sysconfig
             },
         };
 
-        for (const sysconfig::TimeZoneRegion &region :
+        for (const sysconfig::TimeZoneRegion& region :
              sysconfig::timezone->list_timezone_regions(filter))
         {
             std::cout << region << std::endl;
@@ -290,7 +290,7 @@ namespace cc::platform::sysconfig
             },
         };
 
-        for (const sysconfig::TimeZoneCanonicalSpec &spec :
+        for (const sysconfig::TimeZoneCanonicalSpec& spec :
              sysconfig::timezone->list_timezone_specs(filter))
         {
             std::cout << spec << std::endl;

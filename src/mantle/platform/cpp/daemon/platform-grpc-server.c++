@@ -19,26 +19,26 @@
 namespace cc::platform
 {
     void run_grpc_service(
-        const std::string &listen_address)
+        const std::string& listen_address)
     {
         log_debug("Creating gRPC server builder");
         cc::grpc::ServerBuilder builder(listen_address);
 
         builder.add_service(
             sysconfig::grpc::RequestHandler::create_shared(),  // handler
-            listen_address.empty());                                     // add_listener
+            listen_address.empty());                           // add_listener
 
         builder.add_service(
             netconfig::grpc::RequestHandler::create_shared(),  // handler
-            listen_address.empty());                                     // add_listener
+            listen_address.empty());                           // add_listener
 
         builder.add_service(
             vfs::grpc::RequestHandler::create_shared(),  // handler
-            listen_address.empty());                               // add_listener
+            listen_address.empty());                     // add_listener
 
         builder.add_service(
             upgrade::grpc::RequestHandler::create_shared(),  // handler
-            listen_address.empty());                                   // add_listener
+            listen_address.empty());                         // add_listener
 
         logf_debug("Starting gRPC Server");
         std::unique_ptr<::grpc::Server> server = builder.BuildAndStart();
@@ -59,4 +59,4 @@ namespace cc::platform
         core::platform::signal_shutdown.disconnect(signal_handle);
         server.reset();
     }
-}  // namespace platform
+}  // namespace cc::platform

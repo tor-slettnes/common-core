@@ -21,7 +21,7 @@ namespace cc::core::platform
         LinuxHostProvider();
 
     public:
-        void set_host_name(const std::string &hostname) override;
+        void set_host_name(const std::string& hostname) override;
 
         std::string get_system_release_flavor_short() const override;
         std::string get_system_release_flavor_long() const override;

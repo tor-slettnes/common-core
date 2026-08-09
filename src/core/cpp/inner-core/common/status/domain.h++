@@ -31,7 +31,7 @@ namespace cc::core::status
 
     extern const types::SymbolMap<Domain> DomainNames;
 
-    std::ostream &operator<<(std::ostream &stream, Domain domain);
-    std::istream &operator>>(std::istream &stream, Domain &domain);
+    std::ostream& operator<<(std::ostream& stream, Domain domain);
+    std::istream& operator>>(std::istream& stream, Domain& domain);
 
 }  // namespace cc::core::status

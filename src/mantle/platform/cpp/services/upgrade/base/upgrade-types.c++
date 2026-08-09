@@ -12,7 +12,7 @@ namespace cc::platform::upgrade
     //==========================================================================
     // PackageSource
 
-    PackageSource::PackageSource(const Location &location)
+    PackageSource::PackageSource(const Location& location)
         : location(location)
     {
     }
@@ -22,12 +22,12 @@ namespace cc::platform::upgrade
         return this->location_type() != LocationType::NONE;
     }
 
-    bool PackageSource::operator==(const PackageSource &other) const
+    bool PackageSource::operator==(const PackageSource& other) const
     {
         return this->location == other.location;
     }
 
-    bool PackageSource::operator!=(const PackageSource &other) const
+    bool PackageSource::operator!=(const PackageSource& other) const
     {
         return !this->operator==(other);
     }
@@ -42,9 +42,9 @@ namespace cc::platform::upgrade
         return static_cast<LocationType>(this->location.index());
     }
 
-    vfs::Path PackageSource::vfs_path(const vfs::Path &fallback) const
+    vfs::Path PackageSource::vfs_path(const vfs::Path& fallback) const
     {
-        if (auto *candidate = std::get_if<vfs::Path>(&this->location))
+        if (auto* candidate = std::get_if<vfs::Path>(&this->location))
         {
             if (*candidate)
             {
@@ -54,9 +54,9 @@ namespace cc::platform::upgrade
         return fallback;
     }
 
-    URL PackageSource::url(const URL &fallback) const
+    URL PackageSource::url(const URL& fallback) const
     {
-        if (auto *candidate = std::get_if<URL>(&this->location))
+        if (auto* candidate = std::get_if<URL>(&this->location))
         {
             if (!candidate->empty())
             {
@@ -96,7 +96,7 @@ namespace cc::platform::upgrade
         }
     }
 
-    void PackageSource::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void PackageSource::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         switch (this->location_type())
         {
@@ -117,10 +117,10 @@ namespace cc::platform::upgrade
     // PackageInfo
 
     PackageInfo::PackageInfo(
-        const PackageSource &source,
-        const std::string &product,
-        const sysconfig::Version &version,
-        const std::string &description,
+        const PackageSource& source,
+        const std::string& product,
+        const sysconfig::Version& version,
+        const std::string& description,
         bool reboot_required,
         bool is_applicable)
         : source_(source),
@@ -132,22 +132,22 @@ namespace cc::platform::upgrade
     {
     }
 
-    const PackageSource &PackageInfo::source() const
+    const PackageSource& PackageInfo::source() const
     {
         return this->source_;
     }
 
-    const std::string &PackageInfo::product() const
+    const std::string& PackageInfo::product() const
     {
         return this->product_;
     }
 
-    const Version &PackageInfo::version() const
+    const Version& PackageInfo::version() const
     {
         return this->version_;
     }
 
-    const std::string &PackageInfo::description() const
+    const std::string& PackageInfo::description() const
     {
         return this->description_;
     }
@@ -162,7 +162,7 @@ namespace cc::platform::upgrade
         return this->is_applicable_;
     }
 
-    bool PackageInfo::operator==(const PackageInfo &other) const
+    bool PackageInfo::operator==(const PackageInfo& other) const
     {
         return (this->source() == other.source()) &&
                (this->product() == other.product()) &&
@@ -172,7 +172,7 @@ namespace cc::platform::upgrade
                (this->is_applicable() == other.is_applicable());
     }
 
-    void PackageInfo::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void PackageInfo::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         if (this->source())
         {
@@ -190,7 +190,7 @@ namespace cc::platform::upgrade
     //==========================================================================
     // ScanProgress
 
-    void ScanProgress::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void ScanProgress::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append("source", this->source.as_tvlist());
     }
@@ -198,7 +198,7 @@ namespace cc::platform::upgrade
     //==========================================================================
     // UpgradeProgress
 
-    void UpgradeProgress::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void UpgradeProgress::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append("state", this->state);
         tvlist->append("task_description", this->task_description);
@@ -210,20 +210,20 @@ namespace cc::platform::upgrade
         }
     }
 
-    UpgradeProgress::Fraction::Fraction(const core::types::Value &current,
-                                        const core::types::Value &total)
+    UpgradeProgress::Fraction::Fraction(const core::types::Value& current,
+                                        const core::types::Value& total)
         : current(current.as_uint32()),
           total(total.as_uint32(100))
     {
     }
 
-    void UpgradeProgress::Fraction::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void UpgradeProgress::Fraction::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append("current", this->current);
         tvlist->append("total", this->total);
     }
 
-    std::ostream &operator<<(std::ostream &stream, UpgradeProgress::State state)
+    std::ostream& operator<<(std::ostream& stream, UpgradeProgress::State state)
     {
         return UpgradeProgress::state_names.to_stream(stream, state);
     }
@@ -241,15 +241,15 @@ namespace cc::platform::upgrade
 
 namespace std
 {
-    std::ostream &operator<<(
-        std::ostream &stream,
-        const cc::platform::upgrade::Location &location)
+    std::ostream& operator<<(
+        std::ostream& stream,
+        const cc::platform::upgrade::Location& location)
     {
-        if (auto *vpath = std::get_if<cc::platform::vfs::Path>(&location))
+        if (auto* vpath = std::get_if<cc::platform::vfs::Path>(&location))
         {
             stream << "{vfs_path=" << *vpath << "}";
         }
-        else if (auto *url = std::get_if<cc::platform::upgrade::URL>(&location))
+        else if (auto* url = std::get_if<cc::platform::upgrade::URL>(&location))
         {
             stream << "{url=" << *url << "}";
         }

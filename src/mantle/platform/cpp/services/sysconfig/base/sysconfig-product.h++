@@ -19,19 +19,19 @@ namespace cc::platform::sysconfig
     struct Version : public core::types::Listable
     {
     public:
-        static Version from_string(const std::string &version_string);
-        static Version from_value(const core::types::Value &value);
+        static Version from_string(const std::string& version_string);
+        static Version from_value(const core::types::Value& value);
 
         operator bool() const noexcept;
-        bool operator==(const Version &other) const;
-        bool operator!=(const Version &other) const;
-        bool operator<(const Version &other) const;
-        bool operator>(const Version &other) const;
+        bool operator==(const Version& other) const;
+        bool operator!=(const Version& other) const;
+        bool operator<(const Version& other) const;
+        bool operator>(const Version& other) const;
 
     protected:
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
-        void to_stream(std::ostream &stream) const override;
-        void to_literal_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_stream(std::ostream& stream) const override;
+        void to_literal_stream(std::ostream& stream) const override;
 
     public:
         uint major = 0;
@@ -56,7 +56,7 @@ namespace cc::platform::sysconfig
         std::vector<ProductInfo> subsystem_info;
 
     protected:
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
     };
 
     //--------------------------------------------------------------------------
@@ -72,8 +72,8 @@ namespace cc::platform::sysconfig
 
     public:
         virtual ProductInfo get_product_info() const { return {}; }
-        virtual void set_serial_number(const std::string &serial) {}
-        virtual void set_model_name(const std::string &model) {}
+        virtual void set_serial_number(const std::string& serial) {}
+        virtual void set_model_name(const std::string& model) {}
     };
 
     //--------------------------------------------------------------------------
@@ -93,8 +93,8 @@ namespace std
     template <>
     struct less<cc::platform::sysconfig::Version>
     {
-        inline bool operator()(const cc::platform::sysconfig::Version &lhs,
-                               const cc::platform::sysconfig::Version &rhs) const
+        inline bool operator()(const cc::platform::sysconfig::Version& lhs,
+                               const cc::platform::sysconfig::Version& rhs) const
         {
             return lhs < rhs;
         }

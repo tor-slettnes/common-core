@@ -23,7 +23,7 @@ namespace cc::core::platform
     {
     }
 
-    void LinuxHostProvider::set_host_name(const std::string &hostname)
+    void LinuxHostProvider::set_host_name(const std::string& hostname)
     {
         Super::set_host_name(hostname);
         std::ofstream hostnamefile(HOSTNAME_FILE);

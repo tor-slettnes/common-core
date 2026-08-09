@@ -38,7 +38,7 @@ namespace cc::platform::sysconfig::native
         };
     }
 
-    void HostConfigProvider::set_host_name(const std::string &hostname)
+    void HostConfigProvider::set_host_name(const std::string& hostname)
     {
         core::platform::host->set_host_name(hostname);
         this->emit();

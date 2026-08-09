@@ -21,7 +21,7 @@ namespace cc::platform::vfs::grpc
     {
     protected:
         int sync() override;
-        void set_status(const cc::grpc::Status &status);
+        void set_status(const cc::grpc::Status& status);
 
     public:
         cc::grpc::Status status() const;
@@ -36,12 +36,13 @@ namespace cc::platform::vfs::grpc
     class ClientInputBuffer : public ClientBuffer
     {
         using Super = ClientBuffer;
+
     public:
         using Reader = std::unique_ptr<::grpc::ClientReader<platform::vfs::protobuf::FileChunk>>;
 
     public:
-        ClientInputBuffer(Reader &&reader);
-        bool read_some(BufferType *buffer) override;
+        ClientInputBuffer(Reader&& reader);
+        bool read_some(BufferType* buffer) override;
 
     private:
         Reader reader;
@@ -53,14 +54,15 @@ namespace cc::platform::vfs::grpc
     class ClientOutputBuffer : public ClientBuffer
     {
         using Super = ClientBuffer;
+
     public:
         using Writer = std::unique_ptr<::grpc::ClientWriter<platform::vfs::protobuf::FileChunk>>;
 
     public:
-        ClientOutputBuffer(Writer &&writer, const Path &vpath);
+        ClientOutputBuffer(Writer&& writer, const Path& vpath);
         ~ClientOutputBuffer();
 
-        bool write_some(const BufferType &buffer) override;
+        bool write_some(const BufferType& buffer) override;
         int sync() override;
 
     private:
@@ -68,7 +70,6 @@ namespace cc::platform::vfs::grpc
         Path vpath;
         std::uint64_t total_written;
     };
-
 
     //==========================================================================
     /// @class ClientInputStream
@@ -78,8 +79,8 @@ namespace cc::platform::vfs::grpc
         using ClientStub = platform::vfs::grpc::VirtualFileSystem::Stub;
 
     public:
-        ClientInputStream(const std::unique_ptr<ClientStub> &stub,
-                          const Path &vpath);
+        ClientInputStream(const std::unique_ptr<ClientStub>& stub,
+                          const Path& vpath);
 
         cc::grpc::Status status() const;
 
@@ -96,8 +97,8 @@ namespace cc::platform::vfs::grpc
         using ClientStub = platform::vfs::grpc::VirtualFileSystem::Stub;
 
     public:
-        ClientOutputStream(const std::unique_ptr<ClientStub> &stub,
-                           const Path &vpath);
+        ClientOutputStream(const std::unique_ptr<ClientStub>& stub,
+                           const Path& vpath);
 
         cc::grpc::Status status() const;
 

@@ -12,8 +12,8 @@
 namespace cc::platform::multilogger::zmq
 {
     RequestHandler::RequestHandler(
-        const std::shared_ptr<API> &provider,
-        const std::string &interface_name)
+        const std::shared_ptr<API>& provider,
+        const std::string& interface_name)
         : Super(interface_name),
           provider(provider)
     {
@@ -33,8 +33,8 @@ namespace cc::platform::multilogger::zmq
     }
 
     void RequestHandler::add_sink(
-        const cc::platform::multilogger::protobuf::SinkSpec &request,
-        cc::platform::multilogger::protobuf::AddSinkResult *response)
+        const cc::platform::multilogger::protobuf::SinkSpec& request,
+        cc::platform::multilogger::protobuf::AddSinkResult* response)
     {
         response->set_added(
             this->provider->add_sink(
@@ -42,8 +42,8 @@ namespace cc::platform::multilogger::zmq
     }
 
     void RequestHandler::remove_sink(
-        const cc::platform::multilogger::protobuf::SinkID &request,
-        cc::platform::multilogger::protobuf::RemoveSinkResult *response)
+        const cc::platform::multilogger::protobuf::SinkID& request,
+        cc::platform::multilogger::protobuf::RemoveSinkResult* response)
     {
         response->set_removed(
             this->provider->remove_sink(
@@ -51,8 +51,8 @@ namespace cc::platform::multilogger::zmq
     }
 
     void RequestHandler::get_sink(
-        const cc::platform::multilogger::protobuf::SinkID &request,
-        cc::platform::multilogger::protobuf::SinkSpec *response)
+        const cc::platform::multilogger::protobuf::SinkID& request,
+        cc::platform::multilogger::protobuf::SinkSpec* response)
     {
         cc::protobuf::encode(
             this->provider->get_sink_spec(request.sink_id()),
@@ -60,8 +60,8 @@ namespace cc::platform::multilogger::zmq
     }
 
     void RequestHandler::get_all_sinks(
-        const google::protobuf::Empty &,
-        cc::platform::multilogger::protobuf::SinkSpecs *response)
+        const google::protobuf::Empty&,
+        cc::platform::multilogger::protobuf::SinkSpecs* response)
     {
         cc::protobuf::encode(
             this->provider->get_all_sink_specs(),
@@ -69,8 +69,8 @@ namespace cc::platform::multilogger::zmq
     }
 
     void RequestHandler::list_sinks(
-        const google::protobuf::Empty &,
-        cc::platform::multilogger::protobuf::SinkNames *response)
+        const google::protobuf::Empty&,
+        cc::platform::multilogger::protobuf::SinkNames* response)
     {
         cc::protobuf::assign_repeated(
             this->provider->list_sinks(),
@@ -78,8 +78,8 @@ namespace cc::platform::multilogger::zmq
     }
 
     void RequestHandler::list_sink_types(
-        const google::protobuf::Empty &,
-        cc::platform::multilogger::protobuf::SinkTypes *response)
+        const google::protobuf::Empty&,
+        cc::platform::multilogger::protobuf::SinkTypes* response)
     {
         cc::protobuf::assign_repeated(
             this->provider->list_sink_types(),
@@ -87,8 +87,8 @@ namespace cc::platform::multilogger::zmq
     }
 
     void RequestHandler::list_message_fields(
-        const google::protobuf::Empty &,
-        cc::platform::multilogger::protobuf::FieldNames *response)
+        const google::protobuf::Empty&,
+        cc::platform::multilogger::protobuf::FieldNames* response)
     {
         cc::protobuf::assign_repeated(
             this->provider->list_message_fields(),
@@ -96,8 +96,8 @@ namespace cc::platform::multilogger::zmq
     }
 
     void RequestHandler::list_error_fields(
-        const google::protobuf::Empty &,
-        cc::platform::multilogger::protobuf::FieldNames *response)
+        const google::protobuf::Empty&,
+        cc::platform::multilogger::protobuf::FieldNames* response)
     {
         cc::protobuf::assign_repeated(
             this->provider->list_error_fields(),

@@ -28,9 +28,9 @@ namespace cc::python
     // {
     // }
 
-    Exception::Exception(const std::string &text,
-                         const std::string &symbol,
-                         const core::types::KeyValueMap &attributes)
+    Exception::Exception(const std::string& text,
+                         const std::string& symbol,
+                         const core::types::KeyValueMap& attributes)
         : Super(
               core::status::Error(
                   text,                               // text

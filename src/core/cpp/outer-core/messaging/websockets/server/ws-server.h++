@@ -13,14 +13,14 @@
 
 namespace cc::ws
 {
-    class Server: public Endpoint
+    class Server : public Endpoint
     {
         using This = Server;
         using Super = Endpoint;
 
     protected:
-        Server(const std::string &address,
-               const std::string &service_name);
+        Server(const std::string& address,
+               const std::string& service_name);
 
     public:
         void initialize() override;

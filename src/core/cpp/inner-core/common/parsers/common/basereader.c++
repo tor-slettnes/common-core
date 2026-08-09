@@ -11,7 +11,7 @@
 
 namespace cc::core::parsers
 {
-    BaseReader::BaseReader(const std::string &name)
+    BaseReader::BaseReader(const std::string& name)
         : name(name)
     {
     }
@@ -20,7 +20,7 @@ namespace cc::core::parsers
     {
     }
 
-    std::optional<types::Value> BaseReader::try_decode(const std::string_view &text) const
+    std::optional<types::Value> BaseReader::try_decode(const std::string_view& text) const
     {
         try
         {
@@ -32,7 +32,7 @@ namespace cc::core::parsers
         }
     }
 
-    types::Value BaseReader::read_file(const fs::path &path) const
+    types::Value BaseReader::read_file(const fs::path& path) const
     {
         if (std::ifstream is{path})
         {
@@ -44,7 +44,7 @@ namespace cc::core::parsers
         }
     }
 
-    types::Value BaseReader::read_stream(std::istream &&stream) const
+    types::Value BaseReader::read_stream(std::istream&& stream) const
     {
         return this->read_stream(stream);
     }

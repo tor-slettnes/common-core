@@ -17,9 +17,9 @@ namespace cc::platform::upgrade::native
         using Super = PackageIndex;
 
     public:
-        URLPackageIndex(const URL &url);
+        URLPackageIndex(const URL& url);
 
-        PackageSource package_source(const std::string &package_name) const override;
+        PackageSource package_source(const std::string& package_name) const override;
         PackageCatalogue scan() override;
 
     private:

@@ -26,8 +26,8 @@ namespace cc::dds
 
     protected:
         RTIDistributedLogger(
-            const std::string &sink_id,
-            const std::string &application_id = core::platform::path->exec_name(),
+            const std::string& sink_id,
+            const std::string& application_id = core::platform::path->exec_name(),
             int domain_id = 0);
 
     public:
@@ -36,20 +36,20 @@ namespace cc::dds
     protected:
         void open() override;
         void close() override;
-        bool handle_message(const core::logging::Message::ptr &message) override;
+        bool handle_message(const core::logging::Message::ptr& message) override;
 
     private:
         static const core::types::ValueMap<core::status::Level, DDS_Long> levelmap;
 
     private:
         RTI_DLOptions dl_options_;
-        RTI_DLDistLogger *dist_logger_;
+        RTI_DLDistLogger* dist_logger_;
     };
 
     inline static core::logging::SinkFactory rti_dl_factory(
         "rti-dl",
         "Enable logging via RTI Distributed Logger [Default: %default]",
-        [](const core::logging::SinkID &sink_id) -> core::logging::Sink::ptr {
+        [](const core::logging::SinkID& sink_id) -> core::logging::Sink::ptr {
             return RTIDistributedLogger::create_shared(sink_id);
         });
 

@@ -18,8 +18,8 @@ namespace cc::zmq
         using Super = Endpoint;
 
     protected:
-        Responder(const std::string &address,
-                  const std::string &channel_name,
+        Responder(const std::string& address,
+                  const std::string& channel_name,
                   Role role = Role::HOST);
 
         ~Responder();
@@ -30,8 +30,8 @@ namespace cc::zmq
         void run();
 
     protected:
-        virtual void process_binary_request(const core::types::ByteVector &packed_request,
-                                            core::types::ByteVector *packed_reply) = 0;
+        virtual void process_binary_request(const core::types::ByteVector& packed_request,
+                                            core::types::ByteVector* packed_reply) = 0;
 
     private:
         bool keep_listening;

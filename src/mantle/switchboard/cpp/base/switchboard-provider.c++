@@ -17,17 +17,17 @@ namespace cc::platform::switchboard
     //==========================================================================
     // Provider
 
-    Provider::Provider(const std::string &implementation)
+    Provider::Provider(const std::string& implementation)
         : implementation_(implementation)
     {
     }
 
-    const std::string &Provider::implementation() const
+    const std::string& Provider::implementation() const
     {
         return this->implementation_;
     }
 
-    bool Provider::load(const fs::path &filename,
+    bool Provider::load(const fs::path& filename,
                         bool replace_specifications,
                         bool replace_statuses,
                         InvocationStyle invoke_interceptors)
@@ -42,7 +42,7 @@ namespace cc::platform::switchboard
         return (count > 0);
     }
 
-    bool Provider::save(const fs::path &filename,
+    bool Provider::save(const fs::path& filename,
                         bool include_specifications,
                         bool include_statuses)
     {
@@ -88,9 +88,9 @@ namespace cc::platform::switchboard
     }
 
     SwitchMap::const_iterator Provider::find(
-        const SwitchName &name) const
+        const SwitchName& name) const
     {
-        std::scoped_lock lck(const_cast<This *>(this)->switches_mutex);
+        std::scoped_lock lck(const_cast<This*>(this)->switches_mutex);
         if (auto it = this->switches.find(name);
             it != this->end())
         {
@@ -109,7 +109,7 @@ namespace cc::platform::switchboard
     }
 
     SwitchMap::iterator Provider::find(
-        const SwitchName &name)
+        const SwitchName& name)
     {
         std::scoped_lock lck(this->switches_mutex);
         if (auto it = this->switches.find(name);
@@ -135,7 +135,7 @@ namespace cc::platform::switchboard
     }
 
     SwitchMap Provider::get_selected_switches(
-        const SwitchSelection &selection) const
+        const SwitchSelection& selection) const
     {
         if (selection.patterns.empty())
         {
@@ -151,10 +151,10 @@ namespace cc::platform::switchboard
             if (selection.with_ancestors)
             {
                 SwitchMap indirect_matches;
-                for (const auto &[switch_name, sw] : matches)
+                for (const auto& [switch_name, sw] : matches)
                 {
                     indirect_matches.try_emplace(switch_name, sw);
-                    for (const auto &ancestor : sw->get_ancestors())
+                    for (const auto& ancestor : sw->get_ancestors())
                     {
                         indirect_matches.try_emplace(ancestor->name(), ancestor);
                     }
@@ -167,7 +167,7 @@ namespace cc::platform::switchboard
     }
 
     SwitchRef Provider::get_or_add_switch(
-        const SwitchName &name,
+        const SwitchName& name,
         bool active)
     {
         std::scoped_lock lck(this->switches_mutex);
@@ -182,10 +182,10 @@ namespace cc::platform::switchboard
     }
 
     SwitchRef Provider::get_switch(
-        const SwitchName &name,
+        const SwitchName& name,
         bool required) const
     {
-        std::scoped_lock lck(const_cast<This *>(this)->switches_mutex);
+        std::scoped_lock lck(const_cast<This*>(this)->switches_mutex);
         if (auto it = this->find(name); it != this->end())
         {
             return it->second;
@@ -203,20 +203,20 @@ namespace cc::platform::switchboard
     }
 
     SwitchMap Provider::find_regex_matches(
-        const std::vector<std::string> &patterns) const
+        const std::vector<std::string>& patterns) const
     {
         SwitchMap matches;
 
         std::vector<std::regex> rx_patterns;
         rx_patterns.reserve(patterns.size());
-        for (const std::string &pattern : patterns)
+        for (const std::string& pattern : patterns)
         {
             rx_patterns.emplace_back(pattern);
         }
 
-        for (const auto &[name, sw] : this->get_switches())
+        for (const auto& [name, sw] : this->get_switches())
         {
-            for (const std::regex &rx : rx_patterns)
+            for (const std::regex& rx : rx_patterns)
             {
                 if (std::regex_match(name, rx))
                 {
@@ -229,12 +229,12 @@ namespace cc::platform::switchboard
     }
 
     SwitchMap Provider::find_glob_matches(
-        const std::vector<std::string> &patterns) const
+        const std::vector<std::string>& patterns) const
     {
         SwitchMap matches;
-        for (const auto &[name, sw] : this->get_switches())
+        for (const auto& [name, sw] : this->get_switches())
         {
-            for (const std::string &pattern : patterns)
+            for (const std::string& pattern : patterns)
             {
                 if (core::platform::path->filename_match(pattern, name, true))
                 {

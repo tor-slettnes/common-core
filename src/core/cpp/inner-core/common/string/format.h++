@@ -36,21 +36,21 @@ namespace cc::core::str
     class Formatter
     {
     public:
-        Formatter(std::ostream &stream, const std::string &format);
+        Formatter(std::ostream& stream, const std::string& format);
 
         template <class... Args>
-        inline Formatter &add(const Args &...args) noexcept
+        inline Formatter& add(const Args&... args) noexcept
         {
             (this->append(args), ...);
             return *this;
         }
 
         template <class T>
-        inline void append(const T &value) noexcept
+        inline void append(const T& value) noexcept
         {
             if (this->parts_it != this->parts.end())
             {
-                const Part &part = *this->parts_it++;
+                const Part& part = *this->parts_it++;
                 this->stream.imbue(std::locale::classic());
                 std::ios::fmtflags original_flags = this->stream.flags();
                 std::size_t original_precision = this->stream.precision();
@@ -74,10 +74,10 @@ namespace cc::core::str
         {
             Part(char conversion = '\0',
                  ulong pos = 0,
-                 const std::string &flags = "",
-                 const std::optional<uint> &width = {},
-                 const std::optional<uint> &precision = {},
-                 const std::string &tail = "")
+                 const std::string& flags = "",
+                 const std::optional<uint>& width = {},
+                 const std::optional<uint>& precision = {},
+                 const std::string& tail = "")
                 : conversion(conversion),
                   pos(pos),
                   flags(flags),
@@ -114,62 +114,61 @@ namespace cc::core::str
             char timeformat = '\0';
         };
 
-        Parts split_parts(const std::string &fmt) const;
-        std::optional<uint> optional_size(const std::string &size) const;
+        Parts split_parts(const std::string& fmt) const;
+        std::optional<uint> optional_size(const std::string& size) const;
 
-        Modifiers apply_format(const Part &part, uint bytesize);
-        void apply_flags(const std::string &flagstring, Modifiers *modifiers);
-        void apply_conversion(char conv, uint bytesize, Modifiers *modifiers);
+        Modifiers apply_format(const Part& part, uint bytesize);
+        void apply_flags(const std::string& flagstring, Modifiers* modifiers);
+        void apply_conversion(char conv, uint bytesize, Modifiers* modifiers);
         std::string nonarg_conversion(char conversion) const;
 
         // Ouptut formatting for boolean values (to support quoting, lower/upper)
         void appendvalue(bool value,
-                         const Modifiers &modifiers);
+                         const Modifiers& modifiers);
 
         // Ouptut formatting for char (to support quoting, lower/upper)
         void appendvalue(char value,
-                         const Modifiers &modifiers);
+                         const Modifiers& modifiers);
 
         // Ouptut formatting for character arrays (copied if needed)
-        void appendvalue(const char *value,
-                         const Modifiers &modifiers);
+        void appendvalue(const char* value,
+                         const Modifiers& modifiers);
 
         // Ouptut formatting for std::string_view (to support quoting)
-        void appendvalue(const std::string_view &value,
-                         const Modifiers &modifiers);
+        void appendvalue(const std::string_view& value,
+                         const Modifiers& modifiers);
 
         // Ouptut formatting for lvalue strings (copied if needed)
-        void appendvalue(const std::string &value,
-                         const Modifiers &modifiers);
+        void appendvalue(const std::string& value,
+                         const Modifiers& modifiers);
 
         // Ouptut formatting for rvalue strings (destrutive lower/upper case conversion)
-        void appendvalue(std::string &&rvalue,
-                         const Modifiers &modifiers);
+        void appendvalue(std::string&& rvalue,
+                         const Modifiers& modifiers);
 
         // Ouptut formatting for timepionts
-        void appendvalue(const std::chrono::system_clock::time_point &tp,
-                         const Modifiers &modifiers);
+        void appendvalue(const std::chrono::system_clock::time_point& tp,
+                         const Modifiers& modifiers);
 
-        void appendvalue(const std::tm &time,
-                         const Modifiers &modifiers);
+        void appendvalue(const std::tm& time,
+                         const Modifiers& modifiers);
 
         // // Ouptut formatting for byte arrays (to support quoting)
         // void appendvalue(const std::vector<std::uint8_t> &value,
         //                  const Modifiers &modifiers);
 
         // Output formatting for integer pointers, to support `%n` format
-        void appendvalue(int *nargs,
-                         const Modifiers &modifiers);
+        void appendvalue(int* nargs,
+                         const Modifiers& modifiers);
 
-        void appendvalue(const types::Streamable &value,
-                         const Modifiers &modifiers);
-
+        void appendvalue(const types::Streamable& value,
+                         const Modifiers& modifiers);
 
         // Output formatting for integral types: short, ushort, int, uint...
         // to support (a) variable field length and (b) sign space
         template <class T, std::enable_if_t<std::is_integral_v<T>, bool> = true>
-        inline void appendvalue(const T &value,
-                                const Modifiers &modifiers)
+        inline void appendvalue(const T& value,
+                                const Modifiers& modifiers)
         {
             // Variable width argument (`%*`), no conversion
             if (modifiers.varwidth)
@@ -190,8 +189,8 @@ namespace cc::core::str
         // Output formatting for floating point types: float, double,
         // to support 'z' format to generate truncated values
         template <class T, std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
-        inline void appendvalue(const T &value,
-                                const Modifiers &modifiers)
+        inline void appendvalue(const T& value,
+                                const Modifiers& modifiers)
         {
             // If the value is negative but close enough to zero that
             // the string representation is all zeroes, and if no minus
@@ -216,45 +215,43 @@ namespace cc::core::str
         template <class T,
                   std::enable_if_t<!std::is_arithmetic_v<T> && !std::is_base_of_v<types::Streamable, T>,
                                    bool> = true>
-        inline void appendvalue(const T &value,
-                                const Modifiers &)
+        inline void appendvalue(const T& value,
+                                const Modifiers&)
         {
             this->stream << value;
         }
 
-
         template <class T>
-        inline void appendvalue(const std::optional<T> &value,
-                                const Modifiers &modifiers)
+        inline void appendvalue(const std::optional<T>& value,
+                                const Modifiers& modifiers)
         {
             this->append_if<std::optional<T>>(value, modifiers);
         }
 
         template <class T>
-        inline void appendvalue(const std::shared_ptr<T> &value,
-                                const Modifiers &modifiers)
+        inline void appendvalue(const std::shared_ptr<T>& value,
+                                const Modifiers& modifiers)
         {
             this->append_if<std::shared_ptr<T>>(value, modifiers);
         }
 
         template <class T>
-        inline void appendvalue(const std::unique_ptr<T> &value,
-                                const Modifiers &modifiers)
+        inline void appendvalue(const std::unique_ptr<T>& value,
+                                const Modifiers& modifiers)
         {
             this->append_if<std::unique_ptr<T>>(value, modifiers);
         }
 
         template <class T>
-        inline void appendvalue(const std::weak_ptr<T> &value,
-                                const Modifiers &modifiers)
+        inline void appendvalue(const std::weak_ptr<T>& value,
+                                const Modifiers& modifiers)
         {
             this->append_if<std::shared_ptr<T>>(value.lock(), modifiers);
         }
 
-
         template <class ContainerT>
-        inline void append_if(const ContainerT &value,
-                              const Modifiers &modifiers)
+        inline void append_if(const ContainerT& value,
+                              const Modifiers& modifiers)
         {
             if (modifiers.quoted)
             {
@@ -273,7 +270,7 @@ namespace cc::core::str
         }
 
     private:
-        std::ostream &stream;
+        std::ostream& stream;
         std::locale locale;
         const std::string formatstring;
         const Parts parts;
@@ -375,8 +372,8 @@ namespace cc::core::str
     /// `0000002a`, respectively.
 
     template <class... Args>
-    [[nodiscard]] inline std::string format(const std::string &format,
-                                            const Args &...args) noexcept
+    [[nodiscard]] inline std::string format(const std::string& format,
+                                            const Args&... args) noexcept
     {
         std::ostringstream stream;
         Formatter(stream, format).add(args...).add_tail();
@@ -398,9 +395,9 @@ namespace cc::core::str
     /// @sa std::string format(const std::string &format, const Args &...args) noexcept
 
     template <class... Args>
-    inline std::ostream &format(std::ostream &stream,
-                                const std::string &format,
-                                const Args &...args) noexcept
+    inline std::ostream& format(std::ostream& stream,
+                                const std::string& format,
+                                const Args&... args) noexcept
     {
         Formatter(stream, format).add(args...).add_tail();
         return stream;

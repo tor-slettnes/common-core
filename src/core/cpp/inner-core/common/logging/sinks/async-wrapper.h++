@@ -25,7 +25,6 @@ namespace cc::core::logging
     template <class SinkType>
     class AsyncWrapper : public SinkType
     {
-
         using This = AsyncWrapper<SinkType>;
         using Super = SinkType;
 
@@ -43,15 +42,15 @@ namespace cc::core::logging
         }
 
     protected:
-        void load_settings(const types::KeyValueMap &settings) override
+        void load_settings(const types::KeyValueMap& settings) override
         {
             Super::load_settings(settings);
             this->load_async_settings(settings);
         }
 
-        void load_async_settings(const types::KeyValueMap &settings)
+        void load_async_settings(const types::KeyValueMap& settings)
         {
-            if (const types::Value &value = settings.get(SETTING_QUEUE_SIZE))
+            if (const types::Value& value = settings.get(SETTING_QUEUE_SIZE))
             {
                 this->set_queue_size(value.as_uint64());
             }
@@ -86,7 +85,7 @@ namespace cc::core::logging
             this->close_async_queue();
         }
 
-        bool capture(const types::Loggable::ptr &loggable) override
+        bool capture(const types::Loggable::ptr& loggable) override
         {
             if (this->is_open())
             {
@@ -119,7 +118,7 @@ namespace cc::core::logging
     public:
         virtual void worker()
         {
-            while (const std::optional<types::Loggable::ptr> &opt_item = this->queue_->get())
+            while (const std::optional<types::Loggable::ptr>& opt_item = this->queue_->get())
             {
                 this->try_handle_item(opt_item.value());
             }

@@ -49,12 +49,12 @@ namespace cc::core::types
         {ValueType::KVMAP, "map"},
     };  // namespace types
 
-    std::ostream &operator<<(std::ostream &stream, ValueType type)
+    std::ostream& operator<<(std::ostream& stream, ValueType type)
     {
         return TypeNames.to_stream(stream, type, "(Unknown type)");
     }
 
-    std::istream &operator>>(std::istream &stream, ValueType &type)
+    std::istream& operator>>(std::istream& stream, ValueType& type)
     {
         return TypeNames.from_stream(stream, &type, ValueType::NONE);
     }
@@ -66,7 +66,7 @@ namespace cc::core::types
 
     bool is_composite(ValueType vt)
     {
-        switch(vt)
+        switch (vt)
         {
         case ValueType::VALUELIST:
         case ValueType::TVLIST:
@@ -79,7 +79,7 @@ namespace cc::core::types
 
     bool is_integral(ValueType vt)
     {
-        switch(vt)
+        switch (vt)
         {
         case ValueType::UINT:
         case ValueType::SINT:
@@ -91,7 +91,7 @@ namespace cc::core::types
 
     bool is_real(ValueType vt)
     {
-        switch(vt)
+        switch (vt)
         {
         case ValueType::UINT:
         case ValueType::SINT:
@@ -104,7 +104,7 @@ namespace cc::core::types
 
     bool is_numeric(ValueType vt)
     {
-        switch(vt)
+        switch (vt)
         {
         case ValueType::UINT:
         case ValueType::SINT:
@@ -118,7 +118,7 @@ namespace cc::core::types
 
     bool is_time(ValueType vt)
     {
-        switch(vt)
+        switch (vt)
         {
         case ValueType::TIMEPOINT:
         case ValueType::DURATION:
@@ -130,7 +130,7 @@ namespace cc::core::types
 
     bool is_text(ValueType vt)
     {
-        switch(vt)
+        switch (vt)
         {
         case ValueType::CHAR:
         case ValueType::STRING:
@@ -142,7 +142,7 @@ namespace cc::core::types
 
     bool is_bytesequence(ValueType vt)
     {
-        switch(vt)
+        switch (vt)
         {
         case ValueType::STRING:
         case ValueType::BYTEVECTOR:
@@ -152,7 +152,7 @@ namespace cc::core::types
         }
     }
 
-    std::string typetree(const Value &value)
+    std::string typetree(const Value& value)
     {
         switch (value.type())
         {
@@ -167,7 +167,7 @@ namespace cc::core::types
         }
     }
 
-    std::string typetree(const ValueListPtr &list)
+    std::string typetree(const ValueListPtr& list)
     {
         std::string delimiter;
         std::stringstream ss;
@@ -175,7 +175,7 @@ namespace cc::core::types
 
         if (list)
         {
-            for (const Value &v : *list)
+            for (const Value& v : *list)
             {
                 ss << delimiter << typetree(v);
                 delimiter = ", ";
@@ -185,14 +185,14 @@ namespace cc::core::types
         return ss.str();
     }
 
-    std::string typetree(const KeyValueMapPtr &kvmap)
+    std::string typetree(const KeyValueMapPtr& kvmap)
     {
         std::string delimiter;
         std::stringstream ss;
         ss << "KeyValueMap(";
         if (kvmap)
         {
-            for (const auto &[k, v] : *kvmap)
+            for (const auto& [k, v] : *kvmap)
             {
                 ss << delimiter << k << ":" << typetree(v);
                 delimiter = ", ";
@@ -202,7 +202,7 @@ namespace cc::core::types
         return ss.str();
     }
 
-    std::string typetree(const TaggedValueListPtr &tvlist)
+    std::string typetree(const TaggedValueListPtr& tvlist)
     {
         std::string delimiter;
         std::stringstream ss;
@@ -210,7 +210,7 @@ namespace cc::core::types
 
         if (tvlist)
         {
-            for (const auto &[t, v] : *tvlist)
+            for (const auto& [t, v] : *tvlist)
             {
                 if (t.has_value())
                 {

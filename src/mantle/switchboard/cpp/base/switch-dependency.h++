@@ -27,16 +27,16 @@ namespace cc::platform::switchboard
         // static constexpr StateMask DEFAULT_TRIGGERS = STATE_SETTLED;
         static const StateSet DEFAULT_TRIGGERS;
 
-        friend bool operator==(const Dependency &lhs, const Dependency &rhs);
-        friend bool operator!=(const Dependency &lhs, const Dependency &rhs);
-        friend bool operator==(const DependencyRef &lhs, const DependencyRef &rhs);
-        friend bool operator!=(const DependencyRef &lhs, const DependencyRef &rhs);
+        friend bool operator==(const Dependency& lhs, const Dependency& rhs);
+        friend bool operator!=(const Dependency& lhs, const Dependency& rhs);
+        friend bool operator==(const DependencyRef& lhs, const DependencyRef& rhs);
+        friend bool operator!=(const DependencyRef& lhs, const DependencyRef& rhs);
 
     protected:
         Dependency(
-            const std::weak_ptr<Provider> &provider,
-            const SwitchName &predecessor_name,
-            const StateSet &trigger_states = DEFAULT_TRIGGERS,
+            const std::weak_ptr<Provider>& provider,
+            const SwitchName& predecessor_name,
+            const StateSet& trigger_states = DEFAULT_TRIGGERS,
             DependencyPolarity polarity = DependencyPolarity::POSITIVE,
             bool hard = false,
             bool sufficient = false);
@@ -45,7 +45,7 @@ namespace cc::platform::switchboard
         // Accessor methods
         ProviderRef provider() const;
         SwitchRef predecessor() const;
-        const SwitchName &predecessor_name() const;
+        const SwitchName& predecessor_name() const;
         State predecessor_state(bool allow_pending = true) const;
 
         StateSet trigger_states() const;
@@ -61,7 +61,7 @@ namespace cc::platform::switchboard
         static State inverted(State state);
 
     protected:
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
 
     public:
         std::weak_ptr<Provider> provider_;

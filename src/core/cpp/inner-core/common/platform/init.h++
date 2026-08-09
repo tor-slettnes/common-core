@@ -21,8 +21,8 @@ namespace cc::core::platform
     protected:
         using Function = std::function<void()>;
 
-        Task(const std::string &handle,
-             const Function &functor);
+        Task(const std::string& handle,
+             const Function& functor);
 
     public:
         std::string handle;
@@ -34,8 +34,8 @@ namespace cc::core::platform
     class InitTask : public Task
     {
     public:
-        InitTask(const std::string &handle,
-                 const Function &functor);
+        InitTask(const std::string& handle,
+                 const Function& functor);
         virtual ~InitTask();
     };
 
@@ -45,11 +45,10 @@ namespace cc::core::platform
     class ShutdownTask : public Task
     {
     public:
-        ShutdownTask(const std::string &handle,
-                 const Function &functor);
+        ShutdownTask(const std::string& handle,
+                     const Function& functor);
         virtual ~ShutdownTask();
     };
-
 
     //==========================================================================
     // ExitTask - triggered on program exit (after leaving main())
@@ -57,15 +56,15 @@ namespace cc::core::platform
     class ExitTask : public Task
     {
     public:
-        ExitTask(const std::string &handle,
-                 const Function &functor);
+        ExitTask(const std::string& handle,
+                 const Function& functor);
         virtual ~ExitTask();
     };
 
     //==========================================================================
     // TaskSet
 
-    class TaskSet : public std::unordered_set<Task *>
+    class TaskSet : public std::unordered_set<Task*>
     {
     public:
         void execute() const;

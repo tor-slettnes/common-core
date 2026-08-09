@@ -17,16 +17,16 @@ namespace cc::platform::upgrade::grpc
         using Super = ProviderInterface;
 
     public:
-        ClientProvider(const std::shared_ptr<Client> &client);
+        ClientProvider(const std::shared_ptr<Client>& client);
 
         bool is_pertinent() const override;
 
     protected:
-        PackageCatalogue scan(const PackageSource &source) override;
+        PackageCatalogue scan(const PackageSource& source) override;
         PackageSources list_sources() const override;
-        PackageCatalogue list_available(const PackageSource &source) const override;
-        PackageInfo::ptr best_available(const PackageSource &source) const override;
-        PackageInfo::ptr install(const PackageSource &source) override;
+        PackageCatalogue list_available(const PackageSource& source) const override;
+        PackageInfo::ptr best_available(const PackageSource& source) const override;
+        PackageInfo::ptr install(const PackageSource& source) override;
         void finalize() override;
 
     private:

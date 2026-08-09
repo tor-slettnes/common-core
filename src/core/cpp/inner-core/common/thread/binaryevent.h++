@@ -62,7 +62,7 @@ namespace cc::core::types
         /// @return
         ///     `true` if the flag was set before the deadline expired, `false` otherwise.
         template <class Clock, class Duration>
-        bool wait_until(const std::chrono::time_point<Clock, Duration> &deadline)
+        bool wait_until(const std::chrono::time_point<Clock, Duration>& deadline)
         {
             std::unique_lock<std::mutex> lock(this->event_mtx_);
             this->cv_.wait_until(
@@ -81,7 +81,7 @@ namespace cc::core::types
         /// @return
         ///     `true` if the flag was set before the timeout elapsed, `false` otherwise.
         template <class Rep, class Period = std::ratio<1>>
-        bool wait_for(const std::chrono::duration<Rep, Period> &timeout)
+        bool wait_for(const std::chrono::duration<Rep, Period>& timeout)
         {
             return this->wait_until(
                 std::chrono::steady_clock::now() +

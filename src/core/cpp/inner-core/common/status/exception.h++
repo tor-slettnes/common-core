@@ -48,8 +48,8 @@ namespace cc::core::exception
     {
         /// Override the otherwise ambiguous "<<" operator, which is defined for
         /// both the Event and std::exception base classes
-        friend inline std::ostream &operator<<(std::ostream &stream,
-                                               const Exception<E> &e)
+        friend inline std::ostream& operator<<(std::ostream& stream,
+                                               const Exception<E>& e)
         {
             e.to_stream(stream);
             return stream;
@@ -58,7 +58,7 @@ namespace cc::core::exception
         using Super = status::Error;
 
     public:
-        inline Exception(const status::Error &event,
+        inline Exception(const status::Error& event,
                          const std::string class_name = "Exception")
             : Super(event),
               E(event.text()),
@@ -66,8 +66,8 @@ namespace cc::core::exception
         {
         }
 
-        inline Exception(const status::Error &event,
-                         const E &exc,
+        inline Exception(const status::Error& event,
+                         const E& exc,
                          const std::string class_name = "Exception")
             : Super(event),
               E(exc),

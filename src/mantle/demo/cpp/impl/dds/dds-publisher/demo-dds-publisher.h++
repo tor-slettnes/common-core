@@ -27,18 +27,18 @@ namespace cc::demo::dds
         using Super = cc::dds::Publisher;
 
     protected:
-        Publisher(const std::string &channel_name, int domain_id);
+        Publisher(const std::string& channel_name, int domain_id);
 
     public:
         void initialize() override;
         void deinitialize() override;
 
     private:
-        void on_time_update(const TimeData &time_data);
+        void on_time_update(const TimeData& time_data);
 
         void on_greeting_update(core::signal::MappingAction change,
-                                const std::string &identity,
-                                const Greeting &greeting);
+                                const std::string& identity,
+                                const Greeting& greeting);
 
     private:
         DataWriterPtr<CC::Demo::TimeData> time_writer;

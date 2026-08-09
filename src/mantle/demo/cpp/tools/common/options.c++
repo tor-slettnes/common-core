@@ -10,7 +10,7 @@
 
 namespace cc::demo
 {
-    Options::Options(const std::string &implementation)
+    Options::Options(const std::string& implementation)
         : Super(),
           implementation(implementation)
     {
@@ -61,9 +61,9 @@ namespace cc::demo
     void Options::on_monitor_start()
     {
         FlagMap flags;
-        bool &except = flags["except"];
-        bool &show_time = flags["time"];
-        bool &show_greetings = flags["greetings"];
+        bool& except = flags["except"];
+        bool& show_time = flags["time"];
+        bool& show_greetings = flags["greetings"];
         this->get_flags(&flags, false);
 
         if (!show_time && !show_greetings)

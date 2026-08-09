@@ -11,15 +11,15 @@
 namespace cc::platform::multilogger::zmq
 {
     SubmissionHandler::SubmissionHandler(
-        const std::shared_ptr<API> &provider,
-        const std::weak_ptr<cc::zmq::Subscriber> &subscriber)
+        const std::shared_ptr<API>& provider,
+        const std::weak_ptr<cc::zmq::Subscriber>& subscriber)
         : Super({}, subscriber),
           provider(provider)
     {
     }
 
     void SubmissionHandler::handle_message(
-        const cc::platform::multilogger::protobuf::Loggable &msg)
+        const cc::platform::multilogger::protobuf::Loggable& msg)
     {
         this->provider->submit(cc::protobuf::decode_loggable(msg));
     }

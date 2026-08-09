@@ -9,9 +9,9 @@
 
 namespace cc::platform::sysconfig
 {
-    core::types::TaggedValueList &operator<<(
-        core::types::TaggedValueList &tvlist,
-        const HostInfo &hi)
+    core::types::TaggedValueList& operator<<(
+        core::types::TaggedValueList& tvlist,
+        const HostInfo& hi)
     {
         return tvlist.extend({
             {"hostname", hi.hostname},
@@ -29,9 +29,9 @@ namespace cc::platform::sysconfig
         });
     }
 
-    std::ostream &operator<<(
-        std::ostream &stream,
-        const HostInfo &hi)
+    std::ostream& operator<<(
+        std::ostream& stream,
+        const HostInfo& hi)
     {
         return stream << core::types::TaggedValueList::create_from(hi);
     }

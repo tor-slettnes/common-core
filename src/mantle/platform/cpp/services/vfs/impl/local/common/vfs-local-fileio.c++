@@ -12,7 +12,7 @@ namespace cc::platform::vfs::local
     //==========================================================================
     // FileReader
 
-    FileReader::FileReader(const Location &loc,
+    FileReader::FileReader(const Location& loc,
                            const std::ios::openmode mode)
         : std::ifstream(loc.localPath(), mode),
           loc(loc)
@@ -23,7 +23,7 @@ namespace cc::platform::vfs::local
     //==========================================================================
     // FileWriter
 
-    FileWriter::FileWriter(const Location &loc,
+    FileWriter::FileWriter(const Location& loc,
                            const std::ios::openmode mode)
         : std::ofstream(loc.localPath(), mode),
           loc(loc)

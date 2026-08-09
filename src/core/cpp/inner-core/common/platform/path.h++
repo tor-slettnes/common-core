@@ -45,13 +45,13 @@ namespace cc::core::platform
         core::types::KeyValueMap attributes;       // Custom file attributes
     };
 
-    core::types::TaggedValueList &operator<<(
-        core::types::TaggedValueList &tvlist,
-        const FileStats &stats);
+    core::types::TaggedValueList& operator<<(
+        core::types::TaggedValueList& tvlist,
+        const FileStats& stats);
 
-    std::ostream &operator<<(
-        std::ostream &stream,
-        const FileStats &stats);
+    std::ostream& operator<<(
+        std::ostream& stream,
+        const FileStats& stats);
 
     using DirectoryList = std::vector<fs::directory_entry>;
 
@@ -69,18 +69,18 @@ namespace cc::core::platform
         ///    Provider name
         /// @param[in] exec_name
         ///    Executable path, normally obtained from argv[0].
-        PathProvider(const std::string &provider_name,
-                     const std::string &exec_name);
+        PathProvider(const std::string& provider_name,
+                     const std::string& exec_name);
 
     public:
-        std::optional<FileStats> try_get_stats(const fs::path &path,
+        std::optional<FileStats> try_get_stats(const fs::path& path,
                                                bool dereference = false) const;
 
-        virtual FileStats get_stats(const fs::path &path,
+        virtual FileStats get_stats(const fs::path& path,
                                     bool dereference = false) const;
 
-        virtual bool is_readable(const fs::path &path, bool real_uid = false) const = 0;
-        virtual bool is_writable(const fs::path &path, bool real_uid = false) const = 0;
+        virtual bool is_readable(const fs::path& path, bool real_uid = false) const = 0;
+        virtual bool is_writable(const fs::path& path, bool real_uid = false) const = 0;
 
         /// @brief Return the maximum length of a filesystem path.
         virtual uint path_max_size() const noexcept = 0;
@@ -120,7 +120,7 @@ namespace cc::core::platform
 
         /// @brief Return the base name of the running executable.
         virtual std::string exec_name(bool remove_extension = true,
-                                      const std::string &fallback = "COMMAND") const noexcept;
+                                      const std::string& fallback = "COMMAND") const noexcept;
 
         /// @brief
         ///    Return the base name of the running executable without
@@ -140,9 +140,9 @@ namespace cc::core::platform
         ///     The canonical path of the folder containing the specified name
         ///     (i.e., its parent).  If the name is not found, return fallback.
 
-        fs::path locate_dominating_folder(const fs::path &start,
-                                          const fs::path &name,
-                                          const fs::path &fallback = "") const noexcept;
+        fs::path locate_dominating_folder(const fs::path& start,
+                                          const fs::path& name,
+                                          const fs::path& fallback = "") const noexcept;
 
         /// @brief Return path with a default suffix added, if not already present.
         /// @param[in] pathname
@@ -197,15 +197,15 @@ namespace cc::core::platform
         fs::path log_folder() const noexcept;
 
         /// Obtain the target of a symbolic link
-        virtual fs::path readlink(const fs::path &path) const noexcept;
+        virtual fs::path readlink(const fs::path& path) const noexcept;
 
         /// @brief  Return the binary content of the specified file, up to the specified maximum.
-        virtual types::ByteVector readdata(const fs::path &path,
+        virtual types::ByteVector readdata(const fs::path& path,
                                            ssize_t maxsize = 0) const noexcept;
 
         /// @brief Return the contents off the specified file, up to the specified maximum
-        virtual std::string readtext(const fs::path &path,
-                                     const std::set<char> &striptrailing = WHITESPACE,
+        virtual std::string readtext(const fs::path& path,
+                                     const std::set<char>& striptrailing = WHITESPACE,
                                      ssize_t maxsize = 0,
                                      ssize_t bufsize = 2 << 12) const noexcept;
 
@@ -219,8 +219,8 @@ namespace cc::core::platform
         ///     Uniqueness and ownership is guaranteed via `mkstemps(3)`.
         ///     The file is created and immediately closed, allowing it to be
         ///     subsequently reopened by e.g. a subprocess.
-        fs::path mktemp(const std::string &prefix = "tmp.",
-                        const std::string &suffix = {});
+        fs::path mktemp(const std::string& prefix = "tmp.",
+                        const std::string& suffix = {});
 
         /// @brief
         ///     Create a temporary file in a specific folder
@@ -234,9 +234,9 @@ namespace cc::core::platform
         ///     Uniqueness and ownership is guaranteed via `mkstemps(3)`.
         ///     The file is created and immediately closed, allowing it to be
         ///     subsequently reopened by e.g. a subprocess.
-        virtual fs::path mktemp(const fs::path &folder,
-                                const std::string &prefix,
-                                const std::string &suffix) = 0;
+        virtual fs::path mktemp(const fs::path& folder,
+                                const std::string& prefix,
+                                const std::string& suffix) = 0;
 
         /// @brief
         ///     Create a temporary directory in a specific folder
@@ -246,8 +246,8 @@ namespace cc::core::platform
         ///     Basename suffix
         /// @note
         ///     Uniqueness and ownership is guaranteed via `mkdtemp(3)`.
-        fs::path mktempdir(const std::string &prefix = "tmp.",
-                           const std::string &suffix = {});
+        fs::path mktempdir(const std::string& prefix = "tmp.",
+                           const std::string& suffix = {});
 
         /// @brief
         ///     Create a temporary directory in a specific folder
@@ -259,9 +259,9 @@ namespace cc::core::platform
         ///     Basename suffix
         /// @note
         ///     Uniqueness and ownership is guaranteed via `mkdtemp(3)`.
-        virtual fs::path mktempdir(const fs::path &folder,
-                                   const std::string &prefix,
-                                   const std::string &suffix) = 0;
+        virtual fs::path mktempdir(const fs::path& folder,
+                                   const std::string& prefix,
+                                   const std::string& suffix) = 0;
 
         /// @brief
         ///     Check if a file name matches a shell-style file name mask (globbing pattern)
@@ -277,8 +277,8 @@ namespace cc::core::platform
         /// @return
         ///     `true` iff there were one or more hits.  `false` if no masks are provided.
         virtual bool filename_match(
-            const fs::path &mask,
-            const fs::path &filename,
+            const fs::path& mask,
+            const fs::path& filename,
             bool match_leading_period = false,
             bool ignore_case = false) const = 0;
 
@@ -297,11 +297,10 @@ namespace cc::core::platform
         ///     `true` iff there were one or more hits.  `false` if no masks are provided.
         /// @sa filename_match(std::string &, fs::path &)
         bool filename_match(
-            const types::PathList &masks,
-            const fs::path &filename,
+            const types::PathList& masks,
+            const fs::path& filename,
             bool match_leading_period = false,
             bool ignore_case = false) const;
-
 
         /// @brief
         ///     Locate a relative path inside a folder
@@ -318,8 +317,8 @@ namespace cc::core::platform
         ///     Whether to descend into subdirectories
 
         std::vector<fs::directory_entry> glob(
-            const types::PathList &filename_masks,
-            const fs::path &root,
+            const types::PathList& filename_masks,
+            const fs::path& root,
             bool match_leading_period = false,
             bool ignore_case = false,
             bool recursive = false) const;
@@ -337,19 +336,19 @@ namespace cc::core::platform
         ///     Whether to use case-insensitive matching
 
         std::vector<fs::directory_entry> locate(
-            const types::PathList &filename_masks,
-            const fs::path &root,
+            const types::PathList& filename_masks,
+            const fs::path& root,
             bool match_leading_period = false,
             bool ignore_case = false) const;
 
     private:
         void locate_inside(
-            const fs::path &root,
-            const types::PathList &filename_masks,
+            const fs::path& root,
+            const types::PathList& filename_masks,
             bool match_leading_period,
             bool ignore_case,
             bool recursive,
-            std::vector<fs::directory_entry> *dir) const;
+            std::vector<fs::directory_entry>* dir) const;
 
     protected:
     private:
@@ -363,5 +362,5 @@ namespace cc::core::platform
 
 namespace std::filesystem
 {
-    std::ostream &operator<<(std::ostream &stream, const file_type &type);
+    std::ostream& operator<<(std::ostream& stream, const file_type& type);
 }

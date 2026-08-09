@@ -37,9 +37,8 @@ namespace cc::platform::switchboard
         return this->available();
     }
 
-
     std::pair<SwitchRef, bool> Central::add_switch(
-        const SwitchName &switch_name,
+        const SwitchName& switch_name,
         bool active)
     {
         auto [sw, inserted] = this->insert_switch(switch_name);
@@ -53,7 +52,7 @@ namespace cc::platform::switchboard
     }
 
     bool Central::remove_switch(
-        const SwitchName &name,
+        const SwitchName& name,
         bool propagate)
     {
         std::scoped_lock lck(this->switches_mutex);
@@ -64,7 +63,7 @@ namespace cc::platform::switchboard
         {
             this->switches.erase(it);
             logf_info("Removed switch: %r", name);
-            for (const auto &[candidate, sw] : this->switches)
+            for (const auto& [candidate, sw] : this->switches)
             {
                 sw->remove_dependency(name, propagate);
             }
@@ -90,7 +89,7 @@ namespace cc::platform::switchboard
         }
 
         bool changes = false;
-        for (const auto &[name, old_sw] : old_switches)
+        for (const auto& [name, old_sw] : old_switches)
         {
             auto it = this->switches.find(name);
             if (it == this->switches.end())
@@ -109,16 +108,16 @@ namespace cc::platform::switchboard
     }
 
     std::pair<Central::CentralSwitchRef, bool> Central::insert_switch(
-        const SwitchName &switch_name)
+        const SwitchName& switch_name)
     {
-        const auto &[sw, inserted] = this->find_or_insert<CentralSwitch>(
+        const auto& [sw, inserted] = this->find_or_insert<CentralSwitch>(
             switch_name,
             this->shared_from_this());
 
         if (inserted)
         {
             logf_info("Created switch: %s", sw->name());
-            for (const auto &[key, data] : this->interceptor_factory_map)
+            for (const auto& [key, data] : this->interceptor_factory_map)
             {
                 if (sw->is_in_selection(data.switch_selection))
                 {
@@ -134,7 +133,7 @@ namespace cc::platform::switchboard
         bool replace_statuses,
         InvocationStyle invoke_interceptors)
     {
-        for (const auto &filename : core::settings->get(SETTING_SWITCH_CONFIG_FILES).get_valuelist())
+        for (const auto& filename : core::settings->get(SETTING_SWITCH_CONFIG_FILES).get_valuelist())
         {
             try
             {
@@ -144,20 +143,20 @@ namespace cc::platform::switchboard
                            replace_statuses,
                            invoke_interceptors);
             }
-            catch (const std::exception &e)
+            catch (const std::exception& e)
             {
                 logf_warning("Failed to load switches from %r: %s", filename, e);
             }
         }
     }
 
-    uint Central::import_switches(const core::types::KeyValueMap &declarations,
+    uint Central::import_switches(const core::types::KeyValueMap& declarations,
                                   bool replace_specifications,
                                   bool replace_statuses,
                                   InvocationStyle invoke_interceptors)
     {
         uint count = 0;
-        for (const auto &[name, declaration] : declarations)
+        for (const auto& [name, declaration] : declarations)
         {
             count += this->import_switch(name,
                                          declaration.get_kvmap(),
@@ -169,19 +168,19 @@ namespace cc::platform::switchboard
     }
 
     core::types::KeyValueMap Central::export_switches(
-        const std::optional<SwitchSelection> &selection,
+        const std::optional<SwitchSelection>& selection,
         bool include_specifications,
         bool include_statuses) const
     {
         SwitchMap switches =
             !selection
-            ? this->switches
+                ? this->switches
             : selection->is_regex
-            ? this->find_regex_matches(selection->patterns)
-            : this->find_glob_matches(selection->patterns);
+                ? this->find_regex_matches(selection->patterns)
+                : this->find_glob_matches(selection->patterns);
 
         core::types::KeyValueMap declarations;
-        for (const auto &[name, sw] : switches)
+        for (const auto& [name, sw] : switches)
         {
             declarations.insert_or_assign(
                 name,
@@ -194,8 +193,8 @@ namespace cc::platform::switchboard
     }
 
     bool Central::add_interceptor(
-        const InterceptorRef &interceptor,
-        const SwitchSelection &switch_selection,
+        const InterceptorRef& interceptor,
+        const SwitchSelection& switch_selection,
         bool immediate,
         bool future)
     {
@@ -206,15 +205,15 @@ namespace cc::platform::switchboard
             auto [it, added] = this->interceptor_factory_map.insert_or_assign(
                 interceptor->name(),
                 InterceptorFactoryData({
-                        .interceptor = interceptor,
-                        .switch_selection = switch_selection,
-                        .immediate = immediate,
-                    }));
+                    .interceptor = interceptor,
+                    .switch_selection = switch_selection,
+                    .immediate = immediate,
+                }));
 
             inserted |= added;
         }
 
-        for (const auto &[switch_name, sw] : this->get_switches())
+        for (const auto& [switch_name, sw] : this->get_switches())
         {
             if (sw->is_in_selection(switch_selection))
             {
@@ -226,8 +225,8 @@ namespace cc::platform::switchboard
     }
 
     bool Central::remove_interceptor(
-        const InterceptorName &interceptor_name,
-        const std::optional<SwitchSelection> &switch_selection)
+        const InterceptorName& interceptor_name,
+        const std::optional<SwitchSelection>& switch_selection)
     {
         bool removed = false;
 
@@ -236,7 +235,7 @@ namespace cc::platform::switchboard
             removed = this->interceptor_factory_map.erase(interceptor_name);
         }
 
-        for (const auto &[switch_name, sw] : this->get_switches())
+        for (const auto& [switch_name, sw] : this->get_switches())
         {
             if (!switch_selection || switch_selection->matches(switch_name))
             {
@@ -248,8 +247,8 @@ namespace cc::platform::switchboard
     }
 
     bool Central::import_switch(
-        const std::string &name,
-        const core::types::KeyValueMap &declaration,
+        const std::string& name,
+        const core::types::KeyValueMap& declaration,
         bool replace_specification,
         bool replace_status,
         InvocationStyle invoke_interceptors)
@@ -259,23 +258,23 @@ namespace cc::platform::switchboard
         core::types::Value active_setting = declaration.get(SETTING_SWITCH_ACTIVE);
 
         sw->import_spec(
-            declaration,           // declaration
-            replace_specification, // replace_aliases
-            replace_specification, // replace_localizations
-            replace_specification, // replace_dependencies
-            false);                // replace_interceptors
+            declaration,            // declaration
+            replace_specification,  // replace_aliases
+            replace_specification,  // replace_localizations
+            replace_specification,  // replace_dependencies
+            false);                 // replace_interceptors
 
         sw->import_status(
-            declaration,          // declaration
-            replace_status,       // replace_attributes
-            true,                 // set_state
-            invoke_interceptors); // invoke_interceptors
+            declaration,           // declaration
+            replace_status,        // replace_attributes
+            true,                  // set_state
+            invoke_interceptors);  // invoke_interceptors
 
         return inserted;
     }
 
     core::types::KeyValueMap Central::export_switch(
-        const SwitchRef &sw,
+        const SwitchRef& sw,
         bool include_specification,
         bool include_status) const
     {

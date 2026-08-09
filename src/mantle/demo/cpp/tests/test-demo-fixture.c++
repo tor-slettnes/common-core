@@ -75,8 +75,8 @@ namespace cc::demo
 
         auto signal_handle = demo::signal_greeting.connect(
             [&](core::signal::MappingAction mapping_action,
-                const std::string &identity,
-                const demo::Greeting &greeting) {
+                const std::string& identity,
+                const demo::Greeting& greeting) {
                 received_greeting = greeting;
             });
 

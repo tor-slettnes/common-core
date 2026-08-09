@@ -17,15 +17,15 @@ namespace cc::core::parsers
     class BaseReader
     {
     protected:
-        BaseReader(const std::string &name);
+        BaseReader(const std::string& name);
         virtual ~BaseReader();
 
     public:
-        virtual std::optional<types::Value> try_decode(const std::string_view &text) const;
-        virtual types::Value decoded(const std::string_view &text) const = 0;
-        virtual types::Value read_file(const fs::path &path) const;
-        virtual types::Value read_stream(std::istream &stream) const = 0;
-        virtual types::Value read_stream(std::istream &&stream) const;
+        virtual std::optional<types::Value> try_decode(const std::string_view& text) const;
+        virtual types::Value decoded(const std::string_view& text) const = 0;
+        virtual types::Value read_file(const fs::path& path) const;
+        virtual types::Value read_stream(std::istream& stream) const = 0;
+        virtual types::Value read_stream(std::istream&& stream) const;
 
     public:
         const std::string name;

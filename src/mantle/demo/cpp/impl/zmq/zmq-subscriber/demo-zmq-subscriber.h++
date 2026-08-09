@@ -27,12 +27,11 @@ namespace cc::demo::zmq
         using Super = cc::zmq::Subscriber;
 
     protected:
-        Subscriber(const std::string &host_address = "",
-                   const std::string &channel_name = MESSAGE_CHANNEL);
+        Subscriber(const std::string& host_address = "",
+                   const std::string& channel_name = MESSAGE_CHANNEL);
 
     public:
         void initialize() override;
-
     };
 
 }  // namespace cc::demo::zmq

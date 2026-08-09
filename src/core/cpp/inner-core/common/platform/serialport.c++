@@ -12,7 +12,7 @@ namespace cc::core::platform
     //==========================================================================
     /// @class SerialPort
 
-    SerialPort::SerialPort(const std::string &device, BaudRate speed)
+    SerialPort::SerialPort(const std::string& device, BaudRate speed)
         : device_(device),
           speed_(speed)
     {

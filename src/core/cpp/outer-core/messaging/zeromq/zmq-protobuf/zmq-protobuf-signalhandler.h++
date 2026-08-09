@@ -35,7 +35,7 @@ namespace cc::zmq
             Super::deinitialize();
         }
 
-        void handle_message(const SignalT &message) override
+        void handle_message(const SignalT& message) override
         {
             SignalStore::process_signal(message);
         }

@@ -15,6 +15,6 @@ namespace cc::core
 {
     extern std::shared_ptr<core::SettingsStore> settings;
 
-    void init_settings(const std::string &primary_settings_file,
-                       const std::optional<std::string> &flavor = {});
+    void init_settings(const std::string& primary_settings_file,
+                       const std::optional<std::string>& flavor = {});
 }  // namespace cc::core

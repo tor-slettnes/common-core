@@ -32,9 +32,9 @@ namespace cc::core::types
         /// @brief How to handle `.put()` invocatinos into a full queue
         enum class OverflowDisposition
         {
-            BLOCK,          // Block the calling thread until space is available
-            DISCARD_ITEM,   // Discard the new item instead of placing into queue
-            DISCARD_OLDEST, // Discard the oldest item in the queue to make space
+            BLOCK,           // Block the calling thread until space is available
+            DISCARD_ITEM,    // Discard the new item instead of placing into queue
+            DISCARD_OLDEST,  // Discard the oldest item in the queue to make space
         };
 
     protected:
@@ -53,7 +53,6 @@ namespace cc::core::types
         /// @brief
         ///     Clear the queue.
         virtual void clear();
-
 
         /// @brief
         ///     Close the queue.
@@ -101,7 +100,7 @@ namespace cc::core::types
         ///
         /// @note
         ///     May block if `overflow_disposition == BLOCK`.
-        bool pushable(std::unique_lock<std::mutex> *lock);
+        bool pushable(std::unique_lock<std::mutex>* lock);
 
     protected:
         const std::size_t maxsize_;
@@ -189,7 +188,7 @@ namespace cc::core::types
         /// has been reached) then the oldest item is removed from the front of
         /// the queue.
 
-        inline bool put(const T &value,
+        inline bool put(const T& value,
                         bool reopen = false,
                         bool notify = true)
         {
@@ -234,7 +233,7 @@ namespace cc::core::types
         /// has been reached) then the oldest item is removed from the front of
         /// the queue.
 
-        inline bool put(T &&value,
+        inline bool put(T&& value,
                         bool reopen = false,
                         bool notify = true)
         {
@@ -315,7 +314,7 @@ namespace cc::core::types
         ///     until the specified deadline has arrived.
 
         template <class Clock, class Duration>
-        inline std::optional<T> get(const std::chrono::time_point<Clock, Duration> &deadline)
+        inline std::optional<T> get(const std::chrono::time_point<Clock, Duration>& deadline)
         {
             std::optional<T> value;
 
@@ -351,7 +350,7 @@ namespace cc::core::types
         ///     until the specified deadline has arrived.
 
         template <class Rep, class Period>
-        inline std::optional<T> get(const std::chrono::duration<Rep, Period> &timeout)
+        inline std::optional<T> get(const std::chrono::duration<Rep, Period>& timeout)
         {
             return this->get(
                 std::chrono::steady_clock::now() +
@@ -363,4 +362,4 @@ namespace cc::core::types
         std::chrono::system_clock::duration closewatch;
     };
 
-} // namespace cc::core::types
+}  // namespace cc::core::types

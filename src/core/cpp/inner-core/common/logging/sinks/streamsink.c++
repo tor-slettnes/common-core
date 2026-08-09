@@ -22,21 +22,21 @@ namespace cc::core::logging
     //==========================================================================
     // StreamSink methods
 
-    StreamSink::StreamSink(const std::string &sink_id,
-                           std::ostream &stream)
+    StreamSink::StreamSink(const std::string& sink_id,
+                           std::ostream& stream)
         : Super(sink_id),
           stream(stream)
     {
     }
 
-    StreamSink::StreamSink(const std::string &sink_id,
-                           std::ostream &&stream)
+    StreamSink::StreamSink(const std::string& sink_id,
+                           std::ostream&& stream)
         : Super(sink_id),
           stream(stream)
     {
     }
 
-    void StreamSink::load_settings(const types::KeyValueMap &settings)
+    void StreamSink::load_settings(const types::KeyValueMap& settings)
     {
         Super::load_settings(settings);
 
@@ -45,9 +45,9 @@ namespace cc::core::logging
 #endif
     }
 
-    bool StreamSink::handle_message(const Message::ptr &message)
+    bool StreamSink::handle_message(const Message::ptr& message)
     {
-        const StyleMap *styles = this->styles.get_ptr(message->level());
+        const StyleMap* styles = this->styles.get_ptr(message->level());
 
         // auto lck = std::scoped_lock(this->mtx);
 
@@ -74,20 +74,20 @@ namespace cc::core::logging
         return true;
     }
 
-    void StreamSink::load_styles(const types::KeyValueMap &stylemap)
+    void StreamSink::load_styles(const types::KeyValueMap& stylemap)
     {
         this->load_styles(stylemap, INTRO, "intro");
         this->load_styles(stylemap, TEXT, "text");
         this->load_styles(stylemap, RESET, "reset");
     }
 
-    void StreamSink::load_styles(const types::KeyValueMap &stylemap,
+    void StreamSink::load_styles(const types::KeyValueMap& stylemap,
                                  MessagePart part,
-                                 const std::string &partname)
+                                 const std::string& partname)
     {
-        if (const types::Value &styles = stylemap.get(partname))
+        if (const types::Value& styles = stylemap.get(partname))
         {
-            for (const auto &[level, levelname] : status::level_names)
+            for (const auto& [level, levelname] : status::level_names)
             {
                 std::string style =
                     styles.is_kvmap() ? styles.as_kvmap().get(str::tolower(levelname)).as_string()

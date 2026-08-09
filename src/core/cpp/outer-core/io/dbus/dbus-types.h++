@@ -16,7 +16,7 @@
 
 #define SLOT(method)  sigc::mem_fun(this, &method)
 #define DATASLOT(ptr) [&](const Glib::VariantBase& v) { \
-    cc::glib::variant_cast(v, ptr);                   \
+    cc::glib::variant_cast(v, ptr);                     \
 }
 
 namespace cc::dbus

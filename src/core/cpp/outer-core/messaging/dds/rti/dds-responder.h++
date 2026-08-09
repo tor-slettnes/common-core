@@ -25,9 +25,9 @@ namespace cc::dds
         using BaseResponder = rti::request::SimpleReplier<RequestType, ResponseType>;
 
     public:
-        Responder(const std::string &request_id,
+        Responder(const std::string& request_id,
                   int domain_id,
-                  std::function<ResponseType(RequestType)> &&handler)
+                  std::function<ResponseType(RequestType)>&& handler)
             : Endpoint("responder", request_id, domain_id),
               BaseResponder(this->replier_params(), std::move(handler))
         {

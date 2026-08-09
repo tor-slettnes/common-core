@@ -23,9 +23,8 @@ namespace cc::core::json
     {
     }
 
-
-    TokenParser::TokenPair TokenParser::next_of(const TokenMask &expected,
-                                                const TokenMask &endtokens)
+    TokenParser::TokenPair TokenParser::next_of(const TokenMask& expected,
+                                                const TokenMask& endtokens)
     {
         TokenPair tp = this->next_token();
 
@@ -137,7 +136,6 @@ namespace cc::core::json
         }
     }
 
-
     TokenParser::TokenPair TokenParser::parse_spaces()
     {
         int c = this->input->getc();
@@ -149,8 +147,6 @@ namespace cc::core::json
         this->input->ungetc(c);
         return {TI_SPACE, this->input->token()};
     }
-
-
 
     TokenParser::TokenPair TokenParser::parse_number()
     {
@@ -227,7 +223,7 @@ namespace cc::core::json
         {
             return this->symbol_map.at(this->input->token());
         }
-        catch (const std::out_of_range &e)
+        catch (const std::out_of_range& e)
         {
             return {TI_INVALID, {}};
         }
@@ -296,11 +292,11 @@ namespace cc::core::json
     }
 
     template <class T, class... Args>
-    TokenParser::TokenPair TokenParser::parse_numeric(Args &&...args)
+    TokenParser::TokenPair TokenParser::parse_numeric(Args&&... args)
     {
         static const std::errc ok{};
-        const char *const start = &*this->input->token().begin();
-        const char *const end = &*this->input->token().end();
+        const char* const start = &*this->input->token().begin();
+        const char* const end = &*this->input->token().end();
         T number = 0;
 
         auto [ptr, ec] = std::from_chars(start, end, number, args...);
@@ -313,7 +309,6 @@ namespace cc::core::json
             return {TI_INVALID, {}};
         }
     }
-
 
     void TokenParser::capture_identifier()
     {
@@ -364,13 +359,10 @@ namespace cc::core::json
         }
     }
 
-
-
-
     const TokenParser::SymbolMapping TokenParser::symbol_map = {
-        {"null",  {TI_NULLVALUE, types::Value()}},
+        {"null", {TI_NULLVALUE, types::Value()}},
         {"false", {TI_BOOL, types::Value(false)}},
-        {"true",  {TI_BOOL, types::Value(true)} },
+        {"true", {TI_BOOL, types::Value(true)}},
     };
 
-} // namespace cc::core::json
+}  // namespace cc::core::json

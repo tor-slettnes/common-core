@@ -69,7 +69,7 @@ namespace cc::grpc
 
     protected:
         template <class... Args>
-        SignalClient(Args &&...args)
+        SignalClient(Args&&... args)
             : Super(std::forward<Args>(args)...),
               receiver(std::bind(&SignalReceiver::process_signal,
                                  this,
@@ -172,7 +172,7 @@ namespace cc::grpc
         ///    Exit if the server cache has not been received within this time.
         /// @return
         ///    `true` if and only if the signal cache was received from the server
-        inline bool wait_complete(const core::steady::TimePoint &deadline) const
+        inline bool wait_complete(const core::steady::TimePoint& deadline) const
         {
             return this->completion_event->wait_until(deadline);
         }
@@ -184,7 +184,7 @@ namespace cc::grpc
         ///    after the last `start_watching()` invocation.
         /// @return
         ///    `true` if and only if the signal cache was received from the server
-        inline bool wait_complete(const core::dt::Duration &timeout) const
+        inline bool wait_complete(const core::dt::Duration& timeout) const
         {
             return this->wait_complete(
                 this->watch_start +

@@ -95,7 +95,6 @@ namespace cc::core::str
         partial_expected.push_back(join(words.begin() + 4, words.end(), ",", true));
         EXPECT_EQ(partial_split, partial_expected);
 
-
         std::vector<std::string> symbols = {"SYM_BOL_ONE", "SYM_BOL_TWO", "SYM_BOL_THREE"};
         EXPECT_EQ(common_prefix(symbols, "_"), "SYM_BOL_");
 
@@ -104,7 +103,6 @@ namespace cc::core::str
 
         symbols = {};
         EXPECT_EQ(common_prefix(symbols, "_"), "");
-
     }
 
     TEST(StringTest, Unescape)

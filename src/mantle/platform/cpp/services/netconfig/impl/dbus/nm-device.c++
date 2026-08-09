@@ -17,10 +17,10 @@ namespace cc::platform::netconfig::dbus
     /// Network Manager device
 
     Device::Device(
-        cc::dbus::ProxyContainer *container,
-        const cc::dbus::ConnectionPtr &connection,
-        const cc::dbus::ServiceName &servicename,
-        const cc::dbus::ObjectPath &objectpath)
+        cc::dbus::ProxyContainer* container,
+        const cc::dbus::ConnectionPtr& connection,
+        const cc::dbus::ServiceName& servicename,
+        const cc::dbus::ObjectPath& objectpath)
         : MappedDataWrapper<DeviceData>(
               container,
               connection,
@@ -29,7 +29,7 @@ namespace cc::platform::netconfig::dbus
               NM_DBUS_INTERFACE_DEVICE,
               {
                   {"StateChanged", SLOT(Class::on_signal_state_changed)},
-    },
+              },
               {
                   {"DeviceType", DATASLOT(&this->type)},
                   {"Ip4Connectivity", DATASLOT(&this->ip4connectivity)},
@@ -85,14 +85,14 @@ namespace cc::platform::netconfig::dbus
     }
 
     void Device::on_signal_state_changed(
-        const Glib::VariantContainerBase &parameters)
+        const Glib::VariantContainerBase& parameters)
     {
         cc::glib::variant_cast(parameters, 0, &this->state);
         cc::glib::variant_cast(parameters, 2, &this->state_reason);
         this->emit_change(core::signal::MAP_UPDATE);
     }
 
-    void Device::on_property_ip4config(const Glib::VariantBase &change)
+    void Device::on_property_ip4config(const Glib::VariantBase& change)
     {
         auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(change);
         if (this->valid_path(path))
@@ -102,7 +102,7 @@ namespace cc::platform::netconfig::dbus
         }
     }
 
-    void Device::on_property_ip6config(const Glib::VariantBase &change)
+    void Device::on_property_ip6config(const Glib::VariantBase& change)
     {
         auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(change);
         if (this->valid_path(path))
@@ -112,7 +112,7 @@ namespace cc::platform::netconfig::dbus
         }
     }
 
-    void Device::on_property_active_connection(const Glib::VariantBase &change)
+    void Device::on_property_active_connection(const Glib::VariantBase& change)
     {
         auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(change);
         if (this->valid_path(path))
@@ -123,35 +123,35 @@ namespace cc::platform::netconfig::dbus
         }
     }
 
-    bool Device::update_ip4config(const cc::dbus::ProxyWrapper *source,
+    bool Device::update_ip4config(const cc::dbus::ProxyWrapper* source,
                                   core::signal::MappingAction action)
     {
-        if (const auto *datasource = dynamic_cast<const IP4Config *>(source))
+        if (const auto* datasource = dynamic_cast<const IP4Config*>(source))
         {
             this->ip4config = *datasource;
             logf_trace("%s updated IP4 config: %s", this->identifier(), *datasource);
             this->emit_change(action);
         }
-        return true; // Stay subscribed to updates
+        return true;  // Stay subscribed to updates
     }
 
-    bool Device::update_ip6config(const cc::dbus::ProxyWrapper *source,
+    bool Device::update_ip6config(const cc::dbus::ProxyWrapper* source,
                                   core::signal::MappingAction action)
     {
-        if (const auto *datasource = dynamic_cast<const IP6Config *>(source))
+        if (const auto* datasource = dynamic_cast<const IP6Config*>(source))
         {
             this->ip6config = *datasource;
             logf_trace("%s updated IP6 config: %s", this->identifier(), *datasource);
             this->emit_change(action);
         }
-        return true; // Stay subscrbed to updates
+        return true;  // Stay subscrbed to updates
     }
 
     bool Device::update_active_connection(
-        const cc::dbus::ProxyWrapper *source,
+        const cc::dbus::ProxyWrapper* source,
         core::signal::MappingAction action)
     {
-        if (const auto *datasource = dynamic_cast<const ActiveConnection *>(source))
+        if (const auto* datasource = dynamic_cast<const ActiveConnection*>(source))
         {
             logf_debug("Device %s active connection: %r",
                        this->identifier(),
@@ -174,11 +174,11 @@ namespace cc::platform::netconfig::dbus
 
             this->emit_change(core::signal::MAP_UPDATE);
         }
-        return false; // No need for further updates from this AC
+        return false;  // No need for further updates from this AC
     }
 
     bool Device::add_specific_data(
-        const cc::dbus::ProxyWrapper *source,
+        const cc::dbus::ProxyWrapper* source,
         core::signal::MappingAction action)
     {
         this->update_specific_data(source, action);
@@ -187,14 +187,14 @@ namespace cc::platform::netconfig::dbus
     }
 
     void Device::update_specific_data(
-        const cc::dbus::ProxyWrapper *source,
+        const cc::dbus::ProxyWrapper* source,
         core::signal::MappingAction action)
     {
-        if (const auto *datasource = dynamic_cast<const WiredDevice *>(source))
+        if (const auto* datasource = dynamic_cast<const WiredDevice*>(source))
         {
             this->specific_data = *datasource;
         }
-        else if (const auto *datasource = dynamic_cast<const WirelessDevice *>(source))
+        else if (const auto* datasource = dynamic_cast<const WirelessDevice*>(source))
         {
             this->specific_data = *datasource;
         }
@@ -206,10 +206,10 @@ namespace cc::platform::netconfig::dbus
     }
 
     std::shared_ptr<Device> Device::get_by_interface(
-        const Key &ifkey,
+        const Key& ifkey,
         bool required)
     {
-        for (const auto &[path, ref] : dbus::container.instances<Device>())
+        for (const auto& [path, ref] : dbus::container.instances<Device>())
         {
             auto ifname = ref->get_cached_property<std::string>("Interface");
             if (ifname == ifkey)
@@ -230,10 +230,10 @@ namespace cc::platform::netconfig::dbus
     }
 
     std::shared_ptr<Device> Device::get_by_active_connection(
-        const Key &ackey,
+        const Key& ackey,
         bool required)
     {
-        for (const auto &[path, ref] : dbus::container.instances<Device>())
+        for (const auto& [path, ref] : dbus::container.instances<Device>())
         {
             if (ref->active_connection == ackey)
             {
@@ -262,4 +262,4 @@ namespace cc::platform::netconfig::dbus
         logf_info("Disconnecting device %s (%s)", this->identifier(), this->key());
         this->call_sync("Disconnect");
     }
-} // namespace cc::platform::netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

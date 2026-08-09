@@ -13,44 +13,44 @@ namespace cc::idl
 {
     //==========================================================================
     // Domain
-    void encode(const core::status::Domain &native, CC::Status::Domain *idl) noexcept
+    void encode(const core::status::Domain& native, CC::Status::Domain* idl) noexcept
     {
         *idl = encoded(native);
     }
 
-    void decode(const CC::Status::Domain &idl, core::status::Domain *native) noexcept
+    void decode(const CC::Status::Domain& idl, core::status::Domain* native) noexcept
     {
         *native = decoded_domain(idl);
     }
 
-    CC::Status::Domain encoded(const core::status::Domain &native) noexcept
+    CC::Status::Domain encoded(const core::status::Domain& native) noexcept
     {
         return static_cast<CC::Status::Domain>(native);
     }
 
-    core::status::Domain decoded_domain(const CC::Status::Domain &idl) noexcept
+    core::status::Domain decoded_domain(const CC::Status::Domain& idl) noexcept
     {
         return static_cast<core::status::Domain>(idl);
     }
 
     //==========================================================================
     // Severity Level
-    void encode(const core::status::Level &native, CC::Status::Level *idl) noexcept
+    void encode(const core::status::Level& native, CC::Status::Level* idl) noexcept
     {
         *idl = encoded(native);
     }
 
-    void decode(const CC::Status::Level &idl, core::status::Level *native) noexcept
+    void decode(const CC::Status::Level& idl, core::status::Level* native) noexcept
     {
         *native = decoded_level(idl);
     }
 
-    CC::Status::Level encoded(const core::status::Level &native) noexcept
+    CC::Status::Level encoded(const core::status::Level& native) noexcept
     {
         return static_cast<CC::Status::Level>(native);
     }
 
-    core::status::Level decoded_level(const CC::Status::Level &idl) noexcept
+    core::status::Level decoded_level(const CC::Status::Level& idl) noexcept
     {
         return static_cast<core::status::Level>(idl);
     }
@@ -58,7 +58,7 @@ namespace cc::idl
     //==========================================================================
     // Event
 
-    void encode(const core::status::Event &native, CC::Status::Event *idl) noexcept
+    void encode(const core::status::Event& native, CC::Status::Event* idl) noexcept
     {
         encode(native.timepoint(), &idl->timestamp());
         encode(native.attributes(), &idl->attributes());
@@ -71,21 +71,21 @@ namespace cc::idl
     //==========================================================================
     // Error
 
-    void encode(const core::status::Error &native, CC::Status::Error *idl) noexcept
+    void encode(const core::status::Error& native, CC::Status::Error* idl) noexcept
     {
-        encode(native, static_cast<CC::Status::Event *>(idl));
+        encode(native, static_cast<CC::Status::Event*>(idl));
 
         idl->domain(encoded(native.domain()));
         idl->code(native.code());
         idl->symbol(native.symbol());
     }
 
-    void decode(const CC::Status::Error &idl, core::status::Error *native) noexcept
+    void decode(const CC::Status::Error& idl, core::status::Error* native) noexcept
     {
         *native = decoded_error(idl);
     }
 
-    core::status::Error decoded_error(const CC::Status::Error &idl) noexcept
+    core::status::Error decoded_error(const CC::Status::Error& idl) noexcept
     {
         return {
             idl.text(),                                           // text
@@ -102,10 +102,10 @@ namespace cc::idl
     //==========================================================================
     // LogMessage
 
-    void encode(const core::logging::Message &native,
-                CC::Status::LogMessage *idl) noexcept
+    void encode(const core::logging::Message& native,
+                CC::Status::LogMessage* idl) noexcept
     {
-        encode(native, static_cast<CC::Status::Event *>(idl));
+        encode(native, static_cast<CC::Status::Event*>(idl));
 
         idl->host(native.host());
         idl->log_scope(native.scopename());
@@ -117,12 +117,12 @@ namespace cc::idl
         idl->task_name(native.task_name());
     }
 
-    void decode(const CC::Status::LogMessage &idl, core::logging::Message *native) noexcept
+    void decode(const CC::Status::LogMessage& idl, core::logging::Message* native) noexcept
     {
         *native = decoded_logmessage(idl);
     }
 
-    core::logging::Message decoded_logmessage(const CC::Status::LogMessage &idl) noexcept
+    core::logging::Message decoded_logmessage(const CC::Status::LogMessage& idl) noexcept
     {
         auto level = decoded_level(idl.level());
 

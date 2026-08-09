@@ -25,7 +25,7 @@ namespace cc::core::platform
     {
     }
 
-    std::string WindowsSymbolsProvider::cpp_demangle(const std::string &abiname, bool stem_only) const noexcept
+    std::string WindowsSymbolsProvider::cpp_demangle(const std::string& abiname, bool stem_only) const noexcept
     {
         char demangled[1024];
         if (UnDecorateSymbolName(abiname.c_str(), demangled, sizeof(demangled), 0x0000))

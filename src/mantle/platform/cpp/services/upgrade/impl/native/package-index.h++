@@ -18,14 +18,14 @@ namespace cc::platform::upgrade::native
         using ptr = std::shared_ptr<This>;
 
     public:
-        virtual PackageSource package_source(const std::string &package_name) const = 0;
+        virtual PackageSource package_source(const std::string& package_name) const = 0;
         virtual PackageCatalogue scan() = 0;
         virtual std::vector<PackageInfo::ptr> get_available() const;
         virtual std::size_t get_available_count() const;
 
     protected:
         void emit_scan_progress(
-            const std::optional<PackageSource> &source) const;
+            const std::optional<PackageSource>& source) const;
 
     protected:
         std::vector<PackageInfo::ptr> available_packages;

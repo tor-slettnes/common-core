@@ -72,7 +72,7 @@ namespace cc::platform::pubsub::grpc
         return this->call_replay({topic}).get_opt(topic);
     }
 
-    Snapshot Client::call_replay(const std::vector<Topic> &topics) const
+    Snapshot Client::call_replay(const std::vector<Topic>& topics) const
     {
         pubsub::protobuf::Filters request;
         cc::protobuf::assign_repeated(topics, request.mutable_topics());

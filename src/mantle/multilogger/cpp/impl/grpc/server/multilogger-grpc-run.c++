@@ -11,14 +11,13 @@
 #include "platform/init.h++"
 #include "logging/logging.h++"
 
-
 namespace cc::platform::multilogger::grpc
 {
     constexpr auto SHUTDOWN_SIGNAL_HANDLE = "multilogger-grpc-service";
 
     void run_service(
         std::shared_ptr<API> multilogger_provider,
-        const std::string &listen_address)
+        const std::string& listen_address)
     {
         log_debug("Creating gRPC server builder");
         cc::grpc::ServerBuilder builder(listen_address);

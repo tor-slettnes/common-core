@@ -26,11 +26,11 @@ namespace cc::platform::pubsub
     public:
         virtual ReplayPolicyMap get_replay_policies() const = 0;
         virtual std::optional<ReplayPolicy> get_replay_policy(
-            const Topic &topic) const = 0;
+            const Topic& topic) const = 0;
 
         virtual void assign_replay_policy(
             const Topic& topic,
-            const ReplayPolicy &policy) = 0;
+            const ReplayPolicy& policy) = 0;
 
         virtual void unassign_replay_policy(
             const Topic& topic) = 0;

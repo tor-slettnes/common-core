@@ -23,17 +23,17 @@ namespace cc::core::platform
         PosixTimeZoneProvider();
 
     public:
-        std::tm gmtime(const std::time_t &time) const override;
+        std::tm gmtime(const std::time_t& time) const override;
 
-        std::tm localtime(const std::time_t &time, const std::string &timezone) const override;
-        std::tm localtime(const time_t &time) const override;
+        std::tm localtime(const std::time_t& time, const std::string& timezone) const override;
+        std::tm localtime(const time_t& time) const override;
 
-        dt::TimeZoneInfo tzinfo(const std::string &timezone, const std::time_t &time) const override;
-        dt::TimeZoneInfo tzinfo(const std::time_t &time) const override;
+        dt::TimeZoneInfo tzinfo(const std::string& timezone, const std::time_t& time) const override;
+        dt::TimeZoneInfo tzinfo(const std::time_t& time) const override;
 
     private:
-        SavedValue apply_zone(const std::string &zonename) const;
-        void restore_zone(const SavedValue &saved) const;
+        SavedValue apply_zone(const std::string& zonename) const;
+        void restore_zone(const SavedValue& saved) const;
 
     private:
         std::recursive_mutex mtx;

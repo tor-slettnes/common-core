@@ -16,7 +16,7 @@ namespace cc::core::platform
         using Super = PosixSymbolsProvider;
 
     public:
-        LinuxSymbolsProvider(const std::string &name = "LinuxSymbolsProvider");
+        LinuxSymbolsProvider(const std::string& name = "LinuxSymbolsProvider");
 
         std::string uuid() const noexcept override;
         std::string errno_name(int num) const noexcept override;

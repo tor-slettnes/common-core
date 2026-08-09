@@ -15,7 +15,7 @@ namespace cc::platform::pubsub
 
     Publisher::Publisher()
         : writer_queue_(
-            core::settings->get(SETTING_QUEUE_SIZE, DEFAULT_QUEUE_SIZE).as_uint())
+              core::settings->get(SETTING_QUEUE_SIZE, DEFAULT_QUEUE_SIZE).as_uint())
     {
     }
 
@@ -29,8 +29,8 @@ namespace cc::platform::pubsub
         this->stop_writer();
     }
 
-    void Publisher::publish(const std::string &topic,
-                            const core::types::Value &payload)
+    void Publisher::publish(const std::string& topic,
+                            const core::types::Value& payload)
     {
         this->writer_queue_.put({topic, payload});
     }

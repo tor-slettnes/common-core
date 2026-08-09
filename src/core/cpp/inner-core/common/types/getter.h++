@@ -19,7 +19,7 @@ namespace cc::core::types
         virtual void close() = 0;
         virtual std::optional<T> get() = 0;
 
-        T get(const T &fallback)
+        T get(const T& fallback)
         {
             return this->get().value_or(fallback);
         }

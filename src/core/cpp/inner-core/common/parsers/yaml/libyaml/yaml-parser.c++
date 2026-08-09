@@ -27,18 +27,18 @@ namespace cc::core::yaml
         yaml_parser_delete(&this->parser);
     }
 
-    types::Value YamlParser::parse_text(const std::string_view &text)
+    types::Value YamlParser::parse_text(const std::string_view& text)
     {
         yaml_parser_set_input_string(
             &this->parser,
-            reinterpret_cast<const unsigned char *>(text.data()),
+            reinterpret_cast<const unsigned char*>(text.data()),
             text.size());
         return this->read_all().front();
     }
 
-    types::Value YamlParser::parse_file(const fs::path &path)
+    types::Value YamlParser::parse_file(const fs::path& path)
     {
-        if (FILE *fp = io::checkstatus(::fopen(path.c_str(), "r")))
+        if (FILE* fp = io::checkstatus(::fopen(path.c_str(), "r")))
         {
             yaml_parser_set_input_file(&this->parser, fp);
             types::Value result = this->read_all().front();
@@ -51,20 +51,20 @@ namespace cc::core::yaml
         }
     }
 
-    types::Value YamlParser::parse_stream(std::istream &stream)
+    types::Value YamlParser::parse_stream(std::istream& stream)
     {
         yaml_parser_set_input(&this->parser, This::read_handler, &stream);
         return this->read_all().front();
     }
 
-    int YamlParser::read_handler(void *data,
-                                 unsigned char *buffer,
+    int YamlParser::read_handler(void* data,
+                                 unsigned char* buffer,
                                  size_t size,
-                                 size_t *size_read)
+                                 size_t* size_read)
     {
-        std::istream *stream = reinterpret_cast<std::istream *>(data);
+        std::istream* stream = reinterpret_cast<std::istream*>(data);
         assertf(stream, "YAML read handler received nullptr where input stream expected");
-        stream->read(reinterpret_cast<char *>(buffer), size);
+        stream->read(reinterpret_cast<char*>(buffer), size);
         *size_read = stream->gcount();
         return !stream->fail();
     }
@@ -125,7 +125,7 @@ namespace cc::core::yaml
                 {YAML_MAPPING_END_EVENT}))
         {
             key = {
-                reinterpret_cast<const char *>(event.data.scalar.value),
+                reinterpret_cast<const char*>(event.data.scalar.value),
                 event.data.scalar.length,
             };
         }
@@ -142,8 +142,8 @@ namespace cc::core::yaml
     }
 
     bool YamlParser::expect_next_event_type(
-        const EventTypeSet &expected_types,
-        const EventTypeSet &end_types)
+        const EventTypeSet& expected_types,
+        const EventTypeSet& end_types)
     {
         yaml_event_t event = this->next_event();
         bool expected = this->expect_event_type(event, expected_types, end_types);
@@ -152,9 +152,9 @@ namespace cc::core::yaml
     }
 
     bool YamlParser::expect_event_type(
-        const yaml_event_t &event,
-        const EventTypeSet &expected_types,
-        const EventTypeSet &end_types)
+        const yaml_event_t& event,
+        const EventTypeSet& expected_types,
+        const EventTypeSet& end_types)
     {
         yaml_event_type_t event_type = event.type;
 
@@ -197,13 +197,13 @@ namespace cc::core::yaml
         }
     }
 
-    types::Value YamlParser::process_alias(const yaml_event_t &event)
+    types::Value YamlParser::process_alias(const yaml_event_t& event)
     {
         try
         {
-            return this->anchors.at(reinterpret_cast<char *>(event.data.alias.anchor));
+            return this->anchors.at(reinterpret_cast<char*>(event.data.alias.anchor));
         }
-        catch (const std::out_of_range &)
+        catch (const std::out_of_range&)
         {
             logf_warning(
                 "YAML input contains reference to non-existing anchor %r at position %d",
@@ -213,15 +213,15 @@ namespace cc::core::yaml
         }
     }
 
-    types::Value YamlParser::process_scalar(const yaml_event_t &event)
+    types::Value YamlParser::process_scalar(const yaml_event_t& event)
     {
         std::string stringvalue(
-            reinterpret_cast<const char *>(event.data.scalar.value),
+            reinterpret_cast<const char*>(event.data.scalar.value),
             event.data.scalar.length);
 
         types::Value value = (event.data.scalar.style == YAML_PLAIN_SCALAR_STYLE)
-                                 ? types::Value::from_literal(stringvalue)
-                                 : types::Value(stringvalue);
+                               ? types::Value::from_literal(stringvalue)
+                               : types::Value(stringvalue);
 
         return this->record_value(
             event.data.scalar.anchor,
@@ -229,7 +229,7 @@ namespace cc::core::yaml
             value);
     }
 
-    types::Value YamlParser::process_sequence(const yaml_event_t &event)
+    types::Value YamlParser::process_sequence(const yaml_event_t& event)
     {
         auto list = std::make_shared<types::ValueList>();
         while (auto value = this->read_value())
@@ -242,7 +242,7 @@ namespace cc::core::yaml
             list);
     }
 
-    types::Value YamlParser::process_mapping(const yaml_event_t &event)
+    types::Value YamlParser::process_mapping(const yaml_event_t& event)
     {
         auto map = std::make_shared<types::KeyValueMap>();
         while (auto key = this->read_key())
@@ -265,14 +265,14 @@ namespace cc::core::yaml
     }
 
     types::Value YamlParser::record_value(
-        const yaml_char_t *anchor,
-        const yaml_char_t *tag,
-        const types::Value &value)
+        const yaml_char_t* anchor,
+        const yaml_char_t* tag,
+        const types::Value& value)
     {
         if (anchor)
         {
             this->anchors.insert_or_assign(
-                reinterpret_cast<const char *>(anchor),
+                reinterpret_cast<const char*>(anchor),
                 value);
         }
 

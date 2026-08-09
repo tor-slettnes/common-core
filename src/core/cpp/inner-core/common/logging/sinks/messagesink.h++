@@ -27,13 +27,13 @@ namespace cc::core::logging
         using ptr = std::shared_ptr<MessageSink>;
 
     protected:
-        MessageSink(const SinkID &sink_id = {});
+        MessageSink(const SinkID& sink_id = {});
 
     public:
-        void load_settings(const types::KeyValueMap &settings) override;
+        void load_settings(const types::KeyValueMap& settings) override;
 
     protected:
-        void load_message_settings(const types::KeyValueMap &settings);
+        void load_message_settings(const types::KeyValueMap& settings);
 
         virtual void set_include_context(bool include_context);
         bool include_context() const;
@@ -46,22 +46,20 @@ namespace cc::core::logging
         static void set_all_include_source_location(bool include_source);
 
     protected:
-        bool is_applicable(const types::Loggable &item) const override;
+        bool is_applicable(const types::Loggable& item) const override;
 
-        bool handle_item(const types::Loggable::ptr &item) override;
-        virtual bool handle_message(const Message::ptr &message) = 0;
+        bool handle_item(const types::Loggable::ptr& item) override;
+        virtual bool handle_message(const Message::ptr& message) = 0;
 
-        void send_preamble(std::ostream &stream,
-                           const Message::ptr &message) const;
+        void send_preamble(std::ostream& stream,
+                           const Message::ptr& message) const;
 
-        void send_field(std::ostream &stream,
-                        const std::string_view &text,
+        void send_field(std::ostream& stream,
+                        const std::string_view& text,
                         std::size_t width,
-                        const std::string &delimiter="|") const;
+                        const std::string& delimiter = "|") const;
 
-        std::string formatted(const Message::ptr &message) const;
-
-
+        std::string formatted(const Message::ptr& message) const;
 
     private:
         status::Level threshold_;

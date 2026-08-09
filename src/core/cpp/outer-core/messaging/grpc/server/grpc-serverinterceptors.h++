@@ -38,7 +38,7 @@ namespace cc::grpc
     class LoggingInterceptorFactory
         : public ServerInterceptorFactoryInterface,
           public core::types::enable_create_unique<LoggingInterceptorFactory,
-                                             ServerInterceptorFactoryInterface>
+                                                   ServerInterceptorFactoryInterface>
     {
     protected:
         Interceptor* CreateServerInterceptor(ServerRpcInfo* rpc_info) override;
@@ -59,7 +59,7 @@ namespace cc::grpc
     class EHInterceptorFactory
         : public ServerInterceptorFactoryInterface,
           public core::types::enable_create_unique<EHInterceptorFactory,
-                                             ServerInterceptorFactoryInterface>
+                                                   ServerInterceptorFactoryInterface>
     {
     protected:
         Interceptor* CreateServerInterceptor(ServerRpcInfo* info) override;

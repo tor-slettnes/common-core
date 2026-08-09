@@ -72,27 +72,26 @@ namespace cc::core::logging
         /// @param[in] attributes
         ///     Key/value pairs associated with message
 
-        Message(const std::string &text = "",
+        Message(const std::string& text = "",
                 status::Level level = status::Level::NONE,
                 Scope::ptr scope = nullptr,
-                const std::string &origin = {},
-                const dt::TimePoint &tp = {},
-                const fs::path &path = {},
+                const std::string& origin = {},
+                const dt::TimePoint& tp = {},
+                const fs::path& path = {},
                 uint lineno = 0,
-                const std::string &function = {},
+                const std::string& function = {},
                 pid_t thread_id = 0,
-                const std::string &thread_name = {},
-                const std::string &task_name = {},
-                const std::string &host = {},
-                const types::KeyValueMap &attributes = {});
+                const std::string& thread_name = {},
+                const std::string& task_name = {},
+                const std::string& host = {},
+                const types::KeyValueMap& attributes = {});
 
         // Copy constructor to ensure we obtain values from derived classes
-        Message(const Message &other);
+        Message(const Message& other);
 
-
-        Message &operator=(Message &&other) noexcept;
-        Message &operator=(const Message &other) noexcept;
-        bool equivalent(const Event &other) const noexcept override;
+        Message& operator=(Message&& other) noexcept;
+        Message& operator=(const Message& other) noexcept;
+        bool equivalent(const Event& other) const noexcept override;
 
         /// Will this message be accepted by at least one available sink?
         virtual bool is_applicable() const noexcept;
@@ -100,12 +99,12 @@ namespace cc::core::logging
         std::string contract_id() const noexcept override;
 
         virtual Scope::ptr scope() const noexcept;
-        virtual std::string scopename_or(const std::string &fallback) const noexcept;
+        virtual std::string scopename_or(const std::string& fallback) const noexcept;
         virtual std::string scopename() const noexcept;
 
-        virtual const fs::path &path() const noexcept;
+        virtual const fs::path& path() const noexcept;
         virtual uint lineno() const noexcept;
-        virtual const std::string &function() const noexcept;
+        virtual const std::string& function() const noexcept;
         virtual pid_t thread_id() const noexcept;
         virtual std::string thread_name() const noexcept;
         virtual std::string task_name() const noexcept;
@@ -117,7 +116,7 @@ namespace cc::core::logging
     public:
         static std::vector<std::string> message_fields() noexcept;
         std::vector<std::string> field_names() const noexcept override;
-        types::Value get_field_as_value(const std::string &field_name) const override;
+        types::Value get_field_as_value(const std::string& field_name) const override;
 
     protected:
         Scope::ptr scope_;

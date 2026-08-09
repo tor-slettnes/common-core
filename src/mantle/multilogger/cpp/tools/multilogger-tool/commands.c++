@@ -122,7 +122,7 @@ namespace cc::platform::multilogger
 
     void Options::get_all_sinks()
     {
-        for (const SinkSpec &spec : this->provider->get_all_sink_specs())
+        for (const SinkSpec& spec : this->provider->get_all_sink_specs())
         {
             std::cout << spec << std::endl;
         }
@@ -130,7 +130,7 @@ namespace cc::platform::multilogger
 
     void Options::list_sinks()
     {
-        for (const SinkID &sink_id : this->provider->list_sinks())
+        for (const SinkID& sink_id : this->provider->list_sinks())
         {
             std::cout << sink_id << std::endl;
         }

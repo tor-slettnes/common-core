@@ -51,7 +51,7 @@ namespace cc::platform::netconfig::dbus
         return this->settings->hostname;
     }
 
-    void DBusProvider::set_hostname(const std::string &hostname)
+    void DBusProvider::set_hostname(const std::string& hostname)
     {
         this->settings->set_hostname(hostname);
     }
@@ -64,7 +64,7 @@ namespace cc::platform::netconfig::dbus
         return datamap<Connection, ConnectionData>();
     }
 
-    void DBusProvider::define_connection(const ConnectionData &data,
+    void DBusProvider::define_connection(const ConnectionData& data,
                                          bool activate)
     {
         if (activate)
@@ -85,17 +85,17 @@ namespace cc::platform::netconfig::dbus
         }
     }
 
-    bool DBusProvider::remove_connection(const Key &key)
+    bool DBusProvider::remove_connection(const Key& key)
     {
         return this->settings->remove_connection(key);
     }
 
-    void DBusProvider::activate_connection(const Key &key)
+    void DBusProvider::activate_connection(const Key& key)
     {
         return this->manager->activate_connection(key);
     }
 
-    void DBusProvider::deactivate_connection(const Key &key)
+    void DBusProvider::deactivate_connection(const Key& key)
     {
         return this->manager->deactivate_connection(key);
     }
@@ -137,14 +137,14 @@ namespace cc::platform::netconfig::dbus
         return apmap;
     }
 
-    void DBusProvider::connect_ap(const Key &bssid,
-                                  const ConnectionData &connection)
+    void DBusProvider::connect_ap(const Key& bssid,
+                                  const ConnectionData& connection)
     {
         return this->manager->connect_ap(bssid, connection);
     }
 
-    void DBusProvider::connect_ap(const SSID &ssid,
-                                  const ConnectionData &connection)
+    void DBusProvider::connect_ap(const SSID& ssid,
+                                  const ConnectionData& connection)
     {
         return this->manager->connect_ap(ssid, connection);
     }

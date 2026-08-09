@@ -30,7 +30,7 @@ namespace cc::core::exception
         using Super = CustomException<Exc, Class>;
 
     public:
-        inline CustomException(const status::Error &event)
+        inline CustomException(const status::Error& event)
             : Exception<Exc>(
                   event,
                   TYPE_NAME_BASE(Class))
@@ -38,9 +38,9 @@ namespace cc::core::exception
         }
 
         inline CustomException(std::errc code,
-                               const status::Error::Symbol &symbol,
-                               const std::string &text,
-                               const types::KeyValueMap &attributes = {},
+                               const status::Error::Symbol& symbol,
+                               const std::string& text,
+                               const types::KeyValueMap& attributes = {},
                                status::Level level = status::Level::ERROR)
             : Exception<Exc>(
                   {
@@ -67,8 +67,8 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        Cancelled(const std::string &msg = "Cancelled",
-                  const std::string &operation = "");
+        Cancelled(const std::string& msg = "Cancelled",
+                  const std::string& operation = "");
     };
 
     //==========================================================================
@@ -93,8 +93,8 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        InvalidArgument(const std::string &msg = "Invalid Argument",
-                        const types::Value &argument = {});
+        InvalidArgument(const std::string& msg = "Invalid Argument",
+                        const types::Value& argument = {});
     };
 
     /// Indicates not enough arguments were provided
@@ -103,7 +103,7 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        MissingArgument(const std::string &msg = "Missing Argument",
+        MissingArgument(const std::string& msg = "Missing Argument",
                         uint provided = 0,
                         uint expected = 1);
     };
@@ -114,7 +114,7 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        ExtraneousArgument(const std::string &msg = "Extraneous Argument",
+        ExtraneousArgument(const std::string& msg = "Extraneous Argument",
                            uint provided = 0,
                            uint expected = 0);
     };
@@ -128,7 +128,7 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        OutOfRange(const std::string &msg = "Out of range", const types::Value &item = {});
+        OutOfRange(const std::string& msg = "Out of range", const types::Value& item = {});
     };
 
     //==========================================================================
@@ -140,7 +140,7 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        NotFound(const std::string &msg = "Item not found", const types::Value &item = {});
+        NotFound(const std::string& msg = "Item not found", const types::Value& item = {});
     };
 
     //==========================================================================
@@ -152,8 +152,8 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        Duplicate(const std::string &msg = "Duplicate item",
-                  const types::Value &item = {});
+        Duplicate(const std::string& msg = "Duplicate item",
+                  const types::Value& item = {});
     };
 
     //==========================================================================
@@ -165,8 +165,8 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        FailedPrecondition(const std::string &msg = "Failed Precondition",
-                           const types::KeyValueMap &attributes = {});
+        FailedPrecondition(const std::string& msg = "Failed Precondition",
+                           const types::KeyValueMap& attributes = {});
     };
 
     //==========================================================================
@@ -178,8 +178,8 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        FailedPostcondition(const std::string &msg = "Failed Postcondition",
-                            const types::KeyValueMap &attributes = {});
+        FailedPostcondition(const std::string& msg = "Failed Postcondition",
+                            const types::KeyValueMap& attributes = {});
     };
 
     //==========================================================================
@@ -191,8 +191,8 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        ResourceExhausted(const std::string &msg = "Resource exhausted",
-                          const std::string &resource = "");
+        ResourceExhausted(const std::string& msg = "Resource exhausted",
+                          const std::string& resource = "");
     };
 
     //==========================================================================
@@ -204,8 +204,8 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        Unavailable(const std::string &msg = "Resource unavailable",
-                    const std::string &resource = "");
+        Unavailable(const std::string& msg = "Resource unavailable",
+                    const std::string& resource = "");
     };
 
     //==========================================================================
@@ -217,8 +217,8 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        RuntimeError(const std::string &msg = "Runtime Error",
-                     const types::KeyValueMap &attributes = {});
+        RuntimeError(const std::string& msg = "Runtime Error",
+                     const types::KeyValueMap& attributes = {});
     };
 
     //==========================================================================
@@ -230,8 +230,8 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        UnknownError(const std::string &msg = "Unknown Error",
-                     const types::KeyValueMap &attributes = {});
+        UnknownError(const std::string& msg = "Unknown Error",
+                     const types::KeyValueMap& attributes = {});
     };
 
     //==========================================================================
@@ -244,18 +244,18 @@ namespace cc::core::exception
         using Super = Exception<std::invalid_argument>;
 
     public:
-        InvocationError(const status::Error &event);
+        InvocationError(const status::Error& event);
 
-        InvocationError(const std::string &source,
+        InvocationError(const std::string& source,
                         int exit_code,
-                        const std::string &symbol,
-                        const std::string &text);
+                        const std::string& symbol,
+                        const std::string& text);
 
-        InvocationError(const std::string &source,
-                        const platform::ExitStatus::ptr &exit_status);
+        InvocationError(const std::string& source,
+                        const platform::ExitStatus::ptr& exit_status);
 
-        InvocationError(const std::string &source,
-                        const platform::InvocationResult &result);
+        InvocationError(const std::string& source,
+                        const platform::InvocationResult& result);
     };
 
     //==========================================================================
@@ -270,8 +270,8 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        UnsupportedError(const std::string &msg = "Unsupported operation",
-                         const types::KeyValueMap &attributes = {});
+        UnsupportedError(const std::string& msg = "Unsupported operation",
+                         const types::KeyValueMap& attributes = {});
     };
 
     //==========================================================================
@@ -284,20 +284,20 @@ namespace cc::core::exception
         using Super = Exception<std::system_error>;
 
     public:
-        SystemError(const status::Error &event);
-        SystemError(const std::system_error &e,
-                    const std::optional<std::string> &preamble = {});
+        SystemError(const status::Error& event);
+        SystemError(const std::system_error& e,
+                    const std::optional<std::string>& preamble = {});
 
-        explicit SystemError(int errcode, const std::string &what);
+        explicit SystemError(int errcode, const std::string& what);
         explicit SystemError(int errcode = errno);
-        explicit SystemError(const std::string &preamble,
+        explicit SystemError(const std::string& preamble,
                              int errcode,
-                             const std::string &what);
+                             const std::string& what);
 
-        explicit SystemError(const std::string &preamble, int errcode = errno);
-        explicit SystemError(const std::error_category &category,
+        explicit SystemError(const std::string& preamble, int errcode = errno);
+        explicit SystemError(const std::error_category& category,
                              int errorcode,
-                             const std::string &what);
+                             const std::string& what);
     };
 
     //==========================================================================
@@ -310,10 +310,10 @@ namespace cc::core::exception
         using Super = Exception<std::system_error>;
 
     public:
-        PermissionDenied(const std::string &msg = "Permission denied",
-                         const std::string &operation = "");
+        PermissionDenied(const std::string& msg = "Permission denied",
+                         const std::string& operation = "");
 
-        PermissionDenied(const status::Error &event);
+        PermissionDenied(const status::Error& event);
     };
 
     //==========================================================================
@@ -326,30 +326,30 @@ namespace cc::core::exception
         using Super = Exception<fs::filesystem_error>;
 
     public:
-        FilesystemError(const status::Error &event);
+        FilesystemError(const status::Error& event);
 
-        FilesystemError(const fs::filesystem_error &e);
+        FilesystemError(const fs::filesystem_error& e);
 
-        FilesystemError(const std::error_code &error_code,
-                        const std::filesystem::path &path1,
-                        const std::filesystem::path &path2,
-                        const std::string &what);
-
-        explicit FilesystemError(int errcode,
-                                 const std::filesystem::path &path1,
-                                 const std::filesystem::path &path2,
-                                 const std::string &what);
+        FilesystemError(const std::error_code& error_code,
+                        const std::filesystem::path& path1,
+                        const std::filesystem::path& path2,
+                        const std::string& what);
 
         explicit FilesystemError(int errcode,
-                                 const std::filesystem::path &path1,
-                                 const std::filesystem::path &path2);
+                                 const std::filesystem::path& path1,
+                                 const std::filesystem::path& path2,
+                                 const std::string& what);
 
         explicit FilesystemError(int errcode,
-                                 const std::filesystem::path &path1,
-                                 const std::string &what);
+                                 const std::filesystem::path& path1,
+                                 const std::filesystem::path& path2);
 
         explicit FilesystemError(int errcode,
-                                 const std::filesystem::path &path1);
+                                 const std::filesystem::path& path1,
+                                 const std::string& what);
+
+        explicit FilesystemError(int errcode,
+                                 const std::filesystem::path& path1);
     };
 
     //==========================================================================
@@ -364,13 +364,13 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        DeviceError(const std::string &text,
-                    const std::string &device,
+        DeviceError(const std::string& text,
+                    const std::string& device,
                     Code code,
-                    const std::string &id,
+                    const std::string& id,
                     status::Level level = status::Level::ERROR,
-                    const dt::TimePoint &timepoint = {},
-                    const types::KeyValueMap &attributes = {});
+                    const dt::TimePoint& timepoint = {},
+                    const types::KeyValueMap& attributes = {});
     };
 
     //==========================================================================
@@ -385,19 +385,19 @@ namespace cc::core::exception
     public:
         using Super::Super;
 
-        ServiceError(const std::string &text,
-                     const std::string &service,
+        ServiceError(const std::string& text,
+                     const std::string& service,
                      Code code,
-                     const std::string &id,
+                     const std::string& id,
                      status::Level level = status::Level::ERROR,
-                     const dt::TimePoint &timepoint = {},
-                     const types::KeyValueMap &attributes = {});
+                     const dt::TimePoint& timepoint = {},
+                     const types::KeyValueMap& attributes = {});
     };
 
     //==========================================================================
     // Map various exceptions to appropriate Event objects
 
-    status::Error::ptr map_to_error(const std::exception &e) noexcept;
+    status::Error::ptr map_to_error(const std::exception& e) noexcept;
     status::Error::ptr map_to_error(std::exception_ptr eptr) noexcept;
 
 };  // namespace cc::core::exception
@@ -405,6 +405,6 @@ namespace cc::core::exception
 namespace std
 {
     /// Define output stream operator "<<" on std::exception and derivatives.
-    std::ostream &operator<<(std::ostream &stream, const exception &e);
-    std::ostream &operator<<(std::ostream &stream, exception_ptr eptr);
+    std::ostream& operator<<(std::ostream& stream, const exception& e);
+    std::ostream& operator<<(std::ostream& stream, exception_ptr eptr);
 }  // namespace std

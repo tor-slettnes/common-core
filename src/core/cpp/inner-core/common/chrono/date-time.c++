@@ -74,7 +74,7 @@ namespace cc::core
                 {TimeUnit::ETERNITY, "eternity"},
         };
 
-        std::ostream &operator<<(std::ostream &stream, const TimeZoneInfo &zi)
+        std::ostream& operator<<(std::ostream& stream, const TimeZoneInfo& zi)
         {
             str::format(stream,
                         "{shortname=%r, offset=%s, stdoffset=%s, dst=%b}",
@@ -85,12 +85,12 @@ namespace cc::core
             return stream;
         }
 
-        std::ostream &operator<<(std::ostream &stream, const TimeUnit &unit)
+        std::ostream& operator<<(std::ostream& stream, const TimeUnit& unit)
         {
             return time_unit_names.to_stream(stream, unit);
         }
 
-        std::istream &operator>>(std::istream &stream, TimeUnit &unit)
+        std::istream& operator>>(std::istream& stream, TimeUnit& unit)
         {
             return time_unit_names.from_stream(stream,  // stream
                                                &unit,   // key
@@ -99,7 +99,7 @@ namespace cc::core
                                                true);   // allow_partial
         }
 
-        std::ostream &operator<<(std::ostream &stream, const DateTimeInterval &interval)
+        std::ostream& operator<<(std::ostream& stream, const DateTimeInterval& interval)
         {
             switch (interval.unit)
             {
@@ -119,7 +119,7 @@ namespace cc::core
             return stream;
         }
 
-        std::istream &operator>>(std::istream &stream, DateTimeInterval &interval)
+        std::istream& operator>>(std::istream& stream, DateTimeInterval& interval)
         {
             std::istream::pos_type start = stream.tellg();
             stream >> interval.count;
@@ -219,7 +219,7 @@ namespace cc::core
         // Helper functions, used below.
 
         template <class Dur, class Ref>
-        TimePoint last_aligned_tp(const TimePoint &tp, uint count)
+        TimePoint last_aligned_tp(const TimePoint& tp, uint count)
         {
             auto ref = std::chrono::floor<Ref>(tp);
 
@@ -264,11 +264,11 @@ namespace cc::core
         //==========================================================================
         // Public functions
 
-        void tp_to_stream(std::ostream &stream,
-                          const TimePoint &tp,
+        void tp_to_stream(std::ostream& stream,
+                          const TimePoint& tp,
                           bool local,
                           uint decimals,
-                          const std::string &format)
+                          const std::string& format)
         {
             timespec ts = dt::to_timespec(tp);
             std::tm dt = local ? dt::localtime(ts.tv_sec) : dt::gmtime(ts.tv_sec);
@@ -288,8 +288,8 @@ namespace cc::core
             }
         }
 
-        void dur_to_stream(std::ostream &stream,
-                           const Duration &dur,
+        void dur_to_stream(std::ostream& stream,
+                           const Duration& dur,
                            uint decimals)
         {
             std::size_t original_precision = stream.precision();
@@ -299,10 +299,10 @@ namespace cc::core
                    << "s";
         }
 
-        void dur_to_stream(std::ostream &stream,
-                           const Duration &dur,
+        void dur_to_stream(std::ostream& stream,
+                           const Duration& dur,
                            uint decimals,
-                           const std::string &format)
+                           const std::string& format)
         {
             if (dur < dt::Duration::zero())
             {
@@ -311,18 +311,18 @@ namespace cc::core
             tp_to_stream(stream, TimePoint(std::chrono::abs(dur)), false, decimals, format);
         }
 
-        void dur_to_stream(std::ostream &stream,
-                           const Duration &dur,
-                           const std::optional<std::string> &secondsformat,
-                           const std::optional<std::string> &minutesformat,
-                           const std::optional<std::string> &hoursformat,
-                           const std::optional<std::string> &daysformat,
-                           const std::optional<std::string> &monthsformat,
-                           const std::optional<std::string> &yearsformat,
+        void dur_to_stream(std::ostream& stream,
+                           const Duration& dur,
+                           const std::optional<std::string>& secondsformat,
+                           const std::optional<std::string>& minutesformat,
+                           const std::optional<std::string>& hoursformat,
+                           const std::optional<std::string>& daysformat,
+                           const std::optional<std::string>& monthsformat,
+                           const std::optional<std::string>& yearsformat,
                            uint max_divisions,
                            const std::string delimiter,
-                           const std::string &date_prefix,
-                           const std::string &time_prefix,
+                           const std::string& date_prefix,
+                           const std::string& time_prefix,
                            double precision)
         {
             if (dur < dt::Duration::zero())
@@ -428,29 +428,29 @@ namespace cc::core
             }
         }
 
-        std::string to_js_string(const TimePoint &tp)
+        std::string to_js_string(const TimePoint& tp)
         {
             return to_string(tp, false, 3, JS_FORMAT) + "Z";
         }
 
-        std::string to_string(const TimePoint &tp,
+        std::string to_string(const TimePoint& tp,
                               bool local,
                               uint decimals,
-                              const std::string &format)
+                              const std::string& format)
         {
             std::ostringstream stream;
             tp_to_stream(stream, tp, local, decimals, format);
             return stream.str();
         }
 
-        std::string to_string(const TimePoint &tp,
+        std::string to_string(const TimePoint& tp,
                               uint decimals,
-                              const std::string &format)
+                              const std::string& format)
         {
             return dt::to_string(tp, true, decimals, format);
         }
 
-        std::string to_iso8601_string(const Duration &duration,
+        std::string to_iso8601_string(const Duration& duration,
                                       uint decimals)
         {
             return to_string(
@@ -467,7 +467,7 @@ namespace cc::core
                 "T");                                    // time_prefix
         }
 
-        std::string to_js_string(const Duration &duration,
+        std::string to_js_string(const Duration& duration,
                                  uint decimals)
         {
             std::ostringstream stream;
@@ -477,17 +477,17 @@ namespace cc::core
             return stream.str();
         }
 
-        std::string to_string(const Duration &duration,
-                              const std::optional<std::string> &secondsformat,
-                              const std::optional<std::string> &minutesformat,
-                              const std::optional<std::string> &hoursformat,
-                              const std::optional<std::string> &daysformat,
-                              const std::optional<std::string> &monthsformat,
-                              const std::optional<std::string> &yearsformat,
+        std::string to_string(const Duration& duration,
+                              const std::optional<std::string>& secondsformat,
+                              const std::optional<std::string>& minutesformat,
+                              const std::optional<std::string>& hoursformat,
+                              const std::optional<std::string>& daysformat,
+                              const std::optional<std::string>& monthsformat,
+                              const std::optional<std::string>& yearsformat,
                               uint max_divisions,
-                              const std::string &delimiter,
-                              const std::string &date_prefix,
-                              const std::string &time_prefix)
+                              const std::string& delimiter,
+                              const std::string& date_prefix,
+                              const std::string& time_prefix)
         {
             std::ostringstream stream;
             dur_to_stream(stream,
@@ -505,24 +505,24 @@ namespace cc::core
             return stream.str();
         }
 
-        std::string to_string(const Duration &duration,
+        std::string to_string(const Duration& duration,
                               uint decimals,
-                              const std::string &format)
+                              const std::string& format)
         {
             std::ostringstream stream;
             dur_to_stream(stream, duration, decimals, format);
             return stream.str();
         }
 
-        std::string to_string(const std::tm &tm,
-                              const std::string &format)
+        std::string to_string(const std::tm& tm,
+                              const std::string& format)
         {
             std::ostringstream stream;
             stream << std::put_time(&tm, format.c_str());
             return stream.str();
         }
 
-        timespec to_timespec(const TimePoint &tp)
+        timespec to_timespec(const TimePoint& tp)
         {
             auto seconds = std::chrono::floor<std::chrono::seconds>(tp);
             auto nanos = std::chrono::time_point_cast<std::chrono::nanoseconds>(tp) -
@@ -536,33 +536,33 @@ namespace cc::core
             return ts;
         }
 
-        std::time_t to_time_t(const TimePoint &tp)
+        std::time_t to_time_t(const TimePoint& tp)
         {
             return Clock::to_time_t(tp);
             // return dt::to_timespec(tp).tv_sec;
         }
 
-        std::int64_t to_seconds(const Duration &d)
+        std::int64_t to_seconds(const Duration& d)
         {
             return std::chrono::floor<std::chrono::seconds>(d).count();
         }
 
-        std::int64_t to_milliseconds(const TimePoint &tp)
+        std::int64_t to_milliseconds(const TimePoint& tp)
         {
             return to_milliseconds(tp.time_since_epoch());
         }
 
-        std::int64_t to_milliseconds(const Duration &d)
+        std::int64_t to_milliseconds(const Duration& d)
         {
             return std::chrono::floor<std::chrono::milliseconds>(d).count();
         }
 
-        double to_double(const TimePoint &tp)
+        double to_double(const TimePoint& tp)
         {
             return dt::to_double(tp.time_since_epoch());
         }
 
-        double to_double(const Duration &d)
+        double to_double(const Duration& d)
         {
             return std::chrono::duration<double>(d).count();
         }
@@ -629,13 +629,13 @@ namespace cc::core
                                static_cast<long>((seconds - (int)seconds) * 1e9));
         }
 
-        Duration to_duration(const timespec &ts)
+        Duration to_duration(const timespec& ts)
         {
             return to_duration(ts.tv_sec, ts.tv_nsec);
         }
 
-        Duration to_duration(const std::string_view &input,
-                             const std::optional<std::string> &format,
+        Duration to_duration(const std::string_view& input,
+                             const std::optional<std::string>& format,
                              const Duration fallback)
         {
             return format
@@ -644,8 +644,8 @@ namespace cc::core
         }
 
         std::optional<Duration> try_to_duration(
-            const std::string_view &input,
-            const std::string &format)
+            const std::string_view& input,
+            const std::string& format)
         {
             if (auto tp = try_to_timepoint(input, format, false))
             {
@@ -658,7 +658,7 @@ namespace cc::core
         }
 
         std::optional<Duration> try_to_duration(
-            const std::string_view &input,
+            const std::string_view& input,
             double multiplier)
         {
             static const std::regex rx(
@@ -696,7 +696,7 @@ namespace cc::core
             {
                 double duration = 0;
 
-                for (const auto &[index, unit] : unit_map)
+                for (const auto& [index, unit] : unit_map)
                 {
                     if (match.length(index))
                     {
@@ -741,7 +741,7 @@ namespace cc::core
 
         TimePoint double_to_timepoint(
             double scalar,
-            const std::optional<int> &multiplier_decimal_exponent)
+            const std::optional<int>& multiplier_decimal_exponent)
         {
             if (scalar <= 0)
             {
@@ -763,7 +763,7 @@ namespace cc::core
 
         TimePoint int_to_timepoint(
             std::int64_t scalar,
-            const std::optional<int> &multiplier_decimal_exponent)
+            const std::optional<int>& multiplier_decimal_exponent)
         {
             if (scalar <= 0)
             {
@@ -796,12 +796,12 @@ namespace cc::core
             return TimePoint(to_duration(seconds, nanoseconds));
         }
 
-        TimePoint to_timepoint(const timespec &ts)
+        TimePoint to_timepoint(const timespec& ts)
         {
             return to_timepoint(ts.tv_sec, ts.tv_nsec);
         }
 
-        TimePoint to_timepoint(const std::tm &dt, bool local)
+        TimePoint to_timepoint(const std::tm& dt, bool local)
         {
             return to_timepoint(dt::mktime(dt, local), 0);
         }
@@ -838,9 +838,9 @@ namespace cc::core
         }
 
         TimePoint to_timepoint(
-            const std::string_view &input,
+            const std::string_view& input,
             bool assume_local,
-            const TimePoint &fallback,
+            const TimePoint& fallback,
             const std::optional<int> multiplier_decimal_exponent)
         {
             return try_to_timepoint(
@@ -851,16 +851,16 @@ namespace cc::core
         }
 
         TimePoint to_timepoint(
-            const std::string_view &input,
-            const std::string &format,
+            const std::string_view& input,
+            const std::string& format,
             bool assume_local,
-            const TimePoint &fallback)
+            const TimePoint& fallback)
         {
             return try_to_timepoint(input, format, assume_local).value_or(fallback);
         }
 
         std::optional<TimePoint> try_to_timepoint(
-            const std::string_view &input,
+            const std::string_view& input,
             bool assume_local,
             const std::optional<int> multiplier_decimal_exponent)
         {
@@ -925,12 +925,12 @@ namespace cc::core
         }
 
         std::optional<TimePoint> try_to_timepoint(
-            const std::string_view &input,
-            const std::string &format,
+            const std::string_view& input,
+            const std::string& format,
             bool assume_local)
         {
             std::tm dt = {};
-            if (const char *end = ::strptime(input.data(), format.c_str(), &dt))
+            if (const char* end = ::strptime(input.data(), format.c_str(), &dt))
             {
                 return to_timepoint(dt, (*end != 'Z') && assume_local);
             }
@@ -943,13 +943,13 @@ namespace cc::core
         //--------------------------------------------------------------------------
         // Zone alignment and conversions
 
-        TimePoint last_midnight(const TimePoint &tp, bool local)
+        TimePoint last_midnight(const TimePoint& tp, bool local)
         {
             return last_aligned(tp, std::chrono::hours(24), local);
         }
 
-        TimePoint last_aligned(const TimePoint &tp,
-                               const DateTimeInterval &interval,
+        TimePoint last_aligned(const TimePoint& tp,
+                               const DateTimeInterval& interval,
                                bool local)
         {
             using namespace std::chrono;
@@ -999,8 +999,8 @@ namespace cc::core
             return tp;
         }
 
-        TimePoint last_aligned(const TimePoint &tp,
-                               const Duration &interval,
+        TimePoint last_aligned(const TimePoint& tp,
+                               const Duration& interval,
                                bool local)
         {
             TimePoint reference = dt::epoch;
@@ -1013,9 +1013,9 @@ namespace cc::core
                                 std::chrono::floor<std::chrono::seconds>(interval));
         }
 
-        TimePoint last_aligned(const TimePoint &tp,
-                               const TimePoint &reference,
-                               const Duration &interval)
+        TimePoint last_aligned(const TimePoint& tp,
+                               const TimePoint& reference,
+                               const Duration& interval)
         {
             Duration offset = (tp - reference) % interval;
             if (offset < Duration::zero())
@@ -1025,63 +1025,63 @@ namespace cc::core
             return tp - offset;
         }
 
-        Duration local_adjustment(const TimePoint &tp)
+        Duration local_adjustment(const TimePoint& tp)
         {
             return tzinfo(tp).offset;
         }
 
-        Duration local_adjustment(const TimePoint &tp,
-                                  const std::string &timezone)
+        Duration local_adjustment(const TimePoint& tp,
+                                  const std::string& timezone)
         {
             return tzinfo(timezone, tp).offset;
         }
 
-        std::tm gmtime(const TimePoint &tp)
+        std::tm gmtime(const TimePoint& tp)
         {
             return dt::gmtime(dt::to_time_t(tp));
         }
 
-        std::tm gmtime(const std::time_t &time)
+        std::tm gmtime(const std::time_t& time)
         {
             return platform::timezone->gmtime(time);
         }
 
-        std::tm localtime(const TimePoint &tp, const std::string &timezone)
+        std::tm localtime(const TimePoint& tp, const std::string& timezone)
         {
             return dt::localtime(dt::to_time_t(tp), timezone);
         }
 
-        std::tm localtime(const TimePoint &tp)
+        std::tm localtime(const TimePoint& tp)
         {
             return dt::localtime(dt::to_time_t(tp));
         }
 
-        std::tm localtime(const std::time_t &time, const std::string &timezone)
+        std::tm localtime(const std::time_t& time, const std::string& timezone)
         {
             return platform::timezone->localtime(time, timezone);
         }
 
-        std::tm localtime(const std::time_t &time)
+        std::tm localtime(const std::time_t& time)
         {
             return platform::timezone->localtime(time);
         }
 
-        TimeZoneInfo tzinfo(const std::string &timezone, const TimePoint &tp)
+        TimeZoneInfo tzinfo(const std::string& timezone, const TimePoint& tp)
         {
             return dt::tzinfo(timezone, dt::to_time_t(tp));
         }
 
-        TimeZoneInfo tzinfo(const TimePoint &tp)
+        TimeZoneInfo tzinfo(const TimePoint& tp)
         {
             return dt::tzinfo(dt::to_time_t(tp));
         }
 
-        TimeZoneInfo tzinfo(const std::string &timezone, const std::time_t &time)
+        TimeZoneInfo tzinfo(const std::string& timezone, const std::time_t& time)
         {
             return platform::timezone->tzinfo(timezone, time);
         }
 
-        TimeZoneInfo tzinfo(const std::time_t &time)
+        TimeZoneInfo tzinfo(const std::time_t& time)
         {
             return platform::timezone->tzinfo(time);
         }
@@ -1101,7 +1101,7 @@ namespace cc::core
             }
         }
 
-        std::uint32_t gregorian_days(const std::tm &dt)
+        std::uint32_t gregorian_days(const std::tm& dt)
         {
             uint month = (dt.tm_mon % 12) + TM_MONTH_OFFSET;
             uint year = (dt.tm_year + TM_YEAR_OFFSET) + (dt.tm_mon / 12);
@@ -1151,8 +1151,8 @@ namespace cc::core
             return Clock::now() - dt::Clock::now().time_since_epoch() + tp.time_since_epoch();
         }
 
-        void tp_to_stream(std::ostream &stream,
-                          const TimePoint &stp,
+        void tp_to_stream(std::ostream& stream,
+                          const TimePoint& stp,
                           uint decimals)
         {
             dt::dur_to_stream(stream,
@@ -1164,19 +1164,19 @@ namespace cc::core
 
 namespace std::chrono
 {
-    std::ostream &operator<<(std::ostream &stream, const cc::core::dt::TimePoint &tp)
+    std::ostream& operator<<(std::ostream& stream, const cc::core::dt::TimePoint& tp)
     {
         cc::core::dt::tp_to_stream(stream, tp);
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, const cc::core::dt::Duration &dur)
+    std::ostream& operator<<(std::ostream& stream, const cc::core::dt::Duration& dur)
     {
         cc::core::dt::dur_to_stream(stream, dur);
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, const cc::core::steady::TimePoint &stp)
+    std::ostream& operator<<(std::ostream& stream, const cc::core::steady::TimePoint& stp)
     {
         cc::core::steady::tp_to_stream(stream, stp);
         return stream;
@@ -1184,7 +1184,7 @@ namespace std::chrono
 
 }  // namespace std::chrono
 
-bool operator==(const std::tm &lhs, const std::tm &rhs)
+bool operator==(const std::tm& lhs, const std::tm& rhs)
 {
     return ((lhs.tm_sec == rhs.tm_sec) &&
             (lhs.tm_min == rhs.tm_min) &&
@@ -1197,7 +1197,7 @@ bool operator==(const std::tm &lhs, const std::tm &rhs)
             (lhs.tm_isdst == rhs.tm_isdst));
 }
 
-std::ostream &operator<<(std::ostream &stream, const std::tm &tm)
+std::ostream& operator<<(std::ostream& stream, const std::tm& tm)
 {
     stream << std::put_time(&tm, cc::core::dt::DEFAULT_FORMAT);
     return stream;

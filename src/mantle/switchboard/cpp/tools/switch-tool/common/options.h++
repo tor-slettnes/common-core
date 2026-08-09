@@ -24,10 +24,10 @@ namespace cc::platform::switchboard
         };
 
     public:
-        Options(const std::string &implementation);
+        Options(const std::string& implementation);
 
         void add_options() override;
-        bool handle_command(const std::shared_ptr<switchboard::Provider> &provider);
+        bool handle_command(const std::shared_ptr<switchboard::Provider>& provider);
 
     private:  // implemented in options.c++
         void add_commands();
@@ -73,12 +73,12 @@ namespace cc::platform::switchboard
         void on_monitor_end() override;
 
         static void on_signal_spec(core::signal::MappingAction action,
-                                   const switchboard::SwitchName &name,
-                                   const switchboard::Specification &spec);
+                                   const switchboard::SwitchName& name,
+                                   const switchboard::Specification& spec);
 
         static void on_signal_status(core::signal::MappingAction action,
-                                     const switchboard::SwitchName &name,
-                                     const switchboard::Status &status);
+                                     const switchboard::SwitchName& name,
+                                     const switchboard::Status& status);
 
         std::vector<switchboard::SwitchRef> get_switches_or_all();
         switchboard::SwitchRef get_switch(bool required);
@@ -86,8 +86,8 @@ namespace cc::platform::switchboard
         switchboard::StateSet get_states();
         void print_states() const;
         void print_tvlist(
-            const core::types::TaggedValueList &tvlist,
-            const std::unordered_set<std::string> &selection = {},
+            const core::types::TaggedValueList& tvlist,
+            const std::unordered_set<std::string>& selection = {},
             std::size_t alignment_column = 16) const;
 
     public:

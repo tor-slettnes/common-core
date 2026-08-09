@@ -28,12 +28,12 @@ namespace cc::core::types
         // friend KeyValueMap &operator<<(KeyValueMap &kvmap, const Listable &obj);
 
     public:
-        void to_stream(std::ostream &stream) const override;
+        void to_stream(std::ostream& stream) const override;
         [[nodiscard]] TaggedValueList as_tvlist() const;
         [[nodiscard]] KeyValueMap as_kvmap() const;
         [[nodiscard]] ValueList as_valuelist() const;
 
-        virtual void to_tvlist(TaggedValueList *tvlist) const = 0;
+        virtual void to_tvlist(TaggedValueList* tvlist) const = 0;
     };
 
 }  // namespace cc::core::types

@@ -37,11 +37,11 @@ namespace cc::core::types
         Value(std::int32_t value);
         Value(std::int64_t value);
         Value(const char* cstring);
-        Value(const StringPtr &string);
-        Value(const std::string &string);
-        Value(std::string &&string);
+        Value(const StringPtr& string);
+        Value(const std::string& string);
+        Value(std::string&& string);
         Value(const std::string_view& view);
-        Value(const std::filesystem::path &path);
+        Value(const std::filesystem::path& path);
         Value(const std::vector<Byte>& bytes);
         Value(const BytesPtr& bytes);
 
@@ -137,7 +137,7 @@ namespace cc::core::types
             const dt::TimePoint& fallback = {}) const noexcept;
 
         dt::TimePoint as_timepoint(
-            const std::optional<int> &decimal_exponent,
+            const std::optional<int>& decimal_exponent,
             bool assume_local = true,
             const dt::TimePoint& fallback = {}) const noexcept;
 
@@ -195,7 +195,7 @@ namespace cc::core::types
             bool assume_local = true) const noexcept;
 
         std::optional<dt::TimePoint> try_as_timepoint(
-            const std::optional<int> &decimal_exponent,
+            const std::optional<int>& decimal_exponent,
             bool assume_local = true) const noexcept;
 
         std::optional<dt::Duration> try_as_duration() const noexcept;

@@ -27,14 +27,14 @@ namespace cc::platform::switchboard::dds
         using Super = cc::dds::Subscriber;
 
     protected:
-        Subscriber(const std::string &name, int domain_id);
+        Subscriber(const std::string& name, int domain_id);
 
     private:
         static void on_spec_update(core::signal::MappingAction action,
-                                   const CC::Switchboard::Specification &spec);
+                                   const CC::Switchboard::Specification& spec);
 
         static void on_status_update(core::signal::MappingAction action,
-                                     const CC::Switchboard::Status &status);
+                                     const CC::Switchboard::Status& status);
 
     private:
         DataReaderPtr<CC::Switchboard::Specification> spec_reader;

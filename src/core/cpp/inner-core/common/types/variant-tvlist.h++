@@ -28,11 +28,11 @@ namespace cc::core::types
 
     public:
         TaggedValueList::const_iterator find(
-            const Tag &tag,
+            const Tag& tag,
             bool ignoreCase = false) const noexcept;
 
         TaggedValueList::iterator find(
-            const Tag &tag,
+            const Tag& tag,
             bool ignoreCase = false) noexcept;
 
         // No-ops for compatibility with std::vector<>;
@@ -43,15 +43,15 @@ namespace cc::core::types
         using Super::at;
 
         // Additional signature to obtain the first encountered value with a specific tag.
-        Value &at(const Tag &tag);
-        const Value &at(const Tag &tag) const;
+        Value& at(const Tag& tag);
+        const Value& at(const Tag& tag) const;
 
         // Inherit [] operator from std::deque
         using Super::operator[];
 
         // Additional signature to obtain reference to the first encountered value with
         // a specific tag, inserting a new element if necessary.
-        Value &operator[](const Tag &tag) noexcept;
+        Value& operator[](const Tag& tag) noexcept;
 
         /// @brief Indicate whether any tags are present.
         bool is_tagged() const noexcept;
@@ -60,29 +60,29 @@ namespace cc::core::types
         bool is_mappable() const noexcept;
 
         /// Get the first value
-        Value front(const Value &fallback = {}) const noexcept;
+        Value front(const Value& fallback = {}) const noexcept;
 
         /// Get the last value
-        Value back(const Value &fallback = {}) const noexcept;
+        Value back(const Value& fallback = {}) const noexcept;
 
         /// Get the value at the specified index, or a default value if not in range
-        Value get(uint index, const Value &fallback = {}) const noexcept;
-        Value get(int index, const Value &fallback = {}) const noexcept;
+        Value get(uint index, const Value& fallback = {}) const noexcept;
+        Value get(int index, const Value& fallback = {}) const noexcept;
 
         /// Get the first value with the specified tag, or a default value if not found.
         Value get(
-            const Tag &tag,
-            const Value &fallback = {},
+            const Tag& tag,
+            const Value& fallback = {},
             bool ignoreCase = false) const noexcept;
 
         Value get_nonempty(
-            const Tag &tag,
-            const Value &fallback = {},
+            const Tag& tag,
+            const Value& fallback = {},
             bool ignoreCase = false) const noexcept;
 
         Value get_any_of(
-            const std::vector<std::string> &candidates,
-            const Value &fallback = {},
+            const std::vector<std::string>& candidates,
+            const Value& fallback = {},
             bool ignoreCase = false) const noexcept;
 
         /// Get the value at the specified index
@@ -91,17 +91,16 @@ namespace cc::core::types
 
         /// Get the first value with the specified tag
         std::optional<Value> try_get(
-            const Tag &tag,
+            const Tag& tag,
             bool ignoreCase = false) const noexcept;
 
         std::optional<Value> try_get_nonempty(
-            const Tag &tag,
+            const Tag& tag,
             bool ignoreCase = false) const noexcept;
 
         std::optional<Value> try_get_any_of(
-            const std::vector<std::string> &candidates,
+            const std::vector<std::string>& candidates,
             bool ignoreCase = false) const noexcept;
-
 
         /// Return the tag for each item
         TagList tags() const noexcept;
@@ -132,8 +131,8 @@ namespace cc::core::types
         ///    TaggedValueList instance from which to import
         /// @return
         ///     A reference to this updated instance.
-        TaggedValueList &extend(const TaggedValueList &other);
-        TaggedValueList &extend(TaggedValueList &&other);
+        TaggedValueList& extend(const TaggedValueList& other);
+        TaggedValueList& extend(TaggedValueList&& other);
 
         /// @brief
         ///    Replace tagged values in this list with ones from another
@@ -141,8 +140,8 @@ namespace cc::core::types
         ///    TaggedValueList instance from which to import
         /// @return
         ///     A reference to this updated instance.
-        TaggedValueList &update(const TaggedValueList &other);
-        TaggedValueList &update(TaggedValueList &&other);
+        TaggedValueList& update(const TaggedValueList& other);
+        TaggedValueList& update(TaggedValueList&& other);
 
         /// @brief
         ///    Extract items from an existing TaggedValueList and insert here.
@@ -153,35 +152,35 @@ namespace cc::core::types
         /// @note
         ///    TaggedValue instances are extracted from `other` and
         ///    appended to this list only if not already present.
-        TaggedValueList &merge(TaggedValueList &other);
-        TaggedValueList &merge(TaggedValueList &&other);
+        TaggedValueList& merge(TaggedValueList& other);
+        TaggedValueList& merge(TaggedValueList&& other);
 
         /// @brief
         ///    Push an element at the end of the list if a boolean condition is satisfied
         /// @param[in] tv
         ///    Tagged Value to push
 
-        TaggedValueList::iterator append(const TaggedValue &tv);
-        TaggedValueList::iterator append(const Value &value);
-        TaggedValueList::iterator append(const Tag &tag, const Value &value);
+        TaggedValueList::iterator append(const TaggedValue& tv);
+        TaggedValueList::iterator append(const Value& value);
+        TaggedValueList::iterator append(const Tag& tag, const Value& value);
 
-        AppendResult append_if(bool condition, const TaggedValue &tv);
-        AppendResult append_if(bool condition, const Value &value);
-        AppendResult append_if(bool condition, const Tag &tag, const Value &value);
+        AppendResult append_if(bool condition, const TaggedValue& tv);
+        AppendResult append_if(bool condition, const Value& value);
+        AppendResult append_if(bool condition, const Tag& tag, const Value& value);
 
-        AppendResult append_if_value(const TaggedValue &tv);
-        AppendResult append_if_value(const Value &value);
-        AppendResult append_if_value(const Tag &tag, const Value &value);
+        AppendResult append_if_value(const TaggedValue& tv);
+        AppendResult append_if_value(const Value& value);
+        AppendResult append_if_value(const Tag& tag, const Value& value);
 
     public:
-        void to_stream(std::ostream &stream) const override;
-        void to_stream(std::ostream &stream,
-                       const std::string &prefix,
-                       const std::string &infix,
-                       const std::string &postfix) const;
+        void to_stream(std::ostream& stream) const override;
+        void to_stream(std::ostream& stream,
+                       const std::string& prefix,
+                       const std::string& infix,
+                       const std::string& postfix) const;
 
         template <class T>
-        std::optional<T> try_convert_to(const std::string &key, bool ignore_case = false) const
+        std::optional<T> try_convert_to(const std::string& key, bool ignore_case = false) const
         {
             return this->get(key, {}, ignore_case).try_convert_to<T>();
         }
@@ -193,17 +192,17 @@ namespace cc::core::types
         }
 
         template <class ContainerT>
-        void populate_from(const ContainerT &container)
+        void populate_from(const ContainerT& container)
         {
             this->reserve(this->size() + container.size());
-            for (const auto &[tag, value] : container)
+            for (const auto& [tag, value] : container)
             {
                 this->emplace_back({tag, value});
             }
         }
 
         template <class ContainerT>
-        static std::shared_ptr<TaggedValueList> create_shared_from(const ContainerT &container)
+        static std::shared_ptr<TaggedValueList> create_shared_from(const ContainerT& container)
         {
             auto tvlist = std::make_shared<TaggedValueList>();
             (*tvlist) << container;
@@ -211,7 +210,7 @@ namespace cc::core::types
         }
 
         template <class ContainerT>
-        static TaggedValueList create_from(const ContainerT &container)
+        static TaggedValueList create_from(const ContainerT& container)
         {
             TaggedValueList tvlist;
             tvlist << container;
@@ -223,12 +222,12 @@ namespace cc::core::types
     // Non-member functions
 
     template <class T>
-    TaggedValueList &operator<<(TaggedValueList &tvlist, const T &inputs)
+    TaggedValueList& operator<<(TaggedValueList& tvlist, const T& inputs)
     {
         tvlist.reserve(tvlist.size() + inputs.size());
-        for (const auto &[tag, value] : inputs)
+        for (const auto& [tag, value] : inputs)
         {
-            auto &tv = tvlist.emplace_back();
+            auto& tv = tvlist.emplace_back();
             tv.first = tag;
             tv.second << value;
         }

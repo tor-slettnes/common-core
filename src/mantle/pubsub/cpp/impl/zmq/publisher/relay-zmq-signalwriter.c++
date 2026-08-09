@@ -32,8 +32,8 @@ namespace cc::platform::pubsub::zmq
 
     void SignalWriter::write_message(
         core::signal::MappingAction action,
-        const std::string &topic,
-        const core::types::Value &payload)
+        const std::string& topic,
+        const core::types::Value& payload)
     {
         switch (action)
         {

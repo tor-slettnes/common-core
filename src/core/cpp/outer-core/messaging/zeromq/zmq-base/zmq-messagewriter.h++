@@ -15,15 +15,15 @@ namespace cc::zmq
     class MessageWriter
     {
     protected:
-        MessageWriter(const std::shared_ptr<Publisher> &publisher,
-                      const std::optional<Header> &header = {});
+        MessageWriter(const std::shared_ptr<Publisher>& publisher,
+                      const std::optional<Header>& header = {});
 
     public:
         virtual void initialize() {}
         virtual void deinitialize() {}
 
-        const std::optional<Header> &header() const noexcept;
-        void write(const core::types::ByteVector &bytes);
+        const std::optional<Header>& header() const noexcept;
+        void write(const core::types::ByteVector& bytes);
 
     protected:
         std::shared_ptr<Publisher> publisher() const;

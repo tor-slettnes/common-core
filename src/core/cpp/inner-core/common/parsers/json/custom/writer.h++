@@ -17,34 +17,34 @@ namespace cc::core::json
 
     public:
         CustomWriter();
-        CustomWriter(const fs::path &path);
+        CustomWriter(const fs::path& path);
 
-        void write_stream(std::ostream &stream,
-                          const types::Value &value,
+        void write_stream(std::ostream& stream,
+                          const types::Value& value,
                           bool pretty = false) const override;
 
-        std::string encoded(const types::Value &value,
+        std::string encoded(const types::Value& value,
                             bool pretty = false) const override;
 
     private:
-        static std::ostream &to_stream(std::ostream &stream,
-                                       const types::Value &value,
+        static std::ostream& to_stream(std::ostream& stream,
+                                       const types::Value& value,
                                        bool pretty = false,
-                                       const std::string &indent = "");
+                                       const std::string& indent = "");
 
-        static std::ostream &to_stream(std::ostream &stream,
-                                       const types::KeyValueMap &kvmap,
+        static std::ostream& to_stream(std::ostream& stream,
+                                       const types::KeyValueMap& kvmap,
                                        bool pretty,
-                                       const std::string &indent);
+                                       const std::string& indent);
 
-        static std::ostream &to_stream(std::ostream &stream,
-                                       const types::ValueList &list,
+        static std::ostream& to_stream(std::ostream& stream,
+                                       const types::ValueList& list,
                                        bool pretty,
-                                       const std::string &indent);
+                                       const std::string& indent);
 
-        static std::ostream &to_stream(std::ostream &stream,
-                                       const types::TaggedValueList &tvlist,
+        static std::ostream& to_stream(std::ostream& stream,
+                                       const types::TaggedValueList& tvlist,
                                        bool pretty,
-                                       const std::string &indent);
+                                       const std::string& indent);
     };
 }  // namespace cc::core::json

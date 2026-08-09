@@ -21,7 +21,7 @@ namespace cc::platform::sysconfig::native
     //==========================================================================
     // Time zone configuration
 
-    PosixTimeZoneProvider::PosixTimeZoneProvider(const std::string &name)
+    PosixTimeZoneProvider::PosixTimeZoneProvider(const std::string& name)
         : Super(name),
           zone_settings(SETTINGS_FILE)
     {
@@ -48,7 +48,7 @@ namespace cc::platform::sysconfig::native
     TimeZoneAreas PosixTimeZoneProvider::list_timezone_areas() const
     {
         std::set<TimeZoneArea> areas;
-        for (const auto &[name, spec] : this->zone_map)
+        for (const auto& [name, spec] : this->zone_map)
         {
             areas.insert(spec.area);
         }
@@ -60,7 +60,7 @@ namespace cc::platform::sysconfig::native
         // Determine if there is a matching "area order"  in "timezones.json".
         // If so, extract these areas in order from our initial set.
         core::types::Value area_order = this->zone_settings.get(SETTING_AREA_ORDER);
-        for (const core::types::Value &priority_area : area_order.get_valuelist())
+        for (const core::types::Value& priority_area : area_order.get_valuelist())
         {
             if (auto nh = areas.extract(priority_area.as_string()))
             {
@@ -73,15 +73,15 @@ namespace cc::platform::sysconfig::native
         return area_list;
     }
 
-    TimeZoneCountries PosixTimeZoneProvider::list_timezone_countries(const TimeZoneArea &area)
+    TimeZoneCountries PosixTimeZoneProvider::list_timezone_countries(const TimeZoneArea& area)
     {
         std::set<TimeZoneCountry> countries;
 
-        for (const auto &[name, spec] : this->zone_map)
+        for (const auto& [name, spec] : this->zone_map)
         {
             if (area.empty() || (spec.area == area))
             {
-                for (const TimeZoneLocation &location : spec.locations)
+                for (const TimeZoneLocation& location : spec.locations)
                 {
                     countries.insert(location.country);
                 }
@@ -97,7 +97,7 @@ namespace cc::platform::sysconfig::native
         // initial set.
 
         core::types::Value country_order = this->zone_settings.get(SETTING_COUNTRY_ORDER);
-        for (const core::types::Value &priority_country : country_order.get(area).get_valuelist())
+        for (const core::types::Value& priority_country : country_order.get(area).get_valuelist())
         {
             std::string next_country = priority_country.as_string();
 
@@ -119,7 +119,7 @@ namespace cc::platform::sysconfig::native
     }
 
     TimeZoneRegions PosixTimeZoneProvider::list_timezone_regions(
-        const TimeZoneLocationFilter &filter)
+        const TimeZoneLocationFilter& filter)
     {
         std::set<TimeZoneRegion> regions;
 
@@ -135,11 +135,11 @@ namespace cc::platform::sysconfig::native
         }
 
         // Populate regions (where they exist) from matching country lists.
-        for (const auto &[name, spec] : this->zone_map)
+        for (const auto& [name, spec] : this->zone_map)
         {
             if (filter.area.empty() || (filter.area == spec.area))
             {
-                for (const TimeZoneLocation &location : spec.locations)
+                for (const TimeZoneLocation& location : spec.locations)
                 {
                     if ((location.country.name == country_name) && !location.region.empty())
                     {
@@ -156,7 +156,7 @@ namespace cc::platform::sysconfig::native
         // Determine if there is a matching "region order" for this country in "timezones.json".
         // If so, extract these regions in order from our initial set.
         core::types::Value region_order = this->zone_settings.get(SETTING_REGION_ORDER);
-        for (const core::types::Value &priority_region : region_order.get(country_name).get_valuelist())
+        for (const core::types::Value& priority_region : region_order.get(country_name).get_valuelist())
         {
             if (auto nh = regions.extract(priority_region.as_string()))
             {
@@ -172,10 +172,10 @@ namespace cc::platform::sysconfig::native
     }
 
     TimeZoneCanonicalSpecs PosixTimeZoneProvider::list_timezone_specs(
-        const TimeZoneLocationFilter &filter) const
+        const TimeZoneLocationFilter& filter) const
     {
         TimeZoneCanonicalSpecs specs;
-        for (const TimeZoneCanonicalSpec &spec : this->load_zones())
+        for (const TimeZoneCanonicalSpec& spec : this->load_zones())
         {
             if (this->filter_includes_zone(filter, spec))
             {
@@ -186,14 +186,14 @@ namespace cc::platform::sysconfig::native
     }
 
     TimeZoneCanonicalSpec PosixTimeZoneProvider::get_timezone_spec(
-        const std::string &zonename) const
+        const std::string& zonename) const
     {
         return this->zone_map.get(zonename.empty()
                                       ? this->get_configured_zonename()
                                       : zonename);
     }
 
-    TimeZoneInfo PosixTimeZoneProvider::set_timezone(const TimeZoneCanonicalName &zonename)
+    TimeZoneInfo PosixTimeZoneProvider::set_timezone(const TimeZoneCanonicalName& zonename)
     {
         this->set_configured_zonename(zonename);
         signal_tzspec.emit(this->get_timezone_spec(zonename));
@@ -203,15 +203,15 @@ namespace cc::platform::sysconfig::native
         return zi;
     }
 
-    TimeZoneInfo PosixTimeZoneProvider::set_timezone(const TimeZoneLocation &location)
+    TimeZoneInfo PosixTimeZoneProvider::set_timezone(const TimeZoneLocation& location)
     {
         TimeZoneLocationFilter filter = {
             .country = location.country,
         };
 
-        for (const TimeZoneCanonicalSpec &spec : this->list_timezone_specs(filter))
+        for (const TimeZoneCanonicalSpec& spec : this->list_timezone_specs(filter))
         {
-            for (const TimeZoneLocation &candidate : spec.locations)
+            for (const TimeZoneLocation& candidate : spec.locations)
             {
                 if ((this->country_match(location.country, candidate.country)) && (location.region == candidate.region))
                 {
@@ -236,8 +236,8 @@ namespace cc::platform::sysconfig::native
     }
 
     TimeZoneInfo PosixTimeZoneProvider::get_timezone_info(
-        const TimeZoneCanonicalName &canonical_zone,
-        const core::dt::TimePoint &timepoint) const
+        const TimeZoneCanonicalName& canonical_zone,
+        const core::dt::TimePoint& timepoint) const
 
     {
         core::dt::TimePoint effective_time =
@@ -274,7 +274,7 @@ namespace cc::platform::sysconfig::native
         return zonename;
     }
 
-    void PosixTimeZoneProvider::set_configured_zonename(const std::string &zonename)
+    void PosixTimeZoneProvider::set_configured_zonename(const std::string& zonename)
     {
         // Create/update /etc/localtime symlink
         if (fs::exists(fs::symlink_status(TZLINK)))
@@ -291,12 +291,12 @@ namespace cc::platform::sysconfig::native
         tzset();
     }
 
-    TimeZoneCanonicalSpecs PosixTimeZoneProvider::load_zones(const fs::path &zonetab) const
+    TimeZoneCanonicalSpecs PosixTimeZoneProvider::load_zones(const fs::path& zonetab) const
     {
         TimeZoneCanonicalSpecs tzlist;
         tzlist.reserve(this->zone_map.size());
 
-        for (auto &[name, spec] : this->zone_map)
+        for (auto& [name, spec] : this->zone_map)
         {
             tzlist.push_back(std::move(spec));
         }
@@ -304,7 +304,7 @@ namespace cc::platform::sysconfig::native
         return tzlist;
     }
 
-    TimeZoneMap PosixTimeZoneProvider::load_zone_map(const fs::path &zonetab) const
+    TimeZoneMap PosixTimeZoneProvider::load_zone_map(const fs::path& zonetab) const
     {
         static const std::regex rx(
             "^([\\w,]+)"           // (1) country code(s)
@@ -347,13 +347,13 @@ namespace cc::platform::sysconfig::native
     }
 
     TimeZoneCanonicalSpec PosixTimeZoneProvider::build_canonical_spec(
-        const TimeZoneCanonicalName &zonename,
-        const TimeZoneArea &area,
-        const std::vector<TimeZoneCountryCode> &country_codes,
-        const std::string &description,
+        const TimeZoneCanonicalName& zonename,
+        const TimeZoneArea& area,
+        const std::vector<TimeZoneCountryCode>& country_codes,
+        const std::string& description,
         int latitude,
         int longitude,
-        const CountryMap &country_name_map) const
+        const CountryMap& country_name_map) const
     {
         TimeZoneCanonicalSpec spec = {
             .name = zonename,
@@ -363,9 +363,9 @@ namespace cc::platform::sysconfig::native
         };
 
         spec.locations.reserve(country_codes.size());
-        for (const TimeZoneCountryCode &cc : country_codes)
+        for (const TimeZoneCountryCode& cc : country_codes)
         {
-            TimeZoneLocation &loc = spec.locations.emplace_back();
+            TimeZoneLocation& loc = spec.locations.emplace_back();
             loc.country = {
                 .code = cc,
                 .name = country_name_map.get(cc),
@@ -376,16 +376,16 @@ namespace cc::platform::sysconfig::native
         return spec;
     }
 
-    void PosixTimeZoneProvider::prune_redundant_regions(TimeZoneMap *zonemap) const
+    void PosixTimeZoneProvider::prune_redundant_regions(TimeZoneMap* zonemap) const
     {
         std::unordered_map<TimeZoneCanonicalName, uint> repeats;
 
         // First, count the number of occurences per country
-        for (auto &[name, spec] : *zonemap)
+        for (auto& [name, spec] : *zonemap)
         {
-            for (TimeZoneLocation &location : spec.locations)
+            for (TimeZoneLocation& location : spec.locations)
             {
-                const std::string &country_code = location.country.code;
+                const std::string& country_code = location.country.code;
                 try
                 {
                     ++repeats.at(country_code);
@@ -398,11 +398,11 @@ namespace cc::platform::sysconfig::native
         }
 
         // Now remove region descriptions for countries with only one time zone
-        for (auto &[name, spec] : *zonemap)
+        for (auto& [name, spec] : *zonemap)
         {
-            for (TimeZoneLocation &location : spec.locations)
+            for (TimeZoneLocation& location : spec.locations)
             {
-                const std::string &cc = location.country.code;
+                const std::string& cc = location.country.code;
                 if (repeats.at(cc) < 2)
                 {
                     location.region.clear();
@@ -411,7 +411,7 @@ namespace cc::platform::sysconfig::native
         }
     }
 
-    CountryMap PosixTimeZoneProvider::load_countries(const fs::path &cctab) const
+    CountryMap PosixTimeZoneProvider::load_countries(const fs::path& cctab) const
     {
         static const std::regex rx(
             "^(\\w{2})\\t"  // (1) country code
@@ -432,8 +432,8 @@ namespace cc::platform::sysconfig::native
     }
 
     bool PosixTimeZoneProvider::filter_includes_zone(
-        const TimeZoneLocationFilter &filter,
-        const TimeZoneCanonicalSpec &spec) const
+        const TimeZoneLocationFilter& filter,
+        const TimeZoneCanonicalSpec& spec) const
     {
         if (!filter.area.empty() && (spec.area != filter.area))
         {
@@ -445,7 +445,7 @@ namespace cc::platform::sysconfig::native
             return true;
         }
 
-        for (const TimeZoneLocation &location : spec.locations)
+        for (const TimeZoneLocation& location : spec.locations)
         {
             if (this->country_match(filter.country, location.country))
             {
@@ -456,13 +456,13 @@ namespace cc::platform::sysconfig::native
         return false;
     }
 
-    bool PosixTimeZoneProvider::country_match(const TimeZoneCountry &filter,
-                                              const TimeZoneCountry &candidate) const
+    bool PosixTimeZoneProvider::country_match(const TimeZoneCountry& filter,
+                                              const TimeZoneCountry& candidate) const
     {
         return (filter.code == candidate.code) || (filter.name == candidate.name);
     }
 
-    int PosixTimeZoneProvider::to_scalar_coord(const std::string &coord) const
+    int PosixTimeZoneProvider::to_scalar_coord(const std::string& coord) const
     {
         int deg = std::stol(coord.substr(0, 3));
         uint min = (coord.size() > 3) ? std::stoul(coord.substr(3, 2)) : 0;

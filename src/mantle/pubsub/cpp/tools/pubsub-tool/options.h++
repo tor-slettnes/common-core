@@ -20,8 +20,8 @@ namespace cc::platform::pubsub
         ZMQ
     };
 
-    std::ostream &operator<<(std::ostream &stream, Transport transport);
-    std::istream &operator>>(std::istream &stream, Transport &transport);
+    std::ostream& operator<<(std::ostream& stream, Transport transport);
+    std::istream& operator>>(std::istream& stream, Transport& transport);
 
     class Options : public core::argparse::CommandOptions
     {
@@ -48,15 +48,15 @@ namespace cc::platform::pubsub
         void on_monitor_end() override;
 
         void on_message(
-            const Topic &topic,
-            const core::types::Value &payload) const;
+            const Topic& topic,
+            const core::types::Value& payload) const;
 
         void monitor_topics();
         void on_topiclistener_start();
         void on_topiclistener_end();
         void on_message_topic(
-            const std::string &topic,
-            const core::types::Value &message);
+            const std::string& topic,
+            const core::types::Value& message);
 
     protected:
         std::shared_ptr<pubsub::ControlInterface> relay_control();
@@ -75,4 +75,4 @@ namespace cc::platform::pubsub
         std::shared_ptr<pubsub::Publisher> publisher_;
         pubsub::TopicSet seen_topics_;
     };
-}  // namespace cc::platform::pubsub::grpc
+}  // namespace cc::platform::pubsub

@@ -21,13 +21,13 @@ namespace cc::core::platform
         using Super = LogSinkProvider;
 
     protected:
-        PosixLogSinkProvider(const std::string &application_id,
-                             const std::string &sink_id = "syslog");
+        PosixLogSinkProvider(const std::string& application_id,
+                             const std::string& sink_id = "syslog");
 
     public:
         void open() override;
         void close() override;
-        bool handle_message(const logging::Message::ptr &message) override;
+        bool handle_message(const logging::Message::ptr& message) override;
         std::string application_id() const;
 
     private:

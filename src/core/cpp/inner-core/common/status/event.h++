@@ -34,26 +34,25 @@ namespace cc::core::status
     public:
         Event();
 
-        Event(Event &&src);
+        Event(Event&& src);
 
-        Event(const Event &src);
+        Event(const Event& src);
 
-        Event(const std::string &text,
+        Event(const std::string& text,
               Level level = Level::NONE,
-              const std::string &origin = {},
-              const dt::TimePoint &timepoint = {},
-              const types::KeyValueMap &attributes = {});
+              const std::string& origin = {},
+              const dt::TimePoint& timepoint = {},
+              const types::KeyValueMap& attributes = {});
 
-        Event(const types::KeyValueMap &kvmap,
+        Event(const types::KeyValueMap& kvmap,
               Level default_level = {});
 
-        Event &operator=(Event &&other) noexcept;
-        Event &operator=(const Event &other) noexcept;
-        bool operator==(const Event &other) const noexcept;
-
+        Event& operator=(Event&& other) noexcept;
+        Event& operator=(const Event& other) noexcept;
+        bool operator==(const Event& other) const noexcept;
 
     public:
-        virtual bool equivalent(const Event &other) const noexcept;
+        virtual bool equivalent(const Event& other) const noexcept;
         virtual std::string text() const noexcept;
         virtual Level level() const noexcept;
         virtual std::string origin() const noexcept;
@@ -66,7 +65,7 @@ namespace cc::core::status
 
     public:
         std::vector<std::string> field_names() const noexcept override;
-        types::Value get_field_as_value(const std::string &field_name) const override;
+        types::Value get_field_as_value(const std::string& field_name) const override;
 
     private:
         std::string text_;

@@ -10,7 +10,7 @@
 
 namespace cc::platform::switchboard
 {
-    Options::Options(const std::string &implementation)
+    Options::Options(const std::string& implementation)
         : core::argparse::CommandOptions(),
           implementation(implementation),
           signal_handle(core::platform::path->exec_name()),
@@ -33,7 +33,7 @@ namespace cc::platform::switchboard
         this->add_commands();
     }
 
-    bool Options::handle_command(const std::shared_ptr<switchboard::Provider> &provider)
+    bool Options::handle_command(const std::shared_ptr<switchboard::Provider>& provider)
     {
         this->provider = provider;
         return Super::handle_command();

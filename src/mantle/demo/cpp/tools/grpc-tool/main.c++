@@ -11,7 +11,7 @@
 #include "application/init.h++"
 #include "logging/logging.h++"
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     cc::core::application::initialize(argc, argv);
 
@@ -40,5 +40,4 @@ int main(int argc, char **argv)
         std::cerr << std::current_exception() << std::endl;
         return -1;
     }
-
 }

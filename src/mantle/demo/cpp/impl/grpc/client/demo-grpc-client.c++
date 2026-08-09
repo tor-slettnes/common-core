@@ -26,8 +26,8 @@ namespace cc::demo::grpc
         this->add_mapping_handler(
             cc::demo::protobuf::Signal::kSignalGreeting,
             [&](core::signal::MappingAction action,
-                const std::string &key,
-                const cc::demo::protobuf::Signal &signal) {
+                const std::string& key,
+                const cc::demo::protobuf::Signal& signal) {
                 signal_greeting.emit(
                     action,
                     key,
@@ -36,13 +36,13 @@ namespace cc::demo::grpc
 
         this->add_handler(
             cc::demo::protobuf::Signal::kSignalTime,
-            [](const cc::demo::protobuf::Signal &signal) {
+            [](const cc::demo::protobuf::Signal& signal) {
                 signal_time.emit(
                     cc::protobuf::decoded<TimeData>(signal.signal_time()));
             });
     }
 
-    void ClientImpl::say_hello(const Greeting &greeting)
+    void ClientImpl::say_hello(const Greeting& greeting)
     {
         this->call_check(
             &Stub::SayHello,

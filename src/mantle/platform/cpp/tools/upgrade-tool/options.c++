@@ -75,11 +75,11 @@ namespace cc::platform::upgrade
     void Options::on_monitor_start()
     {
         FlagMap flags;
-        bool &except = flags["except"];
-        bool &show_scan_progress = flags["scan_progress"];
-        bool &show_upgrade_available = flags["available"];
-        bool &show_upgrade_pending = flags["pending"];
-        bool &show_upgrade_progress = flags["upgrade_progress"];
+        bool& except = flags["except"];
+        bool& show_scan_progress = flags["scan_progress"];
+        bool& show_upgrade_available = flags["available"];
+        bool& show_upgrade_pending = flags["pending"];
+        bool& show_upgrade_progress = flags["upgrade_progress"];
 
         this->get_flags(&flags, false);
 
@@ -128,7 +128,7 @@ namespace cc::platform::upgrade
     }
 
     void Options::on_scan_progress(
-        const upgrade::ScanProgress::ptr &progress)
+        const upgrade::ScanProgress::ptr& progress)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_scan_progress(%s)\n",
@@ -137,7 +137,7 @@ namespace cc::platform::upgrade
     }
 
     void Options::on_upgrade_available(
-        const upgrade::PackageInfo::ptr &package_info)
+        const upgrade::PackageInfo::ptr& package_info)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_upgrade_available(%s)\n",
@@ -146,7 +146,7 @@ namespace cc::platform::upgrade
     }
 
     void Options::on_upgrade_pending(
-        const upgrade::PackageInfo::ptr &package_info)
+        const upgrade::PackageInfo::ptr& package_info)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_upgrade_pending(%s)\n",
@@ -155,7 +155,7 @@ namespace cc::platform::upgrade
     }
 
     void Options::on_upgrade_progress(
-        const upgrade::UpgradeProgress::ptr &progress)
+        const upgrade::UpgradeProgress::ptr& progress)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_upgrade_progress(%s)\n",

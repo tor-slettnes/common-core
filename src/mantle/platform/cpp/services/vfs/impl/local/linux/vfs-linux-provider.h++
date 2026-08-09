@@ -17,14 +17,14 @@ namespace cc::platform::vfs::local
         using This = LinuxProvider;
         using Super = LocalProvider;
 
-        using SignalHandler = void (This::*)(const volume::Event &event);
+        using SignalHandler = void (This::*)(const volume::Event& event);
         using ActionHandlerMap = core::types::ValueMap<volume::ActionType, SignalHandler>;
         using VolumeHandlerMap = core::types::ValueMap<volume::DeviceType, ActionHandlerMap>;
         using SerialNumber = std::string;
 
     protected:
         LinuxProvider(
-            const std::string &name = "LinuxProvider",
+            const std::string& name = "LinuxProvider",
             core::platform::ProviderPriority priority = core::platform::PRIORITY_HIGH);
 
         ~LinuxProvider();
@@ -34,26 +34,26 @@ namespace cc::platform::vfs::local
         void initialize() override;
 
     protected:
-        void processEvent(const volume::Event &event);
-        void on_disk_added(const volume::Event &event);
-        void on_disk_removed(const volume::Event &event);
-        void on_disk_changed(const volume::Event &event);
-        void on_disk_online(const volume::Event &event);
-        void on_disk_offline(const volume::Event &event);
-        void on_partition_added(const volume::Event &event);
-        void on_partition_removed(const volume::Event &event);
-        void on_partition_changed(const volume::Event &event);
-        void on_partition_online(const volume::Event &event);
-        void on_partition_offline(const volume::Event &event);
+        void processEvent(const volume::Event& event);
+        void on_disk_added(const volume::Event& event);
+        void on_disk_removed(const volume::Event& event);
+        void on_disk_changed(const volume::Event& event);
+        void on_disk_online(const volume::Event& event);
+        void on_disk_offline(const volume::Event& event);
+        void on_partition_added(const volume::Event& event);
+        void on_partition_removed(const volume::Event& event);
+        void on_partition_changed(const volume::Event& event);
+        void on_partition_online(const volume::Event& event);
+        void on_partition_offline(const volume::Event& event);
 
     private:
-        void register_partition(const volume::PartitionInfo &pi);
-        void unregister_partition(const volume::PartitionInfo &pi);
+        void register_partition(const volume::PartitionInfo& pi);
+        void unregister_partition(const volume::PartitionInfo& pi);
 
-        std::string newContextName(const std::string &basename);
+        std::string newContextName(const std::string& basename);
 
-        Context::ptr newContext(const std::string &name,
-                                const core::types::Value &settings,
+        Context::ptr newContext(const std::string& name,
+                                const core::types::Value& settings,
                                 bool writeable);
 
     private:

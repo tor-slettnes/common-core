@@ -25,10 +25,10 @@ namespace cc::demo::dds
         using Super = CC::Demo::DemoService;
 
     protected:
-        RequestHandler(const std::shared_ptr<API> &api_provider);
+        RequestHandler(const std::shared_ptr<API>& api_provider);
 
     public:
-        void say_hello(const CC::Demo::Greeting &greeting) override;
+        void say_hello(const CC::Demo::Greeting& greeting) override;
         CC::Demo::TimeData get_current_time() override;
         void start_ticking() override;
         void stop_ticking() override;

@@ -21,5 +21,5 @@ namespace cc::core::types
 namespace std::filesystem
 {
     // Provide output stream operator for some built-in STL types.
-    std::ostream &operator<<(std::ostream &stream, const file_type &type);
+    std::ostream& operator<<(std::ostream& stream, const file_type& type);
 }  // namespace std::filesystem

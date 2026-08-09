@@ -10,7 +10,7 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     cc::core::application::initialize(argc, argv);
     auto options = std::make_unique<cc::platform::pubsub::Options>();
@@ -25,5 +25,4 @@ int main(int argc, char **argv)
         std::cerr << std::current_exception() << std::endl;
         return -1;
     }
-
 }

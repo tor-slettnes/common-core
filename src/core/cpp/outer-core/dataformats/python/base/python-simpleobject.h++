@@ -31,30 +31,30 @@ namespace cc::python
         ///     PyObject* instance
         /// @param[in] borrowed
         ///     The object reference is borrowed, increment reference count
-        SimpleObject(PyObject *cobj, bool borrowed = false);
+        SimpleObject(PyObject* cobj, bool borrowed = false);
 
         /// @brief
         ///     Copy constructor. Reference count is incremented.
-        SimpleObject(const SimpleObject &other);
+        SimpleObject(const SimpleObject& other);
 
         /// @brief
         ///     Destructor. Reference count is decemented, which potentially
         ///     destroys the underlying object.
         virtual ~SimpleObject();
 
-        void to_stream(std::ostream &stream) const override;
-        void to_literal_stream(std::ostream &stream) const override;
+        void to_stream(std::ostream& stream) const override;
+        void to_literal_stream(std::ostream& stream) const override;
 
-        SimpleObject &operator=(const SimpleObject &other) noexcept;
+        SimpleObject& operator=(const SimpleObject& other) noexcept;
         operator bool() const noexcept;
 
         /// @brief
         ///     Obtain a new reference to the underlying C object
-        PyObject *acquire() const;
+        PyObject* acquire() const;
 
         /// @brief
         ///     Borrow the reference to the underlying C object
-        PyObject *borrow() const;
+        PyObject* borrow() const;
 
         std::string type_name() const;
 
@@ -141,26 +141,26 @@ namespace cc::python
         ///    List items that cannot be represented as variant values are empty.
         std::optional<core::types::KeyValueMap> as_kvmap() const;
 
-        static PyObject *pystring_from_string(const std::string &string);
-        static PyObject *pybytes_from_bytes(const core::types::ByteVector &bytes);
-        static PyObject *pytuple_from_values(const core::types::ValueList &values);
-        static PyObject *pytuple_from_objects(const Vector &objects);
-        static PyObject *pylist_from_values(const core::types::ValueList &values);
-        static PyObject *pylist_from_tagged_values(const core::types::TaggedValueList &tvlist);
-        static PyObject *pydict_from_kvmap(const core::types::KeyValueMap &kvmap);
-        static PyObject *pydict_from_objects(const Map &kvmap);
-        static PyObject *pyobj_from_value(const core::types::Value &value);
+        static PyObject* pystring_from_string(const std::string& string);
+        static PyObject* pybytes_from_bytes(const core::types::ByteVector& bytes);
+        static PyObject* pytuple_from_values(const core::types::ValueList& values);
+        static PyObject* pytuple_from_objects(const Vector& objects);
+        static PyObject* pylist_from_values(const core::types::ValueList& values);
+        static PyObject* pylist_from_tagged_values(const core::types::TaggedValueList& tvlist);
+        static PyObject* pydict_from_kvmap(const core::types::KeyValueMap& kvmap);
+        static PyObject* pydict_from_objects(const Map& kvmap);
+        static PyObject* pyobj_from_value(const core::types::Value& value);
 
-        static std::ostream &write_to_stream(std::ostream &stream,
-                                             PyObject *obj,
+        static std::ostream& write_to_stream(std::ostream& stream,
+                                             PyObject* obj,
                                              bool literal);
 
-    // private:
-    //     static std::unordered_map<PyTypeObject *, core::types::ValueType> type_map;
+        // private:
+        //     static std::unordered_map<PyTypeObject *, core::types::ValueType> type_map;
 
     protected:
-        PyObject *cobj;
+        PyObject* cobj;
     };
 }  // namespace cc::python
 
-std::ostream &operator<<(std::ostream &stream, PyObject *obj);
+std::ostream& operator<<(std::ostream& stream, PyObject* obj);

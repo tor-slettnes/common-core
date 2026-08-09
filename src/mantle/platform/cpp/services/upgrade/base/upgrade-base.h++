@@ -30,7 +30,7 @@ namespace cc::platform::upgrade
         // and online checks are performed at regular intervals if an Internet
         // connection is available.
         virtual PackageCatalogue scan(
-            const PackageSource &source = {}) = 0;
+            const PackageSource& source = {}) = 0;
 
         // Return information about all currently enabled upgrade sources.
         virtual PackageSources list_sources() const = 0;
@@ -39,7 +39,7 @@ namespace cc::platform::upgrade
         // a prior (implicit or explicit) scan of the specified package source
         // if specified, otherwise across all preconfigured/default sources.
         virtual PackageCatalogue list_available(
-            const PackageSource &source = {}) const = 0;
+            const PackageSource& source = {}) const = 0;
 
         // Return information about the "best" available upgrade package
         // discovered during prior scans of the specified package sources, if
@@ -53,7 +53,7 @@ namespace cc::platform::upgrade
         // This information is also available by connecting to
         // `signal_upgrade_available`.
         virtual PackageInfo::ptr best_available(
-            const PackageSource &source = {}) const = 0;
+            const PackageSource& source = {}) const = 0;
 
         // Install an upgrade from the specified package source if provided,
         // otherwise the current "best" package source based on prior scans.  To
@@ -63,7 +63,7 @@ namespace cc::platform::upgrade
         // progress of the upgrade process, connect to `signal_upgrade_pending`
         // and `signal_upgrade_progress`.
         virtual PackageInfo::ptr install(
-            const PackageSource &source = {}) = 0;
+            const PackageSource& source = {}) = 0;
 
         // Finalize a completed upgrade.  This clears `signal_upgrade_progress`,
         // and if the upgrade requires a system reboot, do so now.

@@ -10,8 +10,8 @@
 
 namespace cc::zmq
 {
-    Publisher::Publisher(const std::string &address,
-                         const std::string &channel_name,
+    Publisher::Publisher(const std::string& address,
+                         const std::string& channel_name,
                          Role role,
                          steady_clock::duration warmup_delay)
         : Super(address, "publisher", channel_name, ZMQ_PUB, role),
@@ -25,8 +25,8 @@ namespace cc::zmq
         this->warmup_deadline = steady_clock::now() + this->warmup_delay;
     }
 
-    void Publisher::publish(const std::optional<core::types::ByteVector> &header,
-                            const core::types::ByteVector &bytes)
+    void Publisher::publish(const std::optional<core::types::ByteVector>& header,
+                            const core::types::ByteVector& bytes)
     {
         if (header)
         {

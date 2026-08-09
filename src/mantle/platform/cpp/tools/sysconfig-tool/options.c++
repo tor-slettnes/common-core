@@ -45,13 +45,13 @@ namespace cc::platform::sysconfig
     void Options::on_monitor_start()
     {
         FlagMap flags;
-        bool &except = flags["except"];
-        bool &show_time = flags["time"];
-        bool &show_time_config = flags["time_config"];
-        bool &show_tz_info = flags["tz_info"];
-        bool &show_tz_spec = flags["tz_spec"];
-        bool &show_host_info = flags["host_info"];
-        bool &show_product_info = flags["product_info"];
+        bool& except = flags["except"];
+        bool& show_time = flags["time"];
+        bool& show_time_config = flags["time_config"];
+        bool& show_tz_info = flags["tz_info"];
+        bool& show_tz_spec = flags["tz_spec"];
+        bool& show_host_info = flags["host_info"];
+        bool& show_product_info = flags["product_info"];
         this->get_flags(&flags, false);
 
         if (!show_time && !show_time_config &&
@@ -116,7 +116,7 @@ namespace cc::platform::sysconfig
         sysconfig::signal_time.disconnect(this->signal_handle);
     }
 
-    void Options::on_time(const core::dt::TimePoint &tp)
+    void Options::on_time(const core::dt::TimePoint& tp)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_time(%s)\n",
@@ -124,7 +124,7 @@ namespace cc::platform::sysconfig
                           tp);
     }
 
-    void Options::on_time_config(const sysconfig::TimeConfig &tc)
+    void Options::on_time_config(const sysconfig::TimeConfig& tc)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_time_config(%s)\n",
@@ -132,7 +132,7 @@ namespace cc::platform::sysconfig
                           tc);
     }
 
-    void Options::on_tz_info(const core::dt::TimeZoneInfo &ti)
+    void Options::on_tz_info(const core::dt::TimeZoneInfo& ti)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_tz_info(%s)\n",
@@ -140,7 +140,7 @@ namespace cc::platform::sysconfig
                           ti);
     }
 
-    void Options::on_tz_spec(const sysconfig::TimeZoneCanonicalSpec &spec)
+    void Options::on_tz_spec(const sysconfig::TimeZoneCanonicalSpec& spec)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_tz_spec(%s)\n",
@@ -148,7 +148,7 @@ namespace cc::platform::sysconfig
                           spec);
     }
 
-    void Options::on_hostinfo(const sysconfig::HostInfo &hi)
+    void Options::on_hostinfo(const sysconfig::HostInfo& hi)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_hostinfo(%s)\n",
@@ -156,7 +156,7 @@ namespace cc::platform::sysconfig
                           hi);
     }
 
-    void Options::on_productinfo(const sysconfig::ProductInfo &pi)
+    void Options::on_productinfo(const sysconfig::ProductInfo& pi)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_productinfo(%s)\n",

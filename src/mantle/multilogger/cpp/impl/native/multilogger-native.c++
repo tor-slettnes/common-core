@@ -20,13 +20,13 @@
 namespace cc::platform::multilogger::native
 {
     void Logger::submit(
-        const core::types::Loggable::ptr &item)
+        const core::types::Loggable::ptr& item)
     {
         core::logging::dispatcher.submit(item);
     }
 
     bool Logger::add_sink(
-        const SinkSpec &spec)
+        const SinkSpec& spec)
     {
         core::logging::Sink::ptr sink = core::logging::dispatcher.get_sink(spec.sink_id);
 
@@ -40,7 +40,7 @@ namespace cc::platform::multilogger::native
     }
 
     bool Logger::remove_sink(
-        const SinkID &id)
+        const SinkID& id)
     {
         if (core::logging::sink_registry.get(id))
         {
@@ -54,7 +54,7 @@ namespace cc::platform::multilogger::native
     }
 
     SinkSpec Logger::get_sink_spec(
-        const SinkID &id) const
+        const SinkID& id) const
     {
         if (core::logging::Sink::ptr sink = core::logging::dispatcher.get_sink(id))
         {
@@ -71,7 +71,7 @@ namespace cc::platform::multilogger::native
         SinkSpecs specs;
         specs.reserve(core::logging::dispatcher.sinks().size());
 
-        for (const auto &[sink_id, sink] : core::logging::dispatcher.sinks())
+        for (const auto& [sink_id, sink] : core::logging::dispatcher.sinks())
         {
             specs.push_back(this->sink_spec(sink));
         }
@@ -100,7 +100,7 @@ namespace cc::platform::multilogger::native
     }
 
     std::shared_ptr<LogSource> Logger::listen(
-        const ListenerSpec &spec)
+        const ListenerSpec& spec)
     {
         std::size_t queue_size = core::settings
                                      ->get("log sinks")
@@ -120,7 +120,7 @@ namespace cc::platform::multilogger::native
         return sink;
     }
 
-    core::logging::Sink::ptr Logger::new_sink(const SinkSpec &spec) const
+    core::logging::Sink::ptr Logger::new_sink(const SinkSpec& spec) const
     {
         if (core::logging::sink_registry.get(spec.sink_id))
         {
@@ -128,7 +128,7 @@ namespace cc::platform::multilogger::native
                 "Requested Sink ID is reserved for default log sink of the corresponding type.",
                 spec.sink_id);
         }
-        else if (auto *factory = core::logging::sink_factories.get(spec.sink_type))
+        else if (auto* factory = core::logging::sink_factories.get(spec.sink_type))
         {
             return this->create_sink(factory, spec);
         }
@@ -140,8 +140,8 @@ namespace cc::platform::multilogger::native
         }
     }
 
-    core::logging::Sink::ptr Logger::create_sink(core::logging::SinkFactory *factory,
-                                                 const SinkSpec &spec) const
+    core::logging::Sink::ptr Logger::create_sink(core::logging::SinkFactory* factory,
+                                                 const SinkSpec& spec) const
     {
         core::logging::Sink::ptr sink = factory->create_sink(spec.sink_id);
 
@@ -164,7 +164,7 @@ namespace cc::platform::multilogger::native
         return sink;
     }
 
-    SinkSpec Logger::sink_spec(const core::logging::Sink::ptr &sink) const
+    SinkSpec Logger::sink_spec(const core::logging::Sink::ptr& sink) const
     {
         SinkSpec spec = {
             .sink_id = sink->sink_id(),

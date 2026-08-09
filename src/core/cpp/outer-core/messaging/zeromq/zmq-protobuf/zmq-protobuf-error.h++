@@ -22,10 +22,10 @@ namespace cc::zmq
     public:
         using core::status::Error::Error;
 
-        ProtoBufError(const cc::protobuf::request_reply::StatusCode &code,
-                      const core::status::Error &error);
+        ProtoBufError(const cc::protobuf::request_reply::StatusCode& code,
+                      const core::status::Error& error);
 
-        bool equivalent(const Event &other) const noexcept override;
+        bool equivalent(const Event& other) const noexcept override;
         cc::protobuf::request_reply::StatusCode status_code() const;
         core::status::Domain domain() const noexcept override;
         std::exception_ptr as_application_error() const override;
@@ -34,7 +34,7 @@ namespace cc::zmq
 
         static std::vector<std::string> status_fields() noexcept;
         std::vector<std::string> field_names() const noexcept override;
-        core::types::Value get_field_as_value(const std::string &field_name) const override;
+        core::types::Value get_field_as_value(const std::string& field_name) const override;
 
     private:
         cc::protobuf::request_reply::StatusCode status_code_;

@@ -12,7 +12,7 @@
 namespace cc::platform::pubsub::grpc
 {
     MessageQueue::MessageQueue(
-        const pubsub::TopicSet &topics,
+        const pubsub::TopicSet& topics,
         std::size_t maxsize)
         : Super(maxsize),
           topics_(topics)
@@ -39,8 +39,8 @@ namespace cc::platform::pubsub::grpc
     }
 
     void MessageQueue::enqueue_message(
-        const std::string &topic,
-        const core::types::Value &value)
+        const std::string& topic,
+        const core::types::Value& value)
     {
         if (this->topics_.empty() || this->topics_.count(topic))
         {

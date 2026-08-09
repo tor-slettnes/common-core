@@ -12,15 +12,15 @@
 
 namespace cc::core::platform
 {
-    PosixSymbolsProvider::PosixSymbolsProvider(const std::string &name)
+    PosixSymbolsProvider::PosixSymbolsProvider(const std::string& name)
         : Super(name)
     {
     }
 
-    std::string PosixSymbolsProvider::cpp_demangle(const std::string &abiname, bool stem_only) const noexcept
+    std::string PosixSymbolsProvider::cpp_demangle(const std::string& abiname, bool stem_only) const noexcept
     {
         int status;
-        if (char *ret = abi::__cxa_demangle(abiname.data(), nullptr, 0, &status))
+        if (char* ret = abi::__cxa_demangle(abiname.data(), nullptr, 0, &status))
         {
             std::string demangled(ret);
             free(ret);

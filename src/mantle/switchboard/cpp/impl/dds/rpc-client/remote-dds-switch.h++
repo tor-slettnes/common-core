@@ -36,7 +36,7 @@ namespace cc::platform::switchboard::dds
         std::shared_ptr<Client> client() const;
 
         bool add_dependency(
-            const DependencyRef &dependency,
+            const DependencyRef& dependency,
             bool allow_update,
             bool reevaluate) override;
 
@@ -45,28 +45,28 @@ namespace cc::platform::switchboard::dds
             bool reevaluate = true) override;
 
         bool add_interceptor(
-            const InterceptorRef &interceptor,
+            const InterceptorRef& interceptor,
             bool immediate = false) override;
 
         bool remove_interceptor(
-            const InterceptorName &name) override;
+            const InterceptorName& name) override;
 
         void update_spec(
-            const std::optional<bool> &primary,
-            const SwitchAliases &aliases,
+            const std::optional<bool>& primary,
+            const SwitchAliases& aliases,
             bool replace_aliases,
-            const LocalizationMap &localizations,
+            const LocalizationMap& localizations,
             bool replace_localizations,
-            const DependencyMap &dependencies,
+            const DependencyMap& dependencies,
             bool replace_dependencies,
-            const InterceptorMap &interceptors,
+            const InterceptorMap& interceptors,
             bool replace_interceptors,
             bool update_state) override;
 
         bool set_target(
             State target_state,
-            const core::status::Error::ptr &error = {},
-            const core::types::KeyValueMap &attributes = {},
+            const core::status::Error::ptr& error = {},
+            const core::types::KeyValueMap& attributes = {},
             bool clear_existing = false,
             InvocationStyle invoke_interceptors = InvocationStyle::DEFAULT,
             CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
@@ -78,7 +78,7 @@ namespace cc::platform::switchboard::dds
             bool inherit) const override;
 
         bool set_attributes(
-            const core::types::KeyValueMap &attributes,
+            const core::types::KeyValueMap& attributes,
             bool clear_existing) override;
     };
-}  // namespace cc::platform::switchboard
+}  // namespace cc::platform::switchboard::dds

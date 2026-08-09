@@ -42,7 +42,7 @@ namespace cc::demo
         demo::provider->stop_ticking();
     }
 
-    void Options::on_time(const demo::TimeData &timedata)
+    void Options::on_time(const demo::TimeData& timedata)
     {
         core::str::format(std::cout,
                           "signal_time(%s)\n",
@@ -50,8 +50,8 @@ namespace cc::demo
     }
 
     void Options::on_greeting(core::signal::MappingAction mapping_action,
-                              const std::string &mapping_key,
-                              const demo::Greeting &greeting)
+                              const std::string& mapping_key,
+                              const demo::Greeting& greeting)
     {
         core::str::format(std::cout,
                           "signal_greeting(%s, %r, %s)\n",

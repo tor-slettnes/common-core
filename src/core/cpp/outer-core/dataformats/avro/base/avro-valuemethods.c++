@@ -355,15 +355,15 @@ namespace cc::avro
             avro::set_time_interval(&branch, variant.as_duration());
             break;
 
-        // case core::types::ValueType::VALUELIST:
-        //     avro::set_variant_branch(&value_field, VariantSchema::VT_ARRAY, &branch);
-        //     avro::set_variant_list(&branch, variant.get_valuelist());
-        //     break;
+            // case core::types::ValueType::VALUELIST:
+            //     avro::set_variant_branch(&value_field, VariantSchema::VT_ARRAY, &branch);
+            //     avro::set_variant_list(&branch, variant.get_valuelist());
+            //     break;
 
-        // case core::types::ValueType::KVMAP:
-        //     avro::set_variant_branch(&value_field, VariantSchema::VT_MAP, &branch);
-        //     avro::set_variant_map(&branch, variant.get_kvmap());
-        //     break;
+            // case core::types::ValueType::KVMAP:
+            //     avro::set_variant_branch(&value_field, VariantSchema::VT_MAP, &branch);
+            //     avro::set_variant_map(&branch, variant.get_kvmap());
+            //     break;
 
         default:
             avro::set_variant_branch(&value_field, VariantSchema::VT_NULL, &branch);

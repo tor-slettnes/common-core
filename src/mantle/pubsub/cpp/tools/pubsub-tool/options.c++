@@ -191,7 +191,7 @@ namespace cc::platform::pubsub
         std::size_t nkeys = std::distance(this->current_arg, this->args.end());
         policy.key_paths.reserve(nkeys);
 
-        for (const std::string &arg: this->remaining_args())
+        for (const std::string& arg : this->remaining_args())
         {
             policy.key_paths.push_back(core::str::split(arg, KEY_PATH_DELIMITER));
         }

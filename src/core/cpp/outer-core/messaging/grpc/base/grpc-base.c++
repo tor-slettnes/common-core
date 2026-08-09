@@ -21,8 +21,8 @@ namespace cc::grpc
     //==========================================================================
     // Base
 
-    Base::Base(const std::string &endpoint_type,
-               const std::string &full_service_name)
+    Base::Base(const std::string& endpoint_type,
+               const std::string& full_service_name)
         : Super("gRPC", endpoint_type, core::str::stem(full_service_name, ".")),
           full_service_name_(full_service_name)
     {
@@ -39,9 +39,9 @@ namespace cc::grpc
         return this->setting(DNSSD_TYPE_OPTION).as_string();
     }
 
-    std::string Base::realaddress(const std::string &address,
-                                  const std::string &hostOption,
-                                  const std::string &portOption,
+    std::string Base::realaddress(const std::string& address,
+                                  const std::string& hostOption,
+                                  const std::string& portOption,
                                   std::string defaultHost,
                                   uint defaultPort) const
     {
@@ -73,9 +73,9 @@ namespace cc::grpc
         return this->setting(MAX_REPLY_SIZE, 0).as_uint();
     }
 
-    void Base::splitaddress(const std::string &address,
-                            std::string *host,
-                            uint *port) const
+    void Base::splitaddress(const std::string& address,
+                            std::string* host,
+                            uint* port) const
     {
         static const std::regex rx(
             "(\\[[\\w\\.:]*\\]|[\\w\\-\\.]*)"  // host, either '[x[:x...]]' or 'n[.n]...'
@@ -95,7 +95,7 @@ namespace cc::grpc
         }
     }
 
-    std::string Base::joinaddress(const std::string &host, uint port) const
+    std::string Base::joinaddress(const std::string& host, uint port) const
     {
         if (port != 0)
         {

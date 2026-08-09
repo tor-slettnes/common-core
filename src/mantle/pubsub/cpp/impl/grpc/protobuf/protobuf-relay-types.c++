@@ -12,14 +12,14 @@ namespace cc::protobuf
 {
     //--------------------------------------------------------------------------
     // KeyPath
-    void encode(const cc::platform::pubsub::KeyPath &native,
-                cc::platform::pubsub::protobuf::KeyPath *proto)
+    void encode(const cc::platform::pubsub::KeyPath& native,
+                cc::platform::pubsub::protobuf::KeyPath* proto)
     {
         protobuf::assign_repeated(native, proto->mutable_elements());
     }
 
-    void decode(const cc::platform::pubsub::protobuf::KeyPath &proto,
-                cc::platform::pubsub::KeyPath *native)
+    void decode(const cc::platform::pubsub::protobuf::KeyPath& proto,
+                cc::platform::pubsub::KeyPath* native)
     {
         protobuf::assign_to_vector(proto.elements(), native);
     }
@@ -46,7 +46,7 @@ namespace cc::protobuf
     void encode(const cc::platform::pubsub::ReplayPolicyMap& native,
                 cc::platform::pubsub::protobuf::ReplayPolicyMap* proto)
     {
-        auto &map = *proto->mutable_map();
+        auto& map = *proto->mutable_map();
         for (const auto& [key, value] : native)
         {
             encode(value, &map[key]);

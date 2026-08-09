@@ -19,6 +19,6 @@ namespace cc::platform::pubsub::zmq
 
     protected:
         Handler();
-        void handle(const cc::zmq::MessageParts &parts) override;
+        void handle(const cc::zmq::MessageParts& parts) override;
     };
 }  // namespace cc::platform::pubsub::zmq

@@ -21,7 +21,7 @@ namespace cc::core::platform
 
     public:
         std::string get_host_name() const override;
-        void set_host_name(const std::string &hostname) override;
+        void set_host_name(const std::string& hostname) override;
 
         std::string get_system_name() const override;
         std::string get_system_version() const override;

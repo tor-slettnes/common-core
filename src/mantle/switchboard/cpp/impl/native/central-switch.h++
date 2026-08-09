@@ -55,11 +55,11 @@ namespace cc::platform::switchboard
 
     public:
         void set_spec(
-            const Specification &spec) override;
+            const Specification& spec) override;
 
     protected:
         bool add_dependency(
-            const DependencyRef &dependency,
+            const DependencyRef& dependency,
             bool allow_update,
             bool reevaluate = true) override;
 
@@ -68,29 +68,29 @@ namespace cc::platform::switchboard
             bool reevaluate = true) override;
 
         bool add_interceptor(
-            const InterceptorRef &interceptor,
+            const InterceptorRef& interceptor,
             bool immediate = false) override;
 
         bool remove_interceptor(
-            const InterceptorName &key) override;
+            const InterceptorName& key) override;
 
         /// Update multiple specification values in one go.
         void update_spec(
-            const std::optional<bool> &primary,
-            const SwitchAliases &aliases,
+            const std::optional<bool>& primary,
+            const SwitchAliases& aliases,
             bool replace_aliases,
-            const LocalizationMap &localizations,
+            const LocalizationMap& localizations,
             bool replace_localizations,
-            const DependencyMap &dependencies,
+            const DependencyMap& dependencies,
             bool replace_dependencies,
-            const InterceptorMap &interceptors,
+            const InterceptorMap& interceptors,
             bool replace_interceptors,
             bool update_state) override;
 
         bool set_target(
             State target_state,
-            const core::status::Error::ptr &error = {},
-            const core::types::KeyValueMap &attributes = {},
+            const core::status::Error::ptr& error = {},
+            const core::types::KeyValueMap& attributes = {},
             bool clear_existing = false,
             InvocationStyle invoke_interceptors = InvocationStyle::DEFAULT,
             CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
@@ -102,7 +102,7 @@ namespace cc::platform::switchboard
             bool inherit) const override;
 
         bool set_attributes(
-            const core::types::KeyValueMap &attributes,
+            const core::types::KeyValueMap& attributes,
             bool clear_existing) override;
 
     private:
@@ -125,17 +125,17 @@ namespace cc::platform::switchboard
             ExceptionHandling on_error);
 
         bool handle_cancel(
-            const std::unordered_set<InterceptorRef> &interceptors,
+            const std::unordered_set<InterceptorRef>& interceptors,
             State state,
             ExceptionHandling eh);
 
         bool handle_errors(
-            const std::unordered_map<InterceptorRef, std::exception_ptr> &exceptions,
+            const std::unordered_map<InterceptorRef, std::exception_ptr>& exceptions,
             State state,
             ExceptionHandling eh);
 
         bool handle_diversion(
-            const core::status::Error::ptr &event,
+            const core::status::Error::ptr& event,
             ExceptionHandling eh,
             ExceptionHandling eh_default);
 
@@ -145,7 +145,7 @@ namespace cc::platform::switchboard
             CascadeStyle cascade_descendants);
 
         bool set_attributes_only(
-            const core::types::KeyValueMap &attributes,
+            const core::types::KeyValueMap& attributes,
             bool clear_existing);
 
         void notify_spec();
@@ -153,7 +153,7 @@ namespace cc::platform::switchboard
 
     public:
         void import_spec(
-            const core::types::KeyValueMap &declaration,
+            const core::types::KeyValueMap& declaration,
             bool replace_aliases,
             bool replace_localizations,
             bool replace_dependencies,
@@ -161,25 +161,25 @@ namespace cc::platform::switchboard
 
     private:
         Localization import_localization(
-            const core::types::KeyValueMap &kvmap) const;
+            const core::types::KeyValueMap& kvmap) const;
 
         DependencyRef import_dependency(
-            const std::string &predecessor_name,
-            const core::types::KeyValueMap &dep_map) const;
+            const std::string& predecessor_name,
+            const core::types::KeyValueMap& dep_map) const;
 
     public:
         void import_status(
-            const core::types::KeyValueMap &status,
+            const core::types::KeyValueMap& status,
             bool replace_attributes,
             bool set_state,
             InvocationStyle invoke_interceptors);
 
     private:
         void export_spec(
-            core::types::TaggedValueList *tvlist) const;
+            core::types::TaggedValueList* tvlist) const;
 
         void export_status(
-            core::types::TaggedValueList *tvlist) const;
+            core::types::TaggedValueList* tvlist) const;
 
     private:
         static State transition_state(State target_state) noexcept;

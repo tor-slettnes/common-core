@@ -31,7 +31,7 @@ namespace cc::platform::pubsub::grpc
 
     protected:
         template <class... Args>
-        ClientImpl(const std::string &host = "", Args &&...args)
+        ClientImpl(const std::string& host = "", Args&&... args)
             : ClientBase(host, std::forward<Args>(args)...)
         {
         }
@@ -39,8 +39,8 @@ namespace cc::platform::pubsub::grpc
     public:
         void initialize() override;
         void deinitialize() override;
-        bool write(const std::string &topic,
-                   const core::types::Value &value) override;
+        bool write(const std::string& topic,
+                   const core::types::Value& value) override;
 
         void start_writer() override;
         void stop_writer() override;
@@ -50,7 +50,7 @@ namespace cc::platform::pubsub::grpc
 
     private:
         Reader::ptr create_reader(
-            const std::vector<Topic> &topics = {});
+            const std::vector<Topic>& topics = {});
 
         void read_worker();
 

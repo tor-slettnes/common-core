@@ -34,11 +34,11 @@ namespace cc::core::types
         // Inherit available constructors from base
         using Bytes::Bytes;
 
-        ByteVector(const Bytes &b);
-        ByteVector(const std::string &s);
-        ByteVector(const std::string_view &s);
+        ByteVector(const Bytes& b);
+        ByteVector(const std::string& s);
+        ByteVector(const std::string_view& s);
 
-        void to_stream(std::ostream &stream) const override;
+        void to_stream(std::ostream& stream) const override;
 
         /// @return
         ///     string_view of data in this array
@@ -59,7 +59,7 @@ namespace cc::core::types
         /// @return
         ///     New ByteVector instance
         static ByteVector from_pointer(
-            const void *ptr,
+            const void* ptr,
             std::size_t size) noexcept;
 
         /// @brief
@@ -69,10 +69,10 @@ namespace cc::core::types
         /// @return
         ///     New ByteVector instance
         static ByteVector from_string(
-            const std::string &s) noexcept;
+            const std::string& s) noexcept;
 
         static std::shared_ptr<ByteVector> shared_from_string(
-            const std::string &s) noexcept;
+            const std::string& s) noexcept;
 
         /// @brief
         ///     Unpack a specific data type stored at the byte array
@@ -88,16 +88,15 @@ namespace cc::core::types
             {
                 throw std::out_of_range("Not enough bytes to unpack");
             }
-            return *(T *)this->data();
+            return *(T*)this->data();
         }
 
         template <class T>
-        static inline ByteVector pack(const T &value)
+        static inline ByteVector pack(const T& value)
         {
-            auto *ptr = reinterpret_cast<const std::uint8_t *>(&value);
+            auto* ptr = reinterpret_cast<const std::uint8_t*>(&value);
             return ByteVector(ptr, ptr + sizeof(T));
         }
-
 
         /// @brief
         ///     Encode the data in this ByteVector instance using Base64
@@ -113,7 +112,7 @@ namespace cc::core::types
         ///     A new ByteVector instance
         /// @exception exception::InvalidArgument
         ///     Invalid Base64 data encountered
-        static ByteVector from_base64(const std::string_view &string);
+        static ByteVector from_base64(const std::string_view& string);
 
         /// @brief
         ///     Try to create a new ByteVector instance from a Base64-encoded string.
@@ -122,7 +121,7 @@ namespace cc::core::types
         /// @return
         ///     A new ByteVector instance if successful, emtpy otherwise.
 
-        static std::optional<ByteVector> try_from_base64(const std::string_view &string);
+        static std::optional<ByteVector> try_from_base64(const std::string_view& string);
 
         /// @brief
         ///     Encode data in this ByteVector instance as a hexacecimal string.
@@ -143,7 +142,7 @@ namespace cc::core::types
         ///     A new ByteVector instance
         /// @exception exception::InvalidArgument
         ///     Invalid hexadecimal digits encountered
-        static ByteVector from_hex(const std::string &string);
+        static ByteVector from_hex(const std::string& string);
     };
 }  // namespace cc::core::types
 
@@ -153,7 +152,7 @@ namespace std
     template <>
     struct hash<cc::core::types::ByteVector>
     {
-        inline std::size_t operator()(const cc::core::types::ByteVector &b) const
+        inline std::size_t operator()(const cc::core::types::ByteVector& b) const
         {
             return std::hash<std::string_view>()(b.stringview());
         }

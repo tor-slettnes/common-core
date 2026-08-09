@@ -53,7 +53,7 @@ namespace cc::platform::vfs::local::volume
         PARAM_DEVNODE
     };
 
-    using DeviceLookupMethod = const char *(*)(udev_device *);
+    using DeviceLookupMethod = const char* (*)(udev_device*);
 
     struct Event : public core::types::Listable
     {
@@ -65,24 +65,24 @@ namespace cc::platform::vfs::local::volume
         using ptr = std::shared_ptr<Event>;
 
     public:
-        Event(struct udev_device *device,
+        Event(struct udev_device* device,
               ActionType actionType = ACTION_UNKNOWN);
 
         ActionType actionType() const noexcept;
         DeviceType deviceType() const noexcept;
 
     protected:
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
 
     private:
-        static core::types::KeyValueMap valuemap(struct udev_list_entry *list) noexcept;
-        static ValueList valuelist(struct udev_list_entry *list) noexcept;
-        static ValueSet valueset(struct udev_list_entry *list) noexcept;
-        static core::types::KeyValueMap systemattributes(struct udev_device *device) noexcept;
-        static std::string string(const char *cstr) noexcept;
-        static udev_device *find_parent(udev_device *device,
+        static core::types::KeyValueMap valuemap(struct udev_list_entry* list) noexcept;
+        static ValueList valuelist(struct udev_list_entry* list) noexcept;
+        static ValueSet valueset(struct udev_list_entry* list) noexcept;
+        static core::types::KeyValueMap systemattributes(struct udev_device* device) noexcept;
+        static std::string string(const char* cstr) noexcept;
+        static udev_device* find_parent(udev_device* device,
                                         ParameterType parameter,
-                                        const std::string &value) noexcept;
+                                        const std::string& value) noexcept;
 
     public:
         std::string action, devpath, subsystem, devtype, syspath,
@@ -102,9 +102,9 @@ namespace cc::platform::vfs::local::volume
 
     struct DiskInfo : public core::types::Listable
     {
-        DiskInfo(const Event &event);
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
-        static bool is_removable(const Event &event);
+        DiskInfo(const Event& event);
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        static bool is_removable(const Event& event);
 
         std::string devnode;
         std::string serial;
@@ -114,8 +114,8 @@ namespace cc::platform::vfs::local::volume
 
     struct PartitionInfo : public core::types::Listable
     {
-        PartitionInfo(const Event &event);
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        PartitionInfo(const Event& event);
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
         std::string friendlyName() const;
 
         std::string devnode;
@@ -140,12 +140,12 @@ namespace cc::platform::vfs::local::volume
         Base();
         ~Base();
         virtual bool available() const;
-        virtual void init(){};
+        virtual void init() {};
         virtual Event::ptr next() = 0;
 
     protected:
-        struct udev *udev = nullptr;
-        struct udev_device *device = nullptr;
+        struct udev* udev = nullptr;
+        struct udev_device* device = nullptr;
     };
 
     //==========================================================================
@@ -161,7 +161,7 @@ namespace cc::platform::vfs::local::volume
         Event::ptr next() override;
 
     protected:
-        struct udev_enumerate *enumerator = nullptr;
+        struct udev_enumerate* enumerator = nullptr;
         struct udev_list_entry *devices = nullptr, *dev_list_entry = nullptr;
     };
 
@@ -188,7 +188,7 @@ namespace cc::platform::vfs::local::volume
         void run();
 
     protected:
-        struct udev_monitor *monitor = nullptr;
+        struct udev_monitor* monitor = nullptr;
         int fd = -1;
         bool running = false;
 

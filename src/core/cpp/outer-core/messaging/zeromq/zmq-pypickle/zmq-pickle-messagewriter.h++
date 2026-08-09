@@ -15,11 +15,11 @@ namespace cc::zmq
     {
     protected:
         PyPickleMessageWriter(
-            const std::shared_ptr<Publisher> &publisher,
-            const std::optional<core::types::ByteVector> &header = {});
+            const std::shared_ptr<Publisher>& publisher,
+            const std::optional<core::types::ByteVector>& header = {});
 
-        void write(const python::SimpleObject &object);
-        void write(const core::types::Value &value);
+        void write(const python::SimpleObject& object);
+        void write(const core::types::Value& value);
     };
 
 }  // namespace cc::zmq

@@ -17,7 +17,7 @@
 
 namespace cc::http
 {
-    bool decompose_header(const std::string &text, Header *header)
+    bool decompose_header(const std::string& text, Header* header)
     {
         static std::regex rx(
             "(\\w[^\\s:]*):\\s*"                      // (1) field name
@@ -54,7 +54,7 @@ namespace cc::http
         }
     }
 
-    void _curl_check_code(CURLUcode code, const std::string &url = {})
+    void _curl_check_code(CURLUcode code, const std::string& url = {})
     {
         if (code != CURLUE_OK)
         {
@@ -76,15 +76,15 @@ namespace cc::http
         }
     }
 
-    void _curl_url_get(CURLUcode *code,
-                       CURLU *handle,
+    void _curl_url_get(CURLUcode* code,
+                       CURLU* handle,
                        CURLUPart part,
-                       std::string *value,
+                       std::string* value,
                        uint flags)
     {
         if ((*code == CURLUE_OK) && (value != nullptr))
         {
-            char *cvalue = nullptr;
+            char* cvalue = nullptr;
             *code = ::curl_url_get(handle, part, &cvalue, flags);
             if (cvalue)
             {
@@ -94,14 +94,14 @@ namespace cc::http
         }
     }
 
-    std::string join_path_query(const std::string &path,
-                                const Query &query)
+    std::string join_path_query(const std::string& path,
+                                const Query& query)
     {
         std::stringstream ss;
         ss << path;
         std::string delimiter = (path.find('?') != std::string::npos) ? "&" : "?";
 
-        for (const auto &[tag, value] : query)
+        for (const auto& [tag, value] : query)
         {
             ss << delimiter;
             if (tag)
@@ -115,18 +115,18 @@ namespace cc::http
         return ss.str();
     }
 
-    void split_url(const std::string &url,
-                   std::string *scheme,
-                   std::string *username,
-                   std::string *password,
-                   std::string *host,
-                   uint *port,
-                   std::string *path,
-                   Query *query,
-                   std::string *fragment)
+    void split_url(const std::string& url,
+                   std::string* scheme,
+                   std::string* username,
+                   std::string* password,
+                   std::string* host,
+                   uint* port,
+                   std::string* path,
+                   Query* query,
+                   std::string* fragment)
     {
         uint flags = CURLU_URLDECODE;
-        CURLU *handle = curl_url();
+        CURLU* handle = curl_url();
         CURLUcode rc = curl_url_set(handle, CURLUPART_URL, url.data(), flags);
 
         _curl_url_get(&rc, handle, CURLUPART_SCHEME, scheme, flags);
@@ -148,7 +148,7 @@ namespace cc::http
             std::string stringquery;
             query->clear();
             _curl_url_get(&rc, handle, CURLUPART_QUERY, &stringquery, 0);
-            for (const std::string &part : core::str::split(stringquery, "&"))
+            for (const std::string& part : core::str::split(stringquery, "&"))
             {
                 std::vector<std::string> kv = core::str::split(part, "=", 1);
                 if (kv.size() == 2)
@@ -165,18 +165,18 @@ namespace cc::http
         _curl_check_code(rc, url);
     }
 
-    std::string join_url(const std::optional<std::string> &scheme,
-                         const std::optional<std::string> &username,
-                         const std::optional<std::string> &password,
-                         const std::optional<std::string> &host,
+    std::string join_url(const std::optional<std::string>& scheme,
+                         const std::optional<std::string>& username,
+                         const std::optional<std::string>& password,
+                         const std::optional<std::string>& host,
                          const std::optional<uint> port,
-                         const std::optional<std::string> &path,
-                         const std::optional<Query> &query,
-                         const std::optional<std::string> &fragment)
+                         const std::optional<std::string>& path,
+                         const std::optional<Query>& query,
+                         const std::optional<std::string>& fragment)
 
     {
         uint flags = CURLU_URLENCODE;
-        CURLU *handle = curl_url();
+        CURLU* handle = curl_url();
         CURLUcode rc = CURLUE_OK;
 
         if (rc == CURLUE_OK)
@@ -214,7 +214,7 @@ namespace cc::http
             std::stringstream ss;
             std::string delimiter;
 
-            for (const auto &[tag, value] : *query)
+            for (const auto& [tag, value] : *query)
             {
                 ss << delimiter;
                 if (tag)
@@ -264,8 +264,8 @@ namespace cc::http
     //     }
     // }
 
-    std::string join_urls(const std::string &base,
-                          const std::string &rel)
+    std::string join_urls(const std::string& base,
+                          const std::string& rel)
     {
         if (base.empty())
         {
@@ -277,7 +277,7 @@ namespace cc::http
         }
         else
         {
-            CURLU *handle = curl_url();
+            CURLU* handle = curl_url();
             CURLUcode rc = curl_url_set(handle, CURLUPART_URL, base.c_str(), 0);
 
             std::string base_path;
@@ -302,7 +302,7 @@ namespace cc::http
         }
     }
 
-    std::string url_encode(const std::string &decoded)
+    std::string url_encode(const std::string& decoded)
     {
         const auto encoded_value = curl_easy_escape(
             nullptr,
@@ -313,7 +313,7 @@ namespace cc::http
         return result;
     }
 
-    std::string url_decode(const std::string &encoded)
+    std::string url_decode(const std::string& encoded)
     {
         int output_length;
 

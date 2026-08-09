@@ -11,7 +11,7 @@
 #include "string/format.h++"
 #include "argparse/common.h++"
 
-int main (int argc, char **argv)
+int main(int argc, char** argv)
 {
     // Initialize paths, load settings, set up shutdown signal handlers
     cc::core::application::initialize(argc, argv);
@@ -19,7 +19,7 @@ int main (int argc, char **argv)
     auto options = std::make_unique<cc::core::argparse::CommonOptions>();
     options->apply(argc, argv);
 
-    const google::protobuf::Descriptor *desc = cc::protobuf::status::Error::GetDescriptor();
+    const google::protobuf::Descriptor* desc = cc::protobuf::status::Error::GetDescriptor();
     std::cout << cc::avro::ProtoBufSchema::from_proto(desc)
               << std::endl;
     return 0;

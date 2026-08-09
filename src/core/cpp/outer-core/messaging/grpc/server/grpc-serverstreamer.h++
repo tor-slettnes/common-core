@@ -28,13 +28,13 @@ namespace cc::grpc
 
     public:
         template <class... Args>
-        ServerStreamer(Args &&...args)
+        ServerStreamer(Args&&... args)
             : Super(args...)
         {
         }
 
-        virtual void stream(::grpc::ServerContext *cxt,
-                            ::grpc::ServerWriter<MessageT> *writer)
+        virtual void stream(::grpc::ServerContext* cxt,
+                            ::grpc::ServerWriter<MessageT>* writer)
         {
             while (std::optional<MessageT> msg = this->get())
             {
@@ -60,18 +60,18 @@ namespace cc::grpc
     public:
         template <class... Args>
         ServerSignalStreamer(
-            core::signal::DataSignal<MessageT> *signal,
-            Args &&...args)
+            core::signal::DataSignal<MessageT>* signal,
+            Args&&... args)
             : Super(args...),
               signal(signal)
         {
         }
 
-        void stream(::grpc::ServerContext *cxt,
-                    ::grpc::ServerWriter<MessageT> *writer) override
+        void stream(::grpc::ServerContext* cxt,
+                    ::grpc::ServerWriter<MessageT>* writer) override
         {
             std::exception_ptr eptr;
-            std::string handle = this->signal->connect([=](const MessageT &msg) {
+            std::string handle = this->signal->connect([=](const MessageT& msg) {
                 this->put(msg);
             });
 
@@ -88,7 +88,7 @@ namespace cc::grpc
         }
 
     private:
-        core::signal::DataSignal<MessageT> *signal;
+        core::signal::DataSignal<MessageT>* signal;
     };
 
 }  // namespace cc::grpc

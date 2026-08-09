@@ -38,21 +38,21 @@ namespace cc::platform::upgrade
     struct PackageSource : public core::types::Listable
     {
     public:
-        PackageSource(const Location &location = {});
+        PackageSource(const Location& location = {});
 
         operator bool() const noexcept;
-        bool operator==(const PackageSource &other) const;
-        bool operator!=(const PackageSource &other) const;
+        bool operator==(const PackageSource& other) const;
+        bool operator!=(const PackageSource& other) const;
         bool empty() const noexcept;
 
         LocationType location_type() const;
-        vfs::Path vfs_path(const vfs::Path &fallback = {}) const;
-        URL url(const URL &fallback = {}) const;
+        vfs::Path vfs_path(const vfs::Path& fallback = {}) const;
+        URL url(const URL& fallback = {}) const;
         fs::path filename() const;
         PackageSource remove_filename() const;
 
     protected:
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
 
     public:
         Location location;
@@ -69,24 +69,24 @@ namespace cc::platform::upgrade
         using ptr = std::shared_ptr<PackageInfo>;
 
     public:
-        PackageInfo(const PackageSource &source = {},
-                    const std::string &product = {},
-                    const sysconfig::Version &version = {},
-                    const std::string &description = {},
+        PackageInfo(const PackageSource& source = {},
+                    const std::string& product = {},
+                    const sysconfig::Version& version = {},
+                    const std::string& description = {},
                     bool reboot_required = false,
                     bool applicable = false);
 
     public:
-        virtual const PackageSource &source() const;
-        virtual const std::string &product() const;
-        virtual const Version &version() const;
-        virtual const std::string &description() const;
+        virtual const PackageSource& source() const;
+        virtual const std::string& product() const;
+        virtual const Version& version() const;
+        virtual const std::string& description() const;
         virtual bool reboot_required() const;
         virtual bool is_applicable() const;
-        virtual bool operator==(const PackageInfo &other) const;
+        virtual bool operator==(const PackageInfo& other) const;
 
     protected:
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
 
     private:
         PackageSource source_;
@@ -107,7 +107,7 @@ namespace cc::platform::upgrade
         using ptr = std::shared_ptr<ScanProgress>;
 
     public:
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
 
     public:
         PackageSource source;
@@ -134,10 +134,10 @@ namespace cc::platform::upgrade
         class Fraction : public core::types::Listable
         {
         public:
-            Fraction(const core::types::Value &current = 0,
-                     const core::types::Value &total = 0);
+            Fraction(const core::types::Value& current = 0,
+                     const core::types::Value& total = 0);
 
-            void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+            void to_tvlist(core::types::TaggedValueList* tvlist) const override;
 
         public:
             std::uint32_t current = 0;
@@ -145,7 +145,7 @@ namespace cc::platform::upgrade
         };
 
     public:
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
 
     public:
         static core::types::SymbolMap<State> state_names;
@@ -157,14 +157,14 @@ namespace cc::platform::upgrade
         core::status::Error::ptr error;
     };
 
-    static std::ostream &operator<<(std::ostream &stream,
+    static std::ostream& operator<<(std::ostream& stream,
                                     UpgradeProgress::State state);
 
 }  // namespace cc::platform::upgrade
 
 namespace std
 {
-    std::ostream &operator<<(
-        std::ostream &stream,
-        const cc::platform::upgrade::Location &location);
+    std::ostream& operator<<(
+        std::ostream& stream,
+        const cc::platform::upgrade::Location& location);
 }

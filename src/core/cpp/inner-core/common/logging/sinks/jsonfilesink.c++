@@ -10,13 +10,13 @@
 
 namespace cc::core::logging
 {
-    JsonFileSink::JsonFileSink(const std::string &sink_id)
+    JsonFileSink::JsonFileSink(const std::string& sink_id)
         : Super(sink_id),
           RotatingPath(sink_id, ".jsonlog")
     {
     }
 
-    void JsonFileSink::load_settings(const types::KeyValueMap &settings)
+    void JsonFileSink::load_settings(const types::KeyValueMap& settings)
     {
         Super::load_settings(settings);
         this->load_rotation(settings);
@@ -34,7 +34,7 @@ namespace cc::core::logging
         this->close_file();
     }
 
-    void JsonFileSink::open_file(const dt::TimePoint &tp)
+    void JsonFileSink::open_file(const dt::TimePoint& tp)
     {
         RotatingPath::open_file(tp);
         this->writer_ = std::make_shared<json::Writer>(this->current_path());
@@ -49,7 +49,7 @@ namespace cc::core::logging
         RotatingPath::close_file();
     }
 
-    bool JsonFileSink::handle_item(const types::Loggable::ptr &item)
+    bool JsonFileSink::handle_item(const types::Loggable::ptr& item)
     {
         if (this->writer_)
         {

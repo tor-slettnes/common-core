@@ -15,8 +15,8 @@ namespace cc::protobuf
     //--------------------------------------------------------------------------
     // Greeting
 
-    void encode(const cc::demo::Greeting &greeting,
-                cc::demo::protobuf::Greeting *msg)
+    void encode(const cc::demo::Greeting& greeting,
+                cc::demo::protobuf::Greeting* msg)
     {
         msg->set_text(greeting.text);
         msg->set_identity(greeting.identity);
@@ -25,8 +25,8 @@ namespace cc::protobuf
         encode(greeting.data, msg->mutable_data());
     }
 
-    void decode(const cc::demo::protobuf::Greeting &msg,
-                cc::demo::Greeting *greeting)
+    void decode(const cc::demo::protobuf::Greeting& msg,
+                cc::demo::Greeting* greeting)
     {
         greeting->text = msg.text();
         greeting->identity = msg.identity();
@@ -38,16 +38,16 @@ namespace cc::protobuf
     //--------------------------------------------------------------------------
     // TimeData
 
-    void encode(const cc::demo::TimeData &timedata,
-                cc::demo::protobuf::TimeData *msg)
+    void encode(const cc::demo::TimeData& timedata,
+                cc::demo::protobuf::TimeData* msg)
     {
         encode(timedata.timepoint, msg->mutable_timestamp());
         encode(timedata.localtime, msg->mutable_local_time());
         encode(timedata.utctime, msg->mutable_utc_time());
     }
 
-    void decode(const cc::demo::protobuf::TimeData &msg,
-                cc::demo::TimeData *timedata)
+    void decode(const cc::demo::protobuf::TimeData& msg,
+                cc::demo::TimeData* timedata)
     {
         decode(msg.timestamp(), &timedata->timepoint);
         decode(msg.local_time(), &timedata->localtime);

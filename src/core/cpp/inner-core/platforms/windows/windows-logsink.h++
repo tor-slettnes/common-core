@@ -20,13 +20,13 @@ namespace cc::core::platform
         using Super = LogSinkProvider;
 
     protected:
-        WindowsLogSinkProvider(const std::string &application_id,
-                               const std::string &sink_id = "eventlog");
+        WindowsLogSinkProvider(const std::string& application_id,
+                               const std::string& sink_id = "eventlog");
 
     public:
         void open() override;
         void close() override;
-        bool handle_message(const logging::Message::ptr &message) override;
+        bool handle_message(const logging::Message::ptr& message) override;
         std::string application_id() const;
 
     private:

@@ -16,9 +16,9 @@ namespace cc::core::argparse
     //==========================================================================
     // BaseOption methods
 
-    BaseOption::BaseOption(const KeyList &keys,
-                           const std::optional<std::string> &argname,
-                           const std::string &helptext,
+    BaseOption::BaseOption(const KeyList& keys,
+                           const std::optional<std::string>& argname,
+                           const std::string& helptext,
                            RepeatSpec repeats)
         : argname(argname),
           helptext(helptext),
@@ -29,7 +29,7 @@ namespace cc::core::argparse
 
         if (keys.size() > 0)
         {
-            for (auto &key : keys)
+            for (auto& key : keys)
             {
                 std::smatch matches;
                 if (std::regex_match(key, matches, shortx))
@@ -70,7 +70,7 @@ namespace cc::core::argparse
         return ss.str();
     }
 
-    std::string BaseOption::get_description(const Substitutions &subst,
+    std::string BaseOption::get_description(const Substitutions& subst,
                                             size_t align_column,
                                             size_t wrap_column) const
     {
@@ -92,7 +92,7 @@ namespace cc::core::argparse
                 current_column = 0;
             }
             std::string helptext(this->helptext);
-            for (const auto &s : subst)
+            for (const auto& s : subst)
             {
                 str::substitute(s.first, s.second, &helptext);
             }

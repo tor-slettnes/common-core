@@ -12,9 +12,9 @@
 
 namespace cc::zmq
 {
-    ProtoBufServer::ProtoBufServer(const std::string &bind_address,
-                                   const std::string &channel_name,
-                                   RequestHandlerMap &&handler_map,
+    ProtoBufServer::ProtoBufServer(const std::string& bind_address,
+                                   const std::string& channel_name,
+                                   RequestHandlerMap&& handler_map,
                                    Role role)
         : Super(bind_address, channel_name, role),
           handler_map(std::move(handler_map))
@@ -24,7 +24,7 @@ namespace cc::zmq
     void ProtoBufServer::initialize()
     {
         Super::initialize();
-        for (const auto &[interface_name, handler] : this->handler_map)
+        for (const auto& [interface_name, handler] : this->handler_map)
         {
             handler->initialize();
         }
@@ -32,15 +32,15 @@ namespace cc::zmq
 
     void ProtoBufServer::deinitialize()
     {
-        for (const auto &[interface_name, handler] : this->handler_map)
+        for (const auto& [interface_name, handler] : this->handler_map)
         {
             handler->deinitialize();
         }
         Super::deinitialize();
     }
 
-    void ProtoBufServer::process_binary_request(const core::types::ByteVector &packed_request,
-                                                core::types::ByteVector *packed_reply)
+    void ProtoBufServer::process_binary_request(const core::types::ByteVector& packed_request,
+                                                core::types::ByteVector* packed_reply)
     {
         cc::protobuf::request_reply::Request request;
         cc::protobuf::request_reply::Reply reply;
@@ -64,8 +64,8 @@ namespace cc::zmq
         cc::protobuf::to_bytes(reply, packed_reply);
     }
 
-    void ProtoBufServer::process_protobuf_request(const cc::protobuf::request_reply::Request &request,
-                                                  cc::protobuf::request_reply::Reply *reply)
+    void ProtoBufServer::process_protobuf_request(const cc::protobuf::request_reply::Request& request,
+                                                  cc::protobuf::request_reply::Reply* reply)
     {
         reply->set_client_id(request.client_id());
         reply->set_request_id(request.request_id());
@@ -85,22 +85,22 @@ namespace cc::zmq
         }
     }
 
-    void ProtoBufServer::insert_error_response(cc::protobuf::request_reply::Reply *reply,
+    void ProtoBufServer::insert_error_response(cc::protobuf::request_reply::Reply* reply,
                                                cc::protobuf::request_reply::StatusCode status_code,
-                                               const std::string &text,
-                                               const core::types::KeyValueMap &attributes)
+                                               const std::string& text,
+                                               const core::types::KeyValueMap& attributes)
     {
-        cc::protobuf::request_reply::Status *status = reply->mutable_status();
+        cc::protobuf::request_reply::Status* status = reply->mutable_status();
         status->set_code(status_code);
 
-        core::status::Error event(text,                                           // text
-                            core::status::Domain::APPLICATION,              // domain
-                            core::platform::path->exec_name(),                    // origin
-                            static_cast<core::status::Error::Code>(status_code),  // code
-                            cc::protobuf::request_reply::StatusCode_Name(status_code),           // symbol
-                            core::status::Level::ERROR,                    // level
-                            {},                                             // timepoint
-                            attributes);                                    // attributes
+        core::status::Error event(text,                                                       // text
+                                  core::status::Domain::APPLICATION,                          // domain
+                                  core::platform::path->exec_name(),                          // origin
+                                  static_cast<core::status::Error::Code>(status_code),        // code
+                                  cc::protobuf::request_reply::StatusCode_Name(status_code),  // symbol
+                                  core::status::Level::ERROR,                                 // level
+                                  {},                                                         // timepoint
+                                  attributes);                                                // attributes
 
         cc::protobuf::encode(event, status->mutable_details());
     }

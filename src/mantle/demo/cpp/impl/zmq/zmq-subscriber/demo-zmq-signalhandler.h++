@@ -21,7 +21,7 @@ namespace cc::demo::zmq
 
     protected:
         void initialize() override;
-        void handle_message(const cc::demo::protobuf::Signal &message) override;
+        void handle_message(const cc::demo::protobuf::Signal& message) override;
     };
 
 }  // namespace cc::demo::zmq

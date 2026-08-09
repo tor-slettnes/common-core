@@ -9,13 +9,13 @@
 
 namespace cc::core::types
 {
-    std::ostream &operator<<(std::ostream &stream, const Streamable &obj)
+    std::ostream& operator<<(std::ostream& stream, const Streamable& obj)
     {
         obj.to_stream(stream);
         return stream;
     }
 
-    void Streamable::to_literal_stream(std::ostream &stream) const
+    void Streamable::to_literal_stream(std::ostream& stream) const
     {
         this->to_stream(stream);
     }

@@ -23,7 +23,6 @@ namespace cc::core::types
     ///   - `status::Telemetry`
     ///   - `types::BinaryData`
 
-
     class Loggable : public Listable
     {
         using This = Loggable;
@@ -36,29 +35,29 @@ namespace cc::core::types
         inline static const std::string FIELD_ATTRIBUTES = "attributes";
 
     protected:
-        Loggable(const dt::TimePoint &tp = {},                // origin timestmap
-                 const types::KeyValueMap &attributes = {});  // loggable data
+        Loggable(const dt::TimePoint& tp = {},                // origin timestmap
+                 const types::KeyValueMap& attributes = {});  // loggable data
 
-        Loggable(Loggable &&src);
-        Loggable(const Loggable &src);
+        Loggable(Loggable&& src);
+        Loggable(const Loggable& src);
 
-        Loggable(const types::KeyValueMap &kvmap);
+        Loggable(const types::KeyValueMap& kvmap);
 
         virtual ~Loggable() {}  // Hack to ensure class is polymorphic
 
-        Loggable &operator=(Loggable &&other) noexcept;
-        Loggable &operator=(const Loggable &other) noexcept;
-        bool operator==(const Loggable &other) const noexcept;
-        bool operator!=(const Loggable &other) const noexcept;
+        Loggable& operator=(Loggable&& other) noexcept;
+        Loggable& operator=(const Loggable& other) noexcept;
+        bool operator==(const Loggable& other) const noexcept;
+        bool operator!=(const Loggable& other) const noexcept;
 
     public:
         virtual ContractID contract_id() const noexcept = 0;
         virtual dt::TimePoint timepoint() const noexcept;
-        virtual const types::KeyValueMap &attributes() const noexcept;
-        virtual types::KeyValueMap &attributes() noexcept;
+        virtual const types::KeyValueMap& attributes() const noexcept;
+        virtual types::KeyValueMap& attributes() noexcept;
         virtual types::Value attribute(
-            const std::string &key,
-            const types::Value &fallback = {}) const noexcept;
+            const std::string& key,
+            const types::Value& fallback = {}) const noexcept;
 
     protected:
         virtual std::string class_name() const noexcept;
@@ -68,11 +67,11 @@ namespace cc::core::types
 
     public:
         virtual std::vector<std::string> field_names() const noexcept;
-        virtual types::Value get_field_as_value(const std::string &field_name) const;
+        virtual types::Value get_field_as_value(const std::string& field_name) const;
 
     public:
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_stream(std::ostream& stream) const override;
 
     private:
         dt::TimePoint timepoint_;

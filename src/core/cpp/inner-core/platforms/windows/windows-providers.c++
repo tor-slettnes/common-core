@@ -14,7 +14,7 @@
 
 namespace cc::core::platform
 {
-    void register_windows_providers(const std::string &exec_name)
+    void register_windows_providers(const std::string& exec_name)
     {
         symbols.registerProvider<WindowsSymbolsProvider>();
         path.registerProvider<WindowsPathProvider>(exec_name);
@@ -34,7 +34,7 @@ namespace cc::core::platform
         symbols.unregisterProvider<WindowsSymbolsProvider>();
     }
 
-    void register_providers(const std::string &exec_name)
+    void register_providers(const std::string& exec_name)
     {
         register_windows_providers(exec_name);
     }

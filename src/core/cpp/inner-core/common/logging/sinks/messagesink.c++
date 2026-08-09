@@ -20,27 +20,27 @@ namespace cc::core::logging
     //--------------------------------------------------------------------------
     // MessageSink
 
-    MessageSink::MessageSink(const std::string &sink_id)
+    MessageSink::MessageSink(const std::string& sink_id)
         : Sink(sink_id, Message::CONTRACT),
           include_context_(DEFAULT_INCLUDE_CONTEXT),
           include_source_(DEFAULT_INCLUDE_SOURCE)
     {
     }
 
-    void MessageSink::load_settings(const types::KeyValueMap &settings)
+    void MessageSink::load_settings(const types::KeyValueMap& settings)
     {
         Super::load_settings(settings);
         this->load_message_settings(settings);
     }
 
-    void MessageSink::load_message_settings(const types::KeyValueMap &settings)
+    void MessageSink::load_message_settings(const types::KeyValueMap& settings)
     {
-        if (const types::Value &value = settings.get(SETTING_INCLUDE_CONTEXT))
+        if (const types::Value& value = settings.get(SETTING_INCLUDE_CONTEXT))
         {
             this->set_include_context(value.as_bool());
         }
 
-        if (const types::Value &value = settings.get(SETTING_INCLUDE_SOURCE))
+        if (const types::Value& value = settings.get(SETTING_INCLUDE_SOURCE))
         {
             this->set_include_source_location(value.as_bool());
         }
@@ -77,9 +77,9 @@ namespace cc::core::logging
         This::all_include_source_ = include_source;
     }
 
-    bool MessageSink::is_applicable(const types::Loggable &item) const
+    bool MessageSink::is_applicable(const types::Loggable& item) const
     {
-        if (auto event = dynamic_cast<const Message *>(&item))
+        if (auto event = dynamic_cast<const Message*>(&item))
         {
             return Super::is_applicable(item);
         }
@@ -89,7 +89,7 @@ namespace cc::core::logging
         }
     }
 
-    bool MessageSink::handle_item(const types::Loggable::ptr &item)
+    bool MessageSink::handle_item(const types::Loggable::ptr& item)
     {
         if (auto message = std::dynamic_pointer_cast<Message>(item))
         {
@@ -101,8 +101,8 @@ namespace cc::core::logging
         }
     }
 
-    void MessageSink::send_preamble(std::ostream &stream,
-                                    const Message::ptr &message) const
+    void MessageSink::send_preamble(std::ostream& stream,
+                                    const Message::ptr& message) const
     {
         dt::tp_to_stream(stream, message->timepoint(), true, 3, "%T");
 
@@ -148,14 +148,14 @@ namespace cc::core::logging
         }
     }
 
-    void MessageSink::send_field(std::ostream &stream,
-                                 const std::string_view &text,
+    void MessageSink::send_field(std::ostream& stream,
+                                 const std::string_view& text,
                                  std::size_t width,
-                                 const std::string &delimiter) const
+                                 const std::string& delimiter) const
     {
         if (text.size() > width)
         {
-            stream << text.substr(0, width-1)
+            stream << text.substr(0, width - 1)
                    << "…"
                    << delimiter;
         }
@@ -167,7 +167,7 @@ namespace cc::core::logging
         }
     }
 
-    std::string MessageSink::formatted(const Message::ptr &message) const
+    std::string MessageSink::formatted(const Message::ptr& message) const
     {
         std::stringstream ss;
         this->send_preamble(ss, message);

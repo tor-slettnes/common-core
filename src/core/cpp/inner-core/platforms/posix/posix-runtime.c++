@@ -25,9 +25,9 @@ namespace cc::core::platform
         return ::isatty(fd);
     }
 
-    void PosixRunTimeProvider::putenv(const std::string &envstring)
+    void PosixRunTimeProvider::putenv(const std::string& envstring)
     {
-        if (int err = ::putenv(const_cast<char *>(envstring.data())))
+        if (int err = ::putenv(const_cast<char*>(envstring.data())))
         {
             throw std::system_error(err, std::system_category());
         }

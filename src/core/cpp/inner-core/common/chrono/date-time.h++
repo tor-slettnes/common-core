@@ -56,7 +56,7 @@ namespace cc::core
             bool dst = false;       // Whether daylight savings time is in effect
         };
 
-        std::ostream &operator<<(std::ostream &stream, const TimeZoneInfo &zi);
+        std::ostream& operator<<(std::ostream& stream, const TimeZoneInfo& zi);
 
         constexpr auto TM_YEAR_OFFSET = 1900;
         constexpr auto TM_MONTH_OFFSET = 1;
@@ -80,8 +80,8 @@ namespace cc::core
             ETERNITY      // Inifinite time
         };
 
-        std::ostream &operator<<(std::ostream &stream, const TimeUnit &unit);
-        std::istream &operator>>(std::istream &stream, TimeUnit &unit);
+        std::ostream& operator<<(std::ostream& stream, const TimeUnit& unit);
+        std::istream& operator>>(std::istream& stream, TimeUnit& unit);
 
         struct DateTimeInterval
         {
@@ -94,8 +94,8 @@ namespace cc::core
             std::int64_t count = 0;
         };
 
-        std::ostream &operator<<(std::ostream &stream, const DateTimeInterval &interval);
-        std::istream &operator>>(std::istream &stream, DateTimeInterval &interval);
+        std::ostream& operator<<(std::ostream& stream, const DateTimeInterval& interval);
+        std::istream& operator>>(std::istream& stream, DateTimeInterval& interval);
 
         /// Write out provided timepoint as a string representing UTC or local time.
         /// @param[in] stream
@@ -109,11 +109,11 @@ namespace cc::core
         /// @param[in] format
         ///     Output format for std::put_time(). The default is `%F@%T`,
         ///     yielding an ISO 8601 string (`YYYY-MM-DD@HH:MM:SS`)
-        void tp_to_stream(std::ostream &stream,
-                          const TimePoint &tp,
+        void tp_to_stream(std::ostream& stream,
+                          const TimePoint& tp,
                           bool local = true,
                           uint decimals = 3,
-                          const std::string &format = DEFAULT_FORMAT);
+                          const std::string& format = DEFAULT_FORMAT);
 
         /// Write out string representation of the provided duration as seconds.
         /// @param[in] stream
@@ -122,8 +122,8 @@ namespace cc::core
         ///     A duration
         /// @param[in] decimals
         ///     Sub-second resolution. The default is 3 (i.e., milliseconds)
-        void dur_to_stream(std::ostream &stream,
-                           const Duration &dur,
+        void dur_to_stream(std::ostream& stream,
+                           const Duration& dur,
                            uint decimals);
 
         /// Write out formatted string representation of the provided duration.
@@ -135,10 +135,10 @@ namespace cc::core
         ///     Sub-second resolution. The default is 3 (i.e., milliseconds)
         /// @param[in] format
         ///     Output format for std::put_time().
-        void dur_to_stream(std::ostream &stream,
-                           const Duration &dur,
+        void dur_to_stream(std::ostream& stream,
+                           const Duration& dur,
                            uint decimals,
-                           const std::string &format);
+                           const std::string& format);
 
         /// Write out a human readable string representation of the provided
         /// duration, e.g., `42 hours, 12 minutes, 2.322 seconds`.
@@ -176,18 +176,18 @@ namespace cc::core
         /// `yearsformat` is provided but `monthsformat` is not, the number of days
         /// is shown modulo 365.
 
-        void dur_to_stream(std::ostream &stream,
-                           const Duration &dur,
-                           const std::optional<std::string> &secondsformat = "%.3fs",
-                           const std::optional<std::string> &minutesformat = "%zm",
-                           const std::optional<std::string> &hoursformat = "%zh",
-                           const std::optional<std::string> &daysformat = "%zd",
-                           const std::optional<std::string> &monthsformat = {},
-                           const std::optional<std::string> &yearsformat = "%zy",
+        void dur_to_stream(std::ostream& stream,
+                           const Duration& dur,
+                           const std::optional<std::string>& secondsformat = "%.3fs",
+                           const std::optional<std::string>& minutesformat = "%zm",
+                           const std::optional<std::string>& hoursformat = "%zh",
+                           const std::optional<std::string>& daysformat = "%zd",
+                           const std::optional<std::string>& monthsformat = {},
+                           const std::optional<std::string>& yearsformat = "%zy",
                            uint max_divisions = 6,
                            const std::string delimiter = " ",
-                           const std::string &date_prefix = "",
-                           const std::string &time_prefix = "",
+                           const std::string& date_prefix = "",
+                           const std::string& time_prefix = "",
                            double precision = 1e-9);
 
         /// Return the provided timepoint as a JavaScript time string
@@ -195,7 +195,7 @@ namespace cc::core
         ///     A timepoint
         /// @return
         ///     Timepoint represented as a JavaScript time string
-        std::string to_js_string(const TimePoint &tp);
+        std::string to_js_string(const TimePoint& tp);
 
         /// Return the provided timepoint as a string representing UTC or local time.
         /// @param[in] tp
@@ -209,10 +209,10 @@ namespace cc::core
         ///     yielding an ISO 8601 string (`YYYY-MM-DD@HH:MM:SS`)
         /// @return
         ///     String representing the provided timeppoint as UTC or local time.
-        std::string to_string(const TimePoint &tp,
+        std::string to_string(const TimePoint& tp,
                               bool local,
                               uint decimals = 3,
-                              const std::string &format = DEFAULT_FORMAT);
+                              const std::string& format = DEFAULT_FORMAT);
 
         /// Return the provided timepoint as a string.
         /// representing local time.
@@ -225,10 +225,9 @@ namespace cc::core
         ///     yielding an ISO 8601 string (`YYYY-MM-DD@HH:MM:SS`)
         /// @return
         ///     String representing the provided timeppoint as local time.
-        std::string to_string(const TimePoint &tp,
+        std::string to_string(const TimePoint& tp,
                               uint decimals = 3,
-                              const std::string &format = DEFAULT_FORMAT);
-
+                              const std::string& format = DEFAULT_FORMAT);
 
         /// @brief
         ///     Return a formatted IS08601 string representation of the provided duration.
@@ -238,7 +237,7 @@ namespace cc::core
         ///     Sub-second resolution.
         /// @return
         ///     String representing the provided duration
-        std::string to_iso8601_string(const Duration &duration,
+        std::string to_iso8601_string(const Duration& duration,
                                       uint decimals = 3);
 
         /// Return a string representation of the provided duration suitable for JSON
@@ -248,7 +247,7 @@ namespace cc::core
         ///     Sub-second resolution.
         /// @return
         ///     String representing the provided duration
-        std::string to_js_string(const Duration &duration,
+        std::string to_js_string(const Duration& duration,
                                  uint decimals = 3);
 
         /// @brief
@@ -286,17 +285,17 @@ namespace cc::core
         /// `yearsformat` is provided but `monthsformat` is not, the number of days
         /// is shown modulo 365.
 
-        std::string to_string(const Duration &duration,
-                              const std::optional<std::string> &secondsformat = "%.3gs",
-                              const std::optional<std::string> &minutesformat = "%zm",
-                              const std::optional<std::string> &hoursformat = "%zh",
-                              const std::optional<std::string> &daysformat = "%zd",
-                              const std::optional<std::string> &monthsformat = {},
-                              const std::optional<std::string> &yearsformat = "%zy",
+        std::string to_string(const Duration& duration,
+                              const std::optional<std::string>& secondsformat = "%.3gs",
+                              const std::optional<std::string>& minutesformat = "%zm",
+                              const std::optional<std::string>& hoursformat = "%zh",
+                              const std::optional<std::string>& daysformat = "%zd",
+                              const std::optional<std::string>& monthsformat = {},
+                              const std::optional<std::string>& yearsformat = "%zy",
                               uint max_divisions = 6,
-                              const std::string &delimiter = " ",
-                              const std::string &date_prefix = "",
-                              const std::string &time_prefix = "");
+                              const std::string& delimiter = " ",
+                              const std::string& date_prefix = "",
+                              const std::string& time_prefix = "");
 
         /// Return a formatted string representation of the provided duration.
         /// @param[in] duration
@@ -307,46 +306,46 @@ namespace cc::core
         ///     Output format for std::put_time().
         /// @return
         ///     String representing the provided duration
-        std::string to_string(const Duration &duration,
+        std::string to_string(const Duration& duration,
                               uint decimals,
-                              const std::string &format = DEFAULT_DURATION_FORMAT);
+                              const std::string& format = DEFAULT_DURATION_FORMAT);
 
         /// Return a human readable string representation of the provided `std::tm` structure.
-        std::string to_string(const std::tm &tm,
-                              const std::string &format = DEFAULT_FORMAT);
+        std::string to_string(const std::tm& tm,
+                              const std::string& format = DEFAULT_FORMAT);
 
         /// Convert from TimePoint (std::chrono::system_clock__time_point) to C "struct timespec";
-        timespec to_timespec(const TimePoint &tp);
+        timespec to_timespec(const TimePoint& tp);
 
         /// Convert the provided timepoint to the `time_t` C type (seconds since epoch).
-        std::time_t to_time_t(const TimePoint &tp);
+        std::time_t to_time_t(const TimePoint& tp);
 
         /// Convert a duration to seconds (truncated, not rounded)
-        std::int64_t to_seconds(const Duration &d);
+        std::int64_t to_seconds(const Duration& d);
 
         /// Convert a duration to milliseconds (truncated, not rounded) since UNIX epoch
-        std::int64_t to_milliseconds(const TimePoint &tp);
+        std::int64_t to_milliseconds(const TimePoint& tp);
 
         /// Convert a duration to milliseconds (truncated, not rounded)
-        std::int64_t to_milliseconds(const Duration &d);
+        std::int64_t to_milliseconds(const Duration& d);
 
         template <class Scale>
-        std::int64_t to_scalar(const TimePoint &tp)
+        std::int64_t to_scalar(const TimePoint& tp)
         {
             return to_scalar<Scale>(tp.time_since_epoch());
         }
 
         template <class Scale>
-        std::int64_t to_scalar(const Duration &dur)
+        std::int64_t to_scalar(const Duration& dur)
         {
             return std::chrono::duration_cast<Scale>(dur).count();
         }
 
         /// Convert from TimePoint (std::chrono::system_clock::time_point) to double
-        double to_double(const TimePoint &tp);
+        double to_double(const TimePoint& tp);
 
         /// Convert from Duration (std::chrono::system_clock::duration) to double
-        double to_double(const Duration &d);
+        double to_double(const Duration& d);
 
         //--------------------------------------------------------------------------
         // Duration conversions
@@ -372,21 +371,21 @@ namespace cc::core
         Duration to_duration(double seconds);
 
         /// Convert from `struct timespec` to Duration
-        Duration to_duration(const timespec &ts);
+        Duration to_duration(const timespec& ts);
 
         /// Convert from string representation (`HH:MM:SS.sss`) to Duration
         Duration to_duration(
-            const std::string_view &text,
-            const std::optional<std::string> &format = {},
+            const std::string_view& text,
+            const std::optional<std::string>& format = {},
             const Duration fallback = Duration::zero());
 
         // Try to convert from a string to a duration
         std::optional<Duration> try_to_duration(
-            const std::string_view &text,
-            const std::string &format);
+            const std::string_view& text,
+            const std::string& format);
 
         std::optional<Duration> try_to_duration(
-            const std::string_view &text,
+            const std::string_view& text,
             double multiplier = 1.0);
 
         //--------------------------------------------------------------------------
@@ -411,7 +410,7 @@ namespace cc::core
         ///    May 3rd 2969.
         TimePoint double_to_timepoint(
             double value,
-            const std::optional<int> &multiplier_decimal_exponent = {});
+            const std::optional<int>& multiplier_decimal_exponent = {});
 
         /// Convert a scalar epoch-based timestamp with optional precision
         /// to a TimePoint.
@@ -433,7 +432,7 @@ namespace cc::core
         ///    May 3rd 2969.
         TimePoint int_to_timepoint(
             std::int64_t scalar,
-            const std::optional<int> &multiplier_decimal_exponent);
+            const std::optional<int>& multiplier_decimal_exponent);
 
         /// Convert from milliseconds (Java style timestamp) to TimePoint
         TimePoint ms_to_timepoint(std::int64_t milliseconds);
@@ -442,10 +441,10 @@ namespace cc::core
         TimePoint to_timepoint(time_t seconds, long nanoseconds = 0);
 
         /// Convert from "struct timespec" to TimePoint, or fallback if the time is zero.
-        TimePoint to_timepoint(const timespec &ts);
+        TimePoint to_timepoint(const timespec& ts);
 
         /// Convert from "struct tm" to TimePoint, or fallback if the time is zero.
-        TimePoint to_timepoint(const std::tm &dt, bool local = true);
+        TimePoint to_timepoint(const std::tm& dt, bool local = true);
 
         /// @brief
         ///    Convert from year/month/day/hour/minute/second/fraction to timepoint.
@@ -476,16 +475,16 @@ namespace cc::core
                                std::optional<Duration> tz_offset);
 
         TimePoint to_timepoint(
-            const std::string_view &s,
+            const std::string_view& s,
             bool assume_local = true,
-            const TimePoint &fallback = {},
+            const TimePoint& fallback = {},
             const std::optional<int> multiplier_decimal_exponent = {});
 
         TimePoint to_timepoint(
-            const std::string_view &s,
-            const std::string &format,
+            const std::string_view& s,
+            const std::string& format,
             bool assume_local = true,
-            const TimePoint &fallback = {});
+            const TimePoint& fallback = {});
 
         // @brief
         //    Convert a ISO-formatted string (yyyy-mm-dd?hh:mm:ss[.fraction][Z]) to a timepoint.
@@ -495,7 +494,7 @@ namespace cc::core
         //    Assume local time if the trailing `Z'` is missing.
 
         std::optional<TimePoint> try_to_timepoint(
-            const std::string_view &input,
+            const std::string_view& input,
             bool assume_local = true,
             const std::optional<int> multiplier_decimal_exponent = {});
 
@@ -509,8 +508,8 @@ namespace cc::core
         //    Assume local time unless the input string ends in `Z`.
 
         std::optional<TimePoint> try_to_timepoint(
-            const std::string_view &input,
-            const std::string &format,
+            const std::string_view& input,
+            const std::string& format,
             bool assume_local = true);
 
         //--------------------------------------------------------------------------
@@ -518,39 +517,39 @@ namespace cc::core
 
         /// Return the most recent midnight prior to a given timestamp,
         /// in either the local timezone or UTC.
-        TimePoint last_midnight(const TimePoint &tp = Clock::now(), bool local = true);
+        TimePoint last_midnight(const TimePoint& tp = Clock::now(), bool local = true);
 
         /// Return the most recent time aligned to the specific date/time interval
-        TimePoint last_aligned(const TimePoint &tp,
-                               const DateTimeInterval &interval,
+        TimePoint last_aligned(const TimePoint& tp,
+                               const DateTimeInterval& interval,
                                bool local = true);
 
         /// Return the most recent time aligned to the specific clock interval
-        TimePoint last_aligned(const TimePoint &tp,
-                               const Duration &interval,
+        TimePoint last_aligned(const TimePoint& tp,
+                               const Duration& interval,
                                bool local = true);
 
         /// Return the most recent time aligned to a specific reference (e.g. epoch)
         /// and interval
-        TimePoint last_aligned(const TimePoint &tp,
-                               const TimePoint &reference,
-                               const Duration &interval);
+        TimePoint last_aligned(const TimePoint& tp,
+                               const TimePoint& reference,
+                               const Duration& interval);
 
         /// Return the local timezone offset. Note that this will be affected by the
         /// provided timepoint wherever daylight savings time/summer time is used.
-        Duration local_adjustment(const TimePoint &tp);
+        Duration local_adjustment(const TimePoint& tp);
 
         /// Return the local timezone offset. Note that this will be affected by the
         /// provided timepoint wherever daylight savings time/summer time is used.
-        Duration local_adjustment(const TimePoint &tp,
-                                  const std::string &timezone);
+        Duration local_adjustment(const TimePoint& tp,
+                                  const std::string& timezone);
 
         /// Convert the provided timepoint to a C `tm` structure representing UTC
         /// date/time.
-        std::tm gmtime(const TimePoint &tp = Clock::now());
+        std::tm gmtime(const TimePoint& tp = Clock::now());
 
         /// Convert the provided time_t value to a C `tm` structure representing UTC date/time.
-        std::tm gmtime(const std::time_t &time);
+        std::tm gmtime(const std::time_t& time);
 
         /// Convert the provided timepoint to a C `tm` structure representing local date/time.
         /// param[in] tp
@@ -559,12 +558,12 @@ namespace cc::core
         ///    A string representing the timezone in which to represent the provided time.  If
         ///    empty, and if the TZ environment variable is not set, the system's default timezone
         ///    is used.
-        std::tm localtime(const TimePoint &tp, const std::string &timezone);
-        std::tm localtime(const TimePoint &tp = Clock::now());
+        std::tm localtime(const TimePoint& tp, const std::string& timezone);
+        std::tm localtime(const TimePoint& tp = Clock::now());
 
         /// Convert the provided time_t value to a C `tm` structure representing local date/time.
-        std::tm localtime(const std::time_t &time, const std::string &timezone);
-        std::tm localtime(const std::time_t &time);
+        std::tm localtime(const std::time_t& time, const std::string& timezone);
+        std::tm localtime(const std::time_t& time);
 
         /// @brief Return information about the specified time zone.
         /// @param[in] timezone
@@ -575,18 +574,18 @@ namespace cc::core
         ///    Time point
         /// @return
         ///    A TimeZoneInfo structure containing information about the specified zone, see above.
-        TimeZoneInfo tzinfo(const std::string &timezone, const TimePoint &tp = Clock::now());
-        TimeZoneInfo tzinfo(const TimePoint &tp = Clock::now());
+        TimeZoneInfo tzinfo(const std::string& timezone, const TimePoint& tp = Clock::now());
+        TimeZoneInfo tzinfo(const TimePoint& tp = Clock::now());
 
-        TimeZoneInfo tzinfo(const std::string &timezone, const std::time_t &time);
-        TimeZoneInfo tzinfo(const std::time_t &time);
+        TimeZoneInfo tzinfo(const std::string& timezone, const std::time_t& time);
+        TimeZoneInfo tzinfo(const std::time_t& time);
 
         /// Convert a `struct tm` object to seconds since epoch.
         /// This is similar to `std::mktime()`, but also supports UTC time.
         std::time_t mktime(std::tm datetime, bool local = true);
 
         /// Helper function to calculate number of calendar days
-        std::uint32_t gregorian_days(const tm &datetime);
+        std::uint32_t gregorian_days(const tm& datetime);
 
         /// Helper function to determine if a year is a leap year
         bool is_leap_year(uint year, bool gregorian = true);
@@ -606,8 +605,8 @@ namespace cc::core
         // using TimePoint = std::chrono::time_point<Clock, Duration>;
         extern const TimePoint epoch;
 
-        void tp_to_stream(std::ostream &stream,
-                          const TimePoint &stp,
+        void tp_to_stream(std::ostream& stream,
+                          const TimePoint& stp,
                           uint decimals = 3);
 
         // Convert from System Clock to Steady Clock
@@ -615,7 +614,7 @@ namespace cc::core
     }  // namespace steady
 
     template <class TargetClock, class SourceClock>
-    typename TargetClock::time_point timepoint_cast(const typename SourceClock::time_point &source_tp)
+    typename TargetClock::time_point timepoint_cast(const typename SourceClock::time_point& source_tp)
     {
         typename SourceClock::duration relative_to_now =
             source_tp.time_since_epoch() -
@@ -629,14 +628,14 @@ namespace cc::core
 
 namespace std::chrono
 {
-    std::ostream &operator<<(std::ostream &stream, const system_clock::time_point &tp);
-    std::ostream &operator<<(std::ostream &stream, const system_clock::duration &dur);
-    std::ostream &operator<<(std::ostream &stream, const steady_clock::time_point &stp);
+    std::ostream& operator<<(std::ostream& stream, const system_clock::time_point& tp);
+    std::ostream& operator<<(std::ostream& stream, const system_clock::duration& dur);
+    std::ostream& operator<<(std::ostream& stream, const steady_clock::time_point& stp);
 }  // namespace std::chrono
 
 // Compare `std::tm` structs.  This is actually an alias for `struct tm`,
 // so we need to define it in the global namespace.
-bool operator==(const std::tm &lhs, const std::tm &rhs);
+bool operator==(const std::tm& lhs, const std::tm& rhs);
 
 /// Represent `struct tm` instances
-std::ostream &operator<<(std::ostream &stream, const std::tm &tm);
+std::ostream& operator<<(std::ostream& stream, const std::tm& tm);

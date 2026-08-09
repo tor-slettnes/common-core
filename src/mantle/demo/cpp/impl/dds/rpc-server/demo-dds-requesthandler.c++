@@ -14,13 +14,13 @@
 
 namespace cc::demo::dds
 {
-    RequestHandler::RequestHandler(const std::shared_ptr<API> &api_provider)
+    RequestHandler::RequestHandler(const std::shared_ptr<API>& api_provider)
         : provider(api_provider)
     {
         logf_debug("Demo DDS RequestHandler Constructor");
     }
 
-    void RequestHandler::say_hello(const CC::Demo::Greeting &greeting)
+    void RequestHandler::say_hello(const CC::Demo::Greeting& greeting)
     {
         // We received a greeting from a client.  Emit a signal to registered
         // callbacks (slots). (This includes `Publisher::on_signal_greeting()`,

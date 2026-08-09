@@ -20,7 +20,6 @@ namespace cc::core::logging
     using SinkID = std::string;
     using SinkType = std::string;
 
-
     //--------------------------------------------------------------------------
     // Constants
 
@@ -39,8 +38,8 @@ namespace cc::core::logging
         using ptr = std::shared_ptr<Sink>;
 
     protected:
-        Sink(const SinkID &sink_id,
-             const std::optional<Loggable::ContractID> &contract_id = {});
+        Sink(const SinkID& sink_id,
+             const std::optional<Loggable::ContractID>& contract_id = {});
 
         virtual ~Sink() {}
 
@@ -49,27 +48,27 @@ namespace cc::core::logging
         SinkType sink_type() const;
 
     protected:
-        void set_sink_type(const SinkType &sink_type);
+        void set_sink_type(const SinkType& sink_type);
 
     public:
-        virtual void load_settings(const types::KeyValueMap &settings);
+        virtual void load_settings(const types::KeyValueMap& settings);
 
-        void set_contract_id(const std::optional<Loggable::ContractID> &contract_id);
+        void set_contract_id(const std::optional<Loggable::ContractID>& contract_id);
         std::optional<Loggable::ContractID> contract_id() const;
 
         virtual void set_threshold(status::Level threshold);
         status::Level threshold() const;
 
     public:
-        virtual bool is_applicable(const types::Loggable &loggable) const;
+        virtual bool is_applicable(const types::Loggable& loggable) const;
         virtual bool is_open() const;
         virtual void open();
         virtual void close();
-        virtual bool capture(const types::Loggable::ptr &loggable);
+        virtual bool capture(const types::Loggable::ptr& loggable);
 
     protected:
-        virtual bool try_handle_item(const types::Loggable::ptr &loggable);
-        virtual bool handle_item(const types::Loggable::ptr &loggable) = 0;
+        virtual bool try_handle_item(const types::Loggable::ptr& loggable);
+        virtual bool handle_item(const types::Loggable::ptr& loggable) = 0;
 
     private:
         bool is_open_;

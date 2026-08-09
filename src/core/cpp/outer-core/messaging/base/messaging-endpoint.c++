@@ -19,9 +19,9 @@ namespace cc::messaging
     //==========================================================================
     // @class Endpoint
 
-    Endpoint::Endpoint(const std::string &messaging_flavor,
-                       const std::string &endpoint_type,
-                       const std::string &channel_name)
+    Endpoint::Endpoint(const std::string& messaging_flavor,
+                       const std::string& endpoint_type,
+                       const std::string& channel_name)
         : messaging_flavor_(messaging_flavor),
           endpoint_type_(endpoint_type),
           channel_name_(channel_name),
@@ -77,7 +77,7 @@ namespace cc::messaging
     {
         std::vector<std::string> names;
         names.reserve(this->settings()->size());
-        for (const auto &[candidate_name, settings] : *this->settings())
+        for (const auto& [candidate_name, settings] : *this->settings())
         {
             if (candidate_name != DEFAULT_CHANNEL)
             {
@@ -92,14 +92,14 @@ namespace cc::messaging
     {
         if (!this->settings_->loaded())
         {
-            for (const std::string &component : {
+            for (const std::string& component : {
                      this->channel_name(),
                      std::string(PRODUCT_NAME),
                      std::string(PROJECT_NAME),
                      "common"s,
                  })
             {
-                if (const std::optional<fs::path> &path = this->settings_file(component))
+                if (const std::optional<fs::path>& path = this->settings_file(component))
                 {
                     logf_trace("%s loading settings from %s", *this, path.value());
                     this->settings_->load(path.value());
@@ -110,8 +110,8 @@ namespace cc::messaging
     }
 
     core::types::Value Endpoint::setting(
-        const std::string &key,
-        const core::types::Value &fallback) const
+        const std::string& key,
+        const core::types::Value& fallback) const
     {
         if (auto value = this->settings()->get(this->channel_name()).get(key))
         {
@@ -129,13 +129,13 @@ namespace cc::messaging
         }
     }
 
-    std::optional<fs::path> Endpoint::settings_file(const std::string &flavor) const
+    std::optional<fs::path> Endpoint::settings_file(const std::string& flavor) const
     {
         if (!flavor.empty())
         {
             return core::str::format("%,s-endpoints-%,s",
-                               this->messaging_flavor(),
-                               flavor);
+                                     this->messaging_flavor(),
+                                     flavor);
         }
         else
         {
@@ -143,7 +143,7 @@ namespace cc::messaging
         }
     }
 
-    void Endpoint::to_stream(std::ostream &stream) const
+    void Endpoint::to_stream(std::ostream& stream) const
     {
         stream << this->messaging_flavor()
                << " "

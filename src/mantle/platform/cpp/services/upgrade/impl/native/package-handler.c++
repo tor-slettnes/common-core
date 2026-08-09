@@ -18,12 +18,12 @@
 
 namespace cc::platform::upgrade::native
 {
-    PackageHandler::PackageHandler(const core::SettingsStore::ptr &settings)
+    PackageHandler::PackageHandler(const core::SettingsStore::ptr& settings)
         : settings(settings)
     {
     }
 
-    NativePackageInfo::ptr PackageHandler::install(const PackageSource &source)
+    NativePackageInfo::ptr PackageHandler::install(const PackageSource& source)
     {
         fs::path staging_folder = this->create_staging_folder();
         std::exception_ptr eptr;
@@ -54,7 +54,7 @@ namespace cc::platform::upgrade::native
         return package_info;
     }
 
-    void PackageHandler::finalize(const NativePackageInfo::ptr &package_info)
+    void PackageHandler::finalize(const NativePackageInfo::ptr& package_info)
     {
         core::platform::ArgVector argv = package_info->finalize_command();
         if (!argv.empty())
@@ -78,8 +78,8 @@ namespace cc::platform::upgrade::native
     }
 
     NativePackageInfo::ptr PackageHandler::install_unpacked(
-        const PackageSource &source,
-        const fs::path &staging_folder)
+        const PackageSource& source,
+        const fs::path& staging_folder)
     {
         auto package_info = std::make_shared<NativePackageInfo>(
             staging_folder / this->package_info_file(),
@@ -157,7 +157,7 @@ namespace cc::platform::upgrade::native
 
     void PackageHandler::unpack_from_fd(
         core::platform::FileDescriptor fd,
-        const fs::path &staging_folder) const
+        const fs::path& staging_folder) const
     {
         core::platform::ArgVector argv_gpgv = {
             "/usr/bin/gpgv",
@@ -167,7 +167,7 @@ namespace cc::platform::upgrade::native
             "2",
         };
 
-        if (const core::types::Value &keyring = this->settings->get(SETTING_KEYRING_FILE))
+        if (const core::types::Value& keyring = this->settings->get(SETTING_KEYRING_FILE))
         {
             argv_gpgv.insert(
                 argv_gpgv.end(),
@@ -204,8 +204,8 @@ namespace cc::platform::upgrade::native
     }
 
     void PackageHandler::check_gpg_verify_result(
-        const core::platform::Invocation &invocation,
-        const core::platform::InvocationResult &result) const
+        const core::platform::Invocation& invocation,
+        const core::platform::InvocationResult& result) const
     {
         switch (result.error_code())
         {
@@ -223,8 +223,8 @@ namespace cc::platform::upgrade::native
     }
 
     void PackageHandler::check_tar_unpack_result(
-        const core::platform::Invocation &invocation,
-        const core::platform::InvocationResult &result) const
+        const core::platform::Invocation& invocation,
+        const core::platform::InvocationResult& result) const
     {
         if (result.error_code())
         {
@@ -313,10 +313,10 @@ namespace cc::platform::upgrade::native
     }
 
     void PackageHandler::emit_upgrade_progress(
-        const std::optional<UpgradeProgress::State> &state,
-        const std::optional<std::string> &task_description,
-        const std::optional<UpgradeProgress::Fraction> &task_progress,
-        const std::optional<UpgradeProgress::Fraction> &total_progress,
+        const std::optional<UpgradeProgress::State>& state,
+        const std::optional<std::string>& task_description,
+        const std::optional<UpgradeProgress::Fraction>& task_progress,
+        const std::optional<UpgradeProgress::Fraction>& total_progress,
         const std::optional<core::status::Error::ptr> error) const
     {
         UpgradeProgress::ptr progress = signal_upgrade_progress.get_cached({});

@@ -26,8 +26,8 @@ namespace cc::platform::pubsub::zmq
         using This = Subscriber;
 
     protected:
-        Subscriber(const std::string &host_address = "",
-                   const std::string &channel_name = CONSUMER_CHANNEL,
+        Subscriber(const std::string& host_address = "",
+                   const std::string& channel_name = CONSUMER_CHANNEL,
                    Role role = Role::SATELLITE);
 
     public:

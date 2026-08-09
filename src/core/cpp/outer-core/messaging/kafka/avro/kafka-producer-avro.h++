@@ -17,18 +17,18 @@ namespace cc::kafka
         using Super = Producer;
 
     protected:
-        AvroProducer(const std::string &profile_name,
+        AvroProducer(const std::string& profile_name,
                      const core::types::KeyValueMap settings = {});
 
     public:
         using Super::produce;
 
         void produce(
-            const std::string &topic,
-            const avro::BaseValue &avro_wrapper,
-            const std::optional<core::dt::TimePoint> &timepoint = {},
-            const std::optional<std::string_view> &key = {},
-            const HeaderMap &headers = {},
-            const DeliveryReportCapture::CallbackData::ptr &cb_data = {});
+            const std::string& topic,
+            const avro::BaseValue& avro_wrapper,
+            const std::optional<core::dt::TimePoint>& timepoint = {},
+            const std::optional<std::string_view>& key = {},
+            const HeaderMap& headers = {},
+            const DeliveryReportCapture::CallbackData::ptr& cb_data = {});
     };
 }  // namespace cc::kafka

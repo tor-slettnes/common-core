@@ -16,7 +16,7 @@ namespace cc::core::types
     ///     UniqueClass
 
     template <class UniqueClass, class... Args>
-    [[nodiscard]] std::unique_ptr<UniqueClass> create_unique(Args &&...args);
+    [[nodiscard]] std::unique_ptr<UniqueClass> create_unique(Args&&... args);
 
     /// @class enable_create_unique
     /// @tparam UniqueClass
@@ -49,11 +49,11 @@ namespace cc::core::types
     {
     public:
         template <class... Args>
-        [[nodiscard]] static std::unique_ptr<UniqueBase> create_unique(Args &&...args);
+        [[nodiscard]] static std::unique_ptr<UniqueBase> create_unique(Args&&... args);
     };
 
     template <class T>
-    bool equivalent(const std::unique_ptr<T> &lhs, const std::unique_ptr<T> &rhs);
+    bool equivalent(const std::unique_ptr<T>& lhs, const std::unique_ptr<T>& rhs);
 }  // namespace cc::core::types
 
 #include "create-unique.i++"

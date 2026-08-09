@@ -24,14 +24,14 @@ namespace cc::core::status
         {Level::FATAL, "FATAL"},
     };
 
-    std::ostream &operator<<(std::ostream &stream, Level lvl)
+    std::ostream& operator<<(std::ostream& stream, Level lvl)
     {
         return level_names.to_stream(stream,
                                      lvl,
                                      "UNKNOWN_" + std::to_string(static_cast<uint>(lvl)));
     }
 
-    std::istream &operator>>(std::istream &stream, Level &lvl)
+    std::istream& operator>>(std::istream& stream, Level& lvl)
     {
         return level_names.from_stream(stream, &lvl);
     }

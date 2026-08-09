@@ -15,12 +15,12 @@ namespace cc::glib
     //==========================================================================
     // Error_Category
 
-    Error_Category::Error_Category(const std::string &classname)
+    Error_Category::Error_Category(const std::string& classname)
         : classname_(classname)
     {
     }
 
-    const char *Error_Category::name() const noexcept
+    const char* Error_Category::name() const noexcept
     {
         return this->classname_.c_str();
     }
@@ -36,8 +36,8 @@ namespace cc::glib
     //==========================================================================
     // Error
 
-    Error::Error(const Glib::Error &e,
-                 const std::optional<std::string> &preamble)
+    Error::Error(const Glib::Error& e,
+                 const std::optional<std::string>& preamble)
         : std::system_error(
               e.code(),
               glib_error_category,
@@ -45,8 +45,8 @@ namespace cc::glib
     {
     }
 
-    Error::Error(const Gio::DBus::Error &e,
-                 const std::optional<std::string> &preamble)
+    Error::Error(const Gio::DBus::Error& e,
+                 const std::optional<std::string>& preamble)
         : std::system_error(
               e.code(),
               gio_dbus_error_category,
@@ -55,13 +55,13 @@ namespace cc::glib
     }
 
     void log_exception(std::exception_ptr eptr,
-                       const std::string &preamble,
+                       const std::string& preamble,
                        core::status::Level level,
                        core::logging::Scope::ptr scope,
-                       const core::dt::TimePoint &tp,
-                       const std::filesystem::path &path,
-                       const int &lineno,
-                       const std::string &function)
+                       const core::dt::TimePoint& tp,
+                       const std::filesystem::path& path,
+                       const int& lineno,
+                       const std::string& function)
     {
         if (eptr)
         {
@@ -77,15 +77,15 @@ namespace cc::glib
             {
                 std::rethrow_exception(eptr);
             }
-            catch (const std::exception &e)
+            catch (const std::exception& e)
             {
                 msg->add(e);
             }
-            catch (const Gio::DBus::Error &e)
+            catch (const Gio::DBus::Error& e)
             {
                 msg->format("[Gio::Error::%s]: %s", e.code(), e.what());
             }
-            catch (const Glib::Error &e)
+            catch (const Glib::Error& e)
             {
                 msg->format("[Glib::Error::%s]: %s", e.code(), e.what());
             }
@@ -101,7 +101,7 @@ namespace cc::glib
 
 namespace Glib
 {
-    std::ostream &operator<<(std::ostream &stream, const Error &e)
+    std::ostream& operator<<(std::ostream& stream, const Error& e)
     {
         stream << e.what();
         return stream;

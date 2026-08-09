@@ -32,13 +32,13 @@ namespace cc::dds
         using DataReaderQos = ::dds::sub::qos::DataReaderQos;
 
         template <class T>
-        using Handler = std::function<void(core::signal::MappingAction, const T &)>;
+        using Handler = std::function<void(core::signal::MappingAction, const T&)>;
 
         template <class T>
         using DataReaderPtr = std::shared_ptr<::dds::sub::DataReader<T>>;
 
     public:
-        Subscriber(const std::string &channel_name, int domain_id);
+        Subscriber(const std::string& channel_name, int domain_id);
         ~Subscriber();
 
         void initialize() override;
@@ -62,7 +62,7 @@ namespace cc::dds
 
         template <class T>
         inline std::shared_ptr<::dds::sub::DataReader<T>>
-        create_reader(const std::string &topic_name,
+        create_reader(const std::string& topic_name,
                       bool reliable = false,
                       bool sync_latest = false)
         {
@@ -88,8 +88,8 @@ namespace cc::dds
 
         template <class T>
         inline std::shared_ptr<::dds::sub::DataReader<T>>
-        create_reader(const std::string &topic_name,
-                      const Handler<T> &handler,
+        create_reader(const std::string& topic_name,
+                      const Handler<T>& handler,
                       bool reliable = true,
                       bool sync_latest = false)
         {
@@ -124,8 +124,8 @@ namespace cc::dds
 
         template <class T>
         inline std::shared_ptr<::dds::sub::DataReader<T>>
-        create_signal_reader(core::signal::DataSignal<T> *signal,
-                             const std::string &topic_name = TYPE_NAME_BASE(T),
+        create_signal_reader(core::signal::DataSignal<T>* signal,
+                             const std::string& topic_name = TYPE_NAME_BASE(T),
                              bool reliable = true,
                              bool sync_latest = false)
         {
@@ -139,12 +139,12 @@ namespace cc::dds
     private:
         template <class T>
         static void
-        read_samples(const std::shared_ptr<::dds::sub::DataReader<T>> &reader,
-                     const Handler<T> &handler)
+        read_samples(const std::shared_ptr<::dds::sub::DataReader<T>>& reader,
+                     const Handler<T>& handler)
         {
             ::dds::sub::LoanedSamples<T> samples = reader->take();
             logf_trace("Took %d samples", std::distance(samples.begin(), samples.end()));
-            for (const auto &sample : samples)
+            for (const auto& sample : samples)
             {
                 if (sample.info().valid())
                 {

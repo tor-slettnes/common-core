@@ -65,12 +65,12 @@ namespace cc::platform::netconfig
     void Options::on_monitor_start()
     {
         FlagMap flags;
-        bool &except = flags["except"];
-        bool &show_global = flags["global"];
-        bool &show_connection = flags["connection"];
-        bool &show_active = flags["active"];
-        bool &show_accesspoint = flags["accesspoint"];
-        bool &show_device = flags["device"];
+        bool& except = flags["except"];
+        bool& show_global = flags["global"];
+        bool& show_connection = flags["connection"];
+        bool& show_active = flags["active"];
+        bool& show_accesspoint = flags["accesspoint"];
+        bool& show_device = flags["device"];
         this->get_flags(&flags, false);
 
         if (!show_global && !show_device &&
@@ -128,7 +128,7 @@ namespace cc::platform::netconfig
     }
 
     void Options::on_globaldata(
-        const netconfig::GlobalData::ptr &data)
+        const netconfig::GlobalData::ptr& data)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_globaldata(%s)\n",
@@ -138,7 +138,7 @@ namespace cc::platform::netconfig
 
     void Options::on_connection(
         core::signal::MappingAction action,
-        const std::string &key,
+        const std::string& key,
         netconfig::ConnectionData::ptr data)
     {
         core::str::format(std::cout,
@@ -151,7 +151,7 @@ namespace cc::platform::netconfig
 
     void Options::on_active_connection(
         core::signal::MappingAction action,
-        const std::string &key,
+        const std::string& key,
         netconfig::ActiveConnectionData::ptr data)
     {
         core::str::format(std::cout,
@@ -164,7 +164,7 @@ namespace cc::platform::netconfig
 
     void Options::on_accesspoint(
         core::signal::MappingAction action,
-        const std::string &key,
+        const std::string& key,
         netconfig::AccessPointData::ptr data)
     {
         core::str::format(std::cout,
@@ -177,7 +177,7 @@ namespace cc::platform::netconfig
 
     void Options::on_device(
         core::signal::MappingAction action,
-        const std::string &key,
+        const std::string& key,
         netconfig::DeviceData::ptr data)
     {
         core::str::format(std::cout,

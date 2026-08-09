@@ -11,7 +11,7 @@
 namespace cc::platform::vfs
 {
     RemoteContext::RemoteContext(
-        const std::weak_ptr<ProviderInterface> &provider)
+        const std::weak_ptr<ProviderInterface>& provider)
         : Context(),
           provider(provider)
     {

@@ -14,7 +14,7 @@
 
 namespace cc::zmq
 {
-    ProtoBufRequestHandler::ProtoBufRequestHandler(const std::string &interface_name)
+    ProtoBufRequestHandler::ProtoBufRequestHandler(const std::string& interface_name)
         : interface_name_(interface_name)
     {
     }
@@ -24,7 +24,7 @@ namespace cc::zmq
         return this->interface_name_;
     }
 
-    std::string ProtoBufRequestHandler::full_method_name(const std::string &basename) const
+    std::string ProtoBufRequestHandler::full_method_name(const std::string& basename) const
     {
         return this->interface_name() + "::" + basename;
     }
@@ -34,8 +34,8 @@ namespace cc::zmq
         this->clear_handlers();
     }
 
-    void ProtoBufRequestHandler::process_method_request(const cc::protobuf::request_reply::Request &request,
-                                                        cc::protobuf::request_reply::Reply *reply)
+    void ProtoBufRequestHandler::process_method_request(const cc::protobuf::request_reply::Request& request,
+                                                        cc::protobuf::request_reply::Reply* reply)
     {
         std::shared_ptr<ProtoBufError> error;
 
@@ -68,7 +68,7 @@ namespace cc::zmq
 
             std::vector<std::string> method_names;
             method_names.reserve(this->handler_map.size());
-            for (const auto &[name, method] : this->handler_map)
+            for (const auto& [name, method] : this->handler_map)
             {
                 method_names.push_back(name);
             }
@@ -86,7 +86,7 @@ namespace cc::zmq
 
         if (error)
         {
-            cc::protobuf::request_reply::Status *status = reply->mutable_status();
+            cc::protobuf::request_reply::Status* status = reply->mutable_status();
             status->set_code(error->status_code());
             cc::protobuf::encode(*error, status->mutable_details());
         }

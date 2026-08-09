@@ -32,16 +32,16 @@ namespace cc::platform::multilogger
         virtual void deinitialize() {}
 
         virtual void submit(
-            const core::types::Loggable::ptr &item) = 0;
+            const core::types::Loggable::ptr& item) = 0;
 
         virtual bool add_sink(
-            const SinkSpec &spec) = 0;
+            const SinkSpec& spec) = 0;
 
         virtual bool remove_sink(
-            const SinkID &id) = 0;
+            const SinkID& id) = 0;
 
         virtual SinkSpec get_sink_spec(
-            const SinkID &id) const = 0;
+            const SinkID& id) const = 0;
 
         virtual SinkSpecs get_all_sink_specs() const = 0;
 
@@ -54,14 +54,14 @@ namespace cc::platform::multilogger
         virtual FieldNames list_error_fields() const = 0;
 
         virtual std::shared_ptr<LogSource> listen(
-            const ListenerSpec &spec) = 0;
+            const ListenerSpec& spec) = 0;
 
     public:
-        void start_listening(const ListenerSpec &spec);
+        void start_listening(const ListenerSpec& spec);
         void stop_listening(bool wait = true);
 
     private:
-        void keep_listening(const ListenerSpec &spec);
+        void keep_listening(const ListenerSpec& spec);
 
     private:
         std::string identity_;

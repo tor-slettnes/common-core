@@ -22,7 +22,7 @@ namespace cc::platform::pubsub::grpc
     {
     protected:
         Reader(const std::unique_ptr<platform::pubsub::grpc::Relay::Stub>& stub,
-               const platform::pubsub::protobuf::Filters &filters);
+               const platform::pubsub::protobuf::Filters& filters);
 
     public:
         ~Reader();

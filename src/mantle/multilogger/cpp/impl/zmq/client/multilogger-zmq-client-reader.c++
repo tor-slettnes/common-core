@@ -11,7 +11,7 @@
 
 namespace cc::platform::multilogger::zmq
 {
-    ClientReader::ClientReader(const std::weak_ptr<cc::zmq::Subscriber> &subscriber)
+    ClientReader::ClientReader(const std::weak_ptr<cc::zmq::Subscriber>& subscriber)
         : HandlerBase({}, subscriber),
           QueueBase()
     {
@@ -23,7 +23,7 @@ namespace cc::platform::multilogger::zmq
         QueueBase::close();
     }
 
-    void ClientReader::handle_message(const cc::platform::multilogger::protobuf::Loggable &msg)
+    void ClientReader::handle_message(const cc::platform::multilogger::protobuf::Loggable& msg)
     {
         this->put(cc::protobuf::decode_loggable(msg));
     }

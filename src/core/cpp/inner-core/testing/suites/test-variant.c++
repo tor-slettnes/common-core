@@ -104,7 +104,6 @@ namespace cc::core::types
                               std::chrono::milliseconds(123));
         EXPECT_EQ(iso_dur_parsed, iso_dur_control);
 
-
         Value casual_dur_parsed = Value::from_literal("43h 32m 21s 123ms 345us 567ns");
         EXPECT_EQ(casual_dur_parsed.type(), ValueType::DURATION);
 
@@ -119,7 +118,7 @@ namespace cc::core::types
         Value tp_parsed = Value::from_literal("1969-07-20T20:17:00Z");
         EXPECT_EQ(tp_parsed.type(), ValueType::TIMEPOINT);
 
-        std::tm tm {
+        std::tm tm{
             .tm_sec = 0,
             .tm_min = 17,
             .tm_hour = 20,
@@ -131,7 +130,6 @@ namespace cc::core::types
         };
         Value tp_control(core::dt::to_timepoint(tm, false));
         EXPECT_EQ(tp_parsed, tp_control);
-
     }
 
     TEST(Variant, DeepCopy)
@@ -145,12 +143,12 @@ namespace cc::core::types
             {"my_map", core::types::KeyValueMap({{"one", 1}, {"two", "II"}, {"three", 3.14}})},
             {"my_list",
              core::types::ValueList({
-                        true,
-                        2,
-                        3.141592653589793238,
-                        "IV",
-                        core::types::KeyValueMap({{"one", "first"}, {"two", "second"}}),
-                 })},
+                 true,
+                 2,
+                 3.141592653589793238,
+                 "IV",
+                 core::types::KeyValueMap({{"one", "first"}, {"two", "second"}}),
+             })},
             {"my_timestamp", core::dt::Clock::now()},
             {"my_5_seconds", std::chrono::seconds(5)},
         };
@@ -172,9 +170,7 @@ namespace cc::core::types
         EXPECT_EQ(kvmap_copy.get("my_list").get(4).get("five").as_sint(), 5);
 
         EXPECT_NE(kvmap, kvmap_copy);
-
     }
-
 
     // TEST(StringTest, WideString)
     // {

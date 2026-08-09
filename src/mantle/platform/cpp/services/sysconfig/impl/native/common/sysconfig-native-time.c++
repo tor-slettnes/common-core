@@ -13,7 +13,7 @@
 
 namespace cc::platform::sysconfig::native
 {
-    TimeConfigProvider::TimeConfigProvider(const std::string &name)
+    TimeConfigProvider::TimeConfigProvider(const std::string& name)
         : Super(name)
     {
     }
@@ -24,7 +24,7 @@ namespace cc::platform::sysconfig::native
         logf_debug("Scheduling time updates each second");
         core::scheduler.add(
             this->name(),                        // handle
-            [](const core::dt::TimePoint &tp) {  // |
+            [](const core::dt::TimePoint& tp) {  // |
                 signal_time.emit(tp);            // |> Invocation
             },                                   // |
             1s,                                  // Interval
@@ -35,7 +35,7 @@ namespace cc::platform::sysconfig::native
         {
             this->emit_time_config();
         }
-        catch (const core::exception::UnsupportedError &e)
+        catch (const core::exception::UnsupportedError& e)
         {
             log_warning(this->name(), ": ", e);
         }
@@ -53,7 +53,7 @@ namespace cc::platform::sysconfig::native
         return core::dt::Clock::now();
     }
 
-    void TimeConfigProvider::set_current_time(const core::dt::TimePoint &tp)
+    void TimeConfigProvider::set_current_time(const core::dt::TimePoint& tp)
     {
         throw core::exception::UnsupportedError(
             "set_current_time() is not implemented on this platform");
@@ -65,7 +65,7 @@ namespace cc::platform::sysconfig::native
             "get_time_config() is not implemented on this platform");
     }
 
-    void TimeConfigProvider::set_time_config(const TimeConfig &config)
+    void TimeConfigProvider::set_time_config(const TimeConfig& config)
     {
         throw core::exception::UnsupportedError(
             "set_time_config() is not implemented on this platform");

@@ -13,7 +13,7 @@ namespace cc::core::platform
     //==========================================================================
     // Task
 
-    Task::Task(const std::string &handle, const Function &functor)
+    Task::Task(const std::string& handle, const Function& functor)
         : Function(functor),
           handle(handle)
     {
@@ -22,7 +22,7 @@ namespace cc::core::platform
     //==========================================================================
     // InitTask
 
-    InitTask::InitTask(const std::string &handle, const Function &functor)
+    InitTask::InitTask(const std::string& handle, const Function& functor)
         : Task(handle, functor)
     {
         init_tasks.insert(this);
@@ -36,7 +36,7 @@ namespace cc::core::platform
     //==========================================================================
     // ShutdownTask
 
-    ShutdownTask::ShutdownTask(const std::string &handle, const Function &functor)
+    ShutdownTask::ShutdownTask(const std::string& handle, const Function& functor)
         : Task(handle, functor)
     {
         signal_shutdown.connect(handle, *this);
@@ -50,7 +50,7 @@ namespace cc::core::platform
     //==========================================================================
     // ExitTask
 
-    ExitTask::ExitTask(const std::string &handle, const Function &functor)
+    ExitTask::ExitTask(const std::string& handle, const Function& functor)
         : Task(handle, functor)
     {
         exit_tasks.insert(this);
@@ -66,9 +66,9 @@ namespace cc::core::platform
 
     void TaskSet::execute() const
     {
-        for (const Task *task : *this)
+        for (const Task* task : *this)
         {
-           log_trace("Executing task: ", task->handle);
+            log_trace("Executing task: ", task->handle);
             (*task)();
         }
     }

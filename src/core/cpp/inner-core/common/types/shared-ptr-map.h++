@@ -38,7 +38,6 @@ namespace cc::core::types
             return item;
         }
 
-
         /// @brief
         ///    Create a new `shared_ptr<>` reference and insert into the map.
         /// @param[in] key

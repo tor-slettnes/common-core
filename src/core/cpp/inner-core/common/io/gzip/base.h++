@@ -22,8 +22,8 @@ namespace cc::core::io
     class GZipBuffer : public StreamBuffer
     {
     protected:
-        GZipBuffer(const fs::path &file_path,
-                   const std::string &open_mode);
+        GZipBuffer(const fs::path& file_path,
+                   const std::string& open_mode);
 
     protected:
         void throw_last_error() const;
@@ -33,4 +33,4 @@ namespace cc::core::io
         gzFile gzfile;
     };
 
-} // namespace cc::core::io
+}  // namespace cc::core::io

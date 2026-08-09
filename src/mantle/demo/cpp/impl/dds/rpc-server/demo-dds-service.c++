@@ -11,9 +11,9 @@
 
 namespace cc::demo::dds
 {
-    Service::Service(const ::dds::rpc::Server &server,
+    Service::Service(const ::dds::rpc::Server& server,
                      int domain_id,
-                     const std::shared_ptr<API> &api_provider)
+                     const std::shared_ptr<API>& api_provider)
         : Super(server,
                 CC::Demo::SERVICE_ID,
                 domain_id,

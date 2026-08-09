@@ -28,7 +28,7 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RemoteSwitch::add_dependency(
-        const DependencyRef &dependency,
+        const DependencyRef& dependency,
         bool allow_update,
         bool reevaluate)
     {
@@ -54,7 +54,7 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RemoteSwitch::add_interceptor(
-        const InterceptorRef &interceptor,
+        const InterceptorRef& interceptor,
         bool immediate)
     {
         return this->provider()->add_interceptor(
@@ -65,7 +65,7 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RemoteSwitch::remove_interceptor(
-        const InterceptorName &name)
+        const InterceptorName& name)
     {
         return this->provider()->remove_interceptor(
             name,           // name
@@ -73,19 +73,19 @@ namespace cc::platform::switchboard::dds
     }
 
     void RemoteSwitch::update_spec(
-        const std::optional<bool> &primary,
-        const SwitchAliases &aliases,
+        const std::optional<bool>& primary,
+        const SwitchAliases& aliases,
         bool replace_aliases,
-        const LocalizationMap &localizations,
+        const LocalizationMap& localizations,
         bool replace_localizations,
-        const DependencyMap &dependencies,
+        const DependencyMap& dependencies,
         bool replace_dependencies,
-        const InterceptorMap &interceptors,
+        const InterceptorMap& interceptors,
         bool replace_interceptors,
         bool update_state)
     {
         CC::Switchboard::SetSpecificationRequest req;
-        CC::Switchboard::Specification &spec = req.spec();
+        CC::Switchboard::Specification& spec = req.spec();
         spec.switch_name(this->name());
         if (primary)
         {
@@ -107,8 +107,8 @@ namespace cc::platform::switchboard::dds
 
     bool RemoteSwitch::set_target(
         State target_state,
-        const core::status::Error::ptr &error,
-        const core::types::KeyValueMap &attributes,
+        const core::status::Error::ptr& error,
+        const core::types::KeyValueMap& attributes,
         bool clear_existing,
         InvocationStyle invoke_interceptors,
         CascadeStyle cascade_descendants,
@@ -142,7 +142,7 @@ namespace cc::platform::switchboard::dds
     }
 
     core::types::KeyValueMap RemoteSwitch::get_attributes(
-            bool inherit) const
+        bool inherit) const
     {
         CC::Switchboard::GetAttributesRequest req;
         req.switch_name(this->name());
@@ -152,7 +152,7 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RemoteSwitch::set_attributes(
-        const core::types::KeyValueMap &attributes,
+        const core::types::KeyValueMap& attributes,
         bool clear_existing)
     {
         CC::Switchboard::SetAttributesRequest req;

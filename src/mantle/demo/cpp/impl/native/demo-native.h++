@@ -18,10 +18,10 @@ namespace cc::demo
         using Super = API;
 
     protected:
-        NativeImpl(const std::string &identity);
+        NativeImpl(const std::string& identity);
 
     public:  // Implementation
-        void say_hello(const Greeting &greeting) override;
+        void say_hello(const Greeting& greeting) override;
         TimeData get_current_time() override;
         void start_ticking() override;
         void stop_ticking() override;

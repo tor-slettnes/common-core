@@ -33,7 +33,7 @@ namespace cc::core::platform
         void stop() override;
 
     private:
-        static VOID WINAPI ServiceStart(DWORD argc, LPTSTR *argv);
+        static VOID WINAPI ServiceStart(DWORD argc, LPTSTR* argv);
         static VOID WINAPI ServiceStop();
         static VOID WINAPI ServiceCtrlHandler(DWORD);
         static VOID WINAPI ReportServiceStatus(DWORD current_state,

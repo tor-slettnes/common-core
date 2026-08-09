@@ -32,7 +32,7 @@ namespace cc::platform::sysconfig::native
         return fs::exists(TIMEDATECTL_PATH) && this->is_systemd_init();
     }
 
-    void SystemdTimeConfigProvider::set_current_time(const core::dt::TimePoint &tp)
+    void SystemdTimeConfigProvider::set_current_time(const core::dt::TimePoint& tp)
     {
         core::platform::process->invoke_check({
             TIMEDATECTL_PATH,
@@ -85,7 +85,7 @@ namespace cc::platform::sysconfig::native
         }
 
         core::types::ValueMap<std::string, std::string> valuemap;
-        for (const std::string &line : core::str::splitlines(result.stdout->str()))
+        for (const std::string& line : core::str::splitlines(result.stdout->str()))
         {
             std::vector<std::string> subparts = core::str::split(line, "=", 1);
             if (subparts.size() == 2)

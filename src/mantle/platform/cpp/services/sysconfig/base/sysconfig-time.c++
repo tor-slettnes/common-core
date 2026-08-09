@@ -18,12 +18,12 @@ namespace cc::platform::sysconfig
         {TSYNC_NTP, "TSYNC_NTP"},
     };
 
-    std::ostream &operator<<(std::ostream &stream, TimeSync sync)
+    std::ostream& operator<<(std::ostream& stream, TimeSync sync)
     {
         return tsync_symbols.to_stream(stream, sync, std::to_string(sync));
     }
 
-    std::istream &operator>>(std::istream &stream, TimeSync &sync)
+    std::istream& operator>>(std::istream& stream, TimeSync& sync)
     {
         return tsync_symbols.from_stream(stream, &sync, TSYNC_NONE);
     }
@@ -31,7 +31,7 @@ namespace cc::platform::sysconfig
     //==========================================================================
     // TimeConfig
 
-    std::ostream &operator<<(std::ostream &stream, const TimeConfig &tc)
+    std::ostream& operator<<(std::ostream& stream, const TimeConfig& tc)
     {
         stream << "{synchronization=" << tc.synchronization;
         if (!tc.servers.empty())

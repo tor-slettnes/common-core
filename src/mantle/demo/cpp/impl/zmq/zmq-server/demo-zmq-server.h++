@@ -11,7 +11,6 @@
 #include "zmq-protobuf-server.h++"
 #include "types/create-shared.h++"
 
-
 namespace cc::demo::zmq
 {
     class Server : public cc::zmq::ProtoBufServer,
@@ -21,9 +20,9 @@ namespace cc::demo::zmq
         using Super = cc::zmq::ProtoBufServer;
 
     protected:
-        Server(const std::shared_ptr<API> &provider,
-               const std::string &bind_address = "",
-               const std::string &channel_name = SERVICE_CHANNEL);
+        Server(const std::shared_ptr<API>& provider,
+               const std::string& bind_address = "",
+               const std::string& channel_name = SERVICE_CHANNEL);
     };
 
 }  // namespace cc::demo::zmq

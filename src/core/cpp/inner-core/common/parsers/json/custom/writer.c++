@@ -15,19 +15,19 @@ namespace cc::core::json
     {
     }
 
-    CustomWriter::CustomWriter(const fs::path &path)
+    CustomWriter::CustomWriter(const fs::path& path)
         : Super("CustomWriter", path)
     {
     }
 
-    void CustomWriter::write_stream(std::ostream &stream,
-                                    const types::Value &value,
+    void CustomWriter::write_stream(std::ostream& stream,
+                                    const types::Value& value,
                                     bool pretty) const
     {
         This::to_stream(stream, value, pretty);
     }
 
-    std::string CustomWriter::encoded(const types::Value &value,
+    std::string CustomWriter::encoded(const types::Value& value,
                                       bool pretty) const
     {
         std::stringstream ss;
@@ -35,10 +35,10 @@ namespace cc::core::json
         return ss.str();
     }
 
-    std::ostream &CustomWriter::to_stream(std::ostream &stream,
-                                          const types::Value &value,
+    std::ostream& CustomWriter::to_stream(std::ostream& stream,
+                                          const types::Value& value,
                                           bool pretty,
-                                          const std::string &indent)
+                                          const std::string& indent)
     {
         switch (value.type())
         {
@@ -61,7 +61,6 @@ namespace cc::core::json
                             pretty,
                             indent);
             break;
-
 
         case types::ValueType::DURATION:
             This::to_stream(stream,
@@ -89,10 +88,10 @@ namespace cc::core::json
         return stream;
     }
 
-    std::ostream &CustomWriter::to_stream(std::ostream &stream,
-                                          const types::KeyValueMap &kvmap,
+    std::ostream& CustomWriter::to_stream(std::ostream& stream,
+                                          const types::KeyValueMap& kvmap,
                                           bool pretty,
-                                          const std::string &indent)
+                                          const std::string& indent)
     {
         std::string sub_indent;
         std::string delimiter;
@@ -107,7 +106,7 @@ namespace cc::core::json
         }
 
         stream << "{";
-        for (const auto &[key, value] : kvmap)
+        for (const auto& [key, value] : kvmap)
         {
             stream << delimiter
                    << infix
@@ -122,10 +121,10 @@ namespace cc::core::json
         return stream;
     }
 
-    std::ostream &CustomWriter::to_stream(std::ostream &stream,
-                                          const types::ValueList &list,
+    std::ostream& CustomWriter::to_stream(std::ostream& stream,
+                                          const types::ValueList& list,
                                           bool pretty,
-                                          const std::string &indent)
+                                          const std::string& indent)
     {
         std::string sub_indent;
         std::string delimiter;
@@ -138,7 +137,7 @@ namespace cc::core::json
         }
 
         stream << "[";
-        for (const types::Value &value : list)
+        for (const types::Value& value : list)
         {
             stream << delimiter
                    << infix
@@ -151,10 +150,10 @@ namespace cc::core::json
         return stream;
     }
 
-    std::ostream &CustomWriter::to_stream(std::ostream &stream,
-                                          const types::TaggedValueList &tvlist,
+    std::ostream& CustomWriter::to_stream(std::ostream& stream,
+                                          const types::TaggedValueList& tvlist,
                                           bool pretty,
-                                          const std::string &indent)
+                                          const std::string& indent)
     {
         std::string sub_indent;
         std::string delimiter;
@@ -169,7 +168,7 @@ namespace cc::core::json
         }
 
         stream << "{";
-        for (const auto &[tag, value] : tvlist)
+        for (const auto& [tag, value] : tvlist)
         {
             if (tag)
             {

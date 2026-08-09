@@ -26,12 +26,12 @@ namespace cc::avro
                     "avro_generic_value_new");
     }
 
-    CompoundValue::CompoundValue(const std::string &json_schema)
+    CompoundValue::CompoundValue(const std::string& json_schema)
         : CompoundValue(avro::schema_from_json(json_schema), true)
     {
     }
 
-    CompoundValue::CompoundValue(const SchemaWrapper &wrapper)
+    CompoundValue::CompoundValue(const SchemaWrapper& wrapper)
         : CompoundValue(wrapper.as_avro_schema(), false)
     {
     }
@@ -47,29 +47,28 @@ namespace cc::avro
 
     avro_value_t CompoundValue::get_field_by_index(
         int index,
-        const std::optional<std::string> &expected_name) const
+        const std::optional<std::string>& expected_name) const
     {
         return avro::get_field_by_index(this->value, index, expected_name);
     }
 
     avro_value_t CompoundValue::get_field_by_name(
-        const std::string &name,
-        const std::optional<std::size_t> &expected_index) const
+        const std::string& name,
+        const std::optional<std::size_t>& expected_index) const
     {
         return avro::get_field_by_name(this->value, name, expected_index);
     }
 
     void CompoundValue::set_from_value(
-        const core::types::Value &value)
+        const core::types::Value& value)
     {
         avro::set_value(&this->value, value);
     }
 
     void CompoundValue::set_from_serialized(
-        const core::types::Bytes &bytes)
+        const core::types::Bytes& bytes)
     {
         avro::set_from_serialized(&this->value, bytes);
     }
-
 
 }  // namespace cc::avro

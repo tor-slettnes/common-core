@@ -16,7 +16,7 @@ namespace cc::core::types
     ///     SharedClass
 
     template <class SharedClass, class... Args>
-    [[nodiscard]] std::shared_ptr<SharedClass> create_shared(Args &&...args);
+    [[nodiscard]] std::shared_ptr<SharedClass> create_shared(Args&&... args);
 
     /// @class enable_create_shared
     /// @tparam SharedClass
@@ -51,7 +51,7 @@ namespace cc::core::types
         using ptr = std::shared_ptr<SharedBase>;
 
         template <class... Args>
-        [[nodiscard]] static std::shared_ptr<SharedBase> create_shared(Args &&...args);
+        [[nodiscard]] static std::shared_ptr<SharedBase> create_shared(Args&&... args);
     };
 
     template <class SharedClass, class SharedBase = SharedClass>
@@ -60,9 +60,8 @@ namespace cc::core::types
     {
     };
 
-
     template <class T>
-    bool equivalent(const std::shared_ptr<T> &lhs, const std::shared_ptr<T> &rhs);
+    bool equivalent(const std::shared_ptr<T>& lhs, const std::shared_ptr<T>& rhs);
 }  // namespace cc::core::types
 
 #include "create-shared.i++"

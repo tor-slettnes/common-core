@@ -21,17 +21,17 @@ namespace cc::zmq
         using Super = Endpoint;
 
     public:
-        Subscriber(const std::string &address,
-                   const std::string &channel_name,
+        Subscriber(const std::string& address,
+                   const std::string& channel_name,
                    Role role = Role::SATELLITE);
 
         ~Subscriber();
 
     public:
-        void add_handler(const std::shared_ptr<MessageHandler> &handler,
+        void add_handler(const std::shared_ptr<MessageHandler>& handler,
                          bool initialize = false);
 
-        void remove_handler(const std::shared_ptr<MessageHandler> &handler,
+        void remove_handler(const std::shared_ptr<MessageHandler>& handler,
                             bool deinitialize = false);
 
         void clear(bool deinitialize = true);
@@ -42,12 +42,12 @@ namespace cc::zmq
         virtual void listen();
 
     private:
-        void process_message(const MessageParts &parts);
+        void process_message(const MessageParts& parts);
 
-        void add_handler_filter(const std::shared_ptr<MessageHandler> &handler);
-        void remove_handler_filter(const std::shared_ptr<MessageHandler> &handler);
-        void invoke_handler(const std::shared_ptr<MessageHandler> &handler,
-                            const MessageParts &parts);
+        void add_handler_filter(const std::shared_ptr<MessageHandler>& handler);
+        void remove_handler_filter(const std::shared_ptr<MessageHandler>& handler);
+        void invoke_handler(const std::shared_ptr<MessageHandler>& handler,
+                            const MessageParts& parts);
 
     private:
         std::recursive_mutex mtx_;

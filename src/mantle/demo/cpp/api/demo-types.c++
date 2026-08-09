@@ -16,11 +16,11 @@ namespace cc::demo
     //==========================================================================
     /// @class Greeting
 
-    Greeting::Greeting(const std::string &text,
-                       const std::string &identity,
-                       const std::string &implementation,
-                       const core::dt::TimePoint &birth,
-                       const core::types::KeyValueMap &data)
+    Greeting::Greeting(const std::string& text,
+                       const std::string& identity,
+                       const std::string& implementation,
+                       const core::dt::TimePoint& birth,
+                       const core::types::KeyValueMap& data)
         : text(text),
           identity(identity),
           implementation(implementation),
@@ -29,7 +29,7 @@ namespace cc::demo
     {
     }
 
-    bool Greeting::operator==(const Greeting &other) const
+    bool Greeting::operator==(const Greeting& other) const
     {
         return ((this->text == other.text) &&
                 (this->identity == other.identity) &&
@@ -38,12 +38,12 @@ namespace cc::demo
                 (this->data == other.data));
     }
 
-    bool Greeting::operator!=(const Greeting &other) const
+    bool Greeting::operator!=(const Greeting& other) const
     {
         return !(*this == other);
     }
 
-    void Greeting::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void Greeting::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->extend({
             {"text", this->text},
@@ -71,35 +71,35 @@ namespace cc::demo
     /// @class TimeData
     /// @brief Time representation from the server.
 
-    TimeData::TimeData(const core::dt::TimePoint &tp)
+    TimeData::TimeData(const core::dt::TimePoint& tp)
         : timepoint(tp),
           localtime(core::dt::localtime(tp)),
           utctime(core::dt::gmtime(tp))
     {
     }
 
-    TimeData::TimeData(const core::dt::TimePoint &tp,
-                       const std::tm &localtime,
-                       const std::tm &utctime)
+    TimeData::TimeData(const core::dt::TimePoint& tp,
+                       const std::tm& localtime,
+                       const std::tm& utctime)
         : timepoint(tp),
           localtime(localtime),
           utctime(utctime)
     {
     }
 
-    bool TimeData::operator==(const TimeData &other) const
+    bool TimeData::operator==(const TimeData& other) const
     {
         return ((this->timepoint == other.timepoint) &&
                 (this->localtime == other.localtime) &&
                 (this->utctime == other.utctime));
     }
 
-    bool TimeData::operator!=(const TimeData &other) const
+    bool TimeData::operator!=(const TimeData& other) const
     {
         return !(*this == other);
     }
 
-    void TimeData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void TimeData::to_tvlist(core::types::TaggedValueList* tvlist) const
     {
         tvlist->append("epoch", core::dt::to_time_t(this->timepoint));
         tvlist->append("local", core::str::format("%T", this->localtime));

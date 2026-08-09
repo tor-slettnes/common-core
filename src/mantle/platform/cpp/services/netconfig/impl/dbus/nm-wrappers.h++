@@ -69,9 +69,9 @@ namespace cc::platform::netconfig::dbus
     ///    Reference to object proxy for the specified type/key.
 
     template <class WrapperType>
-    inline std::shared_ptr<WrapperType> lookup(const Key &key, bool required)
+    inline std::shared_ptr<WrapperType> lookup(const Key& key, bool required)
     {
-        for (const auto &[path, obj] : dbus::container.instances<WrapperType>())
+        for (const auto& [path, obj] : dbus::container.instances<WrapperType>())
         {
             if (obj->key() == key)
             {
@@ -98,11 +98,11 @@ namespace cc::platform::netconfig::dbus
     inline core::types::ValueMap<Key, std::shared_ptr<DataType>> datamap()
     {
         core::types::ValueMap<Key, std::shared_ptr<DataType>> map;
-        for (const auto &[path, ref] : dbus::container.instances<WrapperType>())
+        for (const auto& [path, ref] : dbus::container.instances<WrapperType>())
         {
             map.emplace(ref->key(), ref);
         }
         return map;
     }
 
-} // namespace cc::platform::netconfig::dbus
+}  // namespace cc::platform::netconfig::dbus

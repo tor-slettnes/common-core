@@ -22,8 +22,8 @@ namespace cc::platform::multilogger::zmq
 
     protected:
         MessageWriter(
-            const std::shared_ptr<API> &provider,
-            const std::shared_ptr<cc::zmq::Publisher> &publisher);
+            const std::shared_ptr<API>& provider,
+            const std::shared_ptr<cc::zmq::Publisher>& publisher);
 
         virtual ~MessageWriter();
 
@@ -36,7 +36,7 @@ namespace cc::platform::multilogger::zmq
         void stop();
         void worker();
 
-        void on_log_item(const core::types::Loggable::ptr &msg);
+        void on_log_item(const core::types::Loggable::ptr& msg);
 
     private:
         std::shared_ptr<API> provider;

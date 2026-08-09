@@ -10,6 +10,6 @@
 
 namespace cc::core::platform
 {
-    void register_linux_providers(const std::string &exec_name);
+    void register_linux_providers(const std::string& exec_name);
     void unregister_linux_providers();
 }  // namespace cc::core::platform

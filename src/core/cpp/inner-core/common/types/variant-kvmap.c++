@@ -37,9 +37,9 @@ namespace cc::core::types
     }
 
     Value KeyValueMap::get_nested(
-            const std::vector<std::string> &path,
-            const Value &fallback,
-            bool ignoreCase) const noexcept
+        const std::vector<std::string>& path,
+        const Value& fallback,
+        bool ignoreCase) const noexcept
     {
         return this->try_get_nested(path, ignoreCase).value_or(fallback);
     }
@@ -48,7 +48,7 @@ namespace cc::core::types
         const std::string& key,
         bool ignoreCase) const noexcept
     {
-        if (const auto &value = this->try_get(key, ignoreCase))
+        if (const auto& value = this->try_get(key, ignoreCase))
         {
             return value->get_valuelist_ptr();
         }
@@ -62,7 +62,7 @@ namespace cc::core::types
         const std::string& key,
         bool ignoreCase) const noexcept
     {
-        if (const auto &value = this->try_get(key, ignoreCase))
+        if (const auto& value = this->try_get(key, ignoreCase))
         {
             return value->get_tvlist_ptr();
         }
@@ -76,7 +76,7 @@ namespace cc::core::types
         const std::string& key,
         bool ignoreCase) const noexcept
     {
-        if (const auto &value = this->try_get(key, ignoreCase))
+        if (const auto& value = this->try_get(key, ignoreCase))
         {
             return value->get_kvmap_ptr();
         }
@@ -120,7 +120,7 @@ namespace cc::core::types
         Value value = KeyValueMap::create_shared(*this);
         for (const std::string& element : path)
         {
-            if (const auto &next = value.try_get(element))
+            if (const auto& next = value.try_get(element))
             {
                 value = next.value();
             }
@@ -132,12 +132,11 @@ namespace cc::core::types
         return value;
     }
 
-
     std::optional<Value> KeyValueMap::try_get_nonempty(
         const std::string& key,
         bool ignoreCase) const noexcept
     {
-        if (const auto &value = this->try_get(key, ignoreCase))
+        if (const auto& value = this->try_get(key, ignoreCase))
         {
             if (value->has_nonempty_value())
             {
@@ -153,7 +152,7 @@ namespace cc::core::types
     {
         for (const std::string& candidate : candidates)
         {
-            if (const auto &value = this->try_get(candidate, ignoreCase))
+            if (const auto& value = this->try_get(candidate, ignoreCase))
             {
                 return value;
             }

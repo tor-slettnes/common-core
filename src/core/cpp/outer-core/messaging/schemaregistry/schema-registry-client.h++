@@ -38,33 +38,33 @@ namespace cc::sr
 
     protected:
         SchemaRegistryClient(
-            const std::string &registry_url,
-            const std::string &registry_name = "",
-            const std::string &messaging_flavor = "SchemaRegistry");
+            const std::string& registry_url,
+            const std::string& registry_name = "",
+            const std::string& messaging_flavor = "SchemaRegistry");
 
     public:
         std::string registry_url() const;
-        void set_registry_url(const std::string &url);
+        void set_registry_url(const std::string& url);
 
         SchemaRecord fetch_by_id(
             SchemaID id) const;
 
         SchemaRecord fetch_by_subject(
-            const SchemaSubject &subject) const;
+            const SchemaSubject& subject) const;
 
         SchemaRecord register_schema(
-            const SchemaSubject &subject,
-            const core::types::Value &schema);
+            const SchemaSubject& subject,
+            const core::types::Value& schema);
 
         SchemaRecord register_schema(
-            const SchemaSubject &subject,
-            const SchemaText &schema_text);
+            const SchemaSubject& subject,
+            const SchemaText& schema_text);
 
     private:
         std::string extract_name(
-            const core::types::Value &response) const;
+            const core::types::Value& response) const;
 
         core::types::Value extract_schema(
-            const core::types::Value &response) const;
+            const core::types::Value& response) const;
     };
 }  // namespace cc::sr

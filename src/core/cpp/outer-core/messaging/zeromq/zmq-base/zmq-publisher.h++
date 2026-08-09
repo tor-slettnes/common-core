@@ -24,16 +24,16 @@ namespace cc::zmq
         using ptr = std::shared_ptr<This>;
 
     public:
-        Publisher(const std::string &address,
-                  const std::string &channel_name,
+        Publisher(const std::string& address,
+                  const std::string& channel_name,
                   Role role = Role::HOST,
                   steady_clock::duration warmup_delay = std::chrono::milliseconds(100));
 
     public:
         void initialize() override;
 
-        void publish(const std::optional<core::types::ByteVector> &header,
-                     const core::types::ByteVector &bytes);
+        void publish(const std::optional<core::types::ByteVector>& header,
+                     const core::types::ByteVector& bytes);
 
     private:
         steady_clock::time_point warmup_deadline;

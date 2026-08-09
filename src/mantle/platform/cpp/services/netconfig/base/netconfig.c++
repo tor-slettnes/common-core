@@ -12,7 +12,7 @@ namespace cc::platform::netconfig
     //==========================================================================
     // Provider class
 
-    ConnectionData::ptr ProviderInterface::get_connection(const Key &key) const
+    ConnectionData::ptr ProviderInterface::get_connection(const Key& key) const
     {
         try
         {
@@ -24,11 +24,11 @@ namespace cc::platform::netconfig
         }
     }
 
-    ConnectionData::ptr ProviderInterface::get_connection_by_ssid(const SSID &ssid) const
+    ConnectionData::ptr ProviderInterface::get_connection_by_ssid(const SSID& ssid) const
     {
-        for (auto &[name, ref] : this->get_connections())
+        for (auto& [name, ref] : this->get_connections())
         {
-            if (auto *wifi = ref->wifi_data())
+            if (auto* wifi = ref->wifi_data())
             {
                 if (wifi->ssid == ssid)
                 {
@@ -39,7 +39,7 @@ namespace cc::platform::netconfig
         return {};
     }
 
-    ActiveConnectionData::ptr ProviderInterface::get_active_connection(const Key &key) const
+    ActiveConnectionData::ptr ProviderInterface::get_active_connection(const Key& key) const
     {
         try
         {
@@ -53,7 +53,7 @@ namespace cc::platform::netconfig
 
     ActiveConnectionData::ptr ProviderInterface::get_active_connection(ConnectionType type) const
     {
-        for (const auto &[key, ref] : this->get_active_connections())
+        for (const auto& [key, ref] : this->get_active_connections())
         {
             if (ref->type == type)
             {
@@ -63,7 +63,7 @@ namespace cc::platform::netconfig
         return {};
     }
 
-    AccessPointData::ptr ProviderInterface::get_ap(const Key &key) const
+    AccessPointData::ptr ProviderInterface::get_ap(const Key& key) const
     {
         try
         {
@@ -78,7 +78,7 @@ namespace cc::platform::netconfig
     SSIDMap ProviderInterface::get_aps_by_ssid() const
     {
         SSIDMap map;
-        for (const auto &[key, ap] : this->get_aps())
+        for (const auto& [key, ap] : this->get_aps())
         {
             if (!ap->ssid.empty())
             {
@@ -99,14 +99,14 @@ namespace cc::platform::netconfig
                       std::greater<core::types::Byte>>
             mmap;
 
-        for (const auto &[ssid, ap] : this->get_aps_by_ssid())
+        for (const auto& [ssid, ap] : this->get_aps_by_ssid())
         {
             mmap.emplace(ap->strength, ap);
         }
 
         std::vector<AccessPointData::ptr> aps;
         aps.reserve(mmap.size());
-        for (const auto &[strength, ap] : mmap)
+        for (const auto& [strength, ap] : mmap)
         {
             aps.push_back(ap);
         }
@@ -115,7 +115,7 @@ namespace cc::platform::netconfig
 
     AccessPointData::ptr ProviderInterface::get_active_ap() const
     {
-        for (const auto &[key, device] : this->get_devices())
+        for (const auto& [key, device] : this->get_devices())
         {
             if (auto ap = this->get_active_ap(device))
             {
@@ -125,9 +125,9 @@ namespace cc::platform::netconfig
         return {};
     }
 
-    AccessPointData::ptr ProviderInterface::get_active_ap(const DeviceData::ptr &dev) const
+    AccessPointData::ptr ProviderInterface::get_active_ap(const DeviceData::ptr& dev) const
     {
-        if (auto *wifi = dev->wifi_data())
+        if (auto* wifi = dev->wifi_data())
         {
             if (wifi->active_accesspoint.size())
             {
@@ -144,9 +144,9 @@ namespace cc::platform::netconfig
     {
         std::set<SSID> active;
 
-        for (const auto &[key, device] : this->get_devices())
+        for (const auto& [key, device] : this->get_devices())
         {
-            if (auto *wifi = device->wifi_data())
+            if (auto* wifi = device->wifi_data())
             {
                 if (wifi->active_accesspoint.size())
                 {
@@ -176,7 +176,7 @@ namespace cc::platform::netconfig
         }
     }
 
-    DeviceData::ptr ProviderInterface::get_device(const Key &key) const
+    DeviceData::ptr ProviderInterface::get_device(const Key& key) const
     {
         try
         {
@@ -190,7 +190,7 @@ namespace cc::platform::netconfig
 
     DeviceData::ptr ProviderInterface::get_device(NMDeviceType type) const
     {
-        for (const auto &[key, ref] : this->get_devices())
+        for (const auto& [key, ref] : this->get_devices())
         {
             if ((ref->type == type) &&
                 (ref->state != NM_DEVICE_STATE_UNKNOWN) &&
@@ -204,9 +204,9 @@ namespace cc::platform::netconfig
 
     WifiTuple ProviderInterface::get_active_wifi_data() const
     {
-        for (const auto &[key, dev] : this->get_devices())
+        for (const auto& [key, dev] : this->get_devices())
         {
-            if (const WirelessDeviceData *wifi = dev->wifi_data())
+            if (const WirelessDeviceData* wifi = dev->wifi_data())
             {
                 if (wifi->active_accesspoint.size())
                 {
@@ -222,7 +222,7 @@ namespace cc::platform::netconfig
 
     bool ProviderInterface::has_gateway() const
     {
-        for (const auto &[key, ac] : this->get_active_connections())
+        for (const auto& [key, ac] : this->get_active_connections())
         {
             if (ac->has_gateway())
             {

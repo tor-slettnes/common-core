@@ -11,18 +11,18 @@
 
 namespace cc::core::parsers
 {
-    BaseWriter::BaseWriter(const std::string &name)
+    BaseWriter::BaseWriter(const std::string& name)
         : name(name)
     {
     }
 
-    BaseWriter::BaseWriter(const std::string &name, const fs::path &path)
+    BaseWriter::BaseWriter(const std::string& name, const fs::path& path)
         : name(name),
           stream_(std::make_unique<std::ofstream>(path))
     {
     }
 
-    void BaseWriter::write(const types::Value &value, bool pretty, bool newline)
+    void BaseWriter::write(const types::Value& value, bool pretty, bool newline)
     {
         assertf(this->stream_, "Cannot write JSON object with no output file");
         this->write_stream(*this->stream_, value, pretty);
@@ -32,20 +32,20 @@ namespace cc::core::parsers
         }
     }
 
-    void BaseWriter::append_file(const fs::path &path,
-                                 const types::Value &value,
+    void BaseWriter::append_file(const fs::path& path,
+                                 const types::Value& value,
                                  bool pretty) const
     {
         std::ofstream fstream(path, std::ios_base::ate);
         this->write_stream(fstream, value, pretty);
     }
 
-    void BaseWriter::write_file(const fs::path &path,
-                                const types::Value &value,
+    void BaseWriter::write_file(const fs::path& path,
+                                const types::Value& value,
                                 bool pretty) const
     {
         std::ofstream fstream(path);
         this->write_stream(fstream, value, pretty);
     }
 
-}  // namespace cc::core::json
+}  // namespace cc::core::parsers

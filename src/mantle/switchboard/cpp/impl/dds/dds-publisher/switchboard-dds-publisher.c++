@@ -13,7 +13,7 @@
 
 namespace cc::platform::switchboard::dds
 {
-    Publisher::Publisher(const std::string &name, int domain_id)
+    Publisher::Publisher(const std::string& name, int domain_id)
         : Super(name, domain_id),
           spec_writer(this->create_writer<CC::Switchboard::Specification>(
               CC::Switchboard::SPEC_TOPIC,  // topic_name
@@ -50,8 +50,8 @@ namespace cc::platform::switchboard::dds
     }
 
     void Publisher::on_spec_update(core::signal::MappingAction action,
-                                   const SwitchName &name,
-                                   const Specification &spec)
+                                   const SwitchName& name,
+                                   const Specification& spec)
     {
         logf_trace("Sending switch %r %s spec update: %s", name, action, spec);
         auto encoded_spec = idl::encoded<CC::Switchboard::Specification>(name, spec);
@@ -59,8 +59,8 @@ namespace cc::platform::switchboard::dds
     }
 
     void Publisher::on_status_update(core::signal::MappingAction action,
-                                     const SwitchName &name,
-                                     const Status &status)
+                                     const SwitchName& name,
+                                     const Status& status)
     {
         logf_trace("Sending switch %r %s status update: %s", name, action, status);
         auto encoded_status = idl::encoded<CC::Switchboard::Status>(name, status);

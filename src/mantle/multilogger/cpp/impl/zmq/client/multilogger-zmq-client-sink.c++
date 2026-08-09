@@ -11,8 +11,8 @@
 
 namespace cc::platform::multilogger::zmq
 {
-    ClientSink::ClientSink(const std::string &sink_id,
-                           const std::shared_ptr<cc::zmq::Publisher> &publisher)
+    ClientSink::ClientSink(const std::string& sink_id,
+                           const std::shared_ptr<cc::zmq::Publisher>& publisher)
         : Super(sink_id),
           host_(DEFAULT_HOST),
           external_publisher_(bool(publisher)),
@@ -20,15 +20,15 @@ namespace cc::platform::multilogger::zmq
     {
     }
 
-    void ClientSink::load_settings(const core::types::KeyValueMap &settings)
+    void ClientSink::load_settings(const core::types::KeyValueMap& settings)
     {
         Sink::load_settings(settings);
         this->load_client_settings(settings);
     }
 
-    void ClientSink::load_client_settings(const core::types::KeyValueMap &settings)
+    void ClientSink::load_client_settings(const core::types::KeyValueMap& settings)
     {
-        if (const core::types::Value &value = settings.get(SETTING_HOST))
+        if (const core::types::Value& value = settings.get(SETTING_HOST))
         {
             this->set_host(value.as_string());
         }
@@ -39,7 +39,7 @@ namespace cc::platform::multilogger::zmq
         return this->host_;
     }
 
-    void ClientSink::set_host(const std::string &address)
+    void ClientSink::set_host(const std::string& address)
     {
         this->host_ = address;
     }
@@ -80,7 +80,7 @@ namespace cc::platform::multilogger::zmq
         Super::close();
     }
 
-    bool ClientSink::handle_item(const core::types::Loggable::ptr &loggable)
+    bool ClientSink::handle_item(const core::types::Loggable::ptr& loggable)
     {
         if (this->writer_)
         {

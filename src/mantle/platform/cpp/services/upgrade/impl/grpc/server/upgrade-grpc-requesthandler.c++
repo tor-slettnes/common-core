@@ -18,15 +18,15 @@ namespace cc::platform::upgrade::grpc
     }
 
     RequestHandler::RequestHandler(
-        const std::shared_ptr<upgrade::ProviderInterface> &provider)
+        const std::shared_ptr<upgrade::ProviderInterface>& provider)
         : provider(provider)
     {
     }
 
     ::grpc::Status RequestHandler::Scan(
-        ::grpc::ServerContext *context,
-        const platform::upgrade::protobuf::PackageSource *request,
-        platform::upgrade::protobuf::PackageCatalogue *response)
+        ::grpc::ServerContext* context,
+        const platform::upgrade::protobuf::PackageSource* request,
+        platform::upgrade::protobuf::PackageCatalogue* response)
     {
         try
         {
@@ -43,9 +43,9 @@ namespace cc::platform::upgrade::grpc
     }
 
     ::grpc::Status RequestHandler::ListSources(
-        ::grpc::ServerContext *context,
-        const ::google::protobuf::Empty *request,
-        platform::upgrade::protobuf::PackageSources *response)
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        platform::upgrade::protobuf::PackageSources* response)
     {
         try
         {
@@ -59,9 +59,9 @@ namespace cc::platform::upgrade::grpc
     }
 
     ::grpc::Status RequestHandler::ListAvailable(
-        ::grpc::ServerContext *context,
-        const platform::upgrade::protobuf::PackageSource *request,
-        platform::upgrade::protobuf::PackageCatalogue *response)
+        ::grpc::ServerContext* context,
+        const platform::upgrade::protobuf::PackageSource* request,
+        platform::upgrade::protobuf::PackageCatalogue* response)
     {
         try
         {
@@ -77,9 +77,9 @@ namespace cc::platform::upgrade::grpc
     }
 
     ::grpc::Status RequestHandler::BestAvailable(
-        ::grpc::ServerContext *context,
-        const platform::upgrade::protobuf::PackageSource *request,
-        platform::upgrade::protobuf::PackageInfo *response)
+        ::grpc::ServerContext* context,
+        const platform::upgrade::protobuf::PackageSource* request,
+        platform::upgrade::protobuf::PackageInfo* response)
     {
         try
         {
@@ -95,9 +95,9 @@ namespace cc::platform::upgrade::grpc
     }
 
     ::grpc::Status RequestHandler::Install(
-        ::grpc::ServerContext *context,
-        const platform::upgrade::protobuf::InstallRequest *request,
-        platform::upgrade::protobuf::PackageInfo *response)
+        ::grpc::ServerContext* context,
+        const platform::upgrade::protobuf::InstallRequest* request,
+        platform::upgrade::protobuf::PackageInfo* response)
     {
         try
         {
@@ -114,9 +114,9 @@ namespace cc::platform::upgrade::grpc
     }
 
     ::grpc::Status RequestHandler::Finalize(
-        ::grpc::ServerContext *context,
-        const ::google::protobuf::Empty *request,
-        ::google::protobuf::Empty *response)
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ::google::protobuf::Empty* response)
     {
         try
         {
@@ -130,9 +130,9 @@ namespace cc::platform::upgrade::grpc
     }
 
     ::grpc::Status RequestHandler::Watch(
-        ::grpc::ServerContext *context,
-        const cc::protobuf::signal::Filter *filter,
-        ::grpc::ServerWriter<platform::upgrade::protobuf::Signal> *writer)
+        ::grpc::ServerContext* context,
+        const cc::protobuf::signal::Filter* filter,
+        ::grpc::ServerWriter<platform::upgrade::protobuf::Signal>* writer)
     {
         try
         {
@@ -147,4 +147,4 @@ namespace cc::platform::upgrade::grpc
         }
     }
 
-} // namespace cc::platform::upgrade::grpc
+}  // namespace cc::platform::upgrade::grpc

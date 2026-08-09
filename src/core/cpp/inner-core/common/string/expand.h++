@@ -34,9 +34,9 @@ namespace cc::core::str
     ///     Keys that do not exist in the map are replaced by an empty string.
 
     template <class V = std::string, class MapType = std::unordered_map<std::string, V>>
-    std::string expand(const std::string &format,
-                       const MapType &kvmap,
-                       const std::optional<V> &fallback = "")
+    std::string expand(const std::string& format,
+                       const MapType& kvmap,
+                       const std::optional<V>& fallback = "")
     {
         static const std::regex rx("\\{(\\w+)\\}");
 
@@ -52,7 +52,7 @@ namespace cc::core::str
             {
                 ss << kvmap.at(matchit->str(1));
             }
-            catch (const std::out_of_range &)
+            catch (const std::out_of_range&)
             {
                 ss << fallback.value_or(matchit->str(0));
             }

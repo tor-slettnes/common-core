@@ -9,9 +9,9 @@
 
 namespace cc::platform::switchboard::dds
 {
-    Service::Service(const ::dds::rpc::Server &server,
+    Service::Service(const ::dds::rpc::Server& server,
                      int domain_id,
-                     const std::shared_ptr<Provider> &api_provider)
+                     const std::shared_ptr<Provider>& api_provider)
         : Super(server,
                 CC::Switchboard::SERVICE_INTERFACE_ID,
                 domain_id,
@@ -30,4 +30,4 @@ namespace cc::platform::switchboard::dds
         Super::deinitialize();
         switchboard::stop_event_capture();
     }
-}  // namespace cc::platform::switchboard
+}  // namespace cc::platform::switchboard::dds

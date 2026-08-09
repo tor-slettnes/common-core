@@ -103,7 +103,7 @@ namespace cc::core::argparse
         }
     }
 
-    std::ofstream ServerOptions::openpidfile(const fs::path &pidfile)
+    std::ofstream ServerOptions::openpidfile(const fs::path& pidfile)
     {
         std::ofstream pidstream;
         if (!pidfile.empty())

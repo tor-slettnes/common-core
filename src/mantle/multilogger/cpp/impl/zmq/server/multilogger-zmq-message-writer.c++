@@ -13,8 +13,8 @@
 namespace cc::platform::multilogger::zmq
 {
     MessageWriter::MessageWriter(
-        const std::shared_ptr<API> &provider,
-        const std::shared_ptr<cc::zmq::Publisher> &publisher)
+        const std::shared_ptr<API>& provider,
+        const std::shared_ptr<cc::zmq::Publisher>& publisher)
         : Super(publisher),
           provider(provider),
           keep_writing(false),
@@ -70,7 +70,7 @@ namespace cc::platform::multilogger::zmq
         {
             while (this->keep_writing)
             {
-                if (const auto &item = this->listener->get())
+                if (const auto& item = this->listener->get())
                 {
                     this->forward(
                         cc::protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(

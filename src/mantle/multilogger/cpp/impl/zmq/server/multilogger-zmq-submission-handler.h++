@@ -22,14 +22,13 @@ namespace cc::platform::multilogger::zmq
         using Super = cc::zmq::ProtoBufMessageHandler<cc::platform::multilogger::protobuf::Loggable>;
 
     protected:
-        SubmissionHandler(const std::shared_ptr<API> &provider,
-                          const std::weak_ptr<cc::zmq::Subscriber> &subscriber);
+        SubmissionHandler(const std::shared_ptr<API>& provider,
+                          const std::weak_ptr<cc::zmq::Subscriber>& subscriber);
 
     protected:
-        void handle_message(const cc::platform::multilogger::protobuf::Loggable &msg) override;
+        void handle_message(const cc::platform::multilogger::protobuf::Loggable& msg) override;
 
     private:
         std::shared_ptr<API> provider;
     };
-}
-
+}  // namespace cc::platform::multilogger::zmq

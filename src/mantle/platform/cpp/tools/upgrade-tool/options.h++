@@ -32,16 +32,16 @@ namespace cc::platform::upgrade
         void on_monitor_end() override;
 
         void on_scan_progress(
-            const upgrade::ScanProgress::ptr &progress);
+            const upgrade::ScanProgress::ptr& progress);
 
         void on_upgrade_available(
-            const upgrade::PackageInfo::ptr &package_info);
+            const upgrade::PackageInfo::ptr& package_info);
 
         void on_upgrade_pending(
-            const upgrade::PackageInfo::ptr &package_info);
+            const upgrade::PackageInfo::ptr& package_info);
 
         void on_upgrade_progress(
-            const upgrade::UpgradeProgress::ptr &progress);
+            const upgrade::UpgradeProgress::ptr& progress);
 
     private:
         void get_current();
@@ -53,7 +53,7 @@ namespace cc::platform::upgrade
         void finalize();
 
     private:
-        vfs::Path vfspath(const std::string &path);
+        vfs::Path vfspath(const std::string& path);
 
     private:
         std::string signal_handle;

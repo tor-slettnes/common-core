@@ -21,24 +21,24 @@ namespace cc::core::status
     {
     }
 
-    Error::Error(const Error &src)
+    Error::Error(const Error& src)
     {
         *this = src;
     }
 
-    Error::Error(Error &&src)
+    Error::Error(Error&& src)
     {
         *this = std::move(src);
     }
 
-    Error::Error(const std::string &text,
+    Error::Error(const std::string& text,
                  Domain domain,
-                 const std::string &origin,
-                 const Code &code,
-                 const Symbol &symbol,
+                 const std::string& origin,
+                 const Code& code,
+                 const Symbol& symbol,
                  Level level,
-                 const dt::TimePoint &timepoint,
-                 const types::KeyValueMap &attributes)
+                 const dt::TimePoint& timepoint,
+                 const types::KeyValueMap& attributes)
         : Super(text, level, origin, timepoint, attributes),
           domain_(domain),
           code_(code),
@@ -46,7 +46,7 @@ namespace cc::core::status
     {
     }
 
-    Error::Error(const types::KeyValueMap &kvmap)
+    Error::Error(const types::KeyValueMap& kvmap)
         : Super(kvmap, Level::ERROR),
           domain_(kvmap.get(FIELD_DOMAIN).convert_to<Domain>()),
           code_(kvmap.get(FIELD_CODE).as_sint64()),
@@ -54,7 +54,7 @@ namespace cc::core::status
     {
     }
 
-    Error &Error::operator=(Error &&other) noexcept
+    Error& Error::operator=(Error&& other) noexcept
     {
         Super::operator=(std::move(other));
         std::swap(this->domain_, other.domain_);
@@ -63,7 +63,7 @@ namespace cc::core::status
         return *this;
     }
 
-    Error &Error::operator=(const Error &other) noexcept
+    Error& Error::operator=(const Error& other) noexcept
     {
         Super::operator=(other);
         this->domain_ = other.domain();
@@ -72,9 +72,9 @@ namespace cc::core::status
         return *this;
     }
 
-    bool Error::equivalent(const Event &other) const noexcept
+    bool Error::equivalent(const Event& other) const noexcept
     {
-        if (auto *that = dynamic_cast<const Error *>(&other))
+        if (auto* that = dynamic_cast<const Error*>(&other))
         {
             return Super::equivalent(other) &&
                    (this->domain() == that->domain()) &&
@@ -130,7 +130,7 @@ namespace cc::core::status
         return "Error";
     }
 
-    void Error::to_stream(std::ostream &stream) const
+    void Error::to_stream(std::ostream& stream) const
     {
         stream << "["
                << this->class_name()
@@ -144,7 +144,7 @@ namespace cc::core::status
         }
     }
 
-    void Error::to_literal_stream(std::ostream &stream) const
+    void Error::to_literal_stream(std::ostream& stream) const
     {
         return Super::to_stream(stream);
     }
@@ -167,7 +167,7 @@ namespace cc::core::status
         return This::error_fields();
     }
 
-    types::Value Error::get_field_as_value(const std::string &field_name) const
+    types::Value Error::get_field_as_value(const std::string& field_name) const
     {
         if (field_name == This::FIELD_DOMAIN)
         {

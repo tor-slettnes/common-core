@@ -21,22 +21,22 @@ namespace cc::platform::switchboard
         using This = Provider;
 
     protected:
-        Provider(const std::string &implementation);
+        Provider(const std::string& implementation);
 
     public:  // Operations to manage switches
-        const std::string &implementation() const;
+        const std::string& implementation() const;
 
         virtual void initialize() {}
         virtual void deinitialize() {}
         virtual bool available() const = 0;
         virtual bool wait_ready() const = 0;
 
-        bool load(const fs::path &filename,
+        bool load(const fs::path& filename,
                   bool replace_specifications = false,
                   bool replace_statuses = true,
                   InvocationStyle invoke_interceptors = InvocationStyle::ALL);
 
-        bool save(const fs::path &filename,
+        bool save(const fs::path& filename,
                   bool include_specifications = false,
                   bool include_statuses = true);
 
@@ -62,7 +62,7 @@ namespace cc::platform::switchboard
         /// @return
         ///    A map of switches
         virtual SwitchMap get_selected_switches(
-            const SwitchSelection &selection) const;
+            const SwitchSelection& selection) const;
 
         /// @brief
         ///    Find an existing switch, or create a new one if missing
@@ -71,7 +71,7 @@ namespace cc::platform::switchboard
         /// @param[in] active
         ///    Initial position, if added
         virtual SwitchRef get_or_add_switch(
-            const SwitchName &name,
+            const SwitchName& name,
             bool active = false);
 
         /// @brief Find a switch
@@ -80,10 +80,10 @@ namespace cc::platform::switchboard
         /// @returns
         ///    Iterator to the switch if found, or this->end() otherwise.
         virtual SwitchMap::const_iterator find(
-            const SwitchName &name) const;
+            const SwitchName& name) const;
 
         virtual SwitchMap::iterator find(
-            const SwitchName &name);
+            const SwitchName& name);
 
         /// @brief Find a switch
         /// @param[in] name
@@ -93,7 +93,7 @@ namespace cc::platform::switchboard
         ///    `std::out_of_range` exception, otherwise return an empty
         ///    reference.
         virtual SwitchRef get_switch(
-            const SwitchName &name,
+            const SwitchName& name,
             bool required = false) const;
 
         /// @brief Add a new switch, or update an existing one
@@ -102,7 +102,7 @@ namespace cc::platform::switchboard
         /// @param[in] active
         ///    Initial position
         virtual std::pair<SwitchRef, bool> add_switch(
-            const SwitchName &name,
+            const SwitchName& name,
             bool active = false) = 0;
 
         /// @brief Remove an existing switch
@@ -113,7 +113,7 @@ namespace cc::platform::switchboard
         /// @return
         ///    Boolean indicating whether switch existed or not
         virtual bool remove_switch(
-            const SwitchName &name,
+            const SwitchName& name,
             bool propagate = true) = 0;
 
         /// @brief Remove all switches, optionally reloading defaults
@@ -136,7 +136,7 @@ namespace cc::platform::switchboard
         ///     Invoke interceptors if setting the initial state
 
         virtual uint import_switches(
-            const core::types::KeyValueMap &declarations,
+            const core::types::KeyValueMap& declarations,
             bool replace_specifications = false,
             bool replace_statuses = true,
             InvocationStyle invoke_interceptors = InvocationStyle::ALL) = 0;
@@ -154,7 +154,7 @@ namespace cc::platform::switchboard
         ///     These may subsequently be imported.
 
         virtual core::types::KeyValueMap export_switches(
-            const std::optional<SwitchSelection> &selection,
+            const std::optional<SwitchSelection>& selection,
             bool include_specifications = false,
             bool include_statuses = true) const = 0;
 
@@ -180,8 +180,8 @@ namespace cc::platform::switchboard
         ///      `true` iff a new interceptor was added.
 
         virtual bool add_interceptor(
-            const InterceptorRef &interceptor,
-            const SwitchSelection &switch_selection,
+            const InterceptorRef& interceptor,
+            const SwitchSelection& switch_selection,
             bool immediate = false,
             bool future = true) = 0;
 
@@ -197,15 +197,15 @@ namespace cc::platform::switchboard
         ///     `true` if a removal took place.
 
         virtual bool remove_interceptor(
-            const InterceptorName &name,
-            const std::optional<SwitchSelection> &switch_selection = {}) = 0;
+            const InterceptorName& name,
+            const std::optional<SwitchSelection>& switch_selection = {}) = 0;
 
     protected:
         SwitchMap find_regex_matches(
-            const std::vector<std::string> &patterns) const;
+            const std::vector<std::string>& patterns) const;
 
         SwitchMap find_glob_matches(
-            const std::vector<std::string> &patterns) const;
+            const std::vector<std::string>& patterns) const;
 
     protected:
         /// @brief
@@ -217,7 +217,7 @@ namespace cc::platform::switchboard
 
         template <class SwitchType>
         SwitchRef sync_switch(core::signal::MappingAction action,
-                              const SwitchName &switch_name)
+                              const SwitchName& switch_name)
         {
             switch (action)
             {
@@ -249,7 +249,7 @@ namespace cc::platform::switchboard
 
         template <class SwitchType, class... Args>
         std::pair<std::shared_ptr<SwitchType>, bool>
-        find_or_insert(const std::string &switch_name, Args &&...args)
+        find_or_insert(const std::string& switch_name, Args&&... args)
         {
             if (auto sw = std::dynamic_pointer_cast<SwitchType>(this->switches.get(switch_name)))
             {

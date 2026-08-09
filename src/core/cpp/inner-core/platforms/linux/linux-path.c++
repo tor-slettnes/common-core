@@ -9,7 +9,7 @@
 
 namespace cc::core::platform
 {
-    LinuxPathProvider::LinuxPathProvider(const std::string &exec_name)
+    LinuxPathProvider::LinuxPathProvider(const std::string& exec_name)
         : Super("LinuxPathProvider", exec_name),
           exec_path_(this->readlink("/proc/self/exe"))
     {

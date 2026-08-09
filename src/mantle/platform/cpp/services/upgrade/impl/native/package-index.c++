@@ -21,7 +21,7 @@ namespace cc::platform::upgrade::native
     }
 
     void PackageIndex::emit_scan_progress(
-        const std::optional<PackageSource> &source) const
+        const std::optional<PackageSource>& source) const
     {
         auto progress = std::make_shared<ScanProgress>();
         if (source)

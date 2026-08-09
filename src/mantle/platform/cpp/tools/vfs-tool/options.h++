@@ -30,13 +30,13 @@ namespace cc::platform::vfs
 
         void on_context(
             core::signal::MappingAction action,
-            const std::string &key,
-            const Context::ptr &cxt);
+            const std::string& key,
+            const Context::ptr& cxt);
 
         void on_context_in_use(
             core::signal::MappingAction action,
-            const std::string &key,
-            const Context::ptr &cxt);
+            const std::string& key,
+            const Context::ptr& cxt);
 
     private:
         void get_contexts();
@@ -59,9 +59,9 @@ namespace cc::platform::vfs
         void upload();
 
     private:
-        std::string get_context_arg(const std::string &what = "context name");
-        Path get_vfspath_arg(const std::string &what = "VFS path");
-        Path vfspath(const std::string &path);
+        std::string get_context_arg(const std::string& what = "context name");
+        Path get_vfspath_arg(const std::string& what = "VFS path");
+        Path vfspath(const std::string& path);
 
     private:
         std::string signal_handle;

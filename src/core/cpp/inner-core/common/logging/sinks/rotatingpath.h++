@@ -34,13 +34,13 @@ namespace cc::core::logging
         using This = RotatingPath;
 
     protected:
-        RotatingPath(const std::string &sink_name,
-                     const fs::path &default_suffix);
+        RotatingPath(const std::string& sink_name,
+                     const fs::path& default_suffix);
 
         virtual ~RotatingPath();
 
     protected:
-        void load_rotation(const types::KeyValueMap &settings);
+        void load_rotation(const types::KeyValueMap& settings);
         std::unordered_map<std::string, std::string> expansions() const;
 
     public:
@@ -48,10 +48,10 @@ namespace cc::core::logging
         fs::path default_suffix() const;
 
         std::string filename_template() const;
-        void set_filename_template(const std::string &name_template);
+        void set_filename_template(const std::string& name_template);
 
         fs::path log_folder() const;
-        void set_log_folder(const fs::path &path);
+        void set_log_folder(const fs::path& path);
 
         fs::path current_path() const;
         fs::path current_suffix() const;
@@ -63,28 +63,28 @@ namespace cc::core::logging
         void set_compress_after_use(bool use_local_time);
 
         dt::DateTimeInterval rotation_interval() const;
-        void set_rotation_interval(const dt::DateTimeInterval &interval);
+        void set_rotation_interval(const dt::DateTimeInterval& interval);
 
         dt::DateTimeInterval expiration_interval() const;
-        void set_expiration_interval(const dt::DateTimeInterval &interval);
+        void set_expiration_interval(const dt::DateTimeInterval& interval);
 
     protected:
-        virtual void open_file(const dt::TimePoint &tp);
+        virtual void open_file(const dt::TimePoint& tp);
         virtual void close_file() {}
 
-        virtual void rotate(const dt::TimePoint &tp);
-        void check_rotation(const dt::TimePoint &tp);
+        virtual void rotate(const dt::TimePoint& tp);
+        void check_rotation(const dt::TimePoint& tp);
         dt::TimePoint current_rotation() const;
-        void update_current_path(const dt::TimePoint &tp,
+        void update_current_path(const dt::TimePoint& tp,
                                  bool create_directory = true);
-        fs::path construct_path(const dt::TimePoint &tp) const;
+        fs::path construct_path(const dt::TimePoint& tp) const;
 
-        void check_expiration(const dt::TimePoint &tp);
-        void check_expiration(const dt::TimePoint &expiration_time,
-                              const fs::path &path);
+        void check_expiration(const dt::TimePoint& tp);
+        void check_expiration(const dt::TimePoint& expiration_time,
+                              const fs::path& path);
 
         void compress_all_after_use();
-        void compress(const fs::path &logfile);
+        void compress(const fs::path& logfile);
 
     public:
         static fs::path default_root_folder;

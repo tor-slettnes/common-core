@@ -20,7 +20,7 @@ namespace cc::kafka
     //--------------------------------------------------------------------------
     // LogCapture
 
-    void LogCapture::event_cb(RdKafka::Event &event)
+    void LogCapture::event_cb(RdKafka::Event& event)
     {
         core::status::Level level = This::level_map.get(
             event.severity(),
@@ -52,20 +52,20 @@ namespace cc::kafka
     //--------------------------------------------------------------------------
     // DeliveryReportCapture
 
-    void DeliveryReportCapture::set_callback(const Callback &callback)
+    void DeliveryReportCapture::set_callback(const Callback& callback)
     {
         this->callback = callback;
     }
 
-    void *DeliveryReportCapture::add_callback_data(const CallbackData::ptr &data)
+    void* DeliveryReportCapture::add_callback_data(const CallbackData::ptr& data)
     {
         std::scoped_lock lock(this->callback_mutex);
-        void *key = data.get();
+        void* key = data.get();
         this->callback_map.insert_or_assign(key, data);
         return key;
     }
 
-    void DeliveryReportCapture::dr_cb(RdKafka::Message &message)
+    void DeliveryReportCapture::dr_cb(RdKafka::Message& message)
     {
         if (this->callback)
         {

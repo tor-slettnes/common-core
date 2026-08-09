@@ -16,8 +16,8 @@ namespace cc::grpc
     {
     public:
         ServerBuilder(
-            const std::string &listen_address = {},
-            const std::shared_ptr<::grpc::ServerCredentials> &credentials =
+            const std::string& listen_address = {},
+            const std::shared_ptr<::grpc::ServerCredentials>& credentials =
                 ::grpc::InsecureServerCredentials(),
             bool dnssd_advertise = true,
             bool enable_reflection = true);
@@ -41,17 +41,17 @@ namespace cc::grpc
             bool add_listener);
 
         void add_listener(
-            const std::string &address);
+            const std::string& address);
 
         void add_dnssd(
             std::shared_ptr<RequestHandlerBase> handler,
-            const std::string &address);
+            const std::string& address);
 
         void add_interceptors();
 
         void adjust_max(
             uint candidate,
-            uint *target);
+            uint* target);
 
     private:
         std::vector<std::shared_ptr<RequestHandlerBase>> handlers_;

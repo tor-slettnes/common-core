@@ -20,14 +20,14 @@ namespace cc::platform::switchboard::grpc
         this->connect<switchboard::Specification>(
             Signal::kSpecification,
             switchboard::signal_spec,
-            [](const Specification &spec, Signal *msg) {
+            [](const Specification& spec, Signal* msg) {
                 cc::protobuf::encode(spec, msg->mutable_specification());
             });
 
         this->connect<switchboard::Status>(
             Signal::kStatus,
             switchboard::signal_status,
-            [](const Status &status, Signal *msg) {
+            [](const Status& status, Signal* msg) {
                 cc::protobuf::encode(status, msg->mutable_status());
             });
 

@@ -138,12 +138,12 @@ namespace cc::platform::vfs
     void Options::get_contexts()
     {
         FlagMap flags;
-        bool &removable = flags["removable"];
-        bool &open = flags["open"];
-        bool &verbose = flags["verbose"];
+        bool& removable = flags["removable"];
+        bool& open = flags["open"];
+        bool& verbose = flags["verbose"];
         this->get_flags(&flags);
 
-        for (const auto &[key, cxt] : vfs::get_contexts(removable, open))
+        for (const auto& [key, cxt] : vfs::get_contexts(removable, open))
         {
             if (verbose)
             {
@@ -189,7 +189,7 @@ namespace cc::platform::vfs
     void Options::get_dir()
     {
         vfs::Path vpath = this->get_vfspath_arg();
-        for (const auto &[path, stats] : vfs::get_directory(vpath))
+        for (const auto& [path, stats] : vfs::get_directory(vpath))
         {
             std::stringstream ss;
             ss << stats;
@@ -205,7 +205,7 @@ namespace cc::platform::vfs
     {
         vfs::Path vpath = this->get_vfspath_arg();
 
-        for (const auto &[path, stats] : vfs::get_directory(vpath))
+        for (const auto& [path, stats] : vfs::get_directory(vpath))
         {
             std::cout << vpath / path << std::endl;
         }
@@ -220,7 +220,7 @@ namespace cc::platform::vfs
         {
             masks.push_back(*next_mask);
         }
-        for (const auto &[path, props] : vfs::locate(vpath, masks))
+        for (const auto& [path, props] : vfs::locate(vpath, masks))
         {
             std::cout << vpath / path << std::endl;
         }
@@ -244,7 +244,7 @@ namespace cc::platform::vfs
     {
         vfs::Path vpath = this->get_vfspath_arg();
         FlagMap flags;
-        bool &force = flags["force"];
+        bool& force = flags["force"];
         this->get_flags(&flags);
 
         vfs::remove(vpath, force = force);
@@ -254,7 +254,7 @@ namespace cc::platform::vfs
     {
         vfs::Path vpath = this->get_vfspath_arg();
         FlagMap flags;
-        bool &force = flags["force"];
+        bool& force = flags["force"];
         this->get_flags(&flags);
         vfs::create_folder(vpath, force);
     }
@@ -273,7 +273,7 @@ namespace cc::platform::vfs
 
         if (this->args.size())
         {
-            for (const std::string &name : this->args)
+            for (const std::string& name : this->args)
             {
                 try
                 {
@@ -287,7 +287,7 @@ namespace cc::platform::vfs
         }
         else
         {
-            for (const auto &[name, value] : attributes)
+            for (const auto& [name, value] : attributes)
             {
                 core::str::format(std::cout, "%20s = %r\n", name, value);
             }
@@ -349,17 +349,17 @@ namespace cc::platform::vfs
                           chunks);
     }
 
-    std::string Options::get_context_arg(const std::string &what)
+    std::string Options::get_context_arg(const std::string& what)
     {
         return this->get_arg(what);
     }
 
-    vfs::Path Options::get_vfspath_arg(const std::string &what)
+    vfs::Path Options::get_vfspath_arg(const std::string& what)
     {
         return this->vfspath(this->get_arg(what));
     }
 
-    vfs::Path Options::vfspath(const std::string &path)
+    vfs::Path Options::vfspath(const std::string& path)
     {
         std::vector<std::string> parts = core::str::split(path, ":", 1, true);
         return {parts.at(0),

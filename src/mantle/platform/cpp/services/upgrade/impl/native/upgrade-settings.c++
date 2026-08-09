@@ -20,7 +20,7 @@ namespace cc::platform::upgrade::native
         {
             settings->load(SETTINGS_FILE);
         }
-        catch (const std::exception &e)
+        catch (const std::exception& e)
         {
             std::cerr << e << std::endl;
         }

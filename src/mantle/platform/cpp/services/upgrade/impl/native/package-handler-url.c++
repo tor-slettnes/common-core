@@ -14,13 +14,13 @@
 
 namespace cc::platform::upgrade::native
 {
-    URLPackageHandler::URLPackageHandler(const core::SettingsStore::ptr &settings)
+    URLPackageHandler::URLPackageHandler(const core::SettingsStore::ptr& settings)
         : Super(settings)
     {
     }
 
-    void URLPackageHandler::unpack(const PackageSource &source,
-                                   const fs::path &staging_folder)
+    void URLPackageHandler::unpack(const PackageSource& source,
+                                   const fs::path& staging_folder)
     {
         if (source.empty())
         {
@@ -31,8 +31,8 @@ namespace cc::platform::upgrade::native
         this->unpack_url(source.url(), staging_folder);
     }
 
-    void URLPackageHandler::unpack_url(const URL &url,
-                                       const fs::path &staging_folder) const
+    void URLPackageHandler::unpack_url(const URL& url,
+                                       const fs::path& staging_folder) const
     {
         core::platform::Pipe pipe = core::platform::process->create_pipe();
         cc::http::HTTPClient http;
@@ -79,7 +79,7 @@ namespace cc::platform::upgrade::native
     cc::http::HTTPClient::ReceiveFunction URLPackageHandler::piper(
         core::platform::FileDescriptor fd)
     {
-        return [=](const char *data, std::size_t size) -> void {
+        return [=](const char* data, std::size_t size) -> void {
             core::platform::process->write_fd(fd, data, size);
         };
     }

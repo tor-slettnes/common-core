@@ -11,7 +11,7 @@
 
 namespace cc::platform::upgrade::grpc
 {
-    void register_providers(const std::string &host,
+    void register_providers(const std::string& host,
                             bool wait_for_ready,
                             bool start_watching)
     {
