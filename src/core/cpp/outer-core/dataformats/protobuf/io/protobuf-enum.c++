@@ -55,15 +55,17 @@ namespace cc::protobuf
     }
 
     std::optional<int> enum_value(
-        std::string name,
+        const std::string& name,
         const google::protobuf::EnumDescriptor* enum_desc,
-        const std::optional<std::string>& delimiter)
+        const std::string& delimiter)
     {
-        std::string prefix =
-            delimiter ? common_prefix(enum_desc, *delimiter)
-                      : "";
-
-        if (const auto* vd = enum_desc->FindValueByName(prefix + name))
+        if (const auto* vd = enum_desc->FindValueByName(name))
+        {
+            return vd->number();
+        }
+        else if (const auto* vd = enum_desc->FindValueByName(
+                     common_prefix(enum_desc, delimiter) +
+                     name))
         {
             return vd->number();
         }

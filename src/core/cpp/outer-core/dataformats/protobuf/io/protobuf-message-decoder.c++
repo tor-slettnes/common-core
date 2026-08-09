@@ -101,7 +101,7 @@ namespace cc::protobuf
             }
             else
             {
-                return this->to_tvlist();
+                return this->to_kvmap();
             }
         };
     }
@@ -137,7 +137,7 @@ namespace cc::protobuf
         {
             if (this->reflection->FieldSize(this->msg, &fd) > 0)
             {
-                result = this->mapped_field_to_tvlist(fd);
+                result = this->mapped_field_to_kvmap(fd);
             }
         }
         else if (fd.is_repeated())
@@ -295,12 +295,10 @@ namespace cc::protobuf
         return vlist;
     }
 
-    core::types::TaggedValueListPtr MessageDecoder::mapped_field_to_tvlist(
+    core::types::KeyValueMapPtr MessageDecoder::mapped_field_to_kvmap(
         const google::protobuf::FieldDescriptor& fd) const
     {
-        auto tvlist = std::make_shared<core::types::TaggedValueList>();
-        int size = this->reflection->FieldSize(this->msg, &fd);
-        tvlist->reserve(size);
+        auto kvmap = std::make_shared<core::types::KeyValueMap>();
 
         // A ProtoBuf map is really a repeated field comprising nested messages
         // of the form
@@ -316,6 +314,7 @@ namespace cc::protobuf
         // We create a nested `MessageDecoder()` instance to access these as
         // a TaggedValueList.
 
+        int size = this->reflection->FieldSize(this->msg, &fd);
         for (int n = 0; n < size; n++)
         {
             auto field_data = MessageDecoder(
@@ -323,11 +322,11 @@ namespace cc::protobuf
                                   this->enums_as_strings)
                                   .to_tvlist();
 
-            tvlist->emplace_back(
+            kvmap->insert_or_assign(
                 field_data->front().as_string(),  // key
                 field_data->back());              // value
         }
-        return tvlist;
+        return kvmap;
     }
 
     core::types::Value MessageDecoder::message_to_value(
@@ -339,8 +338,9 @@ namespace cc::protobuf
     //--------------------------------------------------------------------------
     // to_value() method
 
-    core::types::Value to_value(const google::protobuf::Message& msg,
-                                bool enums_as_strings)
+    core::types::Value to_value(
+        const google::protobuf::Message& msg,
+        bool enums_as_strings)
     {
         return MessageDecoder(msg, enums_as_strings).to_value();
     }

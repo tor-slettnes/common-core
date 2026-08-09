@@ -25,9 +25,9 @@ namespace cc::protobuf
         const std::string& fallback = "");
 
     std::optional<int> enum_value(
-        std::string name,
+        const std::string& name,
         const google::protobuf::EnumDescriptor* enum_desc,
-        const std::optional<std::string>& delimiter = "_");
+        const std::string& delimiter = "_");
 
     std::string common_prefix(
         const google::protobuf::EnumDescriptor* desc,

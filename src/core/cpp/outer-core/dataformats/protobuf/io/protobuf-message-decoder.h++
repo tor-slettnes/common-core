@@ -51,7 +51,7 @@ namespace cc::protobuf
         core::types::ValueListPtr repeated_field_to_valuelist(
             const google::protobuf::FieldDescriptor& fd) const;
 
-        core::types::TaggedValueListPtr mapped_field_to_tvlist(
+        core::types::KeyValueMapPtr mapped_field_to_kvmap(
             const google::protobuf::FieldDescriptor& fd) const;
 
         core::types::Value message_to_value(
@@ -67,7 +67,8 @@ namespace cc::protobuf
     //--------------------------------------------------------------------------
     // to_value() method
 
-    core::types::Value to_value(const google::protobuf::Message& msg,
-                                bool enums_as_strings = true);
+    core::types::Value to_value(
+        const google::protobuf::Message& msg,
+        bool enums_as_strings = true);
 
 }  // namespace cc::protobuf

@@ -10,7 +10,7 @@
 namespace cc::core::status
 {
     /// Names for printing.
-    const types::SymbolMap<Domain> DomainNames = {
+    const types::SymbolMap<Domain> domain_names = {
         {Domain::NONE, "NONE"},
         {Domain::APPLICATION, "APPLICATION"},
         {Domain::SYSTEM, "SYSTEM"},
@@ -23,7 +23,7 @@ namespace cc::core::status
     {
         try
         {
-            stream << DomainNames.at(domain);
+            stream << domain_names.at(domain);
         }
         catch (const std::out_of_range&)
         {
@@ -34,7 +34,7 @@ namespace cc::core::status
 
     std::istream& operator>>(std::istream& stream, Domain& domain)
     {
-        return DomainNames.from_stream(stream, &domain, Domain::NONE, false);
+        return domain_names.from_stream(stream, &domain, Domain::NONE, false);
     }
 
 }  // namespace cc::core::status

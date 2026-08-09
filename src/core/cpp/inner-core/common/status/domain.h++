@@ -29,7 +29,7 @@ namespace cc::core::status
         SERVICE       // Status code from a (network) service (HTTP, SMTP, ...)
     };
 
-    extern const types::SymbolMap<Domain> DomainNames;
+    extern const types::SymbolMap<Domain> domain_names;
 
     std::ostream& operator<<(std::ostream& stream, Domain domain);
     std::istream& operator>>(std::istream& stream, Domain& domain);

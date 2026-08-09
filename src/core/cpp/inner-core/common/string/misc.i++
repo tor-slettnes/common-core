@@ -12,10 +12,10 @@ namespace cc::core::str
 {
     template <class InputIt>
     inline void join(
-        std::ostream &out,
-        const InputIt &begin,
-        const InputIt &end,
-        const std::string &delimiter,
+        std::ostream& out,
+        const InputIt& begin,
+        const InputIt& end,
+        const std::string& delimiter,
         bool keep_empties,
         bool quoted)
     {
@@ -43,9 +43,9 @@ namespace cc::core::str
 
     template <class InputIt>
     [[nodiscard]] inline std::string join(
-        const InputIt &begin,
-        const InputIt &end,
-        const std::string &delimiter,
+        const InputIt& begin,
+        const InputIt& end,
+        const std::string& delimiter,
         bool keep_empties,
         bool quoted)
     {
@@ -56,7 +56,7 @@ namespace cc::core::str
 
     template <class... Args>
     [[nodiscard]] inline std::string to_string(
-        const Args &...args) noexcept
+        const Args&... args) noexcept
     {
         std::stringstream ss;
         (ss << ... << args);
