@@ -53,7 +53,6 @@ namespace cc::core::logging
 
     Message& Message::operator=(Message&& other) noexcept
     {
-        Super::operator=(std::move(other));
         std::swap(this->scope_, other.scope_);
         std::swap(this->path_, other.path_);
         std::swap(this->lineno_, other.lineno_);
@@ -62,6 +61,7 @@ namespace cc::core::logging
         std::swap(this->thread_name_, other.thread_name_);
         std::swap(this->task_name_, other.task_name_);
         std::swap(this->host_, other.host_);
+        Super::operator=(std::move(other));
         return *this;
     }
 

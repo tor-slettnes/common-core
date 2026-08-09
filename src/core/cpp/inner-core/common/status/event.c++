@@ -47,10 +47,10 @@ namespace cc::core::status
 
     Event& Event::operator=(Event&& other) noexcept
     {
-        Super::operator=(std::move(other));
         std::swap(this->text_, other.text_);
         std::swap(this->level_, other.level_);
         std::swap(this->origin_, other.origin_);
+        Super::operator=(std::move(other));
         return *this;
     }
 

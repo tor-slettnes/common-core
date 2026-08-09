@@ -56,10 +56,10 @@ namespace cc::core::status
 
     Error& Error::operator=(Error&& other) noexcept
     {
-        Super::operator=(std::move(other));
         std::swap(this->domain_, other.domain_);
         std::swap(this->code_, other.code_);
         std::swap(this->symbol_, other.symbol_);
+        Super::operator=(std::move(other));
         return *this;
     }
 
