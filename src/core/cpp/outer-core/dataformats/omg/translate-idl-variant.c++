@@ -13,8 +13,8 @@ namespace cc::idl
     //==========================================================================
     // Encode/decode Value
 
-    void encode(const core::types::Value &value,
-                CC::Variant::Value *idl) noexcept
+    void encode(const core::types::Value& value,
+                CC::Variant::Value* idl) noexcept
     {
         switch (value.type())
         {
@@ -79,8 +79,8 @@ namespace cc::idl
         }
     }
 
-    void decode(const CC::Variant::Value &idl,
-                core::types::Value *value) noexcept
+    void decode(const CC::Variant::Value& idl,
+                core::types::Value* value) noexcept
     {
         switch (idl._d())
         {
@@ -113,15 +113,12 @@ namespace cc::idl
             break;
 
         case CC::Variant::ValueType::VT_STRING:
-            value->emplace<std::string>(idl.value_string());
+            *value = idl.value_string();
             break;
 
         case CC::Variant::ValueType::VT_BYTEARRAY:
-        {
-            const auto &sequence = idl.value_bytearray();
-            value->emplace<ByteVector>(sequence.cbegin(), sequence.cend());
+            *value = idl.value_bytearray();
             break;
-        }
 
         case CC::Variant::ValueType::VT_TIMEPOINT:
             value->emplace<core::dt::TimePoint>(decoded<core::dt::TimePoint>(idl.value_timestamp()));
@@ -163,29 +160,29 @@ namespace cc::idl
     //==========================================================================
     // Encode/decode TaggedValue
 
-    void encode(const core::types::TaggedValue &native,
-                CC::Variant::TaggedValue *idl) noexcept
+    void encode(const core::types::TaggedValue& native,
+                CC::Variant::TaggedValue* idl) noexcept
     {
         encode(native.first, native.second, idl);
     }
 
-    void decode(const CC::Variant::TaggedValue &idl,
-                core::types::TaggedValue *native) noexcept
+    void decode(const CC::Variant::TaggedValue& idl,
+                core::types::TaggedValue* native) noexcept
     {
         *native = {idl.tag(), decoded<core::types::Value>(idl.value())};
     }
 
-    void encode(const core::types::Tag &tag,
-                const core::types::Value &value,
-                CC::Variant::TaggedValue *idl) noexcept
+    void encode(const core::types::Tag& tag,
+                const core::types::Value& value,
+                CC::Variant::TaggedValue* idl) noexcept
     {
         idl->tag(tag.value_or(""));
         idl->value(encoded<CC::Variant::Value>(value));
     }
 
-    void decode(const CC::Variant::TaggedValue &idl,
-                std::string *tag,
-                core::types::Value *value) noexcept
+    void decode(const CC::Variant::TaggedValue& idl,
+                std::string* tag,
+                core::types::Value* value) noexcept
     {
         *tag = idl.tag();
         decode(idl.value(), value);
@@ -194,22 +191,22 @@ namespace cc::idl
     //==========================================================================
     // Encode/decode ValueList
 
-    void encode(const core::types::ValueList &native,
-                CC::Variant::ValueList *idl) noexcept
+    void encode(const core::types::ValueList& native,
+                CC::Variant::ValueList* idl) noexcept
     {
         idl->list().resize(native.size());
         auto it = idl->list().begin();
-        for (const core::types::Value &value : native)
+        for (const core::types::Value& value : native)
         {
             encode(value, &*it++);
         }
     }
 
-    void decode(const CC::Variant::ValueList &idl,
-                core::types::ValueList *native) noexcept
+    void decode(const CC::Variant::ValueList& idl,
+                core::types::ValueList* native) noexcept
     {
         native->reserve(native->size() + idl.list().size());
-        for (const auto &idl_value : idl.list())
+        for (const auto& idl_value : idl.list())
         {
             decode(idl_value, &native->emplace_back());
         }
@@ -217,7 +214,7 @@ namespace cc::idl
 
     void decode(std::vector<CC::Variant::Value>::const_iterator begin,
                 std::vector<CC::Variant::Value>::const_iterator end,
-                core::types::ValueList *native) noexcept
+                core::types::ValueList* native) noexcept
     {
         native->clear();
         for (auto it = begin; it != end; it++)
@@ -229,22 +226,22 @@ namespace cc::idl
     //==========================================================================
     // Encode/decode TaggedValueList
 
-    void encode(const core::types::TaggedValueList &native,
-                CC::Variant::TaggedValueList *idl) noexcept
+    void encode(const core::types::TaggedValueList& native,
+                CC::Variant::TaggedValueList* idl) noexcept
     {
         idl->list().resize(native.size());
         auto it = idl->list().begin();
-        for (const core::types::TaggedValue &tv : native)
+        for (const core::types::TaggedValue& tv : native)
         {
             encode(tv, &*it++);
         }
     }
 
-    void decode(const CC::Variant::TaggedValueList &idl,
-                core::types::TaggedValueList *native) noexcept
+    void decode(const CC::Variant::TaggedValueList& idl,
+                core::types::TaggedValueList* native) noexcept
     {
         native->reserve(native->size() + idl.list().size());
-        for (const CC::Variant::TaggedValue &tv : idl.list())
+        for (const CC::Variant::TaggedValue& tv : idl.list())
         {
             decode(tv, &native->emplace_back());
         }
@@ -252,7 +249,7 @@ namespace cc::idl
 
     void decode(std::vector<CC::Variant::TaggedValue>::const_iterator begin,
                 std::vector<CC::Variant::TaggedValue>::const_iterator end,
-                core::types::TaggedValueList *native) noexcept
+                core::types::TaggedValueList* native) noexcept
     {
         native->clear();
         for (auto it = begin; it != end; it++)
@@ -264,22 +261,22 @@ namespace cc::idl
     //==========================================================================
     // Encode/decode KeyValueMap
 
-    void encode(const core::types::KeyValueMap &native,
-                CC::Variant::TaggedValueList *idl) noexcept
+    void encode(const core::types::KeyValueMap& native,
+                CC::Variant::TaggedValueList* idl) noexcept
     {
         idl->list().resize(native.size());
         auto it = idl->list().begin();
-        for (const auto &[key, value] : native)
+        for (const auto& [key, value] : native)
         {
             encode(key, value, &*it++);
         }
     }
 
-    void decode(const CC::Variant::TaggedValueList &idl,
-                core::types::KeyValueMap *native) noexcept
+    void decode(const CC::Variant::TaggedValueList& idl,
+                core::types::KeyValueMap* native) noexcept
     {
         native->clear();
-        for (const auto &tv : idl.list())
+        for (const auto& tv : idl.list())
         {
             decode(tv.value(), &(*native)[tv.tag()]);
         }

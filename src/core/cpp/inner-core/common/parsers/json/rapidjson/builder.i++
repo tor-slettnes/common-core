@@ -39,7 +39,7 @@ namespace cc::core::json
             return this->writer.String(value.get_if<char>(), 1);
 
         case types::ValueType::STRING:
-            return this->writer.String(value.get<std::string>());
+            return this->writer.String(value.get_string());
 
         case types::ValueType::UINT:
             return this->writer.Uint64(value.as_uint64());
@@ -61,7 +61,7 @@ namespace cc::core::json
 
         case types::ValueType::BYTEVECTOR:
             // Encode binary data as a base64 string
-            return this->writer.String(value.get<types::ByteVector>().to_base64());
+            return this->writer.String(value.get_bytevector().to_base64());
 
         case types::ValueType::VALUELIST:
             return this->encode_array(value.get_valuelist());
@@ -72,7 +72,7 @@ namespace cc::core::json
         case types::ValueType::TVLIST:
             if (auto tvlist = value.get_tvlist_ptr())
             {
-                return tvlist->mappable()
+                return tvlist->is_mappable()
                          ? this->encode_object(*tvlist)
                          : this->encode_array(tvlist->values());
             }

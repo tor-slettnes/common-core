@@ -340,7 +340,7 @@ namespace cc::avro
 
         case core::types::ValueType::BYTEVECTOR:
             avro::set_variant_branch(&value_field, VariantSchema::VT_BYTES, &branch);
-            avro::set_bytes(&branch, variant.get<core::types::ByteVector>());
+            avro::set_bytes(&branch, variant.as_bytevector());
             break;
 
         case core::types::ValueType::TIMEPOINT:

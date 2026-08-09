@@ -71,11 +71,16 @@ namespace cc::core::types
 
     TaggedValueList ValueList::as_tvlist() const noexcept
     {
-        TaggedValueList tvlist;
-        tvlist.reserve(this->size());
+        return *this->as_tvlist_ptr();
+    }
+
+    TaggedValueListPtr ValueList::as_tvlist_ptr() const noexcept
+    {
+        auto tvlist = std::make_shared<TaggedValueList>();
+        tvlist->reserve(this->size());
         for (const auto& value : *this)
         {
-            tvlist.push_back({nulltag, value});
+            tvlist->push_back({nulltag, value});
         }
         return tvlist;
     }

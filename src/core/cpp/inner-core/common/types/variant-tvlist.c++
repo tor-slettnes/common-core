@@ -86,7 +86,7 @@ namespace cc::core::types
         }
     }
 
-    bool TaggedValueList::tagged() const noexcept
+    bool TaggedValueList::is_tagged() const noexcept
     {
         for (const auto &[t, v] : *this)
         {
@@ -98,7 +98,7 @@ namespace cc::core::types
         return false;
     }
 
-    bool TaggedValueList::mappable() const noexcept
+    bool TaggedValueList::is_mappable() const noexcept
     {
         std::unordered_set<std::string> tags;
 
@@ -268,11 +268,16 @@ namespace cc::core::types
 
     ValueList TaggedValueList::values() const noexcept
     {
-        ValueList values;
-        values.reserve(this->size());
+        return *this->values_ptr();
+    }
+
+    ValueListPtr TaggedValueList::values_ptr() const noexcept
+    {
+        auto values = std::make_shared<ValueList>();
+        values->reserve(this->size());
         for (const auto &[t, v] : *this)
         {
-            values.push_back(v);
+            values->push_back(v);
         }
         return values;
     }

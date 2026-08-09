@@ -40,6 +40,7 @@ namespace cc::core::types
         std::optional<Value> try_get(int index) const noexcept;
 
         TaggedValueList as_tvlist() const noexcept;
+        TaggedValueListPtr as_tvlist_ptr() const noexcept;
 
         /// Return a copy where items with empty values are filtered out
         ValueList filtered_values() const noexcept;
@@ -82,9 +83,9 @@ namespace cc::core::types
             vector->reserve(vector->size() + this->size());
             for (const types::Value &value : *this)
             {
-                if (const T *ptr = value.get_if<T>())
+                if (const std::optional<T> opt = value.try_convert_to<T>())
                 {
-                    vector->push_back(*ptr);
+                    vector->push_back(opt.value());
                 }
             }
         }

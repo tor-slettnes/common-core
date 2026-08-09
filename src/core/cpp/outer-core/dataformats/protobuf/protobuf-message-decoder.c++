@@ -306,7 +306,7 @@ namespace cc::protobuf
         // of the form
         //
         //   ```protobuf
-        //   message map_Entry
+        //   message MapFieldEntry
         //   {
         //       KeyType key = 1;
         //       ValueType value = 2;

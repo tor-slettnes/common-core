@@ -174,9 +174,14 @@ namespace cc::core::types
         }
     }
 
-    TaggedValueList KeyValueMap::as_tvlist() const
+    TaggedValueList KeyValueMap::as_tvlist() const noexcept
     {
         return TaggedValueList(this->cbegin(), this->cend());
+    }
+
+    TaggedValueListPtr KeyValueMap::as_tvlist_ptr() const noexcept
+    {
+        return std::make_shared<TaggedValueList>(this->cbegin(), this->cend());
     }
 
     std::vector<std::string> KeyValueMap::keys() const noexcept
@@ -192,11 +197,16 @@ namespace cc::core::types
 
     ValueList KeyValueMap::values() const noexcept
     {
-        ValueList values;
-        values.reserve(this->size());
+        return *this->values_ptr();
+    }
+
+    ValueListPtr KeyValueMap::values_ptr() const noexcept
+    {
+        auto values = std::make_shared<ValueList>();
+        values->reserve(this->size());
         for (const auto& [k, v] : *this)
         {
-            values.push_back(v);
+            values->push_back(v);
         }
         return values;
     }

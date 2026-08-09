@@ -54,10 +54,10 @@ namespace cc::core::types
         Value &operator[](const Tag &tag) noexcept;
 
         /// @brief Indicate whether any tags are present.
-        bool tagged() const noexcept;
+        bool is_tagged() const noexcept;
 
         /// @brief Indicate whether every item in this list contains a unique tag
-        bool mappable() const noexcept;
+        bool is_mappable() const noexcept;
 
         /// Get the first value
         Value front(const Value &fallback = {}) const noexcept;
@@ -108,6 +108,8 @@ namespace cc::core::types
 
         /// Return the value for each item
         ValueList values() const noexcept;
+
+        ValueListPtr values_ptr() const noexcept;
 
         // Convert this list into a Key/Value map
         KeyValueMap as_kvmap() const noexcept;

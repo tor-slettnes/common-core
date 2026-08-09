@@ -26,16 +26,16 @@ namespace cc::platform::upgrade::native
     constexpr auto SETTING_REBOOT = "reboot required";
     constexpr auto DEFAULT_INSTALL_COMMAND = "install.sh";
 
-    NativePackageInfo::NativePackageInfo(const fs::path &settings_file,
-                                         const PackageSource &source,
-                                         const fs::path &staging_folder)
+    NativePackageInfo::NativePackageInfo(const fs::path& settings_file,
+                                         const PackageSource& source,
+                                         const fs::path& staging_folder)
         : This(core::SettingsStore(settings_file), source, staging_folder)
     {
     }
 
-    NativePackageInfo::NativePackageInfo(const core::types::KeyValueMap &settings,
-                                         const PackageSource &source,
-                                         const fs::path &staging_folder)
+    NativePackageInfo::NativePackageInfo(const core::types::KeyValueMap& settings,
+                                         const PackageSource& source,
+                                         const fs::path& staging_folder)
         : Super(
               source,
               settings.get(SETTING_PRODUCT).as_string(),
@@ -58,16 +58,16 @@ namespace cc::platform::upgrade::native
                            this->product(),
                            this->version(),
                            this->source());
-                const_cast<NativePackageInfo *>(this)->is_applicable_ = true;
+                const_cast<NativePackageInfo*>(this)->is_applicable_ = true;
             }
-            catch (const std::exception &e)
+            catch (const std::exception& e)
             {
                 logf_debug("Product %r version %s from %s is not applicable: %s",
                            this->product(),
                            this->version(),
                            this->source(),
                            e);
-                const_cast<NativePackageInfo *>(this)->is_applicable_ = false;
+                const_cast<NativePackageInfo*>(this)->is_applicable_ = false;
             }
         }
 
@@ -130,8 +130,8 @@ namespace cc::platform::upgrade::native
         return this->capture_setting(SETTING_CAPTURE_TASK_DESCRIPTION);
     }
 
-    std::string NativePackageInfo::capture_setting(const std::string &setting,
-                                                   const std::string &fallback) const
+    std::string NativePackageInfo::capture_setting(const std::string& setting,
+                                                   const std::string& fallback) const
     {
         return this->settings
             .get(SETTING_PROGRESS_CAPTURE)
@@ -139,9 +139,9 @@ namespace cc::platform::upgrade::native
             .as_string();
     }
 
-    Version NativePackageInfo::decode_version(const core::types::Value &value)
+    Version NativePackageInfo::decode_version(const core::types::Value& value)
     {
-        if (auto *version_string = value.get_if<std::string>())
+        if (core::types::StringPtr version_string = value.get_string_ptr())
         {
             return Version::from_string(*version_string);
         }
@@ -160,9 +160,9 @@ namespace cc::platform::upgrade::native
         }
     }
 
-    std::string NativePackageInfo::decode_description(const core::types::Value &value)
+    std::string NativePackageInfo::decode_description(const core::types::Value& value)
     {
-        if (auto *description = value.get_if<std::string>())
+        if (core::types::StringPtr description = value.get_string_ptr())
         {
             return *description;
         }
@@ -176,9 +176,9 @@ namespace cc::platform::upgrade::native
         }
     }
 
-    bool NativePackageInfo::is_applicable_product(const std::string &current_product) const
+    bool NativePackageInfo::is_applicable_product(const std::string& current_product) const
     {
-        if (const core::types::Value &product_match = this->settings.get(SETTING_PRODUCT_MATCH))
+        if (const core::types::Value& product_match = this->settings.get(SETTING_PRODUCT_MATCH))
         {
             std::regex rx(product_match.as_string());
             std::smatch match;
@@ -196,9 +196,9 @@ namespace cc::platform::upgrade::native
         return false;
     }
 
-    bool NativePackageInfo::is_applicable_version(const Version &current_version) const
+    bool NativePackageInfo::is_applicable_version(const Version& current_version) const
     {
-        if (const core::types::Value &version_match = this->settings.get(SETTING_VERSION_MATCH))
+        if (const core::types::Value& version_match = this->settings.get(SETTING_VERSION_MATCH))
         {
             std::string current_version_string = current_version.to_string();
             std::regex rx(version_match.to_string());

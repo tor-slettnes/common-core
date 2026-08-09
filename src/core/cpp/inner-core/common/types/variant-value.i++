@@ -116,19 +116,6 @@ namespace cc::core::types
         return std::get<T>(*this);
     }
 
-    template <class T>
-    inline std::optional<T> Value::try_get() const
-    {
-        if (auto *value = std::get_if<T>(*this))
-        {
-            return *value;
-        }
-        else
-        {
-            return {};
-        }
-    }
-
     // Convencience wrapper around std::get<T>(*this)
     template <class T>
     const T *Value::get_if() const
@@ -192,10 +179,10 @@ namespace cc::core::types
             return static_cast<T>(this->get<complex>().real());
 
         case ValueType::STRING:
-            return str::try_convert_to<T>(this->get<std::string>());
+            return str::try_convert_to<T>(this->get_string());
 
         case ValueType::BYTEVECTOR:
-            return this->get<ByteVector>().unpack<T>();
+            return this->get_bytevector().unpack<T>();
 
         case ValueType::TIMEPOINT:
             return (T)dt::to_double(this->get<dt::TimePoint>().time_since_epoch());
@@ -236,7 +223,7 @@ namespace cc::core::types
             return {};
 
         case ValueType::STRING:
-            return str::try_convert_to<T>(this->get<std::string>());
+            return str::try_convert_to<T>(this->get_string());
 
         default:
             return str::try_convert_to<T>(this->as_string());

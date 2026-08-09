@@ -26,7 +26,7 @@ namespace cc::core::platform
     {
         tvlist.append("type", core::str::convert_from(filestats.type));
         tvlist.append("size", filestats.size);
-        tvlist.append_if(!filestats.link.empty(), "link", filestats.link);
+        tvlist.append_if(!filestats.link.empty(), "link", filestats.link.string());
         tvlist.append("mode", core::str::format("0%03o", filestats.mode));
         tvlist.append("readable", filestats.readable);
         tvlist.append("writable", filestats.writable);

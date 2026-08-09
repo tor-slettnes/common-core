@@ -52,7 +52,7 @@ namespace cc::platform::sysconfig
             version.build_number = kvmap->get("build number", 0);
             return version;
         }
-        else if (const std::string *string = value.get_if<std::string>())
+        else if (core::types::StringPtr string = value.get_string_ptr())
         {
             return Version::from_string(*string);
         }

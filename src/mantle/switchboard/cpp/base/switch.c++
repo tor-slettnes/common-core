@@ -569,7 +569,7 @@ namespace cc::platform::switchboard
         ExceptionHandling on_error)
     {
         return this->set_target(
-            (error && error->is_error()) ? STATE_FAILED : this->target_state(this->active()),
+            (error && error->is_error()) ? STATE_FAILED : STATE_UNSET,
             error,
             attributes,
             clear_existing,

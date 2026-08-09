@@ -7,6 +7,7 @@
 
 #pragma once
 #include "streamable.h++"
+#include "create-shared.h++"
 
 #include <cstdint>
 #include <ostream>
@@ -26,7 +27,8 @@ namespace cc::core::types
 
     using Bytes = std::vector<Byte>;
     class ByteVector : public Bytes,
-                       public Streamable
+                       public Streamable,
+                       public enable_create_shared<ByteVector>
     {
     public:
         // Inherit available constructors from base
@@ -56,7 +58,9 @@ namespace cc::core::types
         ///     size of buffer
         /// @return
         ///     New ByteVector instance
-        static ByteVector from_pointer(const void *ptr, std::size_t size) noexcept;
+        static ByteVector from_pointer(
+            const void *ptr,
+            std::size_t size) noexcept;
 
         /// @brief
         ///     Create a new ByteVector instance from a string
@@ -64,7 +68,11 @@ namespace cc::core::types
         ///     String containing bytes to load
         /// @return
         ///     New ByteVector instance
-        static ByteVector from_string(const std::string &s) noexcept;
+        static ByteVector from_string(
+            const std::string &s) noexcept;
+
+        static std::shared_ptr<ByteVector> shared_from_string(
+            const std::string &s) noexcept;
 
         /// @brief
         ///     Unpack a specific data type stored at the byte array
@@ -89,6 +97,7 @@ namespace cc::core::types
             auto *ptr = reinterpret_cast<const std::uint8_t *>(&value);
             return ByteVector(ptr, ptr + sizeof(T));
         }
+
 
         /// @brief
         ///     Encode the data in this ByteVector instance using Base64

@@ -464,10 +464,10 @@ namespace cc::python
             return PyComplex_FromDoubles(value.as_real(), value.as_imag());
 
         case core::types::ValueType::STRING:
-            return SimpleObject::pystring_from_string(value.get<std::string>());
+            return SimpleObject::pystring_from_string(value.get_string());
 
         case core::types::ValueType::BYTEVECTOR:
-            return SimpleObject::pybytes_from_bytes(value.get<core::types::ByteVector>());
+            return SimpleObject::pybytes_from_bytes(value.get_bytevector());
 
         case core::types::ValueType::VALUELIST:
             return SimpleObject::pylist_from_values(value.get_valuelist());

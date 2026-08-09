@@ -35,6 +35,9 @@ namespace cc::core::types
     using KeyValuePair = std::pair<std::string, Value>;
     using TaggedValue = std::pair<Tag, Value>;
 
+    using StringPtr = std::shared_ptr<std::string>;
+    using BytesPtr = std::shared_ptr<ByteVector>;
+
     using KeyValueMapPtr = std::shared_ptr<KeyValueMap>;
     using ValueListPtr = std::shared_ptr<ValueList>;
     using TaggedValueListPtr = std::shared_ptr<TaggedValueList>;
@@ -55,8 +58,8 @@ namespace cc::core::types
         largest_sint,
         largest_real,
         complex,
-        string,
-        ByteVector,
+        StringPtr,
+        BytesPtr,
         dt::TimePoint,
         dt::Duration,
         ValueListPtr,

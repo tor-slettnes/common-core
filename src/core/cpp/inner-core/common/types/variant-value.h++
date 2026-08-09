@@ -11,6 +11,7 @@
 #include "string/convert.h++"
 
 #include <type_traits>
+#include <filesystem>
 
 namespace cc::core::types
 {
@@ -36,8 +37,13 @@ namespace cc::core::types
         Value(std::int32_t value);
         Value(std::int64_t value);
         Value(const char* cstring);
-        Value(const std::vector<Byte>& bytes);
+        Value(const StringPtr &string);
+        Value(const std::string &string);
+        Value(std::string &&string);
         Value(const std::string_view& view);
+        Value(const std::filesystem::path &path);
+        Value(const std::vector<Byte>& bytes);
+        Value(const BytesPtr& bytes);
 
         Value(const ValueListPtr& list);
         Value(const ValueList& list);
@@ -94,12 +100,13 @@ namespace cc::core::types
         bool is_time() const noexcept;
         bool is_timepoint() const noexcept;
         bool is_duration() const noexcept;
+
         bool is_composite() const noexcept;
+        bool is_mappable() const noexcept;
+        bool is_sequence() const noexcept;
         bool is_valuelist() const noexcept;
         bool is_kvmap() const noexcept;
         bool is_tvlist() const noexcept;
-        bool is_mappable() const noexcept;
-        bool is_sequence() const noexcept;
 
         bool as_bool(bool fallback = false) const noexcept;
         char as_char(char fallback = '\0') const noexcept;
@@ -124,8 +131,6 @@ namespace cc::core::types
         float as_float(float fallback = 0.0) const noexcept;
         double as_double(double fallback = 0.0) const noexcept;
         complex as_complex(const complex& fallback = {0.0, 0.0}) const noexcept;
-        std::string as_string() const noexcept;
-        ByteVector as_bytevector(const ByteVector& fallback = {}) const noexcept;
 
         dt::TimePoint as_timepoint(
             bool assume_local = true,
@@ -147,14 +152,20 @@ namespace cc::core::types
             double multiplier,
             const dt::Duration& fallback = {}) const noexcept;
 
+        std::string as_string() const noexcept;
+        ByteVector as_bytevector(const ByteVector& fallback = {}) const noexcept;
+
         ValueList as_valuelist() const noexcept;
         ValueList as_valuelist(const ValueList& fallback) const noexcept;
+        ValueListPtr as_valuelist_ptr() const noexcept;
 
         TaggedValueList as_tvlist() const noexcept;
         TaggedValueList as_tvlist(const TaggedValueList& fallback) const noexcept;
+        TaggedValueListPtr as_tvlist_ptr() const noexcept;
 
         KeyValueMap as_kvmap() const noexcept;
         KeyValueMap as_kvmap(const KeyValueMap& fallback) const noexcept;
+        KeyValueMapPtr as_kvmap_ptr() const noexcept;
 
         std::optional<bool> try_as_bool() const noexcept;
         std::optional<char> try_as_char() const noexcept;
@@ -179,7 +190,6 @@ namespace cc::core::types
         std::optional<float> try_as_float() const noexcept;
         std::optional<double> try_as_double() const noexcept;
         std::optional<complex> try_as_complex() const noexcept;
-        std::optional<ByteVector> try_as_bytevector() const noexcept;
 
         std::optional<dt::TimePoint> try_as_timepoint(
             bool assume_local = true) const noexcept;
@@ -191,10 +201,6 @@ namespace cc::core::types
         std::optional<dt::Duration> try_as_duration() const noexcept;
         std::optional<dt::Duration> try_as_duration(double multiplier) const noexcept;
         std::optional<dt::Duration> try_as_duration(int decimal_exponent) const noexcept;
-
-        std::optional<ValueList> try_as_valuelist() const noexcept;
-        std::optional<TaggedValueList> try_as_tvlist() const noexcept;
-        std::optional<KeyValueMap> try_as_kvmap() const noexcept;
 
         /// @return
         ///    Constant reference to the contained string if applicable,
@@ -220,6 +226,16 @@ namespace cc::core::types
         ///    Constant reference to the contained KeyValueMap if applicable,
         ///    otherwise to a static empty TaggedValueList.
         const KeyValueMap& get_kvmap() const;
+
+        /// @return
+        ///    `shared_ptr` reference to the contained string if applicable,
+        ///    otherwise an empty `shared_ptr`.
+        StringPtr get_string_ptr() const noexcept;
+
+        /// @return
+        ///    `shared_ptr` reference to the contained ByteVector if applicable,
+        ///    otherwise an empty `shared_ptr`.
+        BytesPtr get_bytevector_ptr() const noexcept;
 
         /// @return
         ///    `shared_ptr` reference to the contained ValueList if applicable,
@@ -331,9 +347,6 @@ namespace cc::core::types
         // Convencience wrapper around std::get<T>(*this)
         template <class T>
         inline const T& get() const;
-
-        template <class T>
-        inline std::optional<T> try_get() const;
 
         // Convencience wrapper around std::get_if<T>(*this)
         template <class T>

@@ -112,7 +112,9 @@ namespace cc::core::types
 
         std::vector<std::string> keys() const noexcept;
         ValueList values() const noexcept;
-        TaggedValueList as_tvlist() const;
+        ValueListPtr values_ptr() const noexcept;
+        TaggedValueList as_tvlist() const noexcept;
+        TaggedValueListPtr as_tvlist_ptr() const noexcept;
         KeyValueMap filtered() const noexcept;
         KeyValueMap flattened() const noexcept;
         KeyValueMap deepcopy() const noexcept;

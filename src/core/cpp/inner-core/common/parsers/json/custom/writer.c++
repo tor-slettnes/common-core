@@ -50,7 +50,7 @@ namespace cc::core::json
         case types::ValueType::BYTEVECTOR:
             // Encode binary data as a base64 string
             This::to_stream(stream,
-                            value.get<types::ByteVector>().to_base64(),
+                            value.get_bytevector().to_base64(),
                             pretty,
                             indent);
             break;
