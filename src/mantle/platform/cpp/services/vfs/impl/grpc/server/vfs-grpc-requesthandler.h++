@@ -32,6 +32,11 @@ namespace cc::platform::vfs::grpc
         RequestHandler();
         RequestHandler(const std::shared_ptr<vfs::ProviderInterface>& provider);
 
+        ::grpc::Status ServiceCheck(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ServiceCheckResponse *response) override;
+
         ::grpc::Status GetContexts(
             ::grpc::ServerContext* context,
             const vfs::protobuf::GetContextsRequest* request,

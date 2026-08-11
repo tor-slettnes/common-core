@@ -10,6 +10,8 @@
 #include "relay-types.h++"
 #include "protobuf-variant-types.h++"
 #include "protobuf-relay-types.h++"
+#include "protobuf-version.h++"
+#include "platform/path.h++"
 #include "protobuf-inline.h++"
 
 namespace cc::platform::pubsub::grpc
@@ -22,6 +24,17 @@ namespace cc::platform::pubsub::grpc
         const std::shared_ptr<ControlInterface> relay_control)
         : relay_control(relay_control)
     {
+    }
+
+    ::grpc::Status RequestHandler::ServiceCheck(
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ServiceCheckResponse* response)
+    {
+        response->set_api_level(APILEVEL_CURRENT);
+        response->set_server_name(core::platform::path->exec_name());
+        cc::protobuf::populate_version(response->mutable_server_version());
+        return ::grpc::Status::OK;
     }
 
     ::grpc::Status RequestHandler::AssignReplayPolicies(

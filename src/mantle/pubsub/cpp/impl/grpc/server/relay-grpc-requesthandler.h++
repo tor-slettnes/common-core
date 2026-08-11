@@ -31,6 +31,11 @@ namespace cc::platform::pubsub::grpc
         RequestHandler(
             const std::shared_ptr<ControlInterface> relay_control);
 
+        ::grpc::Status ServiceCheck(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ServiceCheckResponse *response) override;
+
         ::grpc::Status AssignReplayPolicies(
             ::grpc::ServerContext* context,
             const platform::pubsub::protobuf::ReplayPolicyMap* request,

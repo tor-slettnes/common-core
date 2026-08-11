@@ -12,7 +12,9 @@
 #include "protobuf-switchboard-types.h++"
 #include "protobuf-event-types.h++"
 #include "protobuf-variant-types.h++"
+#include "protobuf-version.h++"
 #include "protobuf-inline.h++"
+#include "platform/path.h++"
 
 namespace cc::platform::switchboard::grpc
 {
@@ -24,6 +26,17 @@ namespace cc::platform::switchboard::grpc
         : Super(),
           provider(api_provider)
     {
+    }
+
+    ::grpc::Status RequestHandler::ServiceCheck(
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ServiceCheckResponse* response)
+    {
+        response->set_api_level(APILEVEL_CURRENT);
+        response->set_server_name(core::platform::path->exec_name());
+        cc::protobuf::populate_version(response->mutable_server_version());
+        return ::grpc::Status::OK;
     }
 
     ::grpc::Status RequestHandler::GetSwitches(

@@ -9,7 +9,9 @@
 #include "demo-grpc-signalqueue.h++"
 #include "protobuf-demo-types.h++"
 #include "protobuf-message.h++"
+#include "protobuf-version.h++"
 #include "protobuf-inline.h++"
+#include "platform/path.h++"
 #include "status/exceptions.h++"
 
 namespace cc::demo::grpc
@@ -19,6 +21,17 @@ namespace cc::demo::grpc
           provider(api_provider)
     {
         logf_debug("Demo gRPC RequestHandler Constructor");
+    }
+
+    ::grpc::Status RequestHandler::ServiceCheck(
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ServiceCheckResponse* response)
+    {
+        response->set_api_level(APILEVEL_CURRENT);
+        response->set_server_name(core::platform::path->exec_name());
+        cc::protobuf::populate_version(response->mutable_server_version());
+        return ::grpc::Status::OK;
     }
 
     ::grpc::Status RequestHandler::SayHello(

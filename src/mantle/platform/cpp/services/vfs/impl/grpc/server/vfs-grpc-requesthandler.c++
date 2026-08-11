@@ -10,8 +10,10 @@
 #include "protobuf-vfs-types.h++"
 #include "protobuf-standard-types.h++"
 #include "protobuf-variant-types.h++"
-#include "protobuf-inline.h++"
+#include "protobuf-version.h++"
 #include "protobuf-message.h++"
+#include "protobuf-inline.h++"
+#include "platform/path.h++"
 #include "logging/logging.h++"
 
 namespace cc::platform::vfs::grpc
@@ -24,6 +26,17 @@ namespace cc::platform::vfs::grpc
     RequestHandler::RequestHandler(const std::shared_ptr<vfs::ProviderInterface>& provider)
         : provider(provider)
     {
+    }
+
+    ::grpc::Status RequestHandler::ServiceCheck(
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ServiceCheckResponse* response)
+    {
+        response->set_api_level(APILEVEL_CURRENT);
+        response->set_server_name(core::platform::path->exec_name());
+        cc::protobuf::populate_version(response->mutable_server_version());
+        return ::grpc::Status::OK;
     }
 
     ::grpc::Status RequestHandler::GetContexts(

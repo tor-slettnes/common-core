@@ -8,7 +8,9 @@
 #include "upgrade-grpc-requesthandler.h++"
 #include "upgrade-grpc-signalqueue.h++"
 #include "protobuf-upgrade-types.h++"
+#include "protobuf-version.h++"
 #include "protobuf-inline.h++"
+#include "platform/path.h++"
 
 namespace cc::platform::upgrade::grpc
 {
@@ -21,6 +23,18 @@ namespace cc::platform::upgrade::grpc
         const std::shared_ptr<upgrade::ProviderInterface>& provider)
         : provider(provider)
     {
+    }
+
+
+    ::grpc::Status RequestHandler::ServiceCheck(
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ServiceCheckResponse* response)
+    {
+        response->set_api_level(APILEVEL_CURRENT);
+        response->set_server_name(core::platform::path->exec_name());
+        cc::protobuf::populate_version(response->mutable_server_version());
+        return ::grpc::Status::OK;
     }
 
     ::grpc::Status RequestHandler::Scan(

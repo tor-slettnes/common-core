@@ -13,9 +13,20 @@ namespace cc::protobuf
 {
     using version::Version;
 
+    void populate_version(Version *version);
+
+    void encode_version(
+        std::uint64_t major,
+        std::uint64_t minor,
+        std::uint64_t patch,
+        std::uint64_t build_number,
+        const std::string &printable_version,
+        Version *version);
+
     Version create_version(std::uint64_t major,
                            std::uint64_t minor = 0,
                            std::uint64_t patch = 0,
+                           std::uint64_t build_number = 0,
                            const std::string printable_version = "");
 
     std::string to_string(const Version& version);

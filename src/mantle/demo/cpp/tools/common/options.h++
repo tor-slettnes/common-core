@@ -19,9 +19,9 @@ namespace cc::demo
     public:
         Options(const std::string& implementation);
 
-    private:
+    protected:
         void add_options() override;
-        void add_commands();
+        virtual void add_commands();
 
         void on_monitor_start() override;
         void on_monitor_end() override;

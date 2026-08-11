@@ -9,10 +9,27 @@
 #include "sysconfig-grpc-signalqueue.h++"
 #include "protobuf-standard-types.h++"
 #include "protobuf-sysconfig-types.h++"
+#include "protobuf-version.h++"
 #include "protobuf-inline.h++"
+#include "platform/path.h++"
 
 namespace cc::platform::sysconfig::grpc
 {
+    //======================================================================
+    // Server status check
+
+    ::grpc::Status RequestHandler::ServiceCheck(
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ServiceCheckResponse* response)
+    {
+        response->set_api_level(APILEVEL_CURRENT);
+        response->set_server_name(core::platform::path->exec_name());
+        cc::protobuf::populate_version(response->mutable_server_version());
+        return ::grpc::Status::OK;
+    }
+
+
     //======================================================================
     // Product information
 

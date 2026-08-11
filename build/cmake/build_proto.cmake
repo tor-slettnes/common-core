@@ -242,6 +242,11 @@ function(cc_add_proto_python TARGET)
     file(MAKE_DIRECTORY "${gen_dir}")
   endif()
 
+  if(arg_GRPC_SOURCES)
+    list(APPEND arg_PROTOBUF_SOURCES "${arg_GRPC_SOURCES}")
+    list(REMOVE_DUPLICATES arg_PROTOBUF_SOURCES)
+  endif()
+
   if(BUILD_PROTOBUF AND arg_PROTOBUF_SOURCES)
     find_package(Protobuf REQUIRED)
 

@@ -26,6 +26,11 @@ namespace cc::platform::multilogger::grpc
         RequestHandler(const std::shared_ptr<API>& provider);
 
     public:
+        ::grpc::Status ServiceCheck(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ServiceCheckResponse *response) override;
+
         ::grpc::Status Submit(
             ::grpc::ServerContext* context,
             const protobuf::Loggable* request,

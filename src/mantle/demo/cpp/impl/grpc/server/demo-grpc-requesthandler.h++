@@ -30,6 +30,11 @@ namespace cc::demo::grpc
         RequestHandler(const std::shared_ptr<API>& api_provider);
 
     public:
+        ::grpc::Status ServiceCheck(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ServiceCheckResponse *response) override;
+
         ::grpc::Status SayHello(
             ::grpc::ServerContext* context,
             const demo::protobuf::Greeting* request,

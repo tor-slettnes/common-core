@@ -24,6 +24,14 @@ namespace cc::platform::sysconfig::grpc
 
     protected:
         //======================================================================
+        // Server status check
+
+        ::grpc::Status ServiceCheck(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ServiceCheckResponse *response) override;
+
+        //======================================================================
         // Product information
 
         ::grpc::Status GetProductInfo(

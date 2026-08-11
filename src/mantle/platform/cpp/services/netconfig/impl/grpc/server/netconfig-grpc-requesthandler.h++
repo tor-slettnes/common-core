@@ -26,6 +26,11 @@ namespace cc::platform::netconfig::grpc
         RequestHandler();
         RequestHandler(const std::shared_ptr<netconfig::ProviderInterface>& provider);
 
+        ::grpc::Status ServiceCheck(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ServiceCheckResponse *response) override;
+
         ::grpc::Status GetHostName(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,

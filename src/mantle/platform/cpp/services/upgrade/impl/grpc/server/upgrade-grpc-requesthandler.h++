@@ -27,6 +27,11 @@ namespace cc::platform::upgrade::grpc
         RequestHandler();
         RequestHandler(const std::shared_ptr<upgrade::ProviderInterface>& provider);
 
+        ::grpc::Status ServiceCheck(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ServiceCheckResponse *response) override;
+
         ::grpc::Status Scan(
             ::grpc::ServerContext* context,
             const platform::upgrade::protobuf::PackageSource* request,

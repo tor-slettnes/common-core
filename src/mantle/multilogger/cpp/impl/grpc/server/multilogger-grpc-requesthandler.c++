@@ -8,14 +8,27 @@
 #include "multilogger-grpc-requesthandler.h++"
 #include "protobuf-multilogger-types.h++"
 #include "protobuf-event-types.h++"
-#include "protobuf-inline.h++"
+#include "protobuf-version.h++"
 #include "protobuf-message.h++"
+#include "protobuf-inline.h++"
+#include "platform/path.h++"
 
 namespace cc::platform::multilogger::grpc
 {
     RequestHandler::RequestHandler(const std::shared_ptr<API>& provider)
         : provider(provider)
     {
+    }
+
+    ::grpc::Status RequestHandler::ServiceCheck(
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ServiceCheckResponse* response)
+    {
+        response->set_api_level(APILEVEL_CURRENT);
+        response->set_server_name(core::platform::path->exec_name());
+        cc::protobuf::populate_version(response->mutable_server_version());
+        return ::grpc::Status::OK;
     }
 
     ::grpc::Status RequestHandler::Submit(

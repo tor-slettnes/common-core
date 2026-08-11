@@ -66,6 +66,11 @@ namespace cc::platform::switchboard::grpc
             const std::shared_ptr<switchboard::Provider>& api_provider);
 
     public:
+        ::grpc::Status ServiceCheck(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ServiceCheckResponse *response) override;
+
         ::grpc::Status GetSwitches(
             ::grpc::ServerContext* context,
             const switchboard::protobuf::SwitchSelection* request,
