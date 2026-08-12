@@ -163,15 +163,15 @@ namespace cc::protobuf
     {
         const google::protobuf::Descriptor* descriptor = msg->GetDescriptor();
         int nfields = descriptor->field_count();
-        bool success = true;
+        bool all_succeeded = true;
         for (int i = 0; i < nfields; i++)
         {
             const google::protobuf::FieldDescriptor* fd = descriptor->field(i);
-            bool encoded = false;
 
             if (const core::types::Value& field_value = value.get(fd->name()))
             {
-                if (!This::encode_field(field_value, msg, fd))
+                bool success = This::encode_field(field_value, msg, fd);
+                if (!success)
                 {
                     logf_notice(
                         "%s: Cannot reconstruct ProtoBuf %s field %r of type %s from value type %s: %r",
@@ -181,41 +181,39 @@ namespace cc::protobuf
                         fd->type_name(),
                         field_value.type_name(),
                         field_value);
+                    all_succeeded = false;
                 }
             }
-            else if (!fd->is_optional())
+            else if (!fd->is_optional() && !fd->containing_oneof())
             {
                 logf_notice(
-                    "%s: ProtoBuf %s field %r not present in input value: %s",
+                    "%s: Expected %s field %r not present in input value: %s",
                     TYPE_NAME_FULL(This),
                     msg->GetDescriptor()->full_name(),
                     fd->name(),
                     value);
+                all_succeeded = false;
             }
         }
-        return success;
+        return all_succeeded;
     }
 
     bool MessageEncoder::encode_field(
-        const core::types::Value& value,
+        const core::types::Value& field_value,
         google::protobuf::Message* msg,
         const google::protobuf::FieldDescriptor* fd)
     {
         if (fd->is_map())
         {
-            return This::encode_mapped_field(value, msg, fd);
+            return This::encode_mapped_field(field_value, msg, fd);
         }
         else if (fd->is_repeated())
         {
-            return This::encode_repeated_field(value, msg, fd);
-        }
-        else if (fd->containing_oneof() && (value.get_kvmap().count(fd->name()) == 0))
-        {
-            return false;
+            return This::encode_repeated_field(field_value, msg, fd);
         }
         else
         {
-            return This::encode_single_field(value, msg, fd);
+            return This::encode_single_field(field_value, msg, fd);
         }
     }
 
