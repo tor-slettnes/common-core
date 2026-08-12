@@ -56,9 +56,9 @@ namespace cc::avro
     void SchemaWrapper::set(const std::string& key,
                             const core::types::Value& value)
     {
-        if (auto kvmap = this->get_kvmap_ptr())
+        if (auto tvlist = this->get_tvlist_ptr())
         {
-            kvmap->insert_or_assign(key, value);
+            tvlist->append(key, value);
         }
     }
 
@@ -89,8 +89,9 @@ namespace cc::avro
     //--------------------------------------------------------------------------
     // RecordSchema
 
-    RecordSchema::RecordSchema(const ContextRef& context,
-                               const std::string& name)
+    RecordSchema::RecordSchema(
+        const ContextRef& context,
+        const std::string& name)
         : SchemaWrapper(context->build(
               name,
               {
@@ -101,9 +102,11 @@ namespace cc::avro
     {
     }
 
-    void RecordSchema::add_field(const std::string& name,
-                                 const core::types::Value& type,
-                                 const std::optional<std::string>& doc)
+    void RecordSchema::add_field(
+        const std::string& name,
+        const core::types::Value& type,
+        const std::optional<core::types::Value>& default_value,
+        const std::optional<std::string>& doc)
     {
         if (auto fields = this->get(std::string(SchemaField_RecordFields)).get_valuelist_ptr())
         {
@@ -111,6 +114,11 @@ namespace cc::avro
                 {SchemaField_Name, name},
                 {SchemaField_Type, type},
             });
+
+            if (default_value)
+            {
+                field.emplace_back(SchemaField_Default, *default_value);
+            }
 
             if (doc)
             {
@@ -124,7 +132,8 @@ namespace cc::avro
     //--------------------------------------------------------------------------
     // MapSchema
 
-    MapSchema::MapSchema(const core::types::Value& valuetype)
+    MapSchema::MapSchema(
+        const core::types::Value& valuetype)
         : SchemaWrapper(core::types::TaggedValueList({
               {SchemaField_Type, TypeName_Map},
               {SchemaField_MapValues, valuetype},
@@ -135,7 +144,8 @@ namespace cc::avro
     //--------------------------------------------------------------------------
     // ArrayShema
 
-    ArraySchema::ArraySchema(const core::types::Value& itemtype)
+    ArraySchema::ArraySchema(
+        const core::types::Value& itemtype)
         : SchemaWrapper(core::types::TaggedValueList({
               {SchemaField_Type, TypeName_Array},
               {SchemaField_ArrayItems, itemtype},
@@ -146,11 +156,12 @@ namespace cc::avro
     //--------------------------------------------------------------------------
     // EnumSchema
 
-    EnumSchema::EnumSchema(const ContextRef& context,
-                           const std::string& name,
-                           const std::vector<std::string>& symbols,
-                           const std::optional<std::string>& default_symbol,
-                           const std::optional<std::string>& doc)
+    EnumSchema::EnumSchema(
+        const ContextRef& context,
+        const std::string& name,
+        const std::vector<std::string>& symbols,
+        const std::optional<std::string>& default_symbol,
+        const std::optional<std::string>& doc)
         : SchemaWrapper(context->build(
               name,
               {
@@ -172,7 +183,8 @@ namespace cc::avro
     //--------------------------------------------------------------------------
     // DurationSchema
 
-    CalendarTimeIntervalSchema::CalendarTimeIntervalSchema(const ContextRef& context)
+    CalendarTimeIntervalSchema::CalendarTimeIntervalSchema(
+        const ContextRef& context)
         : SchemaWrapper(context->build(
               TypeName_CalendarTimeInterval,
               {
@@ -193,7 +205,8 @@ namespace cc::avro
     //     this->add_field(SchemaField_TimeNanos, TypeName_Int);
     // }
 
-    TimeIntervalSchema::TimeIntervalSchema(const ContextRef& context)
+    TimeIntervalSchema::TimeIntervalSchema(
+        const ContextRef& context)
         : SchemaWrapper(core::types::TaggedValueList({
               {SchemaField_Type, TypeName_Long},
               {SchemaField_LogicalType, LogicalType_TimeOfDayMillis},
@@ -211,7 +224,8 @@ namespace cc::avro
     //     this->add_field(SchemaField_TimeNanos, TypeName_Int);
     // }
 
-    TimestampSchema::TimestampSchema(const ContextRef& context)
+    TimestampSchema::TimestampSchema(
+        const ContextRef& context)
         : SchemaWrapper(core::types::TaggedValueList({
               {SchemaField_Type, TypeName_Long},
               {SchemaField_LogicalType, LogicalType_TimeStampMillis},
@@ -222,7 +236,9 @@ namespace cc::avro
     //--------------------------------------------------------------------------
     // VariantSchema
 
-    VariantSchema::VariantSchema(const ContextRef& context)
+    VariantSchema::VariantSchema(
+        const ContextRef& context,
+        const std::optional<core::types::Value> &default_value)
         : RecordSchema(context, TypeName_Variant)
     {
         core::types::ValueList subtypes;
@@ -236,13 +252,14 @@ namespace cc::avro
         // subtypes.push_back(TimestampSchema(context));     // VT_TIMESTAMP
         // subtypes.push_back(MapSchema(TypeName_Variant));    // VT_MAP
         // subtypes.push_back(ArraySchema(TypeName_Variant));  // VT_ARRAY
-        this->add_field(SchemaField_VariantValue, subtypes);
+        this->add_field(SchemaField_VariantValue, subtypes, default_value);
     }
 
     //--------------------------------------------------------------------------
     // VariantMapSchema
 
-    VariantMapSchema::VariantMapSchema(const ContextRef& context)
+    VariantMapSchema::VariantMapSchema(
+        const ContextRef& context)
         : MapSchema(VariantSchema(context))
     {
     }
@@ -250,7 +267,8 @@ namespace cc::avro
     //--------------------------------------------------------------------------
     // VariantListSchema
 
-    VariantListSchema::VariantListSchema(const ContextRef& context)
+    VariantListSchema::VariantListSchema(
+        const ContextRef& context)
         : ArraySchema(VariantSchema(context))
     {
     }

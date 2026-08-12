@@ -48,6 +48,7 @@ namespace cc::avro
             const google::protobuf::FieldDescriptor* fd = this->descriptor->field(i);
 
             core::types::Value field_schema = This::field(fd);
+            std::optional<core::types::Value> default_value;
             if (const google::protobuf::OneofDescriptor* ood = fd->containing_oneof())
             {
                 // Avro does not have an exact counterpart to ProtoBuf `oneof`
@@ -61,9 +62,13 @@ namespace cc::avro
                     TypeName_Null,
                     field_schema,
                 });
+                default_value = core::types::Value();
             }
 
-            this->add_field(fd->name(), field_schema, This::field_comment(fd));
+            this->add_field(fd->name(),
+                            field_schema,
+                            default_value,
+                            This::field_comment(fd));
         }
     }
 

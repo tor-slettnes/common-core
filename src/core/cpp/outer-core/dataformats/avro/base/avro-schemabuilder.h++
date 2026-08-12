@@ -109,6 +109,7 @@ namespace cc::avro
 
         void add_field(const std::string& name,
                        const core::types::Value& type,
+                       const std::optional<core::types::Value>& default_value = {},
                        const std::optional<std::string>& doc = {});
 
     protected:
@@ -211,7 +212,8 @@ namespace cc::avro
             // VT_ARRAY       // 7
         };
 
-        VariantSchema(const ContextRef& context);
+        VariantSchema(const ContextRef& context,
+                      const std::optional<core::types::Value> &default_value = {});
 
     private:
         static core::types::ValueList alternates;
