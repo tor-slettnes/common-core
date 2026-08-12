@@ -201,6 +201,23 @@ namespace cc::core::types
             }
         }
 
+        template <class T, class V = std::vector<std::pair<Tag, Value>>>
+        V filter_by_type() const
+        {
+            V result;
+            result.reserve(this->size());
+            for (const auto& [tag, value] : *this)
+            {
+                if (const T* ptr = value.get_if<T>())
+                {
+                    result.emplace_back(tag, *ptr);
+                }
+            }
+            result.shrink_to_fit();
+            return result;
+        }
+
+
         template <class ContainerT>
         static std::shared_ptr<TaggedValueList> create_shared_from(const ContainerT& container)
         {

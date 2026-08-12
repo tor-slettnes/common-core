@@ -141,7 +141,7 @@ namespace cc::platform::upgrade::native
 
     Version NativePackageInfo::decode_version(const core::types::Value& value)
     {
-        if (core::types::StringPtr version_string = value.get_string_ptr())
+        if (auto *version_string = value.get_if<std::string>())
         {
             return Version::from_string(*version_string);
         }
@@ -162,7 +162,7 @@ namespace cc::platform::upgrade::native
 
     std::string NativePackageInfo::decode_description(const core::types::Value& value)
     {
-        if (core::types::StringPtr description = value.get_string_ptr())
+        if (auto *description = value.get_if<std::string>())
         {
             return *description;
         }

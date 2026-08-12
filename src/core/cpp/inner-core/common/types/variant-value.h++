@@ -228,11 +228,6 @@ namespace cc::core::types
         const KeyValueMap& get_kvmap() const;
 
         /// @return
-        ///    `shared_ptr` reference to the contained string if applicable,
-        ///    otherwise an empty `shared_ptr`.
-        StringPtr get_string_ptr() const noexcept;
-
-        /// @return
         ///    `shared_ptr` reference to the contained ByteVector if applicable,
         ///    otherwise an empty `shared_ptr`.
         BytesPtr get_bytevector_ptr() const noexcept;
@@ -349,7 +344,10 @@ namespace cc::core::types
         inline const T& get() const;
 
         // Convencience wrapper around std::get_if<T>(*this)
-        template <class T>
+        template <class T, std::enable_if_t<!std::is_same_v<T, std::string>, bool> = false>
+        inline const T* get_if() const;
+
+        template <class T, std::enable_if_t<std::is_same_v<T, std::string>, bool> = true>
         inline const T* get_if() const;
 
         // Convencience wrapper around std::get_if<T>(*this)

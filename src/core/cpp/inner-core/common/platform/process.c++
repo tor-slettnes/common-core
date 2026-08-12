@@ -218,7 +218,7 @@ namespace cc::core::platform
             }
             return argv;
         }
-        else if (const auto& command_string = command.get_string_ptr())
+        else if (const auto *command_string = command.get_if<std::string>())
         {
             return this->shell_command(*command_string);
         }

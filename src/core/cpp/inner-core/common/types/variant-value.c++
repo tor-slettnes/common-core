@@ -1142,9 +1142,9 @@ namespace cc::core::types
 
     const std::string& Value::get_string() const
     {
-        if (auto ptr = this->get_string_ptr())
+        if (auto *string = this->get_if<std::string>())
         {
-            return *ptr;
+            return *string;
         }
         else
         {
@@ -1202,18 +1202,6 @@ namespace cc::core::types
         {
             static const KeyValueMap fallback;
             return fallback;
-        }
-    }
-
-    StringPtr Value::get_string_ptr() const noexcept
-    {
-        if (auto* ptr = this->get_if<StringPtr>())
-        {
-            return *ptr;
-        }
-        else
-        {
-            return {};
         }
     }
 

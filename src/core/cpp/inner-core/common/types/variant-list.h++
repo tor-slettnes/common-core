@@ -82,9 +82,9 @@ namespace cc::core::types
             vector->reserve(vector->size() + this->size());
             for (const types::Value& value : *this)
             {
-                if (const std::optional<T> opt = value.try_convert_to<T>())
+                if (const auto *ptr = value.get_if<T>())
                 {
-                    vector->push_back(opt.value());
+                    vector->push_back(*ptr);
                 }
             }
         }

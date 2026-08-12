@@ -7,7 +7,7 @@
 
 #pragma once
 #include "grpc-signalqueue.h++"
-#include "cc/platform/switchboard/grpc/switchboard_service.grpc.pb.h"
+#include "cc/platform/switchboard/protobuf/switchboard_types.pb.h"
 
 namespace cc::platform::switchboard
 {
