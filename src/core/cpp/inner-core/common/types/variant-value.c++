@@ -68,42 +68,17 @@ namespace cc::core::types
     }
 
     Value::Value(const char* cstring)
-        : ValueBase(std::make_shared<std::string>(cstring))
-    {
-    }
-
-    Value::Value(const StringPtr& ptr)
-        : ValueBase(ptr)
-    {
-    }
-
-    Value::Value(const std::string& string)
-        : ValueBase(std::make_shared<std::string>(string))
-    {
-    }
-
-    Value::Value(std::string&& string)
-        : ValueBase(std::make_shared<std::string>(std::move(string)))
+        : ValueBase(std::string(cstring))
     {
     }
 
     Value::Value(const std::string_view& view)
-        : ValueBase(std::make_shared<std::string>(view.begin(), view.end()))
+        : ValueBase(std::string(view.begin(), view.end()))
     {
     }
 
-    Value::Value(const std::filesystem::path& path)
-        : ValueBase(std::make_shared<std::string>(path.string()))
-    {
-    }
-
-    Value::Value(const std::vector<Byte>& bytes)
-        : ValueBase(std::make_shared<ByteVector>(bytes.begin(), bytes.end()))
-    {
-    }
-
-    Value::Value(const BytesPtr& bytes)
-        : ValueBase(bytes)
+    Value::Value(const Bytes& bytes)
+        : ValueBase(ByteVector(bytes.begin(), bytes.end()))
     {
     }
 
@@ -180,10 +155,10 @@ namespace cc::core::types
                 return this->get<complex>() == other.get<complex>();
 
             case ValueType::STRING:
-                return this->get_string() == other.get_string();
+                return this->get<std::string>() == other.get<std::string>();
 
             case ValueType::BYTEVECTOR:
-                return this->get_bytevector() == other.get_bytevector();
+                return this->get<ByteVector>() == other.get<ByteVector>();
 
             case ValueType::TIMEPOINT:
                 return this->get<dt::TimePoint>() == other.get<dt::TimePoint>();
@@ -258,10 +233,10 @@ namespace cc::core::types
             return this->get<char>() != '\0';
 
         case ValueType::STRING:
-            return !this->get_string().empty();
+            return !this->get<std::string>().empty();
 
         case ValueType::BYTEVECTOR:
-            return !this->get_bytevector().empty();
+            return !this->get<ByteVector>().empty();
 
         case ValueType::TIMEPOINT:
             return this->get<dt::TimePoint>() != dt::epoch;
@@ -335,22 +310,22 @@ namespace cc::core::types
 
     bool Value::is_text() const noexcept
     {
-        return this->holdsAnyOf<char, StringPtr>();
+        return this->holdsAnyOf<char, std::string>();
     }
 
     bool Value::is_string() const noexcept
     {
-        return this->holdsAnyOf<StringPtr>();
+        return this->holdsAnyOf<std::string>();
     }
 
     bool Value::is_bytevector() const noexcept
     {
-        return this->holdsAnyOf<BytesPtr>();
+        return this->holdsAnyOf<ByteVector>();
     }
 
     bool Value::is_bytesequence() const noexcept
     {
-        return this->holdsAnyOf<StringPtr, BytesPtr>();
+        return this->holdsAnyOf<std::string, ByteVector>();
     }
 
     bool Value::is_time() const noexcept
@@ -523,7 +498,7 @@ namespace cc::core::types
         switch (this->type())
         {
         case ValueType::STRING:
-            return this->get_string();
+            return this->get<std::string>();
 
         default:
             return this->to_string();
@@ -532,44 +507,7 @@ namespace cc::core::types
 
     ByteVector Value::as_bytevector(const ByteVector& fallback) const noexcept
     {
-        switch (this->type())
-        {
-        case ValueType::NONE:
-            return {};
-
-        case ValueType::BOOL:
-            return ByteVector::pack(this->get<bool>());
-
-        case ValueType::CHAR:
-            return ByteVector::pack(this->get<char>());
-
-        case ValueType::UINT:
-            return ByteVector::pack(this->get<largest_uint>());
-
-        case ValueType::SINT:
-            return ByteVector::pack(this->get<largest_sint>());
-
-        case ValueType::REAL:
-            return ByteVector::pack(this->get<largest_real>());
-
-        case ValueType::COMPLEX:
-            return ByteVector::pack(this->get<complex>());
-
-        case ValueType::TIMEPOINT:
-            return ByteVector::pack(this->get<dt::TimePoint>());
-
-        case ValueType::DURATION:
-            return ByteVector::pack(this->get<dt::Duration>());
-
-        case ValueType::STRING:
-            return ByteVector::from_string(this->get_string());
-
-        case ValueType::BYTEVECTOR:
-            return this->get_bytevector();
-
-        default:
-            return {};
-        }
+        return this->try_as_bytevector().value_or(fallback);
     }
 
     dt::TimePoint Value::as_timepoint(
@@ -771,10 +709,10 @@ namespace cc::core::types
             return (this->as_real() != 0.0) || (this->as_imag() != 0.0);
 
         case ValueType::STRING:
-            return str::try_convert_to<bool>(this->get_string());
+            return str::try_convert_to<bool>(this->get<std::string>());
 
         case ValueType::BYTEVECTOR:
-            for (auto& byte : this->get_bytevector())
+            for (auto& byte : this->get<ByteVector>())
             {
                 if (byte > 0)
                 {
@@ -817,9 +755,9 @@ namespace cc::core::types
             return this->get<bool>() ? 't' : 'f';
 
         case ValueType::STRING:
-            if (this->get_string().size() > 0)
+            if (this->get<std::string>().size() > 0)
             {
-                return this->get_string().front();
+                return this->get<std::string>().front();
             }
             else
             {
@@ -827,9 +765,9 @@ namespace cc::core::types
             }
 
         case ValueType::BYTEVECTOR:
-            if (this->get_bytevector().size() == sizeof(char))
+            if (this->get<ByteVector>().size() == sizeof(char))
             {
-                return static_cast<const char>(this->get_bytevector().front());
+                return static_cast<const char>(this->get<ByteVector>().front());
             }
             else
             {
@@ -1012,6 +950,48 @@ namespace cc::core::types
         return {};
     }
 
+    std::optional<ByteVector> Value::try_as_bytevector() const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::NONE:
+            return {};
+
+        case ValueType::BOOL:
+            return ByteVector::pack(this->get<bool>());
+
+        case ValueType::CHAR:
+            return ByteVector::pack(this->get<char>());
+
+        case ValueType::UINT:
+            return ByteVector::pack(this->get<largest_uint>());
+
+        case ValueType::SINT:
+            return ByteVector::pack(this->get<largest_sint>());
+
+        case ValueType::REAL:
+            return ByteVector::pack(this->get<largest_real>());
+
+        case ValueType::COMPLEX:
+            return ByteVector::pack(this->get<complex>());
+
+        case ValueType::TIMEPOINT:
+            return ByteVector::pack(this->get<dt::TimePoint>());
+
+        case ValueType::DURATION:
+            return ByteVector::pack(this->get<dt::Duration>());
+
+        case ValueType::STRING:
+            return ByteVector::from_string(this->get<std::string>());
+
+        case ValueType::BYTEVECTOR:
+            return this->get<ByteVector>();
+
+        default:
+            return {};
+        }
+    }
+
     std::optional<dt::TimePoint> Value::try_as_timepoint(bool assume_local) const noexcept
     {
         return this->as_timepoint({}, assume_local);
@@ -1031,7 +1011,7 @@ namespace cc::core::types
 
         case ValueType::STRING:
             return dt::try_to_timepoint(
-                this->get_string(),
+                this->get<std::string>(),
                 assume_local,
                 decimal_exponent);
 
@@ -1049,7 +1029,7 @@ namespace cc::core::types
         case ValueType::BYTEVECTOR:
             try
             {
-                return this->get_bytevector().unpack<dt::TimePoint>();
+                return this->get<ByteVector>().unpack<dt::TimePoint>();
             }
             catch (const std::out_of_range&)
             {
@@ -1072,12 +1052,12 @@ namespace cc::core::types
             return dt::to_duration(this->as_real());
 
         case ValueType::STRING:
-            return dt::try_to_duration(this->get_string());
+            return dt::try_to_duration(this->get<std::string>());
 
         case ValueType::BYTEVECTOR:
             try
             {
-                return this->get_bytevector().unpack<dt::Duration>();
+                return this->get<ByteVector>().unpack<dt::Duration>();
             }
             catch (const std::out_of_range&)
             {
@@ -1107,7 +1087,7 @@ namespace cc::core::types
             return dt::to_duration(this->as_real(), multiplier);
 
         case ValueType::STRING:
-            return dt::try_to_duration(this->get_string(), multiplier);
+            return dt::try_to_duration(this->get<std::string>(), multiplier);
 
         default:
             return this->try_as_duration();
@@ -1129,7 +1109,7 @@ namespace cc::core::types
                                    std::pow(10, decimal_exponent));
 
         case ValueType::STRING:
-            return dt::try_to_duration(this->get_string(),
+            return dt::try_to_duration(this->get<std::string>(),
                                        std::pow(10, decimal_exponent));
 
         default:
@@ -1142,7 +1122,7 @@ namespace cc::core::types
 
     const std::string& Value::get_string() const
     {
-        if (auto *string = this->get_if<std::string>())
+        if (auto* string = this->get_if<std::string>())
         {
             return *string;
         }
@@ -1155,9 +1135,9 @@ namespace cc::core::types
 
     const ByteVector& Value::get_bytevector() const
     {
-        if (auto* bv = this->get_if<BytesPtr>())
+        if (auto* bv = this->get_if<ByteVector>())
         {
-            return **bv;
+            return *bv;
         }
         else
         {
@@ -1202,18 +1182,6 @@ namespace cc::core::types
         {
             static const KeyValueMap fallback;
             return fallback;
-        }
-    }
-
-    BytesPtr Value::get_bytevector_ptr() const noexcept
-    {
-        if (auto* ptr = this->get_if<BytesPtr>())
-        {
-            return *ptr;
-        }
-        else
-        {
-            return {};
         }
     }
 
@@ -1552,11 +1520,11 @@ namespace cc::core::types
             break;
 
         case ValueType::STRING:
-            stream << this->get_string();
+            stream << this->get<std::string>();
             break;
 
         case ValueType::BYTEVECTOR:
-            stream << this->get_bytevector();
+            stream << this->get<ByteVector>();
             break;
 
         case ValueType::TIMEPOINT:
@@ -1595,7 +1563,7 @@ namespace cc::core::types
             break;
 
         case ValueType::BYTEVECTOR:
-            stream << "\"%" << this->get_bytevector().to_base64() << "%\"";
+            stream << "\"%" << this->get<ByteVector>().to_base64() << "%\"";
             break;
 
         case ValueType::TIMEPOINT:
@@ -1607,7 +1575,7 @@ namespace cc::core::types
             break;
 
         case ValueType::STRING:
-            str::to_literal(stream, this->get_string());
+            str::to_literal(stream, this->get<std::string>());
             break;
 
         case ValueType::VALUELIST:

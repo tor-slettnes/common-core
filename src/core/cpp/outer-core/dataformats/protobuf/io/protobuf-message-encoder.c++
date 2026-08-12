@@ -308,7 +308,7 @@ namespace cc::protobuf
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_BYTES:
-            if (auto bytevector = value.get_bytevector_ptr())
+            if (auto *bytevector = value.get_if<core::types::ByteVector>())
             {
                 reflection->SetString(msg, fd, bytevector->as_string());
                 encoded = true;
@@ -438,7 +438,7 @@ namespace cc::protobuf
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_BYTES:
-            if (auto bytevector = value.get_bytevector_ptr())
+            if (auto *bytevector = value.get_if<core::types::ByteVector>())
             {
                 reflection->AddString(msg, fd, bytevector->as_string());
                 encoded = true;

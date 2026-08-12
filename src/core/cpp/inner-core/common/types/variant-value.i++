@@ -117,24 +117,10 @@ namespace cc::core::types
     }
 
     // Convencience wrapper around std::get<T>(*this)
-    template <class T, std::enable_if_t<!std::is_same_v<T, std::string>, bool>>
+    template <class T>
     const T *Value::get_if() const
     {
         return std::get_if<T>(this);
-    }
-
-    // Convencience wrapper around std::get<std::string>(*this)
-    template <class T, std::enable_if_t<std::is_same_v<T, std::string>, bool>>
-    const T *Value::get_if() const
-    {
-        if (auto *string_ptr = std::get_if<StringPtr>(this))
-        {
-            return string_ptr->get();
-        }
-        else
-        {
-            return nullptr;
-        }
     }
 
     // Convencience wrapper around std::get<T>(*this)

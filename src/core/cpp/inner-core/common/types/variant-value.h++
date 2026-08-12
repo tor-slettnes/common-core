@@ -11,7 +11,6 @@
 #include "string/convert.h++"
 
 #include <type_traits>
-#include <filesystem>
 
 namespace cc::core::types
 {
@@ -37,13 +36,8 @@ namespace cc::core::types
         Value(std::int32_t value);
         Value(std::int64_t value);
         Value(const char* cstring);
-        Value(const StringPtr& string);
-        Value(const std::string& string);
-        Value(std::string&& string);
         Value(const std::string_view& view);
-        Value(const std::filesystem::path& path);
-        Value(const std::vector<Byte>& bytes);
-        Value(const BytesPtr& bytes);
+        Value(const Bytes& bytes);
 
         Value(const ValueListPtr& list);
         Value(const ValueList& list);
@@ -190,6 +184,7 @@ namespace cc::core::types
         std::optional<float> try_as_float() const noexcept;
         std::optional<double> try_as_double() const noexcept;
         std::optional<complex> try_as_complex() const noexcept;
+        std::optional<ByteVector> try_as_bytevector() const noexcept;
 
         std::optional<dt::TimePoint> try_as_timepoint(
             bool assume_local = true) const noexcept;
@@ -226,11 +221,6 @@ namespace cc::core::types
         ///    Constant reference to the contained KeyValueMap if applicable,
         ///    otherwise to a static empty TaggedValueList.
         const KeyValueMap& get_kvmap() const;
-
-        /// @return
-        ///    `shared_ptr` reference to the contained ByteVector if applicable,
-        ///    otherwise an empty `shared_ptr`.
-        BytesPtr get_bytevector_ptr() const noexcept;
 
         /// @return
         ///    `shared_ptr` reference to the contained ValueList if applicable,
@@ -344,10 +334,7 @@ namespace cc::core::types
         inline const T& get() const;
 
         // Convencience wrapper around std::get_if<T>(*this)
-        template <class T, std::enable_if_t<!std::is_same_v<T, std::string>, bool> = false>
-        inline const T* get_if() const;
-
-        template <class T, std::enable_if_t<std::is_same_v<T, std::string>, bool> = true>
+        template <class T>
         inline const T* get_if() const;
 
         // Convencience wrapper around std::get_if<T>(*this)
