@@ -206,11 +206,11 @@ namespace cc::core::types
         {
             V result;
             result.reserve(this->size());
-            for (const auto& [tag, value] : *this)
+            for (const auto& item : *this)
             {
-                if (const T* ptr = value.get_if<T>())
+                if (const T* ptr = item.second.get_if<T>())
                 {
-                    result.emplace_back(tag, *ptr);
+                    result.emplace_back(item.first, *ptr);
                 }
             }
             result.shrink_to_fit();
