@@ -15,7 +15,7 @@
 namespace cc::dbus
 {
     ProxyContainer::ProxyContainer(Gio::DBus::BusType bus,
-                                   const ServiceName& servicename)
+                                   const ServiceName &servicename)
         : bus(bus),
           servicename(servicename)
     {
@@ -57,10 +57,10 @@ namespace cc::dbus
     }
 
     std::vector<ProxyWrapper::ptr> ProxyContainer::list(
-        const InterfaceName& interfacename) const
+        const InterfaceName &interfacename) const
     {
         std::vector<ProxyWrapper::ptr> refs;
-        for (const ProxyWrapper::ptr& ref : this->list())
+        for (const ProxyWrapper::ptr &ref : this->list())
         {
             if (ref->interfacename == interfacename)
             {
@@ -71,8 +71,8 @@ namespace cc::dbus
     }
 
     std::vector<ProxyWrapper::ptr> ProxyContainer::list(
-        const ObjectPath& prefix,
-        const InterfaceName& interfacename) const
+        const ObjectPath &prefix,
+        const InterfaceName &interfacename) const
     {
         std::vector<ProxyWrapper::ptr> refs;
         for (auto pathitem : this->wrappers)
@@ -93,19 +93,19 @@ namespace cc::dbus
 
     ProxyWrapper::ptr ProxyContainer::add(ProxyWrapper::ptr wrapper)
     {
-        const auto& [it, inserted] = this->wrappers[wrapper->objectpath]
+        const auto &[it, inserted] = this->wrappers[wrapper->objectpath]
                                          .emplace(wrapper->interfacename, wrapper);
         this->pending_init.insert(wrapper);
         return it->second;
     }
 
     ProxyContainer::WrapperMap::iterator ProxyContainer::remove(
-        const ObjectPath& objectpath)
+        const ObjectPath &objectpath)
     {
         auto path_it = this->wrappers.find(objectpath);
         if (path_it != this->wrappers.end())
         {
-            for (auto& [name, ref] : path_it->second)
+            for (auto &[name, ref] : path_it->second)
             {
                 this->pending_init.erase(ref);
                 ref->on_remove();
@@ -125,8 +125,8 @@ namespace cc::dbus
     // }
 
     ProxyWrapper::ptr ProxyContainer::get(
-        const ObjectPath& objectpath,
-        const InterfaceName& interfacename) const
+        const ObjectPath &objectpath,
+        const InterfaceName &interfacename) const
     {
         ProxyWrapper::ptr ref;
         auto it1 = this->wrappers.find(objectpath);
@@ -163,12 +163,12 @@ namespace cc::dbus
     }
 
     void ProxyContainer::on_signal(
-        const Glib::RefPtr<Gio::DBus::Connection>& connection,
-        const Glib::ustring& sender_name,
-        const Glib::ustring& object_path,
-        const Glib::ustring& interface_name,
-        const Glib::ustring& signal_name,
-        const Glib::VariantContainerBase& parameters)
+        const Glib::RefPtr<Gio::DBus::Connection> &connection,
+        const Glib::ustring &sender_name,
+        const Glib::ustring &object_path,
+        const Glib::ustring &interface_name,
+        const Glib::ustring &signal_name,
+        const Glib::VariantContainerBase &parameters)
     {
         if (object_path.size())
         {

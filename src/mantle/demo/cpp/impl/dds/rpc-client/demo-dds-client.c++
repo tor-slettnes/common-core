@@ -15,7 +15,7 @@
 
 namespace cc::demo::dds
 {
-    ClientImpl::ClientImpl(const std::string& identity, int domain_id)
+    ClientImpl::ClientImpl(const std::string &identity, int domain_id)
         : API(identity, "DDS Client"),
           ClientWrapper(CC::Demo::SERVICE_ID, domain_id)
     {
@@ -27,7 +27,7 @@ namespace cc::demo::dds
         this->client()->wait_for_service();
     }
 
-    void ClientImpl::say_hello(const Greeting& greeting)
+    void ClientImpl::say_hello(const Greeting &greeting)
     {
         auto idl_greeting = idl::encoded<CC::Demo::Greeting>(greeting);
         this->client()->say_hello(idl_greeting);

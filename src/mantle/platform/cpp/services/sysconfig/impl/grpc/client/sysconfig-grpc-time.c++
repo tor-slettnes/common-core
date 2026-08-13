@@ -13,7 +13,7 @@
 
 namespace cc::platform::sysconfig::grpc
 {
-    TimeConfigProvider::TimeConfigProvider(const std::shared_ptr<Client>& client)
+    TimeConfigProvider::TimeConfigProvider(const std::shared_ptr<Client> &client)
         : Super(TYPE_NAME_FULL(This)),
           client(client)
     {
@@ -24,20 +24,20 @@ namespace cc::platform::sysconfig::grpc
         Super::initialize();
         this->client->add_handler(
             platform::sysconfig::protobuf::Signal::kTime,
-            [&](const platform::sysconfig::protobuf::Signal& signal) {
+            [&](const platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_time.emit(
                     cc::protobuf::decoded<core::dt::TimePoint>(signal.time()));
             });
 
         this->client->add_handler(
             platform::sysconfig::protobuf::Signal::kTimeConfig,
-            [&](const platform::sysconfig::protobuf::Signal& signal) {
+            [&](const platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_timeconfig.emit(
                     cc::protobuf::decoded<TimeConfig>(signal.time_config()));
             });
     }
 
-    void TimeConfigProvider::set_current_time(const core::dt::TimePoint& tp)
+    void TimeConfigProvider::set_current_time(const core::dt::TimePoint &tp)
     {
         this->client->call_check(
             &Client::Stub::SetCurrentTime,
@@ -51,7 +51,7 @@ namespace cc::platform::sysconfig::grpc
                 &Client::Stub::GetCurrentTime));
     }
 
-    void TimeConfigProvider::set_time_config(const TimeConfig& config)
+    void TimeConfigProvider::set_time_config(const TimeConfig &config)
     {
         this->client->call_check(
             &Client::Stub::SetTimeConfig,

@@ -26,10 +26,10 @@ namespace cc::platform::netconfig::dbus
 
     public:
         Manager(
-            cc::dbus::ProxyContainer* container,
-            const cc::dbus::ConnectionPtr& connection,
-            const cc::dbus::ServiceName& servicename,
-            const cc::dbus::ObjectPath& objectpath = NM_DBUS_PATH);
+            cc::dbus::ProxyContainer *container,
+            const cc::dbus::ConnectionPtr &connection,
+            const cc::dbus::ServiceName &servicename,
+            const cc::dbus::ObjectPath &objectpath = NM_DBUS_PATH);
 
     protected:
         void initialize() override;
@@ -44,24 +44,24 @@ namespace cc::platform::netconfig::dbus
         void add_and_activate_connection(ConnectionData data);
 
         void add_and_activate_connection(
-            const ConnectionData& data,
-            const Glib::DBusObjectPathString& device_path,
-            const Glib::DBusObjectPathString& specific_path = "/");
+            const ConnectionData &data,
+            const Glib::DBusObjectPathString &device_path,
+            const Glib::DBusObjectPathString &specific_path = "/");
 
-        void activate_connection(const Key& key);
-        void deactivate_connection(const Key& key);
-        void connect_ap(const Key& bssid, const ConnectionData& data = {});
-        void connect_ap(const SSID& ssid, const ConnectionData& data = {});
+        void activate_connection(const Key &key);
+        void deactivate_connection(const Key &key);
+        void connect_ap(const Key &bssid, const ConnectionData &data = {});
+        void connect_ap(const SSID &ssid, const ConnectionData &data = {});
 
     private:
         void connect_ap(std::shared_ptr<WirelessDevice> dev,
                         std::shared_ptr<AccessPoint> ap,
-                        const ConnectionData& data);
+                        const ConnectionData &data);
 
-        void on_signal_state_changed(const Glib::VariantContainerBase& parameters);
-        void on_property_devices(const Glib::VariantBase& change);
-        void on_property_wireless_enabled(const Glib::VariantBase& change);
-        void on_property_active_connections(const Glib::VariantBase& change);
+        void on_signal_state_changed(const Glib::VariantContainerBase &parameters);
+        void on_property_devices(const Glib::VariantBase &change);
+        void on_property_wireless_enabled(const Glib::VariantBase &change);
+        void on_property_active_connections(const Glib::VariantBase &change);
 
     private:
         std::shared_ptr<cc::dbus::PropertiesProxy> properties_proxy;

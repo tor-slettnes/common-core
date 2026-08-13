@@ -17,8 +17,8 @@ namespace cc::platform::pubsub::grpc
     // Reader
 
     Reader::Reader(
-        const std::unique_ptr<platform::pubsub::grpc::Relay::Stub>& stub,
-        const platform::pubsub::protobuf::Filters& filters)
+        const std::unique_ptr<platform::pubsub::grpc::Relay::Stub> &stub,
+        const platform::pubsub::protobuf::Filters &filters)
         : reader(stub->Subscriber(&this->context, filters))
     {
     }

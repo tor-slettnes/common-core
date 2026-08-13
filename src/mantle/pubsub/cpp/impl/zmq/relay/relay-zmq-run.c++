@@ -17,8 +17,8 @@ namespace cc::platform::pubsub::zmq
     constexpr auto SHUTDOWN_SIGNAL_HANDLE = "relay-zmq-listeners";
 
     void run_zmq_listeners(
-        const std::string& producer_interface,
-        const std::string& consumer_interface)
+        const std::string &producer_interface,
+        const std::string &consumer_interface)
     {
         // Instantiate Server to handle incoming requests from client
         auto subscriber = Subscriber::create_shared(

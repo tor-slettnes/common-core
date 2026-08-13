@@ -23,15 +23,15 @@ namespace cc::zmq
 
     protected:
         MessageHandler(
-            const std::string& id,
-            const std::optional<Filter>& filter = {},
-            const std::weak_ptr<Subscriber>& subscriber = {});
+            const std::string &id,
+            const std::optional<Filter> &filter = {},
+            const std::weak_ptr<Subscriber> &subscriber = {});
 
         ~MessageHandler();
 
     public:
-        const Identity& id() const noexcept;
-        const std::optional<Filter>& filter() const noexcept;
+        const Identity &id() const noexcept;
+        const std::optional<Filter> &filter() const noexcept;
 
         virtual void initialize();
         virtual void deinitialize();
@@ -41,7 +41,7 @@ namespace cc::zmq
 
         // Override to capture each publication as a vector of individual parts.
         // (Least impactful).
-        virtual void handle(const MessageParts& parts);
+        virtual void handle(const MessageParts &parts);
 
         // Override to capture each publication as a single byte vector combined
         // from the message parts.  The first part is skipped iff `filter` was
@@ -49,11 +49,11 @@ namespace cc::zmq
         //
         // In other words, this will capture the message payload, without the
         // topic.
-        virtual void handle(const core::types::ByteVector& data) {}
+        virtual void handle(const core::types::ByteVector &data) {}
 
     protected:
         core::types::ByteVector combine_parts(
-            const MessageParts& parts,
+            const MessageParts &parts,
             bool remove_header = true) const;
 
     private:

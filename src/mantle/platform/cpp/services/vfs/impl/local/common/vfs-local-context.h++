@@ -19,12 +19,12 @@ namespace cc::platform::vfs::local
                          public std::enable_shared_from_this<LocalContext>
     {
     public:
-        LocalContext(const std::string& name,
-                     const fs::path& root,
+        LocalContext(const std::string &name,
+                     const fs::path &root,
                      bool writable,
-                     const std::string& preexec,
-                     const std::string& postexec,
-                     const std::string& title,
+                     const std::string &preexec,
+                     const std::string &postexec,
+                     const std::string &title,
                      bool removable = false);
 
         void add_ref() override;

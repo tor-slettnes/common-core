@@ -13,10 +13,10 @@
 namespace cc::platform::netconfig::dbus
 {
     Settings::Settings(
-        cc::dbus::ProxyContainer* container,
-        const cc::dbus::ConnectionPtr& connection,
-        const cc::dbus::ServiceName& servicename,
-        const cc::dbus::ObjectPath& objectpath)
+        cc::dbus::ProxyContainer *container,
+        const cc::dbus::ConnectionPtr &connection,
+        const cc::dbus::ServiceName &servicename,
+        const cc::dbus::ObjectPath &objectpath)
         : DataWrapper<SystemData>(
               container,
               connection,
@@ -40,7 +40,7 @@ namespace cc::platform::netconfig::dbus
         this->container->synchronize<Connection>(connections);
     }
 
-    void Settings::define_connection(const ConnectionData& data)
+    void Settings::define_connection(const ConnectionData &data)
     {
         if (auto conn = Connection::get_by_id(data.id, false))
         {
@@ -54,7 +54,7 @@ namespace cc::platform::netconfig::dbus
         }
     }
 
-    void Settings::add_connection(const ConnectionData& data)
+    void Settings::add_connection(const ConnectionData &data)
     {
         auto inputs = Glib::VariantContainerBase::create_tuple({
             connection::build_settings_container(data),
@@ -63,7 +63,7 @@ namespace cc::platform::netconfig::dbus
         this->call_sync("AddConnection", inputs);
     }
 
-    bool Settings::remove_connection(const std::string& key, bool required)
+    bool Settings::remove_connection(const std::string &key, bool required)
     {
         bool found = false;
         if (auto ref = lookup<Connection>(key, false))  // UUID found
@@ -73,7 +73,7 @@ namespace cc::platform::netconfig::dbus
         }
         else
         {
-            for (const auto& [path, ref] : this->container->instances<Connection>())
+            for (const auto &[path, ref] : this->container->instances<Connection>())
             {
                 if (ref->id == key)
                 {
@@ -99,7 +99,7 @@ namespace cc::platform::netconfig::dbus
         return found;
     }
 
-    void Settings::set_hostname(const std::string& hostname)
+    void Settings::set_hostname(const std::string &hostname)
     {
         auto inputs = Glib::VariantContainerBase::create_tuple({
             Glib::Variant<Glib::ustring>::create(hostname),
@@ -108,7 +108,7 @@ namespace cc::platform::netconfig::dbus
     }
 
     void Settings::on_signal_connection_added(
-        const Glib::VariantContainerBase& parameters)
+        const Glib::VariantContainerBase &parameters)
     {
         auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(parameters, 0);
         logf_debug("Added connection %r", path);
@@ -116,14 +116,14 @@ namespace cc::platform::netconfig::dbus
     }
 
     void Settings::on_signal_connection_removed(
-        const Glib::VariantContainerBase& parameters)
+        const Glib::VariantContainerBase &parameters)
     {
         auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(parameters, 0);
         logf_debug("Removed connection %r", path);
         auto conn = this->container->remove(path);
     }
 
-    void Settings::on_property_hostname(const Glib::VariantBase& change)
+    void Settings::on_property_hostname(const Glib::VariantBase &change)
     {
         auto hostname = cc::glib::variant_cast<std::string>(change);
         logf_debug("signal_hostname: %s", hostname);

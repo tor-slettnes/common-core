@@ -13,19 +13,19 @@ namespace cc::core::logging
     //==========================================================================
     // Message
 
-    Message::Message(const std::string& text,
+    Message::Message(const std::string &text,
                      status::Level level,
                      Scope::ptr scope,
-                     const std::string& origin,
-                     const dt::TimePoint& tp,
-                     const fs::path& path,
+                     const std::string &origin,
+                     const dt::TimePoint &tp,
+                     const fs::path &path,
                      uint lineno,
-                     const std::string& function,
+                     const std::string &function,
                      pid_t thread_id,
-                     const std::string& thread_name,
-                     const std::string& task_name,
-                     const std::string& host,
-                     const types::KeyValueMap& attributes)
+                     const std::string &thread_name,
+                     const std::string &task_name,
+                     const std::string &host,
+                     const types::KeyValueMap &attributes)
         : Super(text, level, origin, tp, attributes),
           scope_(scope),
           path_(path),
@@ -38,7 +38,7 @@ namespace cc::core::logging
     {
     }
 
-    Message::Message(const Message& other)
+    Message::Message(const Message &other)
         : Super(other),
           scope_(other.scope()),
           path_(other.path()),
@@ -51,7 +51,7 @@ namespace cc::core::logging
     {
     }
 
-    Message& Message::operator=(Message&& other) noexcept
+    Message &Message::operator=(Message &&other) noexcept
     {
         std::swap(this->scope_, other.scope_);
         std::swap(this->path_, other.path_);
@@ -65,7 +65,7 @@ namespace cc::core::logging
         return *this;
     }
 
-    Message& Message::operator=(const Message& other) noexcept
+    Message &Message::operator=(const Message &other) noexcept
     {
         Super::operator=(other);
         this->scope_ = other.scope();
@@ -77,9 +77,9 @@ namespace cc::core::logging
         return *this;
     }
 
-    bool Message::equivalent(const Event& other) const noexcept
+    bool Message::equivalent(const Event &other) const noexcept
     {
-        if (auto* that = dynamic_cast<const Message*>(&other))
+        if (auto *that = dynamic_cast<const Message *>(&other))
         {
             return Super::equivalent(other) &&
                    (this->scopename() == that->scopename()) &&
@@ -111,7 +111,7 @@ namespace cc::core::logging
         {
             return false;
         }
-        else if (const Scope::ptr& scope = this->scope())
+        else if (const Scope::ptr &scope = this->scope())
         {
             return scope->is_applicable(this->level());
         }
@@ -131,7 +131,7 @@ namespace cc::core::logging
         return this->scope_;
     }
 
-    std::string Message::scopename_or(const std::string& fallback) const noexcept
+    std::string Message::scopename_or(const std::string &fallback) const noexcept
     {
         return this->scope() ? this->scope()->name : fallback;
     }
@@ -141,7 +141,7 @@ namespace cc::core::logging
         return this->scopename_or("");
     }
 
-    const fs::path& Message::path() const noexcept
+    const fs::path &Message::path() const noexcept
     {
         return this->path_;
     }
@@ -151,7 +151,7 @@ namespace cc::core::logging
         return this->lineno_;
     }
 
-    const std::string& Message::function() const noexcept
+    const std::string &Message::function() const noexcept
     {
         return this->function_;
     }
@@ -201,32 +201,32 @@ namespace cc::core::logging
     }
 
     types::Value Message::get_field_as_value(
-        const std::string& field_name) const
+        const std::string &field_name) const
     {
-        using LookupFunction = std::function<types::Value(const Message* message)>;
+        using LookupFunction = std::function<types::Value(const Message *message)>;
         static const std::unordered_map<std::string, LookupFunction> lookup = {
-            {This::FIELD_LOG_SCOPE, [=](const Message* message) {
+            {This::FIELD_LOG_SCOPE, [=](const Message *message) {
                  return message->scopename();
              }},
-            {This::FIELD_SOURCE_PATH, [=](const Message* message) {
+            {This::FIELD_SOURCE_PATH, [=](const Message *message) {
                  return message->path();
              }},
-            {This::FIELD_SOURCE_LINE, [=](const Message* message) {
+            {This::FIELD_SOURCE_LINE, [=](const Message *message) {
                  return message->lineno();
              }},
-            {This::FIELD_FUNCTION_NAME, [=](const Message* message) {
+            {This::FIELD_FUNCTION_NAME, [=](const Message *message) {
                  return message->function();
              }},
-            {This::FIELD_HOST, [=](const Message* message) {
+            {This::FIELD_HOST, [=](const Message *message) {
                  return message->host();
              }},
-            {This::FIELD_THREAD_ID, [=](const Message* message) {
+            {This::FIELD_THREAD_ID, [=](const Message *message) {
                  return message->thread_id();
              }},
-            {This::FIELD_THREAD_NAME, [=](const Message* message) {
+            {This::FIELD_THREAD_NAME, [=](const Message *message) {
                  return message->thread_name();
              }},
-            {This::FIELD_TASK_NAME, [=](const Message* message) {
+            {This::FIELD_TASK_NAME, [=](const Message *message) {
                  return message->task_name();
              }},
         };
@@ -235,7 +235,7 @@ namespace cc::core::logging
         {
             return lookup.at(field_name)(this);
         }
-        catch (const std::out_of_range&)
+        catch (const std::out_of_range &)
         {
             return Super::get_field_as_value(field_name);
         }

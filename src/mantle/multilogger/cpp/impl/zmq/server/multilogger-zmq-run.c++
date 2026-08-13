@@ -17,7 +17,7 @@ namespace cc::platform::multilogger::zmq
 
     void run_service(
         std::shared_ptr<API> api_provider,
-        const std::string& bind_address)
+        const std::string &bind_address)
     {
         // Instantiate Publisher to relay asynchronous events over ZeroMQ
         auto submission_subscriber = std::make_shared<cc::zmq::Subscriber>(

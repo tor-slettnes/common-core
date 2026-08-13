@@ -23,7 +23,7 @@ namespace cc::core::types
         using MapType::MapType;
 
         inline std::optional<std::string> try_to_string(
-            const KeyType& key) const noexcept
+            const KeyType &key) const noexcept
         {
             if (auto it = this->find(key); it != this->end())
             {
@@ -36,18 +36,18 @@ namespace cc::core::types
         }
 
         inline std::string to_string(
-            const KeyType& key,
-            const std::string& fallback = {}) const noexcept
+            const KeyType &key,
+            const std::string &fallback = {}) const noexcept
         {
             return this->try_to_string(key).value_or(fallback);
         }
 
         inline std::optional<KeyType> try_from_string(
-            const std::string& symbol,
+            const std::string &symbol,
             bool allow_partial = false) const noexcept
         {
             std::string lower_symbol = str::tolower(symbol);
-            for (const auto& [candidate_key, candidate_symbol] : *this)
+            for (const auto &[candidate_key, candidate_symbol] : *this)
             {
                 if (allow_partial
                         ? str::startswith(str::tolower(candidate_symbol), lower_symbol)
@@ -60,18 +60,18 @@ namespace cc::core::types
         }
 
         inline KeyType from_string(
-            const std::string& symbol,
-            const KeyType& fallback,
+            const std::string &symbol,
+            const KeyType &fallback,
             bool allow_partial = false) const noexcept
         {
             return this->try_from_string(symbol, allow_partial).value_or(fallback);
         }
 
-        inline std::ostream& to_stream(
-            std::ostream& stream,
-            const KeyType& key) const
+        inline std::ostream &to_stream(
+            std::ostream &stream,
+            const KeyType &key) const
         {
-            if (const auto& opt_symbol = this->try_to_string(key))
+            if (const auto &opt_symbol = this->try_to_string(key))
             {
                 stream << *opt_symbol;
             }
@@ -83,12 +83,12 @@ namespace cc::core::types
         }
 
         template <class ValueType>
-        inline std::ostream& to_stream(
-            std::ostream& stream,
-            const KeyType& key,
-            const ValueType& fallback) const
+        inline std::ostream &to_stream(
+            std::ostream &stream,
+            const KeyType &key,
+            const ValueType &fallback) const
         {
-            if (const std::optional<std::string>& opt_symbol = this->try_to_string(key))
+            if (const std::optional<std::string> &opt_symbol = this->try_to_string(key))
             {
                 stream << *opt_symbol;
             }
@@ -99,17 +99,17 @@ namespace cc::core::types
             return stream;
         }
 
-        inline std::istream& from_stream(
-            std::istream& stream,
-            KeyType* key,
-            const std::optional<KeyType>& fallback = {},
+        inline std::istream &from_stream(
+            std::istream &stream,
+            KeyType *key,
+            const std::optional<KeyType> &fallback = {},
             bool flag_unknown = true,
             bool allow_partial = false) const
         {
             std::string symbol;
             stream >> symbol;
             str::tolower(&symbol);
-            if (const std::optional<KeyType>& opt_key =
+            if (const std::optional<KeyType> &opt_key =
                     this->try_from_string(symbol, allow_partial))
             {
                 *key = *opt_key;
@@ -131,7 +131,7 @@ namespace cc::core::types
 
         template <class T>
         inline std::optional<KeyType> try_convert_from(
-            const T& value,
+            const T &value,
             bool allow_partial = false) const
         {
             std::stringstream ss;
@@ -141,22 +141,22 @@ namespace cc::core::types
 
         template <class T>
         inline KeyType convert_from(
-            const T& value,
-            const KeyType& fallback = {},
+            const T &value,
+            const KeyType &fallback = {},
             bool allow_partial = false) const
         {
             return this->try_convert_from(value, allow_partial).value_or(fallback);
         }
 
         inline void join_keys(
-            std::ostream& stream,
-            const std::string& separator = "|",
-            const std::string& prefix = "{",
-            const std::string& suffix = "}") const
+            std::ostream &stream,
+            const std::string &separator = "|",
+            const std::string &prefix = "{",
+            const std::string &suffix = "}") const
         {
             stream << prefix;
             bool print_sep = false;
-            for (const auto& [k, v] : *this)
+            for (const auto &[k, v] : *this)
             {
                 if (print_sep)
                 {
@@ -169,9 +169,9 @@ namespace cc::core::types
         }
 
         inline std::string joined_keys(
-            const std::string& separator = "|",
-            const std::string& prefix = "{",
-            const std::string& suffix = "}") const
+            const std::string &separator = "|",
+            const std::string &prefix = "{",
+            const std::string &suffix = "}") const
         {
             std::stringstream s;
             this->join_keys(s, separator, prefix, suffix);
@@ -182,7 +182,7 @@ namespace cc::core::types
         {
             std::vector<std::string> keys;
             keys.reserve(this->size());
-            for (const auto& [k, v] : *this)
+            for (const auto &[k, v] : *this)
             {
                 keys.push_back(k);
             }
@@ -193,7 +193,7 @@ namespace cc::core::types
         {
             std::vector<std::string> symbols;
             symbols.reserve(this->size());
-            for (const auto& [k, v] : *this)
+            for (const auto &[k, v] : *this)
             {
                 symbols.push_back(v);
             }
@@ -201,9 +201,9 @@ namespace cc::core::types
         }
 
         inline std::string joined_symbols(
-            const std::string& separator = "|",
-            const std::string& prefix = "{",
-            const std::string& suffix = "}") const
+            const std::string &separator = "|",
+            const std::string &prefix = "{",
+            const std::string &suffix = "}") const
         {
             return prefix + str::join(this->symbols(), separator) + suffix;
         }

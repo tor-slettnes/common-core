@@ -17,7 +17,7 @@
 namespace cc::core::thread
 {
     template <class... Args>
-    std::thread supervised_thread(Args&&... args)
+    std::thread supervised_thread(Args &&...args)
     {
         return std::thread([=]() {
             try

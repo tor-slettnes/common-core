@@ -61,7 +61,7 @@ namespace cc::protobuf
 
         // Implementations shold override this to propagate the encoded message
         // to its peers.
-        virtual void forward(ProtoT&& message) = 0;
+        virtual void forward(ProtoT &&message) = 0;
 
     protected:
         static signal::MappingAction boolean_mapping(bool present)
@@ -96,7 +96,7 @@ namespace cc::protobuf
         ///    Create a new Signal message with optional mapping controls.
         static ProtoT create_signal_message(
             core::signal::MappingAction mapping_action,
-            const std::string& mapping_key)
+            const std::string &mapping_key)
         {
             ProtoT msg = This::create_signal_message(mapping_action);
             msg.set_mapping_key(mapping_key);

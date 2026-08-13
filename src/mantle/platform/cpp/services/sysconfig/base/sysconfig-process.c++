@@ -19,8 +19,8 @@ namespace cc::platform::sysconfig
     PortableExitStatus::PortableExitStatus(bool success,
                                            int exit_code,
                                            int exit_signal,
-                                           const std::string& symbol,
-                                           const std::string& text)
+                                           const std::string &symbol,
+                                           const std::string &text)
         : success_(success),
           code_(exit_code),
           signal_(exit_signal),

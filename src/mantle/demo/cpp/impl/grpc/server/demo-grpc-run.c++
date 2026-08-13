@@ -16,7 +16,7 @@ namespace cc::demo::grpc
 {
     void run_grpc_service(
         std::shared_ptr<demo::API> api_provider,
-        const std::string& listen_address)
+        const std::string &listen_address)
     {
         log_info("Creating gRPC server builder");
         cc::grpc::ServerBuilder builder(listen_address);

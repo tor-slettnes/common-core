@@ -27,8 +27,8 @@ namespace cc::core::platform
         ///     Implementation name, e.g. final class name
         /// @param[in] sink_id
         ///     Sink identifier
-        LogSinkProvider(const std::string& implementation,
-                        const std::string& sink_id = "syslog");
+        LogSinkProvider(const std::string &implementation,
+                        const std::string &sink_id = "syslog");
     };
 
     //--------------------------------------------------------------------------
@@ -42,7 +42,7 @@ namespace cc::core::platform
     inline static logging::SinkFactory system_logger_factory(
         "syslog",
         "Log via UNIX syslog.",
-        [](const logging::SinkID& sink_id) -> logging::Sink::ptr {
+        [](const logging::SinkID &sink_id) -> logging::Sink::ptr {
             return logsink.get_shared();
         },
         logging::DefaultOption::UNLESS_INTERACTIVE);

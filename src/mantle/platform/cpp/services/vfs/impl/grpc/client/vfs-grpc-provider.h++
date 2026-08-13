@@ -19,7 +19,7 @@ namespace cc::platform::vfs::grpc
         using Super = ProviderInterface;
 
     public:
-        ClientProvider(const std::shared_ptr<Client>& client,
+        ClientProvider(const std::shared_ptr<Client> &client,
                        bool use_cached = false);
 
         bool is_pertinent() const override;
@@ -34,88 +34,88 @@ namespace cc::platform::vfs::grpc
             bool open_only = false) const override;
 
         Context::ptr get_context(
-            const std::string& name,
+            const std::string &name,
             bool required) const override;
 
         Context::ptr open_context(
-            const std::string& name,
+            const std::string &name,
             bool required) override;
 
         void close_context(
-            const std::string& name,
+            const std::string &name,
             bool required) override;
 
         void close_context(
-            const Context::ptr& cxt) override;
+            const Context::ptr &cxt) override;
 
         VolumeInfo get_volume_info(
-            const Path& vpath,
-            const OperationFlags& flags) const override;
+            const Path &vpath,
+            const OperationFlags &flags) const override;
 
         FileInfo get_file_info(
-            const Path& vpath,
-            const OperationFlags& flags) const override;
+            const Path &vpath,
+            const OperationFlags &flags) const override;
 
         Directory get_directory(
-            const Path& vpath,
-            const OperationFlags& flags) const override;
+            const Path &vpath,
+            const OperationFlags &flags) const override;
 
         Directory locate(
-            const Path& vpath,
-            const core::types::PathList& filename_masks,
-            const core::types::TaggedValueList& attribute_filters,
-            const OperationFlags& flags) const override;
+            const Path &vpath,
+            const core::types::PathList &filename_masks,
+            const core::types::TaggedValueList &attribute_filters,
+            const OperationFlags &flags) const override;
 
         void copy(
-            const Paths& sources,
-            const Path& target,
-            const OperationFlags& flags) const override;
+            const Paths &sources,
+            const Path &target,
+            const OperationFlags &flags) const override;
 
         void move(
-            const Paths& sources,
-            const Path& target,
-            const OperationFlags& flags) const override;
+            const Paths &sources,
+            const Path &target,
+            const OperationFlags &flags) const override;
 
         void remove(
-            const Paths& vpaths,
-            const OperationFlags& flags) const override;
+            const Paths &vpaths,
+            const OperationFlags &flags) const override;
 
         void create_folder(
-            const Path& vpath,
-            const OperationFlags& flags) const override;
+            const Path &vpath,
+            const OperationFlags &flags) const override;
 
         UniqueReader read_file(
-            const Path& vpath) const override;
+            const Path &vpath) const override;
 
         UniqueWriter write_file(
-            const Path& vpath) const override;
+            const Path &vpath) const override;
 
         core::types::KeyValueMap get_attributes(
-            const Path& vpath) const override;
+            const Path &vpath) const override;
 
         void set_attributes(
-            const Path& vpath,
-            const core::types::KeyValueMap& attributes) const override;
+            const Path &vpath,
+            const core::types::KeyValueMap &attributes) const override;
 
         void clear_attributes(
-            const Path& vpath) const override;
+            const Path &vpath) const override;
 
     private:
         void on_context(
             core::signal::MappingAction action,
-            const std::string& key,
-            const platform::vfs::protobuf::Signal& signal) const;
+            const std::string &key,
+            const platform::vfs::protobuf::Signal &signal) const;
 
         void on_context_in_use(
             core::signal::MappingAction action,
-            const std::string& key,
-            const platform::vfs::protobuf::Signal& signal) const;
+            const std::string &key,
+            const platform::vfs::protobuf::Signal &signal) const;
 
         ContextMap context_map(
-            const platform::vfs::protobuf::ContextMap& msg) const;
+            const platform::vfs::protobuf::ContextMap &msg) const;
 
         std::shared_ptr<RemoteContext> decoded_context(
-            const platform::vfs::protobuf::ContextSpec& spec) const;
+            const platform::vfs::protobuf::ContextSpec &spec) const;
 
     private:
         std::shared_ptr<Client> client;

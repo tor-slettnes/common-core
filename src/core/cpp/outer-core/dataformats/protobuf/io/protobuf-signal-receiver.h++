@@ -22,11 +22,11 @@ namespace cc::protobuf
         using This = SignalReceiver;
 
     protected:
-        using Callback = std::function<void(const SignalT& signal)>;
+        using Callback = std::function<void(const SignalT &signal)>;
 
         using MappingCallback = std::function<void(core::signal::MappingAction action,
-                                                   const std::string& key,
-                                                   const SignalT& signal)>;
+                                                   const std::string &key,
+                                                   const SignalT &signal)>;
 
         using SignalMap = std::unordered_map<typename SignalT::SignalCase, Callback>;
 
@@ -69,7 +69,7 @@ namespace cc::protobuf
 
         void add_handler(
             typename SignalT::SignalCase signal_case,
-            const Callback& callback)
+            const Callback &callback)
         {
             std::scoped_lock lck(this->slots_mtx);
             this->slots.emplace(signal_case, callback);
@@ -77,12 +77,12 @@ namespace cc::protobuf
 
         void add_mapping_handler(
             typename SignalT::SignalCase signal_case,
-            const MappingCallback& callback)
+            const MappingCallback &callback)
         {
             std::scoped_lock lck(this->slots_mtx);
             this->slots.emplace(
                 signal_case,
-                [=](const SignalT& signal) {
+                [=](const SignalT &signal) {
                     callback(
                         static_cast<core::signal::MappingAction>(signal.mapping_action()),
                         signal.mapping_key(),
@@ -97,7 +97,7 @@ namespace cc::protobuf
         ///     re-emit the unmodified ProtoBuf message as a local signal,
         ///     which in turn may be connected to a publisher for a different
         ///     protocol/messaging system.
-        void add_generic_handler(const Callback& callback)
+        void add_generic_handler(const Callback &callback)
         {
             this->generic_handler = callback;
         }
@@ -112,7 +112,7 @@ namespace cc::protobuf
             std::scoped_lock lck(this->slots_mtx);
             signal::Filter filter;
             filter.set_polarity(true);
-            for (const auto& [index, callback] : this->slots)
+            for (const auto &[index, callback] : this->slots)
             {
                 filter.add_indices(index);
             }
@@ -136,7 +136,7 @@ namespace cc::protobuf
         }
 
     public:
-        void process_signal(const SignalT& msg)
+        void process_signal(const SignalT &msg)
         {
             std::scoped_lock lck(this->slots_mtx);
 
@@ -152,7 +152,7 @@ namespace cc::protobuf
 
     protected:
         void process_signal_case(typename SignalT::SignalCase signal_case,
-                                 const SignalT& msg)
+                                 const SignalT &msg)
         {
             auto it = this->slots.find(signal_case);
             if (it != this->slots.end())

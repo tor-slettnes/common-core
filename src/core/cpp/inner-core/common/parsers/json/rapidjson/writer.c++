@@ -16,13 +16,13 @@ namespace cc::core::json
     {
     }
 
-    RapidWriter::RapidWriter(const fs::path& path)
+    RapidWriter::RapidWriter(const fs::path &path)
         : Super("RapidWriter", path)
     {
     }
 
-    void RapidWriter::write_stream(std::ostream& stream,
-                                   const types::Value& value,
+    void RapidWriter::write_stream(std::ostream &stream,
+                                   const types::Value &value,
                                    bool pretty) const
     {
         std::shared_ptr<RapidBuilderBase> builder;
@@ -38,7 +38,7 @@ namespace cc::core::json
         builder->write_stream(value);
     }
 
-    std::string RapidWriter::encoded(const types::Value& value,
+    std::string RapidWriter::encoded(const types::Value &value,
                                      bool pretty) const
     {
         std::stringstream ss;

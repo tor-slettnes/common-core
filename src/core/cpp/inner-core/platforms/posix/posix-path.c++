@@ -22,7 +22,7 @@
 namespace cc::core::platform
 {
     FileStats PosixPathProvider::get_stats(
-        const fs::path& path,
+        const fs::path &path,
         bool dereference) const
     {
         struct stat statbuf;
@@ -56,7 +56,7 @@ namespace cc::core::platform
     }
 
     bool PosixPathProvider::is_readable(
-        const fs::path& path,
+        const fs::path &path,
         bool real_uid) const
     {
         auto method = real_uid ? ::access : ::euidaccess;
@@ -64,7 +64,7 @@ namespace cc::core::platform
     }
 
     bool PosixPathProvider::is_writable(
-        const fs::path& path,
+        const fs::path &path,
         bool real_uid) const
     {
         auto method = real_uid ? ::access : ::euidaccess;
@@ -103,7 +103,7 @@ namespace cc::core::platform
 
     std::optional<fs::path> PosixPathProvider::user_config_folder() const noexcept
     {
-        const char* homedir = std::getenv("HOME");
+        const char *homedir = std::getenv("HOME");
         if (homedir && *homedir)
         {
             auto config_folder = fs::path(homedir) / ".config";
@@ -115,7 +115,7 @@ namespace cc::core::platform
         return {};
     }
 
-    fs::path PosixPathProvider::readlink(const fs::path& path) const noexcept
+    fs::path PosixPathProvider::readlink(const fs::path &path) const noexcept
     {
         struct stat statbuf;
         if (lstat(path.c_str(), &statbuf) != -1)
@@ -128,9 +128,9 @@ namespace cc::core::platform
         }
     }
 
-    fs::path PosixPathProvider::mktemp(const fs::path& folder,
-                                       const std::string& prefix,
-                                       const std::string& suffix)
+    fs::path PosixPathProvider::mktemp(const fs::path &folder,
+                                       const std::string &prefix,
+                                       const std::string &suffix)
     {
         fs::path path = folder / (prefix + "XXXXXX" + suffix);
         std::string name = path.string();
@@ -146,12 +146,12 @@ namespace cc::core::platform
         return name;
     }
 
-    fs::path PosixPathProvider::mktempdir(const fs::path& folder,
-                                          const std::string& prefix,
-                                          const std::string& suffix)
+    fs::path PosixPathProvider::mktempdir(const fs::path &folder,
+                                          const std::string &prefix,
+                                          const std::string &suffix)
     {
         fs::path path_template = folder / (prefix + "XXXXXX" + suffix);
-        if (char* c_path = ::mkdtemp(const_cast<char*>(path_template.c_str())))
+        if (char *c_path = ::mkdtemp(const_cast<char *>(path_template.c_str())))
         {
             return c_path;
         }
@@ -165,8 +165,8 @@ namespace cc::core::platform
     }
 
     bool PosixPathProvider::filename_match(
-        const fs::path& mask,
-        const fs::path& filename,
+        const fs::path &mask,
+        const fs::path &filename,
         bool match_leading_period,
         bool ignore_case) const
     {
@@ -205,14 +205,14 @@ namespace cc::core::platform
         {
             return modemap.at(mode & S_IFMT);
         }
-        catch (const std::out_of_range& e)
+        catch (const std::out_of_range &e)
         {
             return fs::file_type::none;
         }
     }
 
-    fs::path PosixPathProvider::readlink(const fs::path& path,
-                                         const struct stat& statbuf) const noexcept
+    fs::path PosixPathProvider::readlink(const fs::path &path,
+                                         const struct stat &statbuf) const noexcept
     {
         fs::path linktarget;
         if ((statbuf.st_mode & S_IFMT) == S_IFLNK)

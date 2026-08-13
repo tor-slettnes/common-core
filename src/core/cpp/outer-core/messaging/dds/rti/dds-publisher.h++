@@ -32,7 +32,7 @@ namespace cc::dds
         using DataWriterPtr = std::shared_ptr<::dds::pub::DataWriter<T>>;
 
     public:
-        Publisher(const std::string& channel_name, int domain_id);
+        Publisher(const std::string &channel_name, int domain_id);
 
     public:
         //======================================================================
@@ -47,7 +47,7 @@ namespace cc::dds
 
         template <class T>
         std::shared_ptr<::dds::pub::DataWriter<T>>
-        create_writer(const std::string& topic_name,
+        create_writer(const std::string &topic_name,
                       bool reliable = true,
                       bool sync_latest = false)
         {
@@ -70,7 +70,7 @@ namespace cc::dds
         ///     The payload to be published
 
         template <class T>
-        void publish(std::shared_ptr<::dds::pub::DataWriter<T>>& writer, const T& update)
+        void publish(std::shared_ptr<::dds::pub::DataWriter<T>> &writer, const T &update)
         {
             logf_trace("Publishing: %s", update);
             writer->write(update);
@@ -87,9 +87,9 @@ namespace cc::dds
         ///     The payload to publish
 
         template <class T>
-        void publish_change(std::shared_ptr<::dds::pub::DataWriter<T>>& writer,
+        void publish_change(std::shared_ptr<::dds::pub::DataWriter<T>> &writer,
                             core::signal::MappingAction mapping_action,
-                            const T& update)
+                            const T &update)
         {
             switch (mapping_action)
             {

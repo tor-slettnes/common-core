@@ -22,15 +22,15 @@ namespace cc::platform::switchboard
     {
         friend class Switchboard;
 
-        friend bool operator==(const Switch& lhs, const Switch& rhs);
-        friend bool operator!=(const Switch& lhs, const Switch& rhs);
+        friend bool operator==(const Switch &lhs, const Switch &rhs);
+        friend bool operator!=(const Switch &lhs, const Switch &rhs);
 
     protected:
-        Switch(const SwitchName& name,
-               const std::shared_ptr<switchboard::Provider>& provider);
+        Switch(const SwitchName &name,
+               const std::shared_ptr<switchboard::Provider> &provider);
 
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
-        void to_stream(std::ostream& ostream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        void to_stream(std::ostream &ostream) const override;
 
     public:
         // return a reference to the Switchboard provider to which this switch belongs
@@ -40,28 +40,28 @@ namespace cc::platform::switchboard
         SwitchAliases names() const noexcept;
 
         /// return the name of this switch
-        const SwitchName& name() const noexcept;
+        const SwitchName &name() const noexcept;
 
         // Return a list of aliases for this switch
-        const SwitchAliases& aliases() const noexcept;
+        const SwitchAliases &aliases() const noexcept;
 
         // Update list of aliases for this witch
-        void set_aliases(const SwitchAliases& aliases);
+        void set_aliases(const SwitchAliases &aliases);
 
         // Add new aliases for this witch
-        void add_aliases(const SwitchAliases& aliases);
+        void add_aliases(const SwitchAliases &aliases);
 
         // Remove one or more aliases for this switch
-        void remove_aliases(const SwitchAliases& aliases);
+        void remove_aliases(const SwitchAliases &aliases);
 
         // Indicate whether switch has no dependencies
         bool independent() const noexcept;
 
         // Return a map of direct dependencies for this switch
-        const DependencyMap& dependencies() const noexcept;
+        const DependencyMap &dependencies() const noexcept;
 
         // Return a specific dependency, nor an empty pointer if not found.
-        DependencyRef get_dependency(const SwitchName& switch_name) const noexcept;
+        DependencyRef get_dependency(const SwitchName &switch_name) const noexcept;
 
         /// Add a dependency. The switch may change its state as a result.
         /// @param[in] dependency
@@ -71,7 +71,7 @@ namespace cc::platform::switchboard
         /// @param[in] reevaluate
         ///    Reevaluate the switch state after adding the dependency.
         virtual bool add_dependency(
-            const DependencyRef& dependency,
+            const DependencyRef &dependency,
             bool allow_update = true,
             bool reevaluate = true) = 0;
 
@@ -97,7 +97,7 @@ namespace cc::platform::switchboard
         SwitchSet get_descendants() const noexcept;
 
         /// Return a map of this switch's interceptors
-        const InterceptorMap& interceptors() const noexcept;
+        const InterceptorMap &interceptors() const noexcept;
 
         /// Obtain an intereceptor by name
         /// @param[in] name
@@ -107,7 +107,7 @@ namespace cc::platform::switchboard
         /// @return
         ///    Interceptor reference.
         InterceptorRef get_interceptor(
-            const InterceptorName& name,
+            const InterceptorName &name,
             bool required = false) const;
 
         /// Add an interceptor with a callback handler to be invoked following
@@ -126,7 +126,7 @@ namespace cc::platform::switchboard
         /// @return
         ///     `true` if the interceptor was added, `false` if the name already existed.
         virtual bool add_interceptor(
-            const InterceptorRef& interceptor,
+            const InterceptorRef &interceptor,
             bool immediate = false) = 0;
 
         /// Remove an interceptor with a callback handler to be invoked
@@ -134,7 +134,7 @@ namespace cc::platform::switchboard
         /// @return
         ///     `true` if the interceptor was removed, `false` if it did not exist.
         virtual bool remove_interceptor(
-            const InterceptorName& name) = 0;
+            const InterceptorName &name) = 0;
 
         /// Get current specification.
         /// @note
@@ -150,7 +150,7 @@ namespace cc::platform::switchboard
         /// @note
         ///    This does not cascade changes to descendants.
         virtual void set_spec(
-            const Specification& spec);
+            const Specification &spec);
 
         /// @brief Update multiple specification values in one go.
         /// @param[in] primary
@@ -180,14 +180,14 @@ namespace cc::platform::switchboard
         ///    dependencies
 
         virtual void update_spec(
-            const std::optional<bool>& primary,
-            const SwitchAliases& aliases,
+            const std::optional<bool> &primary,
+            const SwitchAliases &aliases,
             bool replace_aliases,
-            const LocalizationMap& localizations,
+            const LocalizationMap &localizations,
             bool replace_localizations,
-            const DependencyMap& dependencies,
+            const DependencyMap &dependencies,
             bool replace_dependencies,
-            const InterceptorMap& interceptors,
+            const InterceptorMap &interceptors,
             bool replace_interceptors,
             bool update_state) = 0;
 
@@ -200,26 +200,26 @@ namespace cc::platform::switchboard
         bool primary() const noexcept;
 
         /// Document the switch's purpose, actions, and states with localized texts
-        void set_localizations(const LocalizationMap& localizations);
+        void set_localizations(const LocalizationMap &localizations);
 
         /// Return the switch's localized texts for all available languages
         LocalizationMap localizations() const noexcept;
 
         /// Return the switch's localizaed texts for a specific language
         std::optional<Localization> localization(
-            const LanguageCode& language_code = DEFAULT_LANGUAGE) const noexcept;
+            const LanguageCode &language_code = DEFAULT_LANGUAGE) const noexcept;
 
         /// Return the switch's localized descriptions for a specific language
         std::optional<std::string> description(
-            const LanguageCode& language_code = DEFAULT_LANGUAGE) const noexcept;
+            const LanguageCode &language_code = DEFAULT_LANGUAGE) const noexcept;
 
         /// Return a textual explanation describing the transition to ACTIVE
         std::optional<std::string> activate_text(
-            const LanguageCode& lanugage_code = DEFAULT_LANGUAGE) const noexcept;
+            const LanguageCode &lanugage_code = DEFAULT_LANGUAGE) const noexcept;
 
         /// Return a textual explanation describing the transition to INACTIVE
         std::optional<std::string> deactivate_text(
-            const LanguageCode& lanugage_code = DEFAULT_LANGUAGE) const noexcept;
+            const LanguageCode &lanugage_code = DEFAULT_LANGUAGE) const noexcept;
 
         /// Return a textual explanation of the current state of this switch, e.g.:
         /// @code
@@ -227,7 +227,7 @@ namespace cc::platform::switchboard
         ///         -> "no network is available"
         /// @endcode
         std::optional<std::string> state_text(
-            const std::string& language_code = DEFAULT_LANGUAGE) const noexcept;
+            const std::string &language_code = DEFAULT_LANGUAGE) const noexcept;
 
         /// Return a textual explanation of a reason, e.g.:
         /// @code
@@ -236,7 +236,7 @@ namespace cc::platform::switchboard
         /// @endcode
         std::optional<std::string> state_text(
             State state,
-            const std::string& language_code = DEFAULT_LANGUAGE) const noexcept;
+            const std::string &language_code = DEFAULT_LANGUAGE) const noexcept;
 
         /// Get current status.
         /// @note
@@ -389,8 +389,8 @@ namespace cc::platform::switchboard
 
         virtual bool set_target(
             State target_state,
-            const core::status::Error::ptr& error = {},
-            const core::types::KeyValueMap& attributes = {},
+            const core::status::Error::ptr &error = {},
+            const core::types::KeyValueMap &attributes = {},
             bool clear_existing = false,
             InvocationStyle invoke_interceptors = InvocationStyle::DEFAULT,
             CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
@@ -401,7 +401,7 @@ namespace cc::platform::switchboard
         /// Change to the specified position: false=off, true=on.
         /// @sa set_target().
         bool set_active(bool active,
-                        const core::types::KeyValueMap& attributes = {},
+                        const core::types::KeyValueMap &attributes = {},
                         bool clear_existing = false,
                         InvocationStyle invoke_interceptors = InvocationStyle::DEFAULT,
                         CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
@@ -411,8 +411,8 @@ namespace cc::platform::switchboard
 
         /// Set the switch to the FAILED state, with an associated error.
         /// @sa set_target();
-        bool set_error(const core::status::Error::ptr& error,
-                       const core::types::KeyValueMap& attributes = {},
+        bool set_error(const core::status::Error::ptr &error,
+                       const core::types::KeyValueMap &attributes = {},
                        bool clear_existing = false,
                        InvocationStyle invoke_interceptors = InvocationStyle::DEFAULT,
                        CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
@@ -423,7 +423,7 @@ namespace cc::platform::switchboard
         /// Turn the switch on or off based on its dependencies.
         /// If the state has no dependencies it remains unchanged.
         /// @sa set_target()
-        bool set_auto(const core::types::KeyValueMap& attributes = {},
+        bool set_auto(const core::types::KeyValueMap &attributes = {},
                       bool clear_existing = false,
                       InvocationStyle invoke_interceptors = InvocationStyle::DEFAULT,
                       CascadeStyle cascade_descendants = CascadeStyle::DEFAULT,
@@ -444,10 +444,10 @@ namespace cc::platform::switchboard
         ErrorMap errors() const noexcept;
 
         /// Get all key/value attributes associated with this switch
-        const core::types::KeyValueMap& attributes() const noexcept;
+        const core::types::KeyValueMap &attributes() const noexcept;
 
         /// Get specific attribute
-        core::types::Value attribute(const std::string& key) const;
+        core::types::Value attribute(const std::string &key) const;
 
         /// @brief
         ///    Get all key/value attributes associated with this switch.
@@ -458,13 +458,13 @@ namespace cc::platform::switchboard
 
         /// Set arbitrary attributes on this switch.
         virtual bool set_attributes(
-            const core::types::KeyValueMap& attributes,
+            const core::types::KeyValueMap &attributes,
             bool clear_existing = false) = 0;
 
         /// Set an arbitrary attribute on this switch.
         void set_attribute(
-            const std::string& name,
-            const core::types::Value& value);
+            const std::string &name,
+            const core::types::Value &value);
 
         /// Return ancestors whose current state prevent this switch from
         /// becoming active, either because they are in a FAILED state
@@ -476,7 +476,7 @@ namespace cc::platform::switchboard
         /// dependency is satisfied.
         DependencyStatusMap dependency_statuses() const noexcept;
 
-        bool is_in_selection(const SwitchSelection& selection) const noexcept;
+        bool is_in_selection(const SwitchSelection &selection) const noexcept;
 
     protected:
         SwitchName name_;

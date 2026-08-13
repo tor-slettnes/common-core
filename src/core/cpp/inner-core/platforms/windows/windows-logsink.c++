@@ -13,8 +13,8 @@
 namespace cc::core::platform
 {
     WindowsLogSinkProvider::WindowsLogSinkProvider(
-        const std::string& application_id,
-        const std::string& sink_id)
+        const std::string &application_id,
+        const std::string &sink_id)
         : Super("WindowsLogSinkProvider", sink_id),
           application_id_(application_id)
     {
@@ -32,11 +32,11 @@ namespace cc::core::platform
         Super::close();
     }
 
-    bool WindowsLogSinkProvider::handle_message(const logging::Message::ptr& message)
+    bool WindowsLogSinkProvider::handle_message(const logging::Message::ptr &message)
     {
-        if (auto* eventType = this->levelmap.get_ptr(message->level()))
+        if (auto *eventType = this->levelmap.get_ptr(message->level()))
         {
-            const std::string& text = this->formatted(message);
+            const std::string &text = this->formatted(message);
             LPCSTR cstr = text.c_str();
             ReportEvent(this->event_log,  // hEventLog
                         *eventType,       // dwEventId

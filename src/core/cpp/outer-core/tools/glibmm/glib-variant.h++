@@ -25,7 +25,7 @@ namespace cc::glib
 
     /// convert from Glib::Variant to specific scalar, non-enumerated data type
     template <class T, std::enable_if_t<!std::is_enum_v<T>, bool> = true>
-    inline bool variant_cast(const Glib::VariantBase& obj, T* value)
+    inline bool variant_cast(const Glib::VariantBase &obj, T *value)
     {
         bool cast = false;
         if (obj)
@@ -35,7 +35,7 @@ namespace cc::glib
                 *value = Glib::VariantBase::cast_dynamic<Glib::Variant<T>>(obj).get();
                 cast = true;
             }
-            catch (const std::bad_cast& e)
+            catch (const std::bad_cast &e)
             {
                 logf_warning("VariantBase %r (type %r) cannot be converted to %s: %s",
                              obj,
@@ -50,7 +50,7 @@ namespace cc::glib
 
     /// Convert from Glib::Variant value to enumerated data type
     template <class T, std::enable_if_t<std::is_enum_v<T>, bool> = true>
-    inline bool variant_cast(const Glib::VariantBase& obj, T* value)
+    inline bool variant_cast(const Glib::VariantBase &obj, T *value)
     {
         uint scalar;
         bool cast = variant_cast<uint>(obj, &scalar);
@@ -63,7 +63,7 @@ namespace cc::glib
 
     /// Convert from Glib::Variant value to data type
     template <class T>
-    inline T variant_cast(const Glib::VariantBase& obj)
+    inline T variant_cast(const Glib::VariantBase &obj)
     {
         T value = {};
         variant_cast<T>(obj, &value);
@@ -72,9 +72,9 @@ namespace cc::glib
 
     /// Convert one element of a Glib::VariantContainer object to specific data type
     template <class T>
-    bool variant_cast(const Glib::VariantContainerBase& obj,
+    bool variant_cast(const Glib::VariantContainerBase &obj,
                       uint index,
-                      T* value)
+                      T *value)
     {
         if (index < obj.get_n_children())
         {
@@ -97,7 +97,7 @@ namespace cc::glib
 
     /// Convert one element of a Glib::VariantContainer object to specific data type
     template <class T>
-    inline T variant_cast(const Glib::VariantContainerBase& obj, uint index)
+    inline T variant_cast(const Glib::VariantContainerBase &obj, uint index)
     {
         T value = {};
         variant_cast<T>(obj, index, &value);
@@ -108,24 +108,24 @@ namespace cc::glib
     /// @brief Extract values from VariantBase maps
 
     template <class T>
-    inline bool extract_value(const VariantMap& map,
-                              const std::string& key,
-                              T* value)
+    inline bool extract_value(const VariantMap &map,
+                              const std::string &key,
+                              T *value)
     {
         auto it = map.find(key);
         return (it != map.end()) && variant_cast(it->second, value);
     }
 
     template <class T>
-    inline bool extract_mapped(const VariantMap& map,
-                               const core::types::SymbolMap<T>& lookup_map,
-                               const std::string& key,
-                               T* value)
+    inline bool extract_mapped(const VariantMap &map,
+                               const core::types::SymbolMap<T> &lookup_map,
+                               const std::string &key,
+                               T *value)
     {
         std::string s;
         if (extract_value(map, key, &s))
         {
-            if (const std::optional<T>& opt_value = lookup_map.try_from_string(s))
+            if (const std::optional<T> &opt_value = lookup_map.try_from_string(s))
             {
                 *value = *opt_value;
                 return true;
@@ -134,9 +134,9 @@ namespace cc::glib
         return false;
     }
 
-    inline bool extract_filepath(const VariantMap& map,
-                                 const std::string& key,
-                                 std::filesystem::path* value)
+    inline bool extract_filepath(const VariantMap &map,
+                                 const std::string &key,
+                                 std::filesystem::path *value)
     {
         std::string s;
         bool is_path = (extract_value(map, key, &s) &&
@@ -151,9 +151,9 @@ namespace cc::glib
     //======================================================================
     // Template methods to insert into Network Manager settings maps
 
-    inline void insert_value(VariantMap* map,
-                             const std::string& key,
-                             const std::string& value)
+    inline void insert_value(VariantMap *map,
+                             const std::string &key,
+                             const std::string &value)
     {
         if (!value.empty())
         {
@@ -162,9 +162,9 @@ namespace cc::glib
     }
 
     template <class T>
-    inline void insert_value(VariantMap* map,
-                             const std::string& key,
-                             const T& value)
+    inline void insert_value(VariantMap *map,
+                             const std::string &key,
+                             const T &value)
     {
         const static T empty = {};
         if (value != empty)
@@ -174,10 +174,10 @@ namespace cc::glib
     }
 
     template <class T>
-    inline void insert_mapped(VariantMap* map,
+    inline void insert_mapped(VariantMap *map,
                               const std::map<T, std::string> lookup_map,
-                              const std::string& key,
-                              const T& value)
+                              const std::string &key,
+                              const T &value)
     {
         auto it = lookup_map.find(value);
         if (it != lookup_map.end())
@@ -190,5 +190,5 @@ namespace cc::glib
 /// Output stream support for Glib VariantBase, for use in log output.
 namespace Glib
 {
-    std::ostream& operator<<(std::ostream& stream, const VariantBase& obj);
+    std::ostream &operator<<(std::ostream &stream, const VariantBase &obj);
 }  // namespace Glib

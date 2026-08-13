@@ -12,130 +12,130 @@
 
 namespace cc::protobuf
 {
-    void encode(const std::string& s,
-                google::protobuf::StringValue* msg) noexcept
+    void encode(const std::string &s,
+                google::protobuf::StringValue *msg) noexcept
     {
         msg->set_value(s);
     }
 
-    void decode(const google::protobuf::StringValue& msg,
-                std::string* s) noexcept
+    void decode(const google::protobuf::StringValue &msg,
+                std::string *s) noexcept
     {
         *s = msg.value();
     }
 
     void encode(double r,
-                google::protobuf::DoubleValue* msg) noexcept
+                google::protobuf::DoubleValue *msg) noexcept
     {
         msg->set_value(r);
     }
 
-    void decode(const google::protobuf::DoubleValue& msg,
-                double* r) noexcept
+    void decode(const google::protobuf::DoubleValue &msg,
+                double *r) noexcept
     {
         *r = msg.value();
     }
 
     void encode(float r,
-                google::protobuf::FloatValue* msg) noexcept
+                google::protobuf::FloatValue *msg) noexcept
     {
         msg->set_value(r);
     }
 
-    void decode(const google::protobuf::FloatValue& msg,
-                float* r) noexcept
+    void decode(const google::protobuf::FloatValue &msg,
+                float *r) noexcept
     {
         *r = msg.value();
     }
 
     void encode(std::uint64_t n,
-                google::protobuf::UInt64Value* msg) noexcept
+                google::protobuf::UInt64Value *msg) noexcept
     {
         msg->set_value(n);
     }
 
-    void decode(const google::protobuf::UInt64Value& msg,
-                std::uint64_t* n) noexcept
+    void decode(const google::protobuf::UInt64Value &msg,
+                std::uint64_t *n) noexcept
     {
         *n = msg.value();
     }
 
     void encode(std::int64_t n,
-                google::protobuf::Int64Value* msg) noexcept
+                google::protobuf::Int64Value *msg) noexcept
     {
         msg->set_value(n);
     }
 
-    void decode(const google::protobuf::Int64Value& msg,
-                std::int64_t* n) noexcept
+    void decode(const google::protobuf::Int64Value &msg,
+                std::int64_t *n) noexcept
     {
         *n = msg.value();
     }
 
     void encode(std::uint32_t n,
-                google::protobuf::UInt32Value* msg) noexcept
+                google::protobuf::UInt32Value *msg) noexcept
     {
         msg->set_value(n);
     }
 
-    void decode(const google::protobuf::UInt32Value& msg,
-                std::uint32_t* n) noexcept
+    void decode(const google::protobuf::UInt32Value &msg,
+                std::uint32_t *n) noexcept
     {
         *n = msg.value();
     }
 
     void encode(std::int32_t n,
-                google::protobuf::Int32Value* msg) noexcept
+                google::protobuf::Int32Value *msg) noexcept
     {
         msg->set_value(n);
     }
 
-    void decode(const google::protobuf::Int32Value& msg,
-                std::int32_t* n) noexcept
+    void decode(const google::protobuf::Int32Value &msg,
+                std::int32_t *n) noexcept
     {
         *n = msg.value();
     }
 
     void encode(bool b,
-                google::protobuf::BoolValue* msg) noexcept
+                google::protobuf::BoolValue *msg) noexcept
     {
         msg->set_value(b);
     }
 
-    void decode(const google::protobuf::BoolValue& msg,
-                bool* b) noexcept
+    void decode(const google::protobuf::BoolValue &msg,
+                bool *b) noexcept
     {
         *b = msg.value();
     }
 
-    void encode(const core::types::Bytes& b,
-                google::protobuf::BytesValue* msg) noexcept
+    void encode(const core::types::Bytes &b,
+                google::protobuf::BytesValue *msg) noexcept
     {
         msg->set_value(b.data(), b.size());
     }
 
-    void decode(const google::protobuf::BytesValue& msg,
-                core::types::Bytes* b) noexcept
+    void decode(const google::protobuf::BytesValue &msg,
+                core::types::Bytes *b) noexcept
     {
         b->assign(msg.value().begin(), msg.value().end());
     }
 
-    void encode(const core::dt::TimePoint& tp,
-                google::protobuf::Timestamp* ts) noexcept
+    void encode(const core::dt::TimePoint &tp,
+                google::protobuf::Timestamp *ts) noexcept
     {
         timespec tspec = core::dt::to_timespec(tp);
         ts->set_seconds(tspec.tv_sec);
         ts->set_nanos((int)tspec.tv_nsec);
     }
 
-    void decode(const google::protobuf::Timestamp& ts,
-                core::dt::TimePoint* tp) noexcept
+    void decode(const google::protobuf::Timestamp &ts,
+                core::dt::TimePoint *tp) noexcept
     {
         *tp = core::dt::to_timepoint(ts.seconds(), ts.nanos());
     }
 
-    void encode(const core::dt::Duration& duration,
-                google::protobuf::Duration* msg) noexcept
+    void encode(const core::dt::Duration &duration,
+                google::protobuf::Duration *msg) noexcept
     {
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(duration);
         if (secs > duration)
@@ -145,15 +145,15 @@ namespace cc::protobuf
         msg->set_nanos(nanos.count());
     }
 
-    void decode(const google::protobuf::Duration& msg,
-                core::dt::Duration* duration) noexcept
+    void decode(const google::protobuf::Duration &msg,
+                core::dt::Duration *duration) noexcept
     {
         *duration = (std::chrono::seconds(msg.seconds()) +
                      std::chrono::nanoseconds(msg.nanos()));
     }
 
-    void encode(const core::types::Value& value,
-                google::protobuf::Value* msg) noexcept
+    void encode(const core::types::Value &value,
+                google::protobuf::Value *msg) noexcept
     {
         switch (value.type())
         {
@@ -200,8 +200,8 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const google::protobuf::Value& msg,
-                core::types::Value* value) noexcept
+    void decode(const google::protobuf::Value &msg,
+                core::types::Value *value) noexcept
     {
         switch (msg.kind_case())
         {
@@ -234,30 +234,30 @@ namespace cc::protobuf
         }
     }
 
-    void encode(const core::types::KeyValueMap& kvmap,
-                google::protobuf::Struct* msg) noexcept
+    void encode(const core::types::KeyValueMap &kvmap,
+                google::protobuf::Struct *msg) noexcept
     {
         auto fields = msg->mutable_fields();
-        for (const auto& [key, value] : kvmap)
+        for (const auto &[key, value] : kvmap)
         {
             encode(value, &(*fields)[key]);
         }
     }
 
-    void decode(const google::protobuf::Struct& msg,
-                core::types::KeyValueMap* kvmap) noexcept
+    void decode(const google::protobuf::Struct &msg,
+                core::types::KeyValueMap *kvmap) noexcept
     {
-        for (const auto& [key, value] : msg.fields())
+        for (const auto &[key, value] : msg.fields())
         {
             decode(value, &(*kvmap)[key]);
         }
     }
 
-    void encode(const core::types::TaggedValueList& tvlist,
-                google::protobuf::Struct* msg) noexcept
+    void encode(const core::types::TaggedValueList &tvlist,
+                google::protobuf::Struct *msg) noexcept
     {
         auto fields = msg->mutable_fields();
-        for (const auto& [key, value] : tvlist)
+        for (const auto &[key, value] : tvlist)
         {
             if (key)
             {
@@ -266,11 +266,11 @@ namespace cc::protobuf
         }
     }
 
-    void decode(const google::protobuf::Struct& msg,
-                core::types::TaggedValueList* tvlist) noexcept
+    void decode(const google::protobuf::Struct &msg,
+                core::types::TaggedValueList *tvlist) noexcept
     {
-        const auto& fields = msg.fields();
-        for (const auto& [key, value] : fields)
+        const auto &fields = msg.fields();
+        for (const auto &[key, value] : fields)
         {
             core::types::TaggedValue tv = {key, {}};
             decode(value, &tv.second);
@@ -278,19 +278,19 @@ namespace cc::protobuf
         }
     }
 
-    void encode(const core::types::ValueList& list,
-                google::protobuf::ListValue* msg) noexcept
+    void encode(const core::types::ValueList &list,
+                google::protobuf::ListValue *msg) noexcept
     {
-        for (const core::types::Value& value : list)
+        for (const core::types::Value &value : list)
         {
             encode(value, msg->add_values());
         }
     }
 
-    void decode(const google::protobuf::ListValue& msg,
-                core::types::ValueList* list) noexcept
+    void decode(const google::protobuf::ListValue &msg,
+                core::types::ValueList *list) noexcept
     {
-        for (const google::protobuf::Value& value : msg.values())
+        for (const google::protobuf::Value &value : msg.values())
         {
             decode(value, &list->emplace_back());
         }

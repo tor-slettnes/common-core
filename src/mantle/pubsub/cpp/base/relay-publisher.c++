@@ -29,8 +29,8 @@ namespace cc::platform::pubsub
         this->stop_writer();
     }
 
-    void Publisher::publish(const std::string& topic,
-                            const core::types::Value& payload)
+    void Publisher::publish(const std::string &topic,
+                            const core::types::Value &payload)
     {
         this->writer_queue_.put({topic, payload});
     }

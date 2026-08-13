@@ -11,10 +11,10 @@
 namespace cc::platform::vfs
 {
     /// Obtain local path to the specified virtual path.
-    fs::path localPath(const Path& vpath);
+    fs::path localPath(const Path &vpath);
 
     /// Obtain virtual path of the parent direcory. Similar to fs::remove_filename
-    Path getParentPath(const Path& vpath);
+    Path getParentPath(const Path &vpath);
 
     /// List available virtual filesystem contexts.
     /// If empty, lists available virtual filesystem contexts.
@@ -36,7 +36,7 @@ namespace cc::platform::vfs
     ContextMap get_open_context(bool removable = false);
 
     /// Get a context reference without incrementing reference counter.
-    Context::ptr get_context(const std::string& name, bool required = true);
+    Context::ptr get_context(const std::string &name, bool required = true);
 
     /// @brief Explicitly open a virtual context.
     /// @param[in] name
@@ -53,42 +53,42 @@ namespace cc::platform::vfs
     ///
     /// Once access is no longer needed The client should invoke
     /// `close_context()', thereby allowing the context to be closed.
-    Context::ptr open_context(const std::string& name, bool required = true);
+    Context::ptr open_context(const std::string &name, bool required = true);
 
     /// Close a previously-opened path. Internally, this decrements a
     /// reference counter associated with the underlying filesystem context,
     /// and closes the context (e.g. unmounts) if it reaches zero.
-    void close_context(const Context::ptr& cxt);
+    void close_context(const Context::ptr &cxt);
 
     /// Close a previously-opened path. Internally, this decrements a
     /// reference counter associated with the underlying filesystem context,
     /// and closes the context (e.g. unmounts) if it reaches zero.
-    void close_context(const std::string& name);
+    void close_context(const std::string &name);
 
     /// Check if a given path exist
-    bool exists(const Path& vpath);
+    bool exists(const Path &vpath);
 
     /// Return information about mounted filesystem containing path.
     VolumeInfo get_volume_info(
-        const Path& vpath);
+        const Path &vpath);
 
     /// Return status of specified paths.
     /// Unlike `list()` this does not descent into folders.
     FileInfo get_file_info(
-        const Path& vpath,
+        const Path &vpath,
         bool with_attributes = true,
         bool dereference = true);
 
     /// List contents of the specified virtual path (context+folder).
     Directory get_directory(
-        const Path& vpath,
+        const Path &vpath,
         bool with_attributes = true,
         bool dereference = true,
         bool include_hidden = false);
 
     /// List contents of the specified virtual path (context+folder).
     DirectoryList list(
-        const Path& vpath,
+        const Path &vpath,
         bool with_attributes = true,
         bool dereference = true,
         bool include_hidden = false);
@@ -111,9 +111,9 @@ namespace cc::platform::vfs
     ///     Case insensitive filename matching
 
     Directory locate(
-        const Path& root,
-        const std::vector<fs::path>& filename_masks,
-        const core::types::TaggedValueList& attribute_filters = {},
+        const Path &root,
+        const std::vector<fs::path> &filename_masks,
+        const core::types::TaggedValueList &attribute_filters = {},
         bool with_attributes = true,
         bool include_hidden = false,
         bool ignore_case = false);
@@ -143,8 +143,8 @@ namespace cc::platform::vfs
     ///     existing folder into which the source path will be copied.
 
     void copy(
-        const Path& source,
-        const Path& target,
+        const Path &source,
+        const Path &target,
         bool force = false,
         bool dereference = false,
         bool merge = false,
@@ -174,8 +174,8 @@ namespace cc::platform::vfs
     ///     Copy/replace attributes on target from source
 
     void copy(
-        const Paths& sources,
-        const Path& target,
+        const Paths &sources,
+        const Path &target,
         bool force = false,
         bool dereference = false,
         bool merge = false,
@@ -199,8 +199,8 @@ namespace cc::platform::vfs
     ///     Indicates that `target` is not the final target path, but an
     ///     existing folder into which the source path will be copied.
     void move(
-        const Path& source,
-        const Path& target,
+        const Path &source,
+        const Path &target,
         bool force = false,
         bool with_attributes = true,
         bool inside_target = false);
@@ -219,8 +219,8 @@ namespace cc::platform::vfs
     /// @param[in] with_attributes
     ///     Copy/replace attributes on target from source
     void move(
-        const Paths& sources,
-        const Path& target,
+        const Paths &sources,
+        const Path &target,
         bool force = false,
         bool with_attributes = true);
 
@@ -234,7 +234,7 @@ namespace cc::platform::vfs
     /// @param[in] with_attributes
     ///     Also remove attributes associated with file.
     void remove(
-        const Path& path,
+        const Path &path,
         bool force = false,
         bool with_attributes = true);
 
@@ -248,7 +248,7 @@ namespace cc::platform::vfs
     /// @param[in] with_attributes
     ///     Also remove attributes associated with each file.
     void remove(
-        const Paths& paths,
+        const Paths &paths,
         bool force = false,
         bool with_attributes = true);
 
@@ -260,7 +260,7 @@ namespace cc::platform::vfs
     ///       - If the parent folder does not exist, create it
     ///       - Do not raise error if the folder already exists
     void create_folder(
-        const Path& vpath,
+        const Path &vpath,
         bool force = false);
 
     /// @brief Read the contents of file from the server
@@ -270,23 +270,23 @@ namespace cc::platform::vfs
     ///     Unique pointer to a FileReader instance, which in turn is
     ///     dervived from `std::istream`.
 
-    UniqueReader read_file(const Path& vpath);
-    UniqueWriter write_file(const Path& vpath);
+    UniqueReader read_file(const Path &vpath);
+    UniqueWriter write_file(const Path &vpath);
 
-    void download(const Path& remote, const fs::path& local);
+    void download(const Path &remote, const fs::path &local);
 
-    void upload(const fs::path& local, const Path& remote);
+    void upload(const fs::path &local, const Path &remote);
 
-    core::types::KeyValueMap get_attributes(const Path& vpath);
-    core::types::Value getAttribute(const Path& vpath,
+    core::types::KeyValueMap get_attributes(const Path &vpath);
+    core::types::Value getAttribute(const Path &vpath,
                                     const std::string attribute,
                                     const core::types::Value fallback = {});
-    void set_attributes(const Path& vpath,
-                        const core::types::KeyValueMap& attributes);
+    void set_attributes(const Path &vpath,
+                        const core::types::KeyValueMap &attributes);
 
-    void setAttribute(const Path& vpath,
-                      const std::string& key,
-                      const core::types::Value& value);
+    void setAttribute(const Path &vpath,
+                      const std::string &key,
+                      const core::types::Value &value);
 
-    void clear_attributes(const Path& vpath);
+    void clear_attributes(const Path &vpath);
 }  // namespace cc::platform::vfs

@@ -25,10 +25,10 @@ namespace cc::platform::multilogger::zmq
         using Super = cc::zmq::ProtoBufMessageWriter<cc::platform::multilogger::protobuf::Loggable>;
 
     protected:
-        ClientWriter(const std::shared_ptr<cc::zmq::Publisher>& publisher);
+        ClientWriter(const std::shared_ptr<cc::zmq::Publisher> &publisher);
 
     public:
-        void write(const core::types::Loggable::ptr& loggable);
+        void write(const core::types::Loggable::ptr &loggable);
 
     private:
         std::shared_ptr<cc::zmq::Publisher> publisher;

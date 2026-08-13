@@ -31,7 +31,7 @@ namespace cc::platform::pubsub
         bool replay_latest;
         KeyPaths key_paths;
     };
-    std::ostream& operator<<(std::ostream& stream, const ReplayPolicy& policy);
+    std::ostream &operator<<(std::ostream &stream, const ReplayPolicy &policy);
 
     using ReplayPolicyMap = core::types::ValueMap<Topic, ReplayPolicy>;
     using Payloads = std::vector<Payload>;

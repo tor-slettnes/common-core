@@ -79,7 +79,7 @@ namespace cc::platform::upgrade::native
         Super::deinitialize();
     }
 
-    PackageCatalogue NativeProvider::scan(const PackageSource& source)
+    PackageCatalogue NativeProvider::scan(const PackageSource &source)
     {
         if (source)
         {
@@ -105,23 +105,23 @@ namespace cc::platform::upgrade::native
     {
         PackageSources sources;
         sources.reserve(this->vfs_indices.size() + this->url_indices.size());
-        for (const auto& [vfs_path, index] : this->vfs_indices)
+        for (const auto &[vfs_path, index] : this->vfs_indices)
         {
             sources.emplace_back(vfs_path);
         }
-        for (const auto& [url, index] : this->url_indices)
+        for (const auto &[url, index] : this->url_indices)
         {
             sources.emplace_back(url);
         }
         return sources;
     }
 
-    PackageCatalogue NativeProvider::list_available(const PackageSource& source) const
+    PackageCatalogue NativeProvider::list_available(const PackageSource &source) const
     {
         if (source.empty())
         {
             PackageCatalogue available;
-            for (const PackageIndex::ptr& index : this->indices())
+            for (const PackageIndex::ptr &index : this->indices())
             {
                 PackageCatalogue sources = index->get_available();
                 available.insert(available.end(),
@@ -130,7 +130,7 @@ namespace cc::platform::upgrade::native
             }
             return available;
         }
-        else if (const PackageIndex::ptr& index = this->get_index(source))
+        else if (const PackageIndex::ptr &index = this->get_index(source))
         {
             return index->get_available();
         }
@@ -142,10 +142,10 @@ namespace cc::platform::upgrade::native
         }
     }
 
-    PackageInfo::ptr NativeProvider::best_available(const PackageSource& source) const
+    PackageInfo::ptr NativeProvider::best_available(const PackageSource &source) const
     {
         PackageInfo::ptr best;
-        for (const PackageInfo::ptr& candidate : this->list_available(source))
+        for (const PackageInfo::ptr &candidate : this->list_available(source))
         {
             if (candidate->is_applicable() &&
                 (!best || (candidate->version() > best->version())))
@@ -156,7 +156,7 @@ namespace cc::platform::upgrade::native
         return best;
     }
 
-    PackageInfo::ptr NativeProvider::install(const PackageSource& source)
+    PackageInfo::ptr NativeProvider::install(const PackageSource &source)
     {
         PackageSource install_source;
 
@@ -182,7 +182,7 @@ namespace cc::platform::upgrade::native
 
         try
         {
-            if (const PackageHandler::ptr& handler = this->get_handler(install_source))
+            if (const PackageHandler::ptr &handler = this->get_handler(install_source))
             {
                 return this->installed_package_info = handler->install(install_source);
             }
@@ -212,7 +212,7 @@ namespace cc::platform::upgrade::native
         }
     }
 
-    bool NativeProvider::remove_index(const PackageSource& source)
+    bool NativeProvider::remove_index(const PackageSource &source)
     {
         switch (source.location_type())
         {
@@ -232,19 +232,19 @@ namespace cc::platform::upgrade::native
         std::vector<PackageIndex::ptr> indices;
         indices.reserve(this->vfs_indices.size() + this->url_indices.size());
 
-        for (const auto& [vfs_path, index] : this->vfs_indices)
+        for (const auto &[vfs_path, index] : this->vfs_indices)
         {
             indices.push_back(index);
         }
 
-        for (const auto& [url, index] : this->url_indices)
+        for (const auto &[url, index] : this->url_indices)
         {
             indices.push_back(index);
         }
         return indices;
     }
 
-    PackageIndex::ptr NativeProvider::get_index(const PackageSource& source) const
+    PackageIndex::ptr NativeProvider::get_index(const PackageSource &source) const
     {
         switch (source.location_type())
         {
@@ -259,7 +259,7 @@ namespace cc::platform::upgrade::native
         }
     }
 
-    PackageIndex::ptr NativeProvider::get_or_add_index(const PackageSource& source)
+    PackageIndex::ptr NativeProvider::get_or_add_index(const PackageSource &source)
     {
         switch (source.location_type())
         {
@@ -279,7 +279,7 @@ namespace cc::platform::upgrade::native
         }
     }
 
-    PackageHandler::ptr NativeProvider::get_handler(const PackageSource& source) const
+    PackageHandler::ptr NativeProvider::get_handler(const PackageSource &source) const
     {
         switch (source.location_type())
         {
@@ -305,7 +305,7 @@ namespace cc::platform::upgrade::native
         }
     }
 
-    void NativeProvider::scan_source(const PackageSource& source)
+    void NativeProvider::scan_source(const PackageSource &source)
     {
         this->get_or_add_index(source)->scan();
         this->emit_best_available();
@@ -313,8 +313,8 @@ namespace cc::platform::upgrade::native
 
     void NativeProvider::on_vfs_context(
         core::signal::MappingAction action,
-        const vfs::ContextName& name,
-        const vfs::Context::ptr& context)
+        const vfs::ContextName &name,
+        const vfs::Context::ptr &context)
     {
         if ((action == core::signal::MAP_ADDITION) &&
             context->removable &&
@@ -326,8 +326,8 @@ namespace cc::platform::upgrade::native
 
     void NativeProvider::on_vfs_context_in_use(
         core::signal::MappingAction action,
-        const vfs::ContextName& name,
-        const vfs::Context::ptr& context)
+        const vfs::ContextName &name,
+        const vfs::Context::ptr &context)
     {
         if ((action == core::signal::MAP_REMOVAL) &&
             (name == this->default_vfs_path.context))

@@ -24,19 +24,19 @@ namespace cc::db
         };
 
         virtual std::vector<std::string> column_names(
-            const std::string& table_name) const = 0;
+            const std::string &table_name) const = 0;
 
         virtual std::size_t column_count(
-            const std::string& table_name) const = 0;
+            const std::string &table_name) const = 0;
 
-        static std::string quote_literal(const std::string& literal);
-        static std::string quote_ident(const std::string& identifier);
+        static std::string quote_literal(const std::string &literal);
+        static std::string quote_ident(const std::string &identifier);
 
         std::string select_query(
-            const ColumnNames& columns,
-            const std::string& table,
-            const std::vector<std::string>& conditions = {},
-            const std::string& order_by = {},
+            const ColumnNames &columns,
+            const std::string &table,
+            const std::vector<std::string> &conditions = {},
+            const std::string &order_by = {},
             SortDirection direction = SortDirection::ASCENDING,
             uint limit = 0) const;
 

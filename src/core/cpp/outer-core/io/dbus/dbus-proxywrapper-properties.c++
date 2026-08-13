@@ -13,11 +13,11 @@ namespace cc::dbus
     constexpr auto properties_interface = "org.freedesktop.DBus.Properties";
 
     PropertiesProxy::PropertiesProxy(
-        ProxyContainer* container,
-        const dbus::ConnectionPtr& connection,
-        const dbus::ServiceName& servicename,
-        const dbus::ObjectPath& objectpath,
-        const dbus::InterfaceName& interfacename)
+        ProxyContainer *container,
+        const dbus::ConnectionPtr &connection,
+        const dbus::ServiceName &servicename,
+        const dbus::ObjectPath &objectpath,
+        const dbus::InterfaceName &interfacename)
         : ProxyWrapper(container,
                        connection,
                        servicename,
@@ -27,8 +27,8 @@ namespace cc::dbus
     {
     }
 
-    void PropertiesProxy::set_property(const std::string& propertyname,
-                                       const Glib::VariantBase& value)
+    void PropertiesProxy::set_property(const std::string &propertyname,
+                                       const Glib::VariantBase &value)
     {
         auto inputs = Glib::VariantContainerBase::create_tuple({
             Glib::Variant<Glib::ustring>::create(this->real_interface),

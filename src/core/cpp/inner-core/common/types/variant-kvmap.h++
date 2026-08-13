@@ -39,8 +39,8 @@ namespace cc::core::types
         /// @returns
         ///   The mapped value if found, otherwise the provided `fallback`
         Value get(
-            const std::string& key,
-            const Value& fallback = {},
+            const std::string &key,
+            const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
         /// @brief
@@ -55,30 +55,30 @@ namespace cc::core::types
         /// @returns
         ///   The mapped value if found and non-empty, otherwise the provided `fallback`
         Value get_nonempty(
-            const std::string& key,
-            const Value& fallback = {},
+            const std::string &key,
+            const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
         Value get_any_of(
-            const std::vector<std::string>& candidates,
-            const Value& fallback = {},
+            const std::vector<std::string> &candidates,
+            const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
         Value get_nested(
-            const std::vector<std::string>& path,
-            const Value& fallback = {},
+            const std::vector<std::string> &path,
+            const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
         ValueListPtr get_valuelist_ptr(
-            const std::string& key,
+            const std::string &key,
             bool ignoreCase = false) const noexcept;
 
         TaggedValueListPtr get_tvlist_ptr(
-            const std::string& key,
+            const std::string &key,
             bool ignoreCase = false) const noexcept;
 
         KeyValueMapPtr get_kvmap_ptr(
-            const std::string& key,
+            const std::string &key,
             bool ignoreCase = false) const noexcept;
 
         /// @brief
@@ -91,23 +91,23 @@ namespace cc::core::types
         /// @returns
         ///   The mapped value if found, otherwise an empty optional container.
         std::optional<Value> try_get(
-            const std::string& key,
+            const std::string &key,
             bool ignoreCase = false) const noexcept;
 
         std::optional<Value> try_get_nonempty(
-            const std::string& key,
+            const std::string &key,
             bool ignoreCase = false) const noexcept;
 
         std::optional<Value> try_get_any_of(
-            const std::vector<std::string>& candidates,
+            const std::vector<std::string> &candidates,
             bool ignoreCase = false) const noexcept;
 
         std::optional<Value> try_get_nested(
-            const std::vector<std::string>& path,
+            const std::vector<std::string> &path,
             bool ignoreCase = false) const noexcept;
 
-        Value extract_value(const std::string& key,
-                            const Value& fallback = {}) noexcept;
+        Value extract_value(const std::string &key,
+                            const Value &fallback = {}) noexcept;
 
         std::vector<std::string> keys() const noexcept;
         ValueList values() const noexcept;
@@ -125,8 +125,8 @@ namespace cc::core::types
         /// @return
         ///   A reference to this updated instance.
 
-        KeyValueMap& update(const KeyValueMap& other) noexcept;
-        KeyValueMap& update(KeyValueMap&& other) noexcept;
+        KeyValueMap &update(const KeyValueMap &other) noexcept;
+        KeyValueMap &update(KeyValueMap &&other) noexcept;
 
         /// @brief
         ///   Merge values from another key value map, recursing
@@ -137,8 +137,8 @@ namespace cc::core::types
         /// @return
         ///   A reference to this updated instance
 
-        KeyValueMap& recursive_merge(const KeyValueMap& other) noexcept;
-        KeyValueMap& recursive_merge(KeyValueMap&& other) noexcept;
+        KeyValueMap &recursive_merge(const KeyValueMap &other) noexcept;
+        KeyValueMap &recursive_merge(KeyValueMap &&other) noexcept;
 
         /// @brief
         ///   Remove key/value pairs  that are identical to those
@@ -149,7 +149,7 @@ namespace cc::core::types
         /// @return
         ///   A reference to this updated instance
 
-        KeyValueMap& recursive_unmerge(const KeyValueMap& basemap) noexcept;
+        KeyValueMap &recursive_unmerge(const KeyValueMap &basemap) noexcept;
 
         /// @brief
         ///   Return the delta between the provided basemap and this instance
@@ -158,7 +158,7 @@ namespace cc::core::types
         ///   Base map against which we are comparing
         /// @return
         ////    A new KeyValueMap instance.
-        KeyValueMap recursive_delta(const KeyValueMap& basemap) const noexcept;
+        KeyValueMap recursive_delta(const KeyValueMap &basemap) const noexcept;
 
         /// @brief
         ///   Insert a pair into the map if a boolean condition is satisfied
@@ -170,7 +170,7 @@ namespace cc::core::types
         ///   A pair comprising an iterator to the new value if inserted,
         ///   and a boolean indicating whether the value was inserted.
         std::pair<KeyValueMap::iterator, bool>
-        insert_if(bool condition, const KeyValuePair& kv);
+        insert_if(bool condition, const KeyValuePair &kv);
 
         /// @brief
         ///   Insert a key/value item into the map if a boolean condition is satisfied
@@ -184,7 +184,7 @@ namespace cc::core::types
         ///   A pair comprising an iterator to the new value if inserted,
         ///   and a boolean indicating whether the value was inserted.
         std::pair<KeyValueMap::iterator, bool>
-        insert_if(bool condition, const std::string& key, const Value& value);
+        insert_if(bool condition, const std::string &key, const Value &value);
 
         /// @brief
         ///   Insert a key/value item into the map if the value is non-empty
@@ -194,7 +194,7 @@ namespace cc::core::types
         ///   A pair comprising an iterator to the new value if inserted,
         ///   and a boolean indicating whether the value was inserted.
         std::pair<KeyValueMap::iterator, bool>
-        insert_if_value(const KeyValuePair& kv);
+        insert_if_value(const KeyValuePair &kv);
 
         /// @brief
         ///   Insert a key/value item into the map if the value is non-empty
@@ -206,10 +206,10 @@ namespace cc::core::types
         ///   A pair comprising an iterator to the new value if inserted,
         ///   and a boolean indicating whether the value was inserted.
         std::pair<KeyValueMap::iterator, bool>
-        insert_if_value(const std::string& key, const Value& value);
+        insert_if_value(const std::string &key, const Value &value);
 
         template <class T>
-        std::optional<T> try_convert_to(const std::string& key, bool ignore_case = false) const
+        std::optional<T> try_convert_to(const std::string &key, bool ignore_case = false) const
         {
             return this->get(key, {}, ignore_case).try_convert_to<T>();
         }
@@ -221,9 +221,9 @@ namespace cc::core::types
         ValueMap<std::string, T, MapType> filter_by_type() const
         {
             ValueMap<std::string, T, MapType> result;
-            for (const auto& item : *this)
+            for (const auto &item : *this)
             {
-                if (const T* ptr = item.second.get_if<T>())
+                if (const T *ptr = item.second.get_if<T>())
                 {
                     result.insert_or_assign(item.first, *ptr);
                 }
@@ -232,16 +232,16 @@ namespace cc::core::types
         }
 
         template <class ContainerT>
-        void populate_from(const ContainerT& container)
+        void populate_from(const ContainerT &container)
         {
-            for (const auto& [key, value] : container)
+            for (const auto &[key, value] : container)
             {
                 this->insert_or_assign(key, value);
             }
         }
 
         template <class ContainerT>
-        static std::shared_ptr<KeyValueMap> create_shared_from(const ContainerT& container)
+        static std::shared_ptr<KeyValueMap> create_shared_from(const ContainerT &container)
         {
             auto kvmap = std::make_shared<KeyValueMap>();
             (*kvmap) << container;
@@ -249,7 +249,7 @@ namespace cc::core::types
         }
 
         template <class ContainerT>
-        static KeyValueMap create_from(const ContainerT& container)
+        static KeyValueMap create_from(const ContainerT &container)
         {
             KeyValueMap kvmap;
             kvmap << container;
@@ -257,16 +257,16 @@ namespace cc::core::types
         }
 
     public:
-        void to_stream(std::ostream& stream) const override;
+        void to_stream(std::ostream &stream) const override;
     };
 
     //--------------------------------------------------------------------------
     // Non-member functions
 
     template <class T>
-    KeyValueMap& operator<<(KeyValueMap& kvmap, const T& inputs)
+    KeyValueMap &operator<<(KeyValueMap &kvmap, const T &inputs)
     {
-        for (const auto& [key, value] : inputs)
+        for (const auto &[key, value] : inputs)
         {
             kvmap[key] << value;
         }

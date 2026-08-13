@@ -15,7 +15,7 @@ namespace cc::avro
     // --------------------------------------------------------------------------
     // SchemaWrapper
 
-    SchemaWrapper::SchemaWrapper(const core::types::Value& value)
+    SchemaWrapper::SchemaWrapper(const core::types::Value &value)
         : Value(value),
           avro_schema(nullptr)
     {
@@ -43,7 +43,7 @@ namespace cc::avro
             checkstatus(avro_schema_from_json_length(
                 json.data(),
                 json.size(),
-                &const_cast<SchemaWrapper*>(this)->avro_schema));
+                &const_cast<SchemaWrapper *>(this)->avro_schema));
         }
         return this->avro_schema;
     }
@@ -53,8 +53,8 @@ namespace cc::avro
         return core::json::writer.encoded(*this);
     }
 
-    void SchemaWrapper::set(const std::string& key,
-                            const core::types::Value& value)
+    void SchemaWrapper::set(const std::string &key,
+                            const core::types::Value &value)
     {
         if (auto tvlist = this->get_tvlist_ptr())
         {
@@ -65,8 +65,8 @@ namespace cc::avro
     //--------------------------------------------------------------------------
     // BuilderContext
 
-    core::types::Value BuilderContext::build(const std::string& name,
-                                             core::types::TaggedValueList&& spec)
+    core::types::Value BuilderContext::build(const std::string &name,
+                                             core::types::TaggedValueList &&spec)
     {
         if (this->defined_schemas.count(name))
         {
@@ -90,8 +90,8 @@ namespace cc::avro
     // RecordSchema
 
     RecordSchema::RecordSchema(
-        const ContextRef& context,
-        const std::string& name)
+        const ContextRef &context,
+        const std::string &name)
         : SchemaWrapper(context->build(
               name,
               {
@@ -103,10 +103,10 @@ namespace cc::avro
     }
 
     void RecordSchema::add_field(
-        const std::string& name,
-        const core::types::Value& type,
-        const std::optional<core::types::Value>& default_value,
-        const std::optional<std::string>& doc)
+        const std::string &name,
+        const core::types::Value &type,
+        const std::optional<core::types::Value> &default_value,
+        const std::optional<std::string> &doc)
     {
         if (auto fields = this->get(std::string(SchemaField_RecordFields)).get_valuelist_ptr())
         {
@@ -133,7 +133,7 @@ namespace cc::avro
     // MapSchema
 
     MapSchema::MapSchema(
-        const core::types::Value& valuetype)
+        const core::types::Value &valuetype)
         : SchemaWrapper(core::types::TaggedValueList({
               {SchemaField_Type, TypeName_Map},
               {SchemaField_MapValues, valuetype},
@@ -145,7 +145,7 @@ namespace cc::avro
     // ArrayShema
 
     ArraySchema::ArraySchema(
-        const core::types::Value& itemtype)
+        const core::types::Value &itemtype)
         : SchemaWrapper(core::types::TaggedValueList({
               {SchemaField_Type, TypeName_Array},
               {SchemaField_ArrayItems, itemtype},
@@ -157,11 +157,11 @@ namespace cc::avro
     // EnumSchema
 
     EnumSchema::EnumSchema(
-        const ContextRef& context,
-        const std::string& name,
-        const std::vector<std::string>& symbols,
-        const std::optional<std::string>& default_symbol,
-        const std::optional<std::string>& doc)
+        const ContextRef &context,
+        const std::string &name,
+        const std::vector<std::string> &symbols,
+        const std::optional<std::string> &default_symbol,
+        const std::optional<std::string> &doc)
         : SchemaWrapper(context->build(
               name,
               {
@@ -184,7 +184,7 @@ namespace cc::avro
     // DurationSchema
 
     CalendarTimeIntervalSchema::CalendarTimeIntervalSchema(
-        const ContextRef& context)
+        const ContextRef &context)
         : SchemaWrapper(context->build(
               TypeName_CalendarTimeInterval,
               {
@@ -206,7 +206,7 @@ namespace cc::avro
     // }
 
     TimeIntervalSchema::TimeIntervalSchema(
-        const ContextRef& context)
+        const ContextRef &context)
         : SchemaWrapper(core::types::TaggedValueList({
               {SchemaField_Type, TypeName_Long},
               {SchemaField_LogicalType, LogicalType_TimeOfDayMillis},
@@ -225,7 +225,7 @@ namespace cc::avro
     // }
 
     TimestampSchema::TimestampSchema(
-        const ContextRef& context)
+        const ContextRef &context)
         : SchemaWrapper(core::types::TaggedValueList({
               {SchemaField_Type, TypeName_Long},
               {SchemaField_LogicalType, LogicalType_TimeStampMillis},
@@ -237,7 +237,7 @@ namespace cc::avro
     // VariantSchema
 
     VariantSchema::VariantSchema(
-        const ContextRef& context,
+        const ContextRef &context,
         const std::optional<core::types::Value> &default_value)
         : RecordSchema(context, TypeName_Variant)
     {
@@ -259,7 +259,7 @@ namespace cc::avro
     // VariantMapSchema
 
     VariantMapSchema::VariantMapSchema(
-        const ContextRef& context)
+        const ContextRef &context)
         : MapSchema(VariantSchema(context))
     {
     }
@@ -268,7 +268,7 @@ namespace cc::avro
     // VariantListSchema
 
     VariantListSchema::VariantListSchema(
-        const ContextRef& context)
+        const ContextRef &context)
         : ArraySchema(VariantSchema(context))
     {
     }

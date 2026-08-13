@@ -26,9 +26,9 @@ namespace cc::ws
         using Super = messaging::Endpoint;
 
     protected:
-        Endpoint(const std::string& address,
-                 const std::string& endpoint_type,
-                 const std::string& channel_name);
+        Endpoint(const std::string &address,
+                 const std::string &endpoint_type,
+                 const std::string &channel_name);
 
         std::string scheme() const;
         std::string interface() const;
@@ -36,10 +36,10 @@ namespace cc::ws
 
     private:
         static void split_address(
-            const std::string& address,
-            std::string* scheme,
-            std::string* host,
-            uint* port);
+            const std::string &address,
+            std::string *scheme,
+            std::string *host,
+            uint *port);
 
     private:
         std::string scheme_;

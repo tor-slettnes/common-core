@@ -16,8 +16,8 @@ namespace cc::core
 {
     std::shared_ptr<core::SettingsStore> settings;
 
-    void init_settings(const std::string& primary_settings_file,
-                       const std::optional<std::string>& flavor)
+    void init_settings(const std::string &primary_settings_file,
+                       const std::optional<std::string> &flavor)
     {
         if (!settings)
         {
@@ -31,7 +31,7 @@ namespace cc::core
                 }
                 settings->load("defaults");
             }
-            catch (const std::exception& e)
+            catch (const std::exception &e)
             {
                 std::cerr << e << std::endl;
             }

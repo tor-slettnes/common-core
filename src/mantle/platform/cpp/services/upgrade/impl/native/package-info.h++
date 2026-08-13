@@ -24,13 +24,13 @@ namespace cc::platform::upgrade::native
         using ptr = std::shared_ptr<NativePackageInfo>;
 
     public:
-        NativePackageInfo(const fs::path& path,
-                          const PackageSource& source,
-                          const fs::path& staging_folder = {});
+        NativePackageInfo(const fs::path &path,
+                          const PackageSource &source,
+                          const fs::path &staging_folder = {});
 
-        NativePackageInfo(const core::types::KeyValueMap& settings,
-                          const PackageSource& source,
-                          const fs::path& staging_folder = {});
+        NativePackageInfo(const core::types::KeyValueMap &settings,
+                          const PackageSource &source,
+                          const fs::path &staging_folder = {});
 
     public:
         bool is_applicable() const override;
@@ -45,14 +45,14 @@ namespace cc::platform::upgrade::native
         std::string match_capture_task_description() const;
 
     private:
-        static Version decode_version(const core::types::Value& value);
-        static std::string decode_description(const core::types::Value& value);
+        static Version decode_version(const core::types::Value &value);
+        static std::string decode_description(const core::types::Value &value);
 
-        std::string capture_setting(const std::string& setting,
-                                    const std::string& fallback = {}) const;
+        std::string capture_setting(const std::string &setting,
+                                    const std::string &fallback = {}) const;
 
-        bool is_applicable_product(const std::string& current_product) const;
-        bool is_applicable_version(const Version& current_version) const;
+        bool is_applicable_product(const std::string &current_product) const;
+        bool is_applicable_version(const Version &current_version) const;
 
     protected:
         core::types::KeyValueMap settings;

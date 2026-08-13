@@ -11,14 +11,14 @@
 namespace cc::platform::vfs::local
 {
     RemovableContext::RemovableContext(
-        const std::string& name,
-        const fs::path& root,
+        const std::string &name,
+        const fs::path &root,
         bool writable,
-        const std::string& preexec,
-        const std::string& postexec,
-        const std::string& title,
-        const std::string& devnode,
-        const std::string& fstype)
+        const std::string &preexec,
+        const std::string &postexec,
+        const std::string &title,
+        const std::string &devnode,
+        const std::string &fstype)
         : Super(name, root, writable, preexec, postexec, title, true),
           devnode(devnode),
           fstype(fstype)

@@ -14,10 +14,10 @@
 
 namespace cc::demo::zmq
 {
-    ClientImpl::ClientImpl(const std::string& identity,
-                           const std::string& host_address,
-                           const std::string& channel_name,
-                           const std::string& interface_name)
+    ClientImpl::ClientImpl(const std::string &identity,
+                           const std::string &host_address,
+                           const std::string &channel_name,
+                           const std::string &interface_name)
         : API(identity, "ZMQ ProtoBuf client"),
           ProtoBufClient(host_address, channel_name, interface_name)
     {
@@ -35,7 +35,7 @@ namespace cc::demo::zmq
         API::deinitialize();
     }
 
-    void ClientImpl::say_hello(const Greeting& greeting)
+    void ClientImpl::say_hello(const Greeting &greeting)
     {
         this->call(METHOD_SAY_HELLO,
                    cc::protobuf::encoded<cc::demo::protobuf::Greeting>(greeting));

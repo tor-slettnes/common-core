@@ -19,7 +19,7 @@
 namespace cc::platform
 {
     void run_grpc_service(
-        const std::string& listen_address)
+        const std::string &listen_address)
     {
         log_debug("Creating gRPC server builder");
         cc::grpc::ServerBuilder builder(listen_address);

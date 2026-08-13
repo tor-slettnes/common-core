@@ -19,8 +19,8 @@ namespace cc::ws
         using Super = Endpoint;
 
     protected:
-        Server(const std::string& address,
-               const std::string& service_name);
+        Server(const std::string &address,
+               const std::string &service_name);
 
     public:
         void initialize() override;

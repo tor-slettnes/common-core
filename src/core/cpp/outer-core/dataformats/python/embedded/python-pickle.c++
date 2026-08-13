@@ -10,7 +10,7 @@
 
 namespace cc::python
 {
-    ContainerObject unpickle(const core::types::ByteVector& bytes)
+    ContainerObject unpickle(const core::types::ByteVector &bytes)
     {
         return cc::python::runtime->call(
             "pickle",
@@ -18,14 +18,14 @@ namespace cc::python
             SimpleObject::Vector({SimpleObject::pybytes_from_bytes(bytes)}));
     }
 
-    core::types::ByteVector pickle(const SimpleObject& object)
+    core::types::ByteVector pickle(const SimpleObject &object)
     {
         ContainerObject result = cc::python::runtime->call(
             "pickle",
             "dumps",
             SimpleObject::Vector({object}));
 
-        if (const auto& bytes = result.as_bytevector())
+        if (const auto &bytes = result.as_bytevector())
         {
             return bytes.value();
         }

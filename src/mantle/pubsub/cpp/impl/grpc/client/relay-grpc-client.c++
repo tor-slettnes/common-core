@@ -19,7 +19,7 @@ namespace cc::platform::pubsub::grpc
     }
 
     std::optional<ReplayPolicy> Client::get_replay_policy(
-        const Topic& topic) const
+        const Topic &topic) const
     {
         pubsub::protobuf::Topics request;
         request.add_topics(topic);
@@ -33,11 +33,11 @@ namespace cc::platform::pubsub::grpc
     }
 
     void Client::assign_replay_policy(
-        const std::string& topic,
-        const ReplayPolicy& policy)
+        const std::string &topic,
+        const ReplayPolicy &policy)
     {
         pubsub::protobuf::ReplayPolicyMap request;
-        auto& map = *request.mutable_map();
+        auto &map = *request.mutable_map();
         cc::protobuf::encode(policy, &map[topic]);
 
         this->call_check(
@@ -46,7 +46,7 @@ namespace cc::platform::pubsub::grpc
     }
 
     void Client::unassign_replay_policy(
-        const Topic& topic)
+        const Topic &topic)
     {
         pubsub::protobuf::Topics request;
         request.add_topics(topic);
@@ -67,12 +67,12 @@ namespace cc::platform::pubsub::grpc
     }
 
     std::optional<Payloads> Client::replay_topic(
-        const Topic& topic)
+        const Topic &topic)
     {
         return this->call_replay({topic}).get_opt(topic);
     }
 
-    Snapshot Client::call_replay(const std::vector<Topic>& topics) const
+    Snapshot Client::call_replay(const std::vector<Topic> &topics) const
     {
         pubsub::protobuf::Filters request;
         cc::protobuf::assign_repeated(topics, request.mutable_topics());

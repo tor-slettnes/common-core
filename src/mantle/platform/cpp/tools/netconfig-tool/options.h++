@@ -29,26 +29,26 @@ namespace cc::platform::netconfig
         void on_monitor_end() override;
 
         void on_globaldata(
-            const netconfig::GlobalData::ptr& data);
+            const netconfig::GlobalData::ptr &data);
 
         void on_connection(
             core::signal::MappingAction action,
-            const std::string& key,
+            const std::string &key,
             netconfig::ConnectionData::ptr data);
 
         void on_active_connection(
             core::signal::MappingAction action,
-            const std::string& key,
+            const std::string &key,
             netconfig::ActiveConnectionData::ptr data);
 
         void on_accesspoint(
             core::signal::MappingAction action,
-            const std::string& key,
+            const std::string &key,
             netconfig::AccessPointData::ptr data);
 
         void on_device(
             core::signal::MappingAction action,
-            const std::string& key,
+            const std::string &key,
             netconfig::DeviceData::ptr data);
 
     private:

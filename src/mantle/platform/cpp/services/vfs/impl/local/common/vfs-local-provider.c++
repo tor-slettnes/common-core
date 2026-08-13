@@ -26,7 +26,7 @@
 namespace cc::platform::vfs::local
 {
     LocalProvider::LocalProvider(
-        const std::string& name,
+        const std::string &name,
         core::platform::ProviderPriority priority)
         : Super(name, priority),
           settings(SETTINGS_STORE)
@@ -50,7 +50,7 @@ namespace cc::platform::vfs::local
         else
         {
             ContextMap cmap;
-            for (const auto& [key, ref] : this->contexts)
+            for (const auto &[key, ref] : this->contexts)
             {
                 if (auto cxt = std::dynamic_pointer_cast<LocalContext>(ref))
                 {
@@ -66,14 +66,14 @@ namespace cc::platform::vfs::local
     }
 
     Context::ptr LocalProvider::get_context(
-        const std::string& name,
+        const std::string &name,
         bool required) const
     {
         try
         {
             return this->contexts.at(name);
         }
-        catch (const std::out_of_range& e)
+        catch (const std::out_of_range &e)
         {
             if (required)
             {
@@ -88,7 +88,7 @@ namespace cc::platform::vfs::local
     }
 
     Context::ptr LocalProvider::open_context(
-        const std::string& name,
+        const std::string &name,
         bool required)
     {
         if (Context::ptr cxt = this->get_context(name, required))
@@ -103,7 +103,7 @@ namespace cc::platform::vfs::local
     }
 
     void LocalProvider::close_context(
-        const std::string& name,
+        const std::string &name,
         bool required)
     {
         if (Context::ptr cxt = this->get_context(name, required))
@@ -113,7 +113,7 @@ namespace cc::platform::vfs::local
     }
 
     void LocalProvider::close_context(
-        const Context::ptr& cxt)
+        const Context::ptr &cxt)
     {
         if (cxt)
         {
@@ -122,16 +122,16 @@ namespace cc::platform::vfs::local
     }
 
     VolumeInfo LocalProvider::get_volume_info(
-        const Path& vpath,
-        const OperationFlags& flags) const
+        const Path &vpath,
+        const OperationFlags &flags) const
     {
         Location loc = this->location(vpath, false);
         return fs::space(loc.localPath());
     }
 
     FileInfo LocalProvider::get_file_info(
-        const Path& vpath,
-        const OperationFlags& flags) const
+        const Path &vpath,
+        const OperationFlags &flags) const
     {
         Location loc = this->location(vpath, false);
         fs::path lpath = loc.localPath();
@@ -144,14 +144,14 @@ namespace cc::platform::vfs::local
     }
 
     Directory LocalProvider::get_directory(
-        const Path& vpath,
-        const OperationFlags& flags) const
+        const Path &vpath,
+        const OperationFlags &flags) const
     {
         Location loc = this->location(vpath, false);
         fs::path lpath = loc.localPath();
 
         Directory dir;
-        for (auto& pi : fs::directory_iterator(lpath))
+        for (auto &pi : fs::directory_iterator(lpath))
         {
             std::string basename = pi.path().filename();
             if (flags.include_hidden || (basename.substr(0, 1) != "."))
@@ -166,7 +166,7 @@ namespace cc::platform::vfs::local
             AttributeStore store(lpath, fs::file_type::directory);
             if (!store.empty())
             {
-                for (auto& entry : dir)
+                for (auto &entry : dir)
                 {
                     entry.second.attributes = store.get(entry.first.string()).as_kvmap();
                 }
@@ -177,10 +177,10 @@ namespace cc::platform::vfs::local
     }
 
     Directory LocalProvider::locate(
-        const Path& virtual_dir,
-        const std::vector<fs::path>& filename_masks,
-        const core::types::TaggedValueList& attribute_filters,
-        const OperationFlags& flags) const
+        const Path &virtual_dir,
+        const std::vector<fs::path> &filename_masks,
+        const core::types::TaggedValueList &attribute_filters,
+        const OperationFlags &flags) const
     {
         Location loc = this->location(virtual_dir, false);
         fs::path local_dir = loc.localPath();
@@ -192,7 +192,7 @@ namespace cc::platform::vfs::local
             flags.ignore_case);
 
         Directory dir;
-        for (const fs::directory_entry& entry : entries)
+        for (const fs::directory_entry &entry : entries)
         {
             core::types::KeyValueMap attributes;
             if (flags.with_attributes || !attribute_filters.empty())
@@ -213,9 +213,9 @@ namespace cc::platform::vfs::local
     }
 
     void LocalProvider::copy(
-        const Paths& sources,
-        const Path& target,
-        const OperationFlags& flags) const
+        const Paths &sources,
+        const Path &target,
+        const OperationFlags &flags) const
     {
         if ((sources.size() > 1) && !flags.inside_target)
         {
@@ -226,16 +226,16 @@ namespace cc::platform::vfs::local
         LocationList srclocs = this->locations(sources, false);
         Location tgtloc = this->location(target, true);
 
-        for (const Location& srcloc : srclocs)
+        for (const Location &srcloc : srclocs)
         {
             this->copy2(srcloc, tgtloc, flags);
         }
     }
 
     void LocalProvider::move(
-        const Paths& sources,
-        const Path& target,
-        const OperationFlags& flags) const
+        const Paths &sources,
+        const Path &target,
+        const OperationFlags &flags) const
     {
         if ((sources.size() > 1) && !flags.inside_target)
         {
@@ -246,15 +246,15 @@ namespace cc::platform::vfs::local
         LocationList srclocs = this->locations(sources, false);
         Location tgtloc = this->location(target, true);
 
-        for (const Location& srcloc : srclocs)
+        for (const Location &srcloc : srclocs)
         {
             move2(srcloc, tgtloc, flags);
         }
     }
 
     void LocalProvider::create_folder(
-        const Path& vpath,
-        const OperationFlags& flags) const
+        const Path &vpath,
+        const OperationFlags &flags) const
     {
         Location loc = this->location(vpath, true);
         if (flags.force)
@@ -268,30 +268,30 @@ namespace cc::platform::vfs::local
     }
 
     void LocalProvider::remove(
-        const Paths& vpaths,
-        const OperationFlags& flags) const
+        const Paths &vpaths,
+        const OperationFlags &flags) const
     {
         LocationList locs = this->locations(vpaths, true);
-        for (const Location& loc : locs)
+        for (const Location &loc : locs)
         {
             this->remove(loc, flags);
         }
     }
 
     UniqueReader LocalProvider::read_file(
-        const Path& vpath) const
+        const Path &vpath) const
     {
         return std::make_unique<FileReader>(this->location(vpath, false));
     }
 
     UniqueWriter LocalProvider::write_file(
-        const Path& vpath) const
+        const Path &vpath) const
     {
         return std::make_unique<FileWriter>(this->location(vpath, true));
     }
 
     void LocalProvider::addContext(
-        const std::string& name,
+        const std::string &name,
         Context::ptr cxt)
     {
         logf_message(cxt->removable
@@ -305,7 +305,7 @@ namespace cc::platform::vfs::local
     }
 
     bool LocalProvider::removeContext(
-        const std::string& name)
+        const std::string &name)
     {
         auto nh = this->contexts.extract(name);
         if (nh)
@@ -331,15 +331,15 @@ namespace cc::platform::vfs::local
 
     void LocalProvider::loadContexts(void)
     {
-        for (const auto& [key, value] : this->settings.get(SETTING_CONTEXTS).get_kvmap())
+        for (const auto &[key, value] : this->settings.get(SETTING_CONTEXTS).get_kvmap())
         {
             this->addContext(key, this->newContext(key, value));
         }
     }
 
     Context::ptr LocalProvider::newContext(
-        const std::string& name,
-        const core::types::Value& settings)
+        const std::string &name,
+        const core::types::Value &settings)
     {
         return std::make_shared<LocalContext>(
             name,
@@ -351,22 +351,22 @@ namespace cc::platform::vfs::local
     }
 
     core::types::KeyValueMap LocalProvider::get_attributes(
-        const Path& vpath) const
+        const Path &vpath) const
     {
         Location loc = this->location(vpath, false);
         return this->get_attributes(loc.localPath());
     }
 
     void LocalProvider::set_attributes(
-        const Path& vpath,
-        const core::types::KeyValueMap& attributes) const
+        const Path &vpath,
+        const core::types::KeyValueMap &attributes) const
     {
         Location loc = this->location(vpath, true);
         this->set_attributes(loc.localPath(), attributes);
     }
 
     void LocalProvider::clear_attributes(
-        const Path& vpath) const
+        const Path &vpath) const
     {
         Location loc = this->location(vpath, true);
         this->clear_attributes(loc.localPath());
@@ -376,9 +376,9 @@ namespace cc::platform::vfs::local
     // Static methods
 
     void LocalProvider::copy2(
-        const Location& srcloc,
-        const Location& tgtloc,
-        const OperationFlags& flags) const
+        const Location &srcloc,
+        const Location &tgtloc,
+        const OperationFlags &flags) const
     {
         fs::path localsource = srcloc.localPath();
         fs::path localtarget = tgtloc.localPath();
@@ -434,11 +434,11 @@ namespace cc::platform::vfs::local
         {
             fs::copy(localsource, localtarget, options);
         }
-        catch (const fs::filesystem_error& e)
+        catch (const fs::filesystem_error &e)
         {
             throw;
         }
-        catch (const std::exception& e)
+        catch (const std::exception &e)
         {
             throw;
         }
@@ -454,9 +454,9 @@ namespace cc::platform::vfs::local
     }
 
     void LocalProvider::move2(
-        const Location& srcloc,
-        const Location& tgtloc,
-        const OperationFlags& flags) const
+        const Location &srcloc,
+        const Location &tgtloc,
+        const OperationFlags &flags) const
     {
         fs::path localsource = srcloc.localPath();
         fs::path localtarget = tgtloc.localPath();
@@ -492,8 +492,8 @@ namespace cc::platform::vfs::local
     }
 
     void LocalProvider::remove(
-        const Location& loc,
-        const OperationFlags& flags) const
+        const Location &loc,
+        const OperationFlags &flags) const
     {
         fs::path lpath = loc.localPath();
         if (flags.force)
@@ -513,10 +513,10 @@ namespace cc::platform::vfs::local
     }
 
     bool LocalProvider::attribute_match(
-        const core::types::TaggedValueList& attribute_filters,
-        const core::types::KeyValueMap& attributes) const
+        const core::types::TaggedValueList &attribute_filters,
+        const core::types::KeyValueMap &attributes) const
     {
-        for (const auto& [name, value] : attribute_filters)
+        for (const auto &[name, value] : attribute_filters)
         {
             if (!name || (attributes.get(name.value()) != value))
             {
@@ -527,15 +527,15 @@ namespace cc::platform::vfs::local
     }
 
     core::types::KeyValueMap LocalProvider::get_attributes(
-        const fs::path& localpath,
+        const fs::path &localpath,
         fs::file_type type_hint) const
     {
         return AttributeStore(localpath, type_hint).get_attributes();
     }
 
     void LocalProvider::set_attributes(
-        const fs::path& localpath,
-        const core::types::KeyValueMap& attributes,
+        const fs::path &localpath,
+        const core::types::KeyValueMap &attributes,
         fs::file_type type_hint,
         bool save) const
     {
@@ -543,7 +543,7 @@ namespace cc::platform::vfs::local
     }
 
     void LocalProvider::clear_attributes(
-        const fs::path& localpath,
+        const fs::path &localpath,
         fs::file_type type_hint,
         bool save) const
     {

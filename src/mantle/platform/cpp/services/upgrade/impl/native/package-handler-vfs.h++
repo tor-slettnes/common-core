@@ -17,16 +17,16 @@ namespace cc::platform::upgrade::native
         using Super = PackageHandler;
 
     public:
-        VFSPackageHandler(const core::SettingsStore::ptr& settings);
+        VFSPackageHandler(const core::SettingsStore::ptr &settings);
 
     public:
         void unpack(
-            const PackageSource& source,
-            const fs::path& staging_folder) override;
+            const PackageSource &source,
+            const fs::path &staging_folder) override;
 
     protected:
         void unpack_file(
-            const fs::path& filepath,
-            const fs::path& staging_folder);
+            const fs::path &filepath,
+            const fs::path &staging_folder);
     };
 }  // namespace cc::platform::upgrade::native

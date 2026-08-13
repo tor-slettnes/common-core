@@ -34,7 +34,7 @@ namespace cc::core::io
         return howmany;
     }
 
-    std::streamsize StreamBuffer::xsgetn(char_type* __s, std::streamsize __n)
+    std::streamsize StreamBuffer::xsgetn(char_type *__s, std::streamsize __n)
     {
         std::streamsize total = 0;
         while (total < __n)
@@ -92,7 +92,7 @@ namespace cc::core::io
     //==========================================================================
     // put area
 
-    std::streamsize StreamBuffer::xsputn(const char_type* __s, std::streamsize __n)
+    std::streamsize StreamBuffer::xsputn(const char_type *__s, std::streamsize __n)
     {
         return this->write_some(std::string(__s, __n)) ? __n : 0;
     }

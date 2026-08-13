@@ -31,8 +31,8 @@ namespace cc::core
         this->stop_watcher();
     }
 
-    Scheduler::Handle Scheduler::add(const Invocation& invocation,
-                                     const dt::Duration& interval,
+    Scheduler::Handle Scheduler::add(const Invocation &invocation,
+                                     const dt::Duration &interval,
                                      const Alignment align,
                                      status::Level loglevel,
                                      uint count,
@@ -44,9 +44,9 @@ namespace cc::core
         return handle;
     }
 
-    Scheduler::Task& Scheduler::add(const Handle& handle,
-                                    const Invocation& invocation,
-                                    const dt::Duration& interval,
+    Scheduler::Task &Scheduler::add(const Handle &handle,
+                                    const Invocation &invocation,
+                                    const dt::Duration &interval,
                                     const Alignment align,
                                     status::Level loglevel,
                                     uint count,
@@ -65,9 +65,9 @@ namespace cc::core
         return this->add_task(tp, std::move(task));
     }
 
-    Scheduler::Task& Scheduler::add_if_missing(const Handle& handle,
-                                               const Invocation& invocation,
-                                               const dt::Duration& interval,
+    Scheduler::Task &Scheduler::add_if_missing(const Handle &handle,
+                                               const Invocation &invocation,
+                                               const dt::Duration &interval,
                                                const Alignment align,
                                                status::Level loglevel,
                                                uint count,
@@ -85,24 +85,24 @@ namespace cc::core
         }
     }
 
-    bool Scheduler::remove(const Scheduler::Task& task)
+    bool Scheduler::remove(const Scheduler::Task &task)
     {
         auto lck = std::scoped_lock(this->mtx);
         return this->remove_task({}, &task);
     }
 
-    bool Scheduler::remove(const Handle& handle)
+    bool Scheduler::remove(const Handle &handle)
     {
         auto lck = std::scoped_lock(this->mtx);
         return this->remove_task(handle);
     }
 
-    bool Scheduler::exists(const Handle& handle)
+    bool Scheduler::exists(const Handle &handle)
     {
         return this->find(handle) != this->end();
     }
 
-    Scheduler::TaskMap::iterator Scheduler::find(const Handle& handle) noexcept
+    Scheduler::TaskMap::iterator Scheduler::find(const Handle &handle) noexcept
     {
         auto lck = std::scoped_lock(this->mtx);
         for (auto it = this->begin(); it != this->end(); it++)
@@ -125,9 +125,9 @@ namespace cc::core
         return this->tasks.end();
     }
 
-    bool Scheduler::has_task(const Handle& handle) const noexcept
+    bool Scheduler::has_task(const Handle &handle) const noexcept
     {
-        for (const auto& [tp, task] : this->tasks)
+        for (const auto &[tp, task] : this->tasks)
         {
             if (task.handle == handle)
             {
@@ -143,7 +143,7 @@ namespace cc::core
         this->stop_watcher();
     }
 
-    Scheduler::Task& Scheduler::add_task(const dt::TimePoint& tp, Scheduler::Task&& task)
+    Scheduler::Task &Scheduler::add_task(const dt::TimePoint &tp, Scheduler::Task &&task)
     {
         // Remove any existing task with the same ID
         this->remove_task(task.handle);
@@ -185,12 +185,12 @@ namespace cc::core
         }
     }
 
-    bool Scheduler::remove_task(const Handle& handle, const Task* ptask)
+    bool Scheduler::remove_task(const Handle &handle, const Task *ptask)
     {
         bool found = false;
         for (auto it = this->tasks.begin(); it != this->tasks.end();)
         {
-            Task& task = it->second;
+            Task &task = it->second;
             if ((ptask == nullptr) ? (task.handle == handle) : (&task == ptask))
             {
                 bool isfirst = (&task == this->current);
@@ -222,7 +222,7 @@ namespace cc::core
         while (this->tasks.size())
         {
             auto it = this->tasks.begin();
-            auto& [tp, task] = *it;
+            auto &[tp, task] = *it;
 
             std::string handle = task.handle;
             this->current = &task;
@@ -279,8 +279,8 @@ namespace cc::core
         logf_trace("Ending watcher thread at %s", now);
     }
 
-    void Scheduler::adjust_times(const dt::TimePoint& expected,
-                                 const dt::TimePoint& now)
+    void Scheduler::adjust_times(const dt::TimePoint &expected,
+                                 const dt::TimePoint &now)
     {
         logf_notice(
             "Clock skew detected (expected to wake up at %.0s, but now it's %.0s). "
@@ -303,9 +303,9 @@ namespace cc::core
     //==========================================================================
     // Task methods
 
-    Scheduler::Task::Task(const Handle& handle,
-                          const Invocation& invocation,
-                          const dt::Duration& interval,
+    Scheduler::Task::Task(const Handle &handle,
+                          const Invocation &invocation,
+                          const dt::Duration &interval,
                           Alignment align,
                           uint count,
                           uint retries,
@@ -324,13 +324,13 @@ namespace cc::core
     {
     }
 
-    bool Scheduler::Task::invoke(const dt::TimePoint& tp)
+    bool Scheduler::Task::invoke(const dt::TimePoint &tp)
     {
         bool keep = false;
 
         try
         {
-            const Invocation& f = this->invocation;
+            const Invocation &f = this->invocation;
             logf_message(this->loglevel,
                          "Scheduled task %r invocation (variant %d)",
                          this->handle,
@@ -344,12 +344,12 @@ namespace cc::core
 
             case 1:
                 std::get<std::function<
-                    void(const dt::TimePoint&)>>(f)(tp);
+                    void(const dt::TimePoint &)>>(f)(tp);
                 break;
 
             case 2:
                 std::get<std::function<
-                    void(const dt::TimePoint&, const Task&)>>(f)(tp, *this);
+                    void(const dt::TimePoint &, const Task &)>>(f)(tp, *this);
                 break;
             }
 
@@ -379,7 +379,7 @@ namespace cc::core
         return keep;
     }
 
-    dt::TimePoint Scheduler::Task::aligned_time(const dt::TimePoint& now) const
+    dt::TimePoint Scheduler::Task::aligned_time(const dt::TimePoint &now) const
     {
         switch (this->align)
         {
@@ -399,8 +399,8 @@ namespace cc::core
         }
     }
 
-    dt::TimePoint Scheduler::Task::next_time(const dt::TimePoint& tp,
-                                             const dt::TimePoint& now) const
+    dt::TimePoint Scheduler::Task::next_time(const dt::TimePoint &tp,
+                                             const dt::TimePoint &now) const
     {
         // By default, advance by the specified interval
         dt::TimePoint next = tp + this->interval;
@@ -425,9 +425,9 @@ namespace cc::core
         return next;
     }
 
-    dt::TimePoint Scheduler::Task::adjusted_time(const dt::TimePoint& old_time,
-                                                 const dt::TimePoint& new_time,
-                                                 const dt::TimePoint& tp) const
+    dt::TimePoint Scheduler::Task::adjusted_time(const dt::TimePoint &old_time,
+                                                 const dt::TimePoint &new_time,
+                                                 const dt::TimePoint &tp) const
     {
         switch (this->align)
         {
@@ -444,8 +444,8 @@ namespace cc::core
         }
     }
 
-    dt::TimePoint Scheduler::Task::next_aligned(const dt::TimePoint& reference,
-                                                const dt::TimePoint& tp) const
+    dt::TimePoint Scheduler::Task::next_aligned(const dt::TimePoint &reference,
+                                                const dt::TimePoint &tp) const
     {
         dt::TimePoint aligned = dt::last_aligned(tp, reference, this->interval);
         if (aligned < tp)

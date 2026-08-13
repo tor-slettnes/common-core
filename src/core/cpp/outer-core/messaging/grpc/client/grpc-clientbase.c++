@@ -11,10 +11,10 @@
 namespace cc::grpc
 {
     ClientBase::ClientBase(
-        const std::string& full_service_name,
-        const std::string& host,
+        const std::string &full_service_name,
+        const std::string &host,
         bool wait_for_ready,
-        const std::shared_ptr<::grpc::ChannelCredentials>& creds)
+        const std::shared_ptr<::grpc::ChannelCredentials> &creds)
         : Base("client", full_service_name),
           host_(this->realaddress(host,
                                   HOST_OPTION,
@@ -27,7 +27,7 @@ namespace cc::grpc
     }
 
     std::shared_ptr<::grpc::ChannelInterface> ClientBase::create_channel(
-        const std::shared_ptr<::grpc::ChannelCredentials>& creds) const
+        const std::shared_ptr<::grpc::ChannelCredentials> &creds) const
     {
         uint max_send_size = this->max_request_size();
         uint max_recv_size = this->max_reply_size();
@@ -67,7 +67,7 @@ namespace cc::grpc
         return this->host_;
     }
 
-    void ClientBase::check(const ::grpc::Status& status) const
+    void ClientBase::check(const ::grpc::Status &status) const
     {
         if (!status.ok())
         {
@@ -75,7 +75,7 @@ namespace cc::grpc
         }
     }
 
-    void ClientBase::check(const Status& status) const
+    void ClientBase::check(const Status &status) const
     {
         status.throw_if_error();
     }
@@ -107,12 +107,12 @@ namespace cc::grpc
         }
     }
 
-    bool ClientBase::wait_for_connected(const core::dt::Duration& timeout) const
+    bool ClientBase::wait_for_connected(const core::dt::Duration &timeout) const
     {
         return this->wait_for_connected(core::dt::Clock::now() + timeout);
     }
 
-    bool ClientBase::wait_for_connected(const core::dt::TimePoint& deadline) const
+    bool ClientBase::wait_for_connected(const core::dt::TimePoint &deadline) const
     {
         grpc_connectivity_state state = this->channel->GetState(true);
 

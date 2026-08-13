@@ -36,7 +36,7 @@ namespace cc::db
         return this->db_file_;
     }
 
-    void SQLite3::open(const fs::path& db_file)
+    void SQLite3::open(const fs::path &db_file)
     {
         if (this->db_file_ != db_file)
         {
@@ -78,7 +78,7 @@ namespace cc::db
         std::vector<std::string> names;
         this->execute(
             query,
-            [&](const core::types::TaggedValueList& row) -> bool {
+            [&](const core::types::TaggedValueList &row) -> bool {
                 names.push_back(row.front().as_string());
                 return true;
             });
@@ -87,15 +87,15 @@ namespace cc::db
     }
 
     std::vector<SQLite3::ColumnSpec> SQLite3::columns(
-        const std::string& table_name) const
+        const std::string &table_name) const
     {
         std::vector<std::string> column_names = this->column_names(table_name);
         std::vector<ColumnSpec> columns;
         columns.reserve(column_names.size());
 
-        for (const std::string& column_name : column_names)
+        for (const std::string &column_name : column_names)
         {
-            const char* type = nullptr;
+            const char *type = nullptr;
             this->check_status(
                 sqlite3_table_column_metadata(
                     this->connection(),       // db
@@ -116,10 +116,10 @@ namespace cc::db
     }
 
     std::vector<std::string> SQLite3::column_names(
-        const std::string& table_name) const
+        const std::string &table_name) const
     {
         std::vector<std::string> names;
-        sqlite3_stmt* statement = this->select_all_from(table_name);
+        sqlite3_stmt *statement = this->select_all_from(table_name);
         try
         {
             names = this->column_names(statement);
@@ -134,17 +134,17 @@ namespace cc::db
     }
 
     std::size_t SQLite3::column_count(
-        const std::string& table_name) const
+        const std::string &table_name) const
     {
-        sqlite3_stmt* statement = this->select_all_from(table_name);
+        sqlite3_stmt *statement = this->select_all_from(table_name);
         std::size_t count = sqlite3_column_count(statement);
         this->finalize(statement);
         return count;
     }
 
     void SQLite3::create_table(
-        const std::string& table_name,
-        const std::vector<ColumnSpec>& columns) const
+        const std::string &table_name,
+        const std::vector<ColumnSpec> &columns) const
     {
         std::stringstream sql;
         std::string delimiter;
@@ -153,7 +153,7 @@ namespace cc::db
             << this->quote_ident(table_name)
             << " (";
 
-        for (const ColumnSpec& spec : columns)
+        for (const ColumnSpec &spec : columns)
         {
             sql << delimiter
                 << this->quote_ident(spec.name);
@@ -171,11 +171,11 @@ namespace cc::db
     }
 
     void SQLite3::read(
-        const QueryCallbackFunction& callback,
-        const std::string& table_name,
-        const ColumnNames& columns,
-        const std::vector<std::string>& conditions,
-        const std::string& order_by,
+        const QueryCallbackFunction &callback,
+        const std::string &table_name,
+        const ColumnNames &columns,
+        const std::vector<std::string> &conditions,
+        const std::string &order_by,
         SortDirection direction,
         uint limit) const
     {
@@ -185,9 +185,9 @@ namespace cc::db
     }
 
     void SQLite3::insert_multi(
-        const std::string& table_name,
-        const MultiRowData& parameters,
-        const QueryCallbackFunction& callback) const
+        const std::string &table_name,
+        const MultiRowData &parameters,
+        const QueryCallbackFunction &callback) const
     {
         std::stringstream sql;
         sql << "INSERT INTO "
@@ -199,32 +199,32 @@ namespace cc::db
     }
 
     bool SQLite3::execute(
-        const std::string& sql,
-        const QueryCallbackFunction& callback) const
+        const std::string &sql,
+        const QueryCallbackFunction &callback) const
     {
         return this->execute(sql, {}, callback);
     }
 
     bool SQLite3::execute(
-        const std::string& sql,
-        const RowData& parameters,
-        const QueryCallbackFunction& callback) const
+        const std::string &sql,
+        const RowData &parameters,
+        const QueryCallbackFunction &callback) const
     {
         return this->execute_multi(sql, {parameters}, callback);
     }
 
     bool SQLite3::execute_multi(
-        const std::string& sql,
-        const MultiRowData& parameter_rows,
-        const QueryCallbackFunction& callback) const
+        const std::string &sql,
+        const MultiRowData &parameter_rows,
+        const QueryCallbackFunction &callback) const
     {
         // std::scoped_lock lck(this->db_lock_);
-        sqlite3_stmt* statement = this->statement(sql);
+        sqlite3_stmt *statement = this->statement(sql);
         bool done = false;
 
         try
         {
-            for (const RowData& parameters : parameter_rows)
+            for (const RowData &parameters : parameter_rows)
             {
                 this->bind_input_parameters(statement, parameters);
                 done = this->execute_statement(statement, callback);
@@ -246,8 +246,8 @@ namespace cc::db
     }
 
     std::shared_ptr<SQLite3::QueryResponseQueue> SQLite3::execute_async_query(
-        const std::string& sql,
-        const RowData& parameters,
+        const std::string &sql,
+        const RowData &parameters,
         std::size_t queue_size)
     {
         using namespace std::placeholders;
@@ -261,7 +261,7 @@ namespace cc::db
                 this->execute(
                     sql,
                     parameters,
-                    [=](core::types::TaggedValueList&& row) -> bool {
+                    [=](core::types::TaggedValueList &&row) -> bool {
                         return queue->put(row);
                     });
                 queue->close();
@@ -272,13 +272,13 @@ namespace cc::db
     }
 
     std::string SQLite3::get_placeholders(
-        const std::string& table_name) const
+        const std::string &table_name) const
     {
         std::vector<std::string> placeholders(this->column_count(table_name), "?");
         return "(" + core::str::join(placeholders, ", ") + ")";
     }
 
-    ::sqlite3* SQLite3::connection() const
+    ::sqlite3 *SQLite3::connection() const
     {
         if (!this->is_open())
         {
@@ -287,9 +287,9 @@ namespace cc::db
         return this->connection_;
     }
 
-    ::sqlite3_stmt* SQLite3::statement(const std::string& sql) const
+    ::sqlite3_stmt *SQLite3::statement(const std::string &sql) const
     {
-        sqlite3_stmt* result = nullptr;
+        sqlite3_stmt *result = nullptr;
         this->check_status(
             sqlite3_prepare_v2(
                 this->connection(),  // db
@@ -303,24 +303,24 @@ namespace cc::db
         return result;
     }
 
-    ::sqlite3_stmt* SQLite3::select_all_from(const std::string& table_name) const
+    ::sqlite3_stmt *SQLite3::select_all_from(const std::string &table_name) const
     {
         return this->statement(this->select_query(
             ALL_COLUMNS,   // columns
             table_name));  // table
     }
 
-    void SQLite3::finalize(::sqlite3_stmt* statement) const
+    void SQLite3::finalize(::sqlite3_stmt *statement) const
     {
         this->check_status(sqlite3_finalize(statement), "sqlite3_finalize");
     }
 
-    void SQLite3::bind_input_parameters(::sqlite3_stmt* statement,
-                                        const RowData& parameters) const
+    void SQLite3::bind_input_parameters(::sqlite3_stmt *statement,
+                                        const RowData &parameters) const
     {
         for (int index = 0; index < parameters.size(); index++)
         {
-            const core::types::Value& value = parameters.at(index);
+            const core::types::Value &value = parameters.at(index);
             int status = SQLITE_OK;
 
             switch (value.type())
@@ -408,8 +408,8 @@ namespace cc::db
         }
     }
 
-    bool SQLite3::execute_statement(::sqlite3_stmt* statement,
-                                    const QueryCallbackFunction& callback) const
+    bool SQLite3::execute_statement(::sqlite3_stmt *statement,
+                                    const QueryCallbackFunction &callback) const
     {
         bool done = false;
         bool accepted = true;
@@ -446,13 +446,13 @@ namespace cc::db
         return done;
     }
 
-    SQLite3::ColumnNames SQLite3::column_names(::sqlite3_stmt* statement) const
+    SQLite3::ColumnNames SQLite3::column_names(::sqlite3_stmt *statement) const
     {
         int column_count = sqlite3_column_count(statement);
         ColumnNames column_names(column_count);
         for (int col_index = 0; col_index < column_count; col_index++)
         {
-            if (const char* name = sqlite3_column_name(statement, col_index))
+            if (const char *name = sqlite3_column_name(statement, col_index))
             {
                 column_names.at(col_index).assign(name);
             }
@@ -461,9 +461,9 @@ namespace cc::db
     }
 
     bool SQLite3::process_row(
-        ::sqlite3_stmt* statement,
-        const ColumnNames& column_names,
-        const QueryCallbackFunction& callback) const
+        ::sqlite3_stmt *statement,
+        const ColumnNames &column_names,
+        const QueryCallbackFunction &callback) const
     {
         try
         {
@@ -480,16 +480,16 @@ namespace cc::db
     }
 
     core::types::TaggedValueList SQLite3::extract_row(
-        ::sqlite3_stmt* statement,
-        const ColumnNames& column_names) const
+        ::sqlite3_stmt *statement,
+        const ColumnNames &column_names) const
     {
         int ncols = sqlite3_column_count(statement);
         core::types::TaggedValueList row_data;
         row_data.reserve(ncols);
         for (int col_index = 0; col_index < ncols; col_index++)
         {
-            const std::string& column_name = column_names.at(col_index);
-            auto& [tag, value] = row_data.emplace_back(column_name, core::types::Value());
+            const std::string &column_name = column_names.at(col_index);
+            auto &[tag, value] = row_data.emplace_back(column_name, core::types::Value());
 
             switch (sqlite3_column_type(statement, col_index))
             {
@@ -502,17 +502,17 @@ namespace cc::db
                 break;
 
             case SQLITE_TEXT:
-                if (const unsigned char* text = sqlite3_column_text(statement, col_index))
+                if (const unsigned char *text = sqlite3_column_text(statement, col_index))
                 {
                     int nbytes = sqlite3_column_bytes(statement, col_index);
-                    value = std::string(reinterpret_cast<const char*>(text), nbytes);
+                    value = std::string(reinterpret_cast<const char *>(text), nbytes);
                 }
                 break;
 
             case SQLITE_BLOB:
-                if (const void* blob = sqlite3_column_blob(statement, col_index))
+                if (const void *blob = sqlite3_column_blob(statement, col_index))
                 {
-                    auto* data = static_cast<const std::uint8_t*>(blob);
+                    auto *data = static_cast<const std::uint8_t *>(blob);
                     int nbytes = sqlite3_column_bytes(statement, col_index);
                     value = core::types::ByteVector(data, data + nbytes);
                 }
@@ -531,8 +531,8 @@ namespace cc::db
 
     void SQLite3::check_status(
         int code,
-        std::string&& action,
-        core::types::KeyValueMap&& attributes) const
+        std::string &&action,
+        core::types::KeyValueMap &&attributes) const
     {
         if (code != SQLITE_OK)
         {

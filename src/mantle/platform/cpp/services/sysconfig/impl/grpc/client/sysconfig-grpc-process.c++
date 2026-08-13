@@ -11,7 +11,7 @@
 
 namespace cc::platform::sysconfig::grpc
 {
-    ProcessProvider::ProcessProvider(const std::shared_ptr<Client>& client)
+    ProcessProvider::ProcessProvider(const std::shared_ptr<Client> &client)
         : Super(TYPE_NAME_FULL(This)),
           client(client)
     {
@@ -22,8 +22,8 @@ namespace cc::platform::sysconfig::grpc
     }
 
     InvocationResult ProcessProvider::invoke_sync(
-        const Invocation& invocation,
-        const std::string& input)
+        const Invocation &invocation,
+        const std::string &input)
     {
         return cc::protobuf::decoded<InvocationResult>(
             this->client->call_check(
@@ -34,8 +34,8 @@ namespace cc::platform::sysconfig::grpc
     }
 
     PID ProcessProvider::invoke_async(
-        const Invocation& invocation,
-        const std::string& input)
+        const Invocation &invocation,
+        const std::string &input)
     {
         return cc::protobuf::decoded<core::platform::PID>(
             this->client->call_check(
@@ -47,7 +47,7 @@ namespace cc::platform::sysconfig::grpc
 
     InvocationResult ProcessProvider::invoke_finish(
         PID pid,
-        const std::string& input)
+        const std::string &input)
     {
         return cc::protobuf::decoded<InvocationResult>(
             this->client->call_check(

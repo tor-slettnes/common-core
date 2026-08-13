@@ -11,7 +11,7 @@
 #include "application/init.h++"
 #include "logging/logging.h++"
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     cc::core::application::initialize(argc, argv);
 

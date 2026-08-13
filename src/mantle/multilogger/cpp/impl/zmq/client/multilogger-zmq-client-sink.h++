@@ -29,21 +29,21 @@ namespace cc::platform::multilogger::zmq
         using Super = core::logging::AsyncWrapper<core::logging::Sink>;
 
     protected:
-        ClientSink(const std::string& sink_id,
-                   const std::shared_ptr<cc::zmq::Publisher>& publisher = {});
+        ClientSink(const std::string &sink_id,
+                   const std::shared_ptr<cc::zmq::Publisher> &publisher = {});
 
     protected:
-        void load_settings(const core::types::KeyValueMap& settings) override;
-        void load_client_settings(const core::types::KeyValueMap& settings);
+        void load_settings(const core::types::KeyValueMap &settings) override;
+        void load_client_settings(const core::types::KeyValueMap &settings);
 
     public:
         std::string host() const;
-        void set_host(const std::string& address);
+        void set_host(const std::string &address);
 
     protected:
         void open() override;
         void close() override;
-        bool handle_item(const core::types::Loggable::ptr& loggable);
+        bool handle_item(const core::types::Loggable::ptr &loggable);
 
     private:
         std::string host_;
@@ -58,7 +58,7 @@ namespace cc::platform::multilogger::zmq
     inline static core::logging::SinkFactory factory(
         "multilogger-zmq",
         "Log to MultiLogger service over ZeroMQ",
-        [](const core::logging::SinkID& sink_id) -> core::logging::Sink::ptr {
+        [](const core::logging::SinkID &sink_id) -> core::logging::Sink::ptr {
             return ClientSink::create_shared(sink_id);
         });
 

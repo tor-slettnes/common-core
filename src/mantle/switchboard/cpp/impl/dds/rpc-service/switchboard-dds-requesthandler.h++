@@ -25,59 +25,59 @@ namespace cc::platform::switchboard::dds
         using Super = CC::Switchboard::Switchboard;
 
     public:
-        RequestHandler(const std::shared_ptr<Provider>& provider);
+        RequestHandler(const std::shared_ptr<Provider> &provider);
 
     public:
         CC::Switchboard::SwitchList get_switches(
-            const CC::Switchboard::SwitchSelection& req) override;
+            const CC::Switchboard::SwitchSelection &req) override;
 
         CC::Switchboard::Switch get_switch(
-            const SwitchName& switch_name) override;
+            const SwitchName &switch_name) override;
 
         bool add_switch(
-            const CC::Switchboard::AddSwitchRequest& req) override;
+            const CC::Switchboard::AddSwitchRequest &req) override;
 
         bool remove_switch(
-            const CC::Switchboard::RemoveSwitchRequest& req) override;
+            const CC::Switchboard::RemoveSwitchRequest &req) override;
 
         bool clear_switches(
-            const CC::Switchboard::ClearSwitchesRequest& req) override;
+            const CC::Switchboard::ClearSwitchesRequest &req) override;
 
         std::uint32_t import_switches(
-            const CC::Switchboard::ImportRequest& req) override;
+            const CC::Switchboard::ImportRequest &req) override;
 
         CC::Variant::TaggedValueList export_switches(
-            const CC::Switchboard::ExportRequest& req) override;
+            const CC::Switchboard::ExportRequest &req) override;
 
         bool set_specification(
-            const CC::Switchboard::SetSpecificationRequest& req) override;
+            const CC::Switchboard::SetSpecificationRequest &req) override;
 
         bool add_dependency(
-            const CC::Switchboard::AddDependencyRequest& req) override;
+            const CC::Switchboard::AddDependencyRequest &req) override;
 
         bool remove_dependency(
-            const CC::Switchboard::RemoveDependencyRequest& req) override;
+            const CC::Switchboard::RemoveDependencyRequest &req) override;
 
         bool add_interceptor(
-            const CC::Switchboard::AddInterceptorRequest& req) override;
+            const CC::Switchboard::AddInterceptorRequest &req) override;
 
         bool remove_interceptor(
-            const CC::Switchboard::RemoveInterceptorRequest& req) override;
+            const CC::Switchboard::RemoveInterceptorRequest &req) override;
 
         CC::Switchboard::InterceptorResult invoke_interceptor(
-            const CC::Switchboard::InterceptorInvocation& req) override;
+            const CC::Switchboard::InterceptorInvocation &req) override;
 
         bool set_target(
-            const CC::Switchboard::SetTargetRequest& req) override;
+            const CC::Switchboard::SetTargetRequest &req) override;
 
         CC::Variant::TaggedValueList get_attributes(
-            const CC::Switchboard::GetAttributesRequest& req) override;
+            const CC::Switchboard::GetAttributesRequest &req) override;
 
         bool set_attributes(
-            const CC::Switchboard::SetAttributesRequest& req) override;
+            const CC::Switchboard::SetAttributesRequest &req) override;
 
         CC::Switchboard::StatusList get_culprits(
-            const CC::Switchboard::CulpritsQuery& req) override;
+            const CC::Switchboard::CulpritsQuery &req) override;
 
     private:
         std::shared_ptr<Provider> provider;

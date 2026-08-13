@@ -14,12 +14,12 @@ namespace cc::python
     {
     }
 
-    void Builtin::to_stream(std::ostream& stream) const
+    void Builtin::to_stream(std::ostream &stream) const
     {
         stream << this->name();
     }
 
-    void Builtin::to_literal_stream(std::ostream& stream) const
+    void Builtin::to_literal_stream(std::ostream &stream) const
     {
         stream << this->name();
     }
@@ -34,27 +34,27 @@ namespace cc::python
         Map object_map(this->attributes_as_objects());
         std::vector<std::string> names;
         names.reserve(object_map.size());
-        for (const auto& [name, obj] : object_map)
+        for (const auto &[name, obj] : object_map)
         {
             names.push_back(name);
         }
         return names;
     }
 
-    ContainerObject Builtin::getattr(const std::string& name) const
+    ContainerObject Builtin::getattr(const std::string &name) const
     {
         SimpleObject name_obj = SimpleObject::pystring_from_string(name);
-        PyObject* globals = PyEval_GetBuiltins();
-        PyObject* dict_item = PyDict_GetItem(globals, name_obj.borrow());
+        PyObject *globals = PyEval_GetBuiltins();
+        PyObject *dict_item = PyDict_GetItem(globals, name_obj.borrow());
         return ContainerObject(dict_item, true);
     }
 
     SimpleObject::Map Builtin::attributes_as_objects() const
     {
-        PyObject* globals = PyEval_GetBuiltins();
+        PyObject *globals = PyEval_GetBuiltins();
         Py_ssize_t pos = 0;
-        PyObject* key_obj = nullptr;
-        PyObject* value_obj = nullptr;
+        PyObject *key_obj = nullptr;
+        PyObject *value_obj = nullptr;
 
         Map map;
         while (PyDict_Next(globals, &pos, &key_obj, &value_obj))

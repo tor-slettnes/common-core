@@ -21,11 +21,11 @@ namespace cc::core::io
     class GZipInputBuffer : public GZipBuffer
     {
     public:
-        GZipInputBuffer(const fs::path& file_path,
+        GZipInputBuffer(const fs::path &file_path,
                         std::size_t read_buffer_size = READ_BUFFER_SIZE);
         ~GZipInputBuffer();
 
-        bool read_some(BufferType* buffer) override;
+        bool read_some(BufferType *buffer) override;
 
     private:
         const std::size_t buffer_size;
@@ -38,7 +38,7 @@ namespace cc::core::io
     class GZipInputStream : public std::istream
     {
     public:
-        GZipInputStream(const fs::path& file_path);
+        GZipInputStream(const fs::path &file_path);
 
     private:
         GZipInputBuffer input_buffer;

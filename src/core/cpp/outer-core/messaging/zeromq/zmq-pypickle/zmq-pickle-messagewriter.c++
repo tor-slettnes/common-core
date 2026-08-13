@@ -11,18 +11,18 @@
 namespace cc::zmq
 {
     PyPickleMessageWriter::PyPickleMessageWriter(
-        const std::shared_ptr<Publisher>& publisher,
-        const std::optional<core::types::ByteVector>& header)
+        const std::shared_ptr<Publisher> &publisher,
+        const std::optional<core::types::ByteVector> &header)
         : MessageWriter(publisher, header)
     {
     }
 
-    void PyPickleMessageWriter::write(const python::SimpleObject& object)
+    void PyPickleMessageWriter::write(const python::SimpleObject &object)
     {
         MessageWriter::write(python::pickle(object));
     }
 
-    void PyPickleMessageWriter::write(const core::types::Value& value)
+    void PyPickleMessageWriter::write(const core::types::Value &value)
     {
         this->write(
             cc::python::SimpleObject(

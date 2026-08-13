@@ -21,7 +21,7 @@ namespace cc::core::platform
         using BaudRate = int;
 
     protected:
-        SerialPort(const std::string& device, BaudRate speed);
+        SerialPort(const std::string &device, BaudRate speed);
 
     public:
         std::string device() const;
@@ -31,7 +31,7 @@ namespace cc::core::platform
         virtual void close() = 0;
         virtual bool is_open() const = 0;
 
-        virtual void write(const std::string& text) = 0;
+        virtual void write(const std::string &text) = 0;
         virtual std::optional<char> readchar() = 0;
         virtual std::string readline() = 0;
 
@@ -56,7 +56,7 @@ namespace cc::core::platform
 
     public:
         virtual SerialPortPtr serialport(
-            const std::string& device,
+            const std::string &device,
             SerialPort::BaudRate speed) = 0;
     };
 

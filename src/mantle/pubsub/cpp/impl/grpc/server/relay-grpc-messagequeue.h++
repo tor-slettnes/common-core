@@ -27,7 +27,7 @@ namespace cc::platform::pubsub::grpc
 
     public:
         MessageQueue(
-            const pubsub::TopicSet& topics,
+            const pubsub::TopicSet &topics,
             std::size_t maxsize = 0);
 
         ~MessageQueue();
@@ -36,8 +36,8 @@ namespace cc::platform::pubsub::grpc
         void deinitialize();
 
         void enqueue_message(
-            const std::string& topic,
-            const core::types::Value& value);
+            const std::string &topic,
+            const core::types::Value &value);
 
     private:
         std::string signal_handle_;

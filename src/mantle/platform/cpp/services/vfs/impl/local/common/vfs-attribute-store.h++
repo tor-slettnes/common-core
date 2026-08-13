@@ -21,28 +21,28 @@ namespace cc::platform::vfs::local
         using Super = core::SettingsStore;
 
     public:
-        AttributeStore(const fs::path& path,
+        AttributeStore(const fs::path &path,
                        fs::file_type type_hint = fs::file_type::none);
 
-        fs::file_type file_type(const fs::path& path,
+        fs::file_type file_type(const fs::path &path,
                                 fs::file_type hint);
 
-        fs::path path(const fs::path& path);
+        fs::path path(const fs::path &path);
 
-        std::string key(const fs::path& basename = {});
+        std::string key(const fs::path &basename = {});
 
-        core::types::KeyValueMap get_attributes(const fs::path& basename = {});
-        core::types::Value get_attribute(const fs::path& basename,
-                                         const std::string& key);
+        core::types::KeyValueMap get_attributes(const fs::path &basename = {});
+        core::types::Value get_attribute(const fs::path &basename,
+                                         const std::string &key);
 
-        void set_attributes(const fs::path& basename,
-                            const core::types::KeyValueMap& map,
+        void set_attributes(const fs::path &basename,
+                            const core::types::KeyValueMap &map,
                             bool save = true);
 
-        void set_attributes(const core::types::KeyValueMap& map,
+        void set_attributes(const core::types::KeyValueMap &map,
                             bool save = true);
 
-        void clear_attributes(const fs::path& basename = {},
+        void clear_attributes(const fs::path &basename = {},
                               bool save = true);
 
     protected:

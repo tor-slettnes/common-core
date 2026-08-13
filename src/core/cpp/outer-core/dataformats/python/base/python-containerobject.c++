@@ -40,7 +40,7 @@ namespace cc::python
         return symbols;
     }
 
-    ContainerObject ContainerObject::getattr(const std::string& name) const
+    ContainerObject ContainerObject::getattr(const std::string &name) const
     {
         if (this->cobj)
         {
@@ -56,7 +56,7 @@ namespace cc::python
     ContainerObject::Map ContainerObject::attributes_as_objects() const
     {
         Map map;
-        for (const std::string& name : this->dir())
+        for (const std::string &name : this->dir())
         {
             if (ContainerObject obj = this->getattr(name))
             {
@@ -69,7 +69,7 @@ namespace cc::python
     core::types::KeyValueMap ContainerObject::attributes_as_kvmap() const
     {
         core::types::KeyValueMap kvmap;
-        for (const auto& [key, obj] : this->attributes_as_objects())
+        for (const auto &[key, obj] : this->attributes_as_objects())
         {
             if (obj.borrow())
             {
@@ -79,7 +79,7 @@ namespace cc::python
         return kvmap;
     }
 
-    ContainerObject ContainerObject::find_qualified_symbol(const std::string& qualified_name) const
+    ContainerObject ContainerObject::find_qualified_symbol(const std::string &qualified_name) const
     {
         // We do this recursively, because `typeof(this)` may in fact be a
         // subclass with an overridden `getattr()` method.

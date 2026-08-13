@@ -22,16 +22,16 @@ namespace cc::platform::switchboard::grpc
     // gRPC servicer methods
 
     RequestHandler::RequestHandler(
-        const std::shared_ptr<Provider>& api_provider)
+        const std::shared_ptr<Provider> &api_provider)
         : Super(),
           provider(api_provider)
     {
     }
 
     ::grpc::Status RequestHandler::ServiceCheck(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        ServiceCheckResponse* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        ServiceCheckResponse *response)
     {
         response->set_api_level(APILEVEL_CURRENT);
         response->set_server_name(core::platform::path->exec_name());
@@ -40,9 +40,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::GetSwitches(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SwitchSelection* request,
-        switchboard::protobuf::SwitchMap* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SwitchSelection *request,
+        switchboard::protobuf::SwitchMap *reply)
     {
         try
         {
@@ -59,9 +59,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::GetSwitch(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SwitchIdentifier* request,
-        switchboard::protobuf::SwitchInfo* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::SwitchInfo *reply)
     {
         try
         {
@@ -82,9 +82,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::AddSwitch(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::AddSwitchRequest* request,
-        ::google::protobuf::BoolValue* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::AddSwitchRequest *request,
+        ::google::protobuf::BoolValue *reply)
     {
         try
         {
@@ -101,9 +101,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::RemoveSwitch(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::RemoveSwitchRequest* request,
-        ::google::protobuf::BoolValue* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::RemoveSwitchRequest *request,
+        ::google::protobuf::BoolValue *reply)
     {
         try
         {
@@ -120,9 +120,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::ClearSwitches(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::ClearSwitchesRequest* request,
-        ::google::protobuf::BoolValue* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::ClearSwitchesRequest *request,
+        ::google::protobuf::BoolValue *reply)
     {
         try
         {
@@ -138,9 +138,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::ImportSwitches(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::ImportRequest* request,
-        switchboard::protobuf::ImportResponse* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::ImportRequest *request,
+        switchboard::protobuf::ImportResponse *reply)
     {
         try
         {
@@ -161,9 +161,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::ExportSwitches(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::ExportRequest* request,
-        switchboard::protobuf::ExportResponse* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::ExportRequest *request,
+        switchboard::protobuf::ExportResponse *reply)
     {
         try
         {
@@ -189,15 +189,15 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::SetSpecification(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SetSpecificationRequest* request,
-        ::google::protobuf::BoolValue* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SetSpecificationRequest *request,
+        ::google::protobuf::BoolValue *reply)
     {
         try
         {
             if (auto sw = this->provider->get_switch(request->switch_name()))
             {
-                const switchboard::protobuf::Specification& spec = request->spec();
+                const switchboard::protobuf::Specification &spec = request->spec();
                 sw->update_spec(
                     spec.has_is_primary() ? spec.is_primary() : std::optional<bool>(),
                     cc::protobuf::decoded<SwitchAliases>(spec.aliases()),
@@ -221,14 +221,14 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::GetSpecifications(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SwitchSelection* request,
-        switchboard::protobuf::SpecificationMap* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SwitchSelection *request,
+        switchboard::protobuf::SpecificationMap *reply)
     {
         try
         {
-            auto& specmap = *reply->mutable_map();
-            for (const auto& [name, sw] : provider->get_selected_switches(
+            auto &specmap = *reply->mutable_map();
+            for (const auto &[name, sw] : provider->get_selected_switches(
                      cc::protobuf::decoded<switchboard::SwitchSelection>(*request)))
             {
                 cc::protobuf::encode(*sw->spec(), &specmap[name]);
@@ -242,9 +242,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::AddDependency(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::AddDependencyRequest* request,
-        ::google::protobuf::BoolValue* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::AddDependencyRequest *request,
+        ::google::protobuf::BoolValue *reply)
     {
         try
         {
@@ -269,9 +269,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::RemoveDependency(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::RemoveDependencyRequest* request,
-        ::google::protobuf::BoolValue* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::RemoveDependencyRequest *request,
+        ::google::protobuf::BoolValue *reply)
     {
         try
         {
@@ -290,9 +290,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::GetDependencies(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SwitchIdentifier* request,
-        switchboard::protobuf::DependencyMap* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::DependencyMap *reply)
     {
         try
         {
@@ -307,9 +307,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::GetAncestors(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SwitchIdentifier* request,
-        switchboard::protobuf::SwitchIdentifiers* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::SwitchIdentifiers *reply)
     {
         try
         {
@@ -324,9 +324,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::GetDescendants(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SwitchIdentifier* request,
-        switchboard::protobuf::SwitchIdentifiers* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::SwitchIdentifiers *reply)
     {
         try
         {
@@ -341,9 +341,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::GetDependencyStatuses(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SwitchIdentifier* request,
-        switchboard::protobuf::DependencyStatusMap* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::DependencyStatusMap *reply)
     {
         try
         {
@@ -358,9 +358,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::AddInterceptor(
-        ::grpc::ServerContext* context,
-        const cc::platform::switchboard::protobuf::AddInterceptorRequest* request,
-        ::google::protobuf::BoolValue* reply)
+        ::grpc::ServerContext *context,
+        const cc::platform::switchboard::protobuf::AddInterceptorRequest *request,
+        ::google::protobuf::BoolValue *reply)
     {
         try
         {
@@ -400,9 +400,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::RemoveInterceptor(
-        ::grpc::ServerContext* context,
-        const cc::platform::switchboard::protobuf::RemoveInterceptorRequest* request,
-        ::google::protobuf::BoolValue* reply)
+        ::grpc::ServerContext *context,
+        const cc::platform::switchboard::protobuf::RemoveInterceptorRequest *request,
+        ::google::protobuf::BoolValue *reply)
     {
         try
         {
@@ -422,7 +422,7 @@ namespace cc::platform::switchboard::grpc
 
             // Next, we remove session-specific callback information
             std::scoped_lock lck(this->interceptor_sessions_mutex);
-            if (InterceptorSession* session = this->interceptor_sessions.get_ptr(session_id))
+            if (InterceptorSession *session = this->interceptor_sessions.get_ptr(session_id))
             {
                 if (!request->has_switch_selection())
                 {
@@ -439,7 +439,7 @@ namespace cc::platform::switchboard::grpc
                     auto it = session->pending.begin();
                     while (it != session->pending.end())
                     {
-                        const InterceptorName& candidate_name = it->first.first;
+                        const InterceptorName &candidate_name = it->first.first;
                         if (candidate_name == name)
                         {
                             it = session->pending.erase(it);
@@ -462,9 +462,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::GetInterceptors(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SwitchIdentifier* request,
-        switchboard::protobuf::InterceptorMap* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::InterceptorMap *reply)
     {
         try
         {
@@ -479,9 +479,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::InvokeInterceptor(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::InterceptorInvocation* request,
-        switchboard::protobuf::InterceptorResult* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::InterceptorInvocation *request,
+        switchboard::protobuf::InterceptorResult *reply)
     {
         try
         {
@@ -516,8 +516,8 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::Intercept(
-        ::grpc::ServerContext* context,
-        InterceptorStream* stream)
+        ::grpc::ServerContext *context,
+        InterceptorStream *stream)
     {
         InterceptorSessionID session_id = create_session(context, stream);
         logf_info("Startng interceptor session: %s", session_id);
@@ -539,9 +539,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::SetTarget(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SetTargetRequest* request,
-        switchboard::protobuf::SetTargetResponse* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SetTargetRequest *request,
+        switchboard::protobuf::SetTargetResponse *reply)
     {
         try
         {
@@ -586,9 +586,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::GetAttributes(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::GetAttributesRequest* request,
-        switchboard::protobuf::GetAttributesResponse* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::GetAttributesRequest *request,
+        switchboard::protobuf::GetAttributesResponse *reply)
     {
         try
         {
@@ -607,9 +607,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::SetAttributes(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SetAttributesRequest* request,
-        switchboard::protobuf::SetAttributesResponse* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SetAttributesRequest *request,
+        switchboard::protobuf::SetAttributesResponse *reply)
     {
         try
         {
@@ -627,14 +627,14 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::GetStatuses(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SwitchSelection* request,
-        switchboard::protobuf::StatusMap* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SwitchSelection *request,
+        switchboard::protobuf::StatusMap *reply)
     {
         try
         {
-            auto& statusmap = *reply->mutable_map();
-            for (const auto& [name, sw] :
+            auto &statusmap = *reply->mutable_map();
+            for (const auto &[name, sw] :
                  provider->get_selected_switches(
                      cc::protobuf::decoded<switchboard::SwitchSelection>(*request)))
             {
@@ -649,9 +649,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::GetCulprits(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::CulpritsQuery* request,
-        switchboard::protobuf::StatusMap* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::CulpritsQuery *request,
+        switchboard::protobuf::StatusMap *reply)
     {
         try
         {
@@ -660,8 +660,8 @@ namespace cc::platform::switchboard::grpc
                                        ? request->expected()
                                        : true;
 
-            auto& statusmap = *reply->mutable_map();
-            for (const auto& [switch_name, status] : sw->culprits(expected_position))
+            auto &statusmap = *reply->mutable_map();
+            for (const auto &[switch_name, status] : sw->culprits(expected_position))
             {
                 cc::protobuf::encode(*status, &statusmap[switch_name]);
             }
@@ -674,9 +674,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::GetErrors(
-        ::grpc::ServerContext* context,
-        const switchboard::protobuf::SwitchIdentifier* request,
-        switchboard::protobuf::ErrorMap* reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::ErrorMap *reply)
     {
         try
         {
@@ -691,9 +691,9 @@ namespace cc::platform::switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::Watch(
-        ::grpc::ServerContext* context,
-        const cc::protobuf::signal::Filter* request,
-        ::grpc::ServerWriter<switchboard::protobuf::Signal>* writer)
+        ::grpc::ServerContext *context,
+        const cc::protobuf::signal::Filter *request,
+        ::grpc::ServerWriter<switchboard::protobuf::Signal> *writer)
     {
         return this->stream_signals<switchboard::protobuf::Signal, SignalQueue>(
             context,
@@ -702,8 +702,8 @@ namespace cc::platform::switchboard::grpc
     }
 
     RequestHandler::InterceptorSessionID RequestHandler::create_session(
-        ::grpc::ServerContext* context,
-        InterceptorStream* stream)
+        ::grpc::ServerContext *context,
+        InterceptorStream *stream)
     {
         InterceptorSessionID session_id = this->peer(context);
         std::scoped_lock lck(this->interceptor_sessions_mutex);
@@ -718,12 +718,12 @@ namespace cc::platform::switchboard::grpc
     }
 
     void RequestHandler::end_session(
-        const InterceptorSessionID& session_id)
+        const InterceptorSessionID &session_id)
     {
         std::scoped_lock lck(interceptor_sessions_mutex);
         if (auto nh = this->interceptor_sessions.extract(session_id))
         {
-            for (const InterceptorName& key : nh.mapped().registrations)
+            for (const InterceptorName &key : nh.mapped().registrations)
             {
                 this->provider->remove_interceptor(key);
             }
@@ -731,8 +731,8 @@ namespace cc::platform::switchboard::grpc
     }
 
     void RequestHandler::on_intercept(
-        const InterceptorName& interceptor_name,
-        const InterceptorSessionID& session_id,
+        const InterceptorName &interceptor_name,
+        const InterceptorSessionID &session_id,
         SwitchRef sw,
         State state)
     {
@@ -752,13 +752,13 @@ namespace cc::platform::switchboard::grpc
     }
 
     RequestHandler::FutureResult RequestHandler::invoke_client_interceptor(
-        const InterceptorName& interceptor_name,
-        const InterceptorSessionID& session_id,
+        const InterceptorName &interceptor_name,
+        const InterceptorSessionID &session_id,
         SwitchRef sw,
         State state)
     {
         std::scoped_lock lck(this->interceptor_sessions_mutex);
-        if (auto* session = this->interceptor_sessions.get_ptr(session_id))
+        if (auto *session = this->interceptor_sessions.get_ptr(session_id))
         {
             if (!session->context->IsCancelled())
             {
@@ -786,13 +786,13 @@ namespace cc::platform::switchboard::grpc
     }
 
     void RequestHandler::on_intercept_response(
-        const SwitchName& switch_name,
-        const InterceptorName& interceptor_name,
-        const InterceptorSessionID& session_id,
-        const switchboard::protobuf::InterceptorResult& result)
+        const SwitchName &switch_name,
+        const InterceptorName &interceptor_name,
+        const InterceptorSessionID &session_id,
+        const switchboard::protobuf::InterceptorResult &result)
     {
         // std::string key = this->pending_key(sw->name(), interceptor_name);
-        if (InterceptorSession* session = this->interceptor_sessions.get_ptr(session_id))
+        if (InterceptorSession *session = this->interceptor_sessions.get_ptr(session_id))
         {
             if (auto nh = session->pending.extract({interceptor_name, switch_name}))
             {
@@ -802,8 +802,8 @@ namespace cc::platform::switchboard::grpc
     }
 
     InterceptorName RequestHandler::interceptor_key(
-        const InterceptorName& interceptor_name,
-        const InterceptorSessionID& session_id) const
+        const InterceptorName &interceptor_name,
+        const InterceptorSessionID &session_id) const
     {
         return interceptor_name + "@" + session_id;
     }

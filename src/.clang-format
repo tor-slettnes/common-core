@@ -19,8 +19,8 @@ AlignConsecutiveMacros: true
 # AlignConsecutiveAssignments: Consecutive
 ReflowComments: false
 SortIncludes: false
-# PointerAlignment: Right
-# ReferenceAlignment: Right
+PointerAlignment: Right
+ReferenceAlignment: Right
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterControlStatement: true

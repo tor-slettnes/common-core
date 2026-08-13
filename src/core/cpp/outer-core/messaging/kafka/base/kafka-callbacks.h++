@@ -26,7 +26,7 @@ namespace cc::kafka
         using LevelMap = core::types::ValueMap<RdKafka::Event::Severity, core::status::Level>;
 
     protected:
-        void event_cb(RdKafka::Event& event) override;
+        void event_cb(RdKafka::Event &event) override;
 
     private:
         static const LevelMap level_map;
@@ -58,17 +58,17 @@ namespace cc::kafka
             core::status::Error::ptr error)>;
 
     public:
-        void set_callback(const Callback& callback);
+        void set_callback(const Callback &callback);
 
-        void* add_callback_data(const CallbackData::ptr& data);
+        void *add_callback_data(const CallbackData::ptr &data);
 
     protected:
-        void dr_cb(RdKafka::Message& message) override;
+        void dr_cb(RdKafka::Message &message) override;
 
     private:
         static core::types::SymbolMap<RdKafka::Message::Status> status_name_map;
         Callback callback;
-        std::unordered_map<void*, CallbackData::ptr> callback_map;
+        std::unordered_map<void *, CallbackData::ptr> callback_map;
         std::mutex callback_mutex;
     };
 
@@ -84,7 +84,7 @@ namespace cc::kafka
         virtual ~ConsumerCapture() = default;
 
     protected:
-        void consume_cb(RdKafka::Message& msg, void* opaque) override;
+        void consume_cb(RdKafka::Message &msg, void *opaque) override;
     };
 
 }  // namespace cc::kafka

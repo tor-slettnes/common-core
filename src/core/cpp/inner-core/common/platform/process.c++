@@ -52,7 +52,7 @@ namespace cc::core::platform
         return tvlist;
     }
 
-    void ExitStatus::to_stream(std::ostream& stream) const
+    void ExitStatus::to_stream(std::ostream &stream) const
     {
         stream << this->as_tvlist();
     }
@@ -188,7 +188,7 @@ namespace cc::core::platform
         return tvlist;
     }
 
-    void InvocationResult::to_stream(std::ostream& stream) const
+    void InvocationResult::to_stream(std::ostream &stream) const
     {
         stream << this->as_tvlist();
     }
@@ -206,13 +206,13 @@ namespace cc::core::platform
         throw std::invalid_argument("process_id() is not implemented on this platform");
     }
 
-    ArgVector ProcessProvider::arg_vector(const types::Value& command) const
+    ArgVector ProcessProvider::arg_vector(const types::Value &command) const
     {
-        if (const types::ValueListPtr& list = command.get_valuelist_ptr())
+        if (const types::ValueListPtr &list = command.get_valuelist_ptr())
         {
             ArgVector argv;
             argv.reserve(list->size());
-            for (types::Value& value : *list)
+            for (types::Value &value : *list)
             {
                 argv.push_back(value.as_string());
             }
@@ -228,37 +228,37 @@ namespace cc::core::platform
         }
     }
 
-    ArgVector ProcessProvider::shell_command(const std::string& command_line) const
+    ArgVector ProcessProvider::shell_command(const std::string &command_line) const
     {
         throw std::invalid_argument("shell_command() is not implemented on this platform");
     }
 
     PID ProcessProvider::invoke_async_fileio(
-        const ArgVector&,
-        const fs::path&,
-        const fs::path&,
-        const fs::path&,
-        const fs::path&) const
+        const ArgVector &,
+        const fs::path &,
+        const fs::path &,
+        const fs::path &,
+        const fs::path &) const
     {
         throw std::invalid_argument("invoke_async() is not implemented on this platform");
     }
 
     ExitStatus::ptr ProcessProvider::invoke_sync_fileio(
-        const ArgVector&,
-        const fs::path&,
-        const fs::path&,
-        const fs::path&,
-        const fs::path&) const
+        const ArgVector &,
+        const fs::path &,
+        const fs::path &,
+        const fs::path &,
+        const fs::path &) const
     {
         throw std::invalid_argument("invoke_sync() is not implemented on this platform");
     }
 
     PID ProcessProvider::invoke_async_pipe(
-        const ArgVector&,
-        const fs::path&,
-        FileDescriptor*,
-        FileDescriptor*,
-        FileDescriptor*) const
+        const ArgVector &,
+        const fs::path &,
+        FileDescriptor *,
+        FileDescriptor *,
+        FileDescriptor *) const
     {
         throw std::invalid_argument("invoke_async_pipe() is not implemented on this platform");
     }
@@ -268,15 +268,15 @@ namespace cc::core::platform
         FileDescriptor fdin,
         FileDescriptor fdout,
         FileDescriptor fderr,
-        std::istream* instream) const
+        std::istream *instream) const
     {
         throw std::invalid_argument("pipe_capture() is not implemented on this platform");
     }
 
     InvocationResult ProcessProvider::invoke_capture(
-        const ArgVector& argv,
-        const fs::path& cwd,
-        std::istream* instream) const
+        const ArgVector &argv,
+        const fs::path &cwd,
+        std::istream *instream) const
     {
         FileDescriptor fdin, fdout, fderr;
         PID pid = this->invoke_async_pipe(argv, cwd, &fdin, &fdout, &fderr);
@@ -285,18 +285,18 @@ namespace cc::core::platform
     }
 
     InvocationResult ProcessProvider::invoke_capture(
-        const ArgVector& argv,
-        const fs::path& cwd,
-        const std::string& input) const
+        const ArgVector &argv,
+        const fs::path &cwd,
+        const std::string &input) const
     {
         std::istringstream stdin(input);
         return this->invoke_capture(argv, cwd, &stdin);
     }
 
     void ProcessProvider::invoke_check(
-        const ArgVector& argv,
-        const fs::path& cwd,
-        std::istream* instream) const
+        const ArgVector &argv,
+        const fs::path &cwd,
+        std::istream *instream) const
     {
         // std::ostringstream out, err;
         InvocationResult result = this->invoke_capture(argv, cwd, instream);
@@ -310,17 +310,17 @@ namespace cc::core::platform
     }
 
     void ProcessProvider::invoke_check(
-        const ArgVector& argv,
-        const fs::path& cwd,
-        const std::string& input) const
+        const ArgVector &argv,
+        const fs::path &cwd,
+        const std::string &input) const
     {
         std::istringstream stdin(input);
         this->invoke_check(argv, cwd, &stdin);
     }
 
     InvocationResults ProcessProvider::pipe_from_stream(
-        const Invocations& invocations,
-        std::istream& instream,
+        const Invocations &invocations,
+        std::istream &instream,
         bool checkstatus) const
     {
         Pipe inpipe = this->create_pipe();
@@ -335,7 +335,7 @@ namespace cc::core::platform
     }
 
     InvocationResults ProcessProvider::pipeline(
-        const Invocations& invocations,
+        const Invocations &invocations,
         FileDescriptor fdin,
         bool checkstatus) const
     {
@@ -344,14 +344,14 @@ namespace cc::core::platform
     }
 
     void ProcessProvider::write_from_stream(
-        std::istream* stream,
+        std::istream *stream,
         FileDescriptor fd) const
     {
         std::vector<char> buffer(CHUNKSIZE);
         std::size_t count = 0;
         while (stream->good())
         {
-            stream->read(reinterpret_cast<char*>(buffer.data()), buffer.size());
+            stream->read(reinterpret_cast<char *>(buffer.data()), buffer.size());
             count += stream->gcount();
             this->write_fd(fd, buffer.data(), stream->gcount());
         }

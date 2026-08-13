@@ -14,7 +14,7 @@ namespace cc::platform::netconfig::dbus
     /// Network Manager IP Configuration
 
     void IPConfig::on_property_addressdata(
-        const Glib::VariantBase& change)
+        const Glib::VariantBase &change)
     {
         auto addressdata = cc::glib::variant_cast<cc::glib::VariantMaps>(change);
         extract_addressdata(addressdata, &this->address_data);
@@ -29,10 +29,10 @@ namespace cc::platform::netconfig::dbus
     /// Network Manager IPv4 Configuration
 
     IP4Config::IP4Config(
-        cc::dbus::ProxyContainer* container,
-        const cc::dbus::ConnectionPtr& connection,
-        const cc::dbus::ServiceName& servicename,
-        const cc::dbus::ObjectPath& objectpath)
+        cc::dbus::ProxyContainer *container,
+        const cc::dbus::ConnectionPtr &connection,
+        const cc::dbus::ServiceName &servicename,
+        const cc::dbus::ObjectPath &objectpath)
         : IPConfig(
               container,
               connection,
@@ -49,11 +49,11 @@ namespace cc::platform::netconfig::dbus
     }
 
     void IP4Config::on_property_dns(
-        const Glib::VariantBase& change)
+        const Glib::VariantBase &change)
     {
         auto serverdata = cc::glib::variant_cast<cc::glib::VariantMaps>(change);
         this->dns.clear();
-        for (const auto& server : serverdata)
+        for (const auto &server : serverdata)
         {
             cc::glib::extract_value(server, "address", &this->dns.emplace_back());
         }
@@ -63,10 +63,10 @@ namespace cc::platform::netconfig::dbus
     /// Network Manager IPv6 Configuration
 
     IP6Config::IP6Config(
-        cc::dbus::ProxyContainer* container,
-        const cc::dbus::ConnectionPtr& connection,
-        const cc::dbus::ServiceName& servicename,
-        const cc::dbus::ObjectPath& objectpath)
+        cc::dbus::ProxyContainer *container,
+        const cc::dbus::ConnectionPtr &connection,
+        const cc::dbus::ServiceName &servicename,
+        const cc::dbus::ObjectPath &objectpath)
         : IPConfig(
               container,
               connection,
@@ -83,7 +83,7 @@ namespace cc::platform::netconfig::dbus
     }
 
     void IP6Config::on_property_dns(
-        const Glib::VariantBase& change)
+        const Glib::VariantBase &change)
     {
         cc::glib::variant_cast(change, &this->dns);
     }

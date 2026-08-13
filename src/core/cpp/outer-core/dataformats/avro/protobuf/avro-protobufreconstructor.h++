@@ -12,6 +12,6 @@
 namespace cc::avro
 {
     bool reconstruct_proto(
-        const BaseValue& avro_value,
-        google::protobuf::Message* msg);
+        const BaseValue &avro_value,
+        google::protobuf::Message *msg);
 }  // namespace cc::avro

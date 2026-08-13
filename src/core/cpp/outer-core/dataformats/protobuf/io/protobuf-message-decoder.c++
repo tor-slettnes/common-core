@@ -21,7 +21,7 @@
 
 namespace cc::protobuf
 {
-    MessageDecoder::MessageDecoder(const google::protobuf::Message& msg,
+    MessageDecoder::MessageDecoder(const google::protobuf::Message &msg,
                                    bool enums_as_strings)
         : msg(msg),
           reflection(msg.GetReflection()),
@@ -35,67 +35,67 @@ namespace cc::protobuf
         switch (this->descriptor->well_known_type())
         {
         case google::protobuf::Descriptor::WELLKNOWNTYPE_DOUBLEVALUE:
-            return dynamic_cast<const google::protobuf::DoubleValue*>(&this->msg)->value();
+            return dynamic_cast<const google::protobuf::DoubleValue *>(&this->msg)->value();
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_FLOATVALUE:
-            return dynamic_cast<const google::protobuf::FloatValue*>(&this->msg)->value();
+            return dynamic_cast<const google::protobuf::FloatValue *>(&this->msg)->value();
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_INT64VALUE:
-            return dynamic_cast<const google::protobuf::Int64Value*>(&this->msg)->value();
+            return dynamic_cast<const google::protobuf::Int64Value *>(&this->msg)->value();
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_UINT64VALUE:
-            return dynamic_cast<const google::protobuf::UInt64Value*>(&this->msg)->value();
+            return dynamic_cast<const google::protobuf::UInt64Value *>(&this->msg)->value();
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_INT32VALUE:
-            return dynamic_cast<const google::protobuf::Int32Value*>(&this->msg)->value();
+            return dynamic_cast<const google::protobuf::Int32Value *>(&this->msg)->value();
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_UINT32VALUE:
-            return dynamic_cast<const google::protobuf::UInt32Value*>(&this->msg)->value();
+            return dynamic_cast<const google::protobuf::UInt32Value *>(&this->msg)->value();
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_STRINGVALUE:
-            return dynamic_cast<const google::protobuf::StringValue*>(&this->msg)->value();
+            return dynamic_cast<const google::protobuf::StringValue *>(&this->msg)->value();
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_BYTESVALUE:
             return core::types::ByteVector(
-                dynamic_cast<const google::protobuf::BytesValue*>(&this->msg)->value());
+                dynamic_cast<const google::protobuf::BytesValue *>(&this->msg)->value());
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_BOOLVALUE:
-            return dynamic_cast<const google::protobuf::BoolValue*>(&this->msg)->value();
+            return dynamic_cast<const google::protobuf::BoolValue *>(&this->msg)->value();
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_DURATION:
             return decoded<core::dt::Duration>(
-                *dynamic_cast<const google::protobuf::Duration*>(&this->msg));
+                *dynamic_cast<const google::protobuf::Duration *>(&this->msg));
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_TIMESTAMP:
             return decoded<core::dt::TimePoint>(
-                *dynamic_cast<const google::protobuf::Timestamp*>(&this->msg));
+                *dynamic_cast<const google::protobuf::Timestamp *>(&this->msg));
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_VALUE:
             return decoded<core::types::Value>(
-                *dynamic_cast<const google::protobuf::Value*>(&this->msg));
+                *dynamic_cast<const google::protobuf::Value *>(&this->msg));
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_LISTVALUE:
             return decoded_shared<core::types::ValueList>(
-                *dynamic_cast<const google::protobuf::ListValue*>(&this->msg));
+                *dynamic_cast<const google::protobuf::ListValue *>(&this->msg));
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_STRUCT:
             return decoded_shared<core::types::KeyValueMap>(
-                *dynamic_cast<const google::protobuf::Struct*>(&this->msg));
+                *dynamic_cast<const google::protobuf::Struct *>(&this->msg));
 
         default:
-            if (const auto* value = dynamic_cast<const variant::Value*>(&this->msg))
+            if (const auto *value = dynamic_cast<const variant::Value *>(&this->msg))
             {
                 return decoded<core::types::Value>(*value);
             }
-            else if (const auto* vlist = dynamic_cast<const variant::ValueList*>(&this->msg))
+            else if (const auto *vlist = dynamic_cast<const variant::ValueList *>(&this->msg))
             {
                 return decoded<core::types::ValueList>(*vlist);
             }
-            else if (const auto* tvlist = dynamic_cast<const variant::TaggedValueList*>(&this->msg))
+            else if (const auto *tvlist = dynamic_cast<const variant::TaggedValueList *>(&this->msg))
             {
                 return decoded<core::types::TaggedValueList>(*tvlist);
             }
-            else if (const auto* kvmap = dynamic_cast<const variant::KeyValueMap*>(&this->msg))
+            else if (const auto *kvmap = dynamic_cast<const variant::KeyValueMap *>(&this->msg))
             {
                 return decoded<core::types::KeyValueMap>(*kvmap);
             }
@@ -119,7 +119,7 @@ namespace cc::protobuf
 
         for (int i = 0; i < nfields; i++)
         {
-            const google::protobuf::FieldDescriptor* fd = this->descriptor->field(i);
+            const google::protobuf::FieldDescriptor *fd = this->descriptor->field(i);
 
             if (core::types::Value value = this->field_to_value(*fd))
             {
@@ -130,7 +130,7 @@ namespace cc::protobuf
     }
 
     core::types::Value MessageDecoder::field_to_value(
-        const google::protobuf::FieldDescriptor& fd) const
+        const google::protobuf::FieldDescriptor &fd) const
     {
         core::types::Value result;
         if (fd.is_map())
@@ -159,7 +159,7 @@ namespace cc::protobuf
     }
 
     core::types::Value MessageDecoder::single_field_to_value(
-        const google::protobuf::FieldDescriptor& fd) const
+        const google::protobuf::FieldDescriptor &fd) const
     {
         switch (fd.type())
         {
@@ -220,7 +220,7 @@ namespace cc::protobuf
     }
 
     core::types::Value MessageDecoder::indexed_field_to_value(
-        const google::protobuf::FieldDescriptor& fd,
+        const google::protobuf::FieldDescriptor &fd,
         int repeat_index) const
     {
         switch (fd.type())
@@ -282,7 +282,7 @@ namespace cc::protobuf
     }
 
     core::types::ValueListPtr MessageDecoder::repeated_field_to_valuelist(
-        const google::protobuf::FieldDescriptor& fd) const
+        const google::protobuf::FieldDescriptor &fd) const
     {
         auto vlist = std::make_shared<core::types::ValueList>();
         int size = this->reflection->FieldSize(this->msg, &fd);
@@ -296,7 +296,7 @@ namespace cc::protobuf
     }
 
     core::types::KeyValueMapPtr MessageDecoder::mapped_field_to_kvmap(
-        const google::protobuf::FieldDescriptor& fd) const
+        const google::protobuf::FieldDescriptor &fd) const
     {
         auto kvmap = std::make_shared<core::types::KeyValueMap>();
 
@@ -330,7 +330,7 @@ namespace cc::protobuf
     }
 
     core::types::Value MessageDecoder::message_to_value(
-        const google::protobuf::Message& msg) const
+        const google::protobuf::Message &msg) const
     {
         return MessageDecoder(msg, this->enums_as_strings).to_value();
     }
@@ -339,7 +339,7 @@ namespace cc::protobuf
     // to_value() method
 
     core::types::Value to_value(
-        const google::protobuf::Message& msg,
+        const google::protobuf::Message &msg,
         bool enums_as_strings)
     {
         return MessageDecoder(msg, enums_as_strings).to_value();

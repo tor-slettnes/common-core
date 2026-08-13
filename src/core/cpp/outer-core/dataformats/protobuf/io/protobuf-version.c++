@@ -23,7 +23,6 @@ namespace cc::protobuf
             version);
     }
 
-
     void encode_version(
         std::uint64_t major,
         std::uint64_t minor,
@@ -43,7 +42,7 @@ namespace cc::protobuf
                            std::uint64_t minor,
                            std::uint64_t patch,
                            std::uint64_t build_number,
-                           const std::string& printable_version)
+                           const std::string &printable_version)
     {
         Version version;
         version.set_major(major);
@@ -54,7 +53,7 @@ namespace cc::protobuf
         return version;
     }
 
-    std::string to_string(const Version& version)
+    std::string to_string(const Version &version)
     {
         if (!version.printable_version().empty())
         {
@@ -79,8 +78,8 @@ namespace cc::protobuf
         }
     }
 
-    bool is_compatible(const Version& client,
-                       const Version& server,
+    bool is_compatible(const Version &client,
+                       const Version &server,
                        bool strict)
     {
         return ((client.major() == server.major()) &&
@@ -89,7 +88,7 @@ namespace cc::protobuf
 
     namespace version
     {
-        std::ostream& operator<<(std::ostream& stream, const Version& version)
+        std::ostream &operator<<(std::ostream &stream, const Version &version)
         {
             stream << cc::protobuf::to_string(version);
             return stream;

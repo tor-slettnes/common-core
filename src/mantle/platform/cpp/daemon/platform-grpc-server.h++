@@ -9,5 +9,5 @@
 
 namespace cc::platform
 {
-    void run_grpc_service(const std::string& listen_address = "");
+    void run_grpc_service(const std::string &listen_address = "");
 }  // namespace cc::platform

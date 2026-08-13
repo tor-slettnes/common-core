@@ -20,9 +20,9 @@ namespace cc::core::platform
     //--------------------------------------------------------------------------
     // FileStats
 
-    core::types::TaggedValueList& operator<<(
-        core::types::TaggedValueList& tvlist,
-        const FileStats& filestats)
+    core::types::TaggedValueList &operator<<(
+        core::types::TaggedValueList &tvlist,
+        const FileStats &filestats)
     {
         tvlist.append("type", core::str::convert_from(filestats.type));
         tvlist.append("size", filestats.size);
@@ -41,9 +41,9 @@ namespace cc::core::platform
         return tvlist;
     }
 
-    std::ostream& operator<<(
-        std::ostream& stream,
-        const FileStats& filestats)
+    std::ostream &operator<<(
+        std::ostream &stream,
+        const FileStats &filestats)
     {
         return stream << core::types::TaggedValueList::create_from(filestats);
     }
@@ -51,27 +51,27 @@ namespace cc::core::platform
     //--------------------------------------------------------------------------
     // PathProvider
 
-    PathProvider::PathProvider(const std::string& provider_name,
-                               const std::string& exec_name)
+    PathProvider::PathProvider(const std::string &provider_name,
+                               const std::string &exec_name)
         : Super(provider_name),
           exec_name_(exec_name)
     {
     }
 
-    std::optional<FileStats> PathProvider::try_get_stats(const fs::path& path,
+    std::optional<FileStats> PathProvider::try_get_stats(const fs::path &path,
                                                          bool dereference) const
     {
         try
         {
             return this->get_stats(path, dereference);
         }
-        catch (const fs::filesystem_error& e)
+        catch (const fs::filesystem_error &e)
         {
             return {};
         }
     }
 
-    FileStats PathProvider::get_stats(const fs::path& path,
+    FileStats PathProvider::get_stats(const fs::path &path,
                                       bool dereference) const
     {
         fs::file_status status = dereference ? fs::symlink_status(path) : fs::status(path);
@@ -129,7 +129,7 @@ namespace cc::core::platform
     }
 
     std::string PathProvider::exec_name(bool remove_extension,
-                                        const std::string& fallback) const noexcept
+                                        const std::string &fallback) const noexcept
     {
         fs::path exec_name = this->exec_path().filename();
 
@@ -160,9 +160,9 @@ namespace cc::core::platform
         }
     }
 
-    fs::path PathProvider::locate_dominating_folder(const fs::path& start,
-                                                    const fs::path& name,
-                                                    const fs::path& fallback) const noexcept
+    fs::path PathProvider::locate_dominating_folder(const fs::path &start,
+                                                    const fs::path &name,
+                                                    const fs::path &fallback) const noexcept
     {
         fs::path current = fs::weakly_canonical(start);
         while (!fs::exists(current / name))
@@ -200,7 +200,7 @@ namespace cc::core::platform
     {
         types::PathList directorylist;
 
-        const char* configpath = std::getenv(CONFIGPATH_VAR);
+        const char *configpath = std::getenv(CONFIGPATH_VAR);
         if (configpath && *configpath)
         {
             for (fs::path path : str::split(configpath, this->path_separator()))
@@ -240,7 +240,7 @@ namespace cc::core::platform
 
     fs::path PathProvider::data_folder() const noexcept
     {
-        if (const char* datafolder = std::getenv(DATADIR_VAR))
+        if (const char *datafolder = std::getenv(DATADIR_VAR))
         {
             return datafolder;
         }
@@ -252,7 +252,7 @@ namespace cc::core::platform
 
     fs::path PathProvider::log_folder() const noexcept
     {
-        if (const char* logfolder = std::getenv(LOGDIR_VAR))
+        if (const char *logfolder = std::getenv(LOGDIR_VAR))
         {
             return logfolder;
         }
@@ -262,12 +262,12 @@ namespace cc::core::platform
         }
     }
 
-    fs::path PathProvider::readlink(const fs::path& path) const noexcept
+    fs::path PathProvider::readlink(const fs::path &path) const noexcept
     {
         return {};
     }
 
-    types::ByteVector PathProvider::readdata(const fs::path& path,
+    types::ByteVector PathProvider::readdata(const fs::path &path,
                                              ssize_t maxsize) const noexcept
     {
         types::ByteVector buffer;
@@ -282,13 +282,13 @@ namespace cc::core::platform
 
             std::ifstream file(path, std::ios::binary);
             buffer.resize(bufsize);
-            file.read(reinterpret_cast<char*>(buffer.data()), buffer.size());
+            file.read(reinterpret_cast<char *>(buffer.data()), buffer.size());
         }
         return buffer;
     }
 
-    std::string PathProvider::readtext(const fs::path& path,
-                                       const std::set<char>& striptrailing,
+    std::string PathProvider::readtext(const fs::path &path,
+                                       const std::set<char> &striptrailing,
                                        ssize_t maxsize,
                                        ssize_t bufsize) const noexcept
     {
@@ -318,25 +318,25 @@ namespace cc::core::platform
         return text;
     }
 
-    fs::path PathProvider::mktempdir(const std::string& prefix,
-                                     const std::string& suffix)
+    fs::path PathProvider::mktempdir(const std::string &prefix,
+                                     const std::string &suffix)
     {
         return this->mktempdir(this->tempfolder(), prefix, suffix);
     }
 
-    fs::path PathProvider::mktemp(const std::string& prefix,
-                                  const std::string& suffix)
+    fs::path PathProvider::mktemp(const std::string &prefix,
+                                  const std::string &suffix)
     {
         return this->mktemp(this->tempfolder(), prefix, suffix);
     }
 
     bool PathProvider::filename_match(
-        const types::PathList& masks,
-        const fs::path& path,
+        const types::PathList &masks,
+        const fs::path &path,
         bool match_leading_period,
         bool ignore_case) const
     {
-        for (const std::string& mask : masks)
+        for (const std::string &mask : masks)
         {
             if (this->filename_match(mask, path, match_leading_period, ignore_case))
             {
@@ -347,8 +347,8 @@ namespace cc::core::platform
     }
 
     std::vector<fs::directory_entry> PathProvider::glob(
-        const types::PathList& filename_masks,
-        const fs::path& directory,
+        const types::PathList &filename_masks,
+        const fs::path &directory,
         bool match_leading_period,
         bool ignore_case,
         bool recursive) const
@@ -364,8 +364,8 @@ namespace cc::core::platform
     }
 
     std::vector<fs::directory_entry> PathProvider::locate(
-        const types::PathList& filename_masks,
-        const fs::path& directory,
+        const types::PathList &filename_masks,
+        const fs::path &directory,
         bool match_leading_period,
         bool ignore_case) const
     {
@@ -377,14 +377,14 @@ namespace cc::core::platform
     }
 
     void PathProvider::locate_inside(
-        const fs::path& directory,
-        const types::PathList& filename_masks,
+        const fs::path &directory,
+        const types::PathList &filename_masks,
         bool match_leading_period,
         bool ignore_case,
         bool recursive,
-        std::vector<fs::directory_entry>* dir) const
+        std::vector<fs::directory_entry> *dir) const
     {
-        for (auto& pi : fs::directory_iterator(directory))
+        for (auto &pi : fs::directory_iterator(directory))
         {
             if (this->filename_match(filename_masks,
                                      pi.path(),
@@ -426,7 +426,7 @@ namespace std::filesystem
         {file_type::unknown, "unknown"},
     };
 
-    std::ostream& operator<<(std::ostream& stream, const file_type& type)
+    std::ostream &operator<<(std::ostream &stream, const file_type &type)
     {
         return typenames.to_stream(stream, type, typenames.at(file_type::unknown));
     }

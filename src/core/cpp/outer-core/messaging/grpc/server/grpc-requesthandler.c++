@@ -14,7 +14,7 @@
 
 namespace cc::grpc
 {
-    RequestHandlerBase::RequestHandlerBase(const std::string& full_service_name)
+    RequestHandlerBase::RequestHandlerBase(const std::string &full_service_name)
         : Base("service", full_service_name)
     {
     }
@@ -29,11 +29,11 @@ namespace cc::grpc
             8080);
     }
 
-    Status RequestHandlerBase::failure(const std::exception& e,
-                                       const std::string& operation,
-                                       const fs::path& path,
-                                       const int& lineno,
-                                       const std::string& function)
+    Status RequestHandlerBase::failure(const std::exception &e,
+                                       const std::string &operation,
+                                       const fs::path &path,
+                                       const int &lineno,
+                                       const std::string &function)
     {
         Status status(*core::exception::map_to_error(e));
         this->log_status(status, operation, path, lineno, function);
@@ -41,16 +41,16 @@ namespace cc::grpc
     }
 
     Status RequestHandlerBase::failure(std::exception_ptr eptr,
-                                       const std::string& operation,
-                                       const fs::path& path,
-                                       const int& lineno,
-                                       const std::string& function)
+                                       const std::string &operation,
+                                       const fs::path &path,
+                                       const int &lineno,
+                                       const std::string &function)
     {
         try
         {
             std::rethrow_exception(eptr);
         }
-        catch (const std::exception& e)
+        catch (const std::exception &e)
         {
             return this->failure(e, operation, path, lineno, function);
         }
@@ -66,12 +66,12 @@ namespace cc::grpc
         }
     }
 
-    Status RequestHandlerBase::failure(const std::exception& exception,
-                                       const ::google::protobuf::Message& request,
-                                       const std::string& peer,
-                                       const fs::path& path,
-                                       const int& lineno,
-                                       const std::string& function)
+    Status RequestHandlerBase::failure(const std::exception &exception,
+                                       const ::google::protobuf::Message &request,
+                                       const std::string &peer,
+                                       const fs::path &path,
+                                       const int &lineno,
+                                       const std::string &function)
     {
         return this->failure(exception,
                              this->request_description(request, peer, function),
@@ -81,11 +81,11 @@ namespace cc::grpc
     }
 
     Status RequestHandlerBase::failure(std::exception_ptr eptr,
-                                       const ::google::protobuf::Message& request,
-                                       const std::string& peer,
-                                       const fs::path& path,
-                                       const int& lineno,
-                                       const std::string& function)
+                                       const ::google::protobuf::Message &request,
+                                       const std::string &peer,
+                                       const fs::path &path,
+                                       const int &lineno,
+                                       const std::string &function)
     {
         return this->failure(eptr,
                              this->request_description(request, peer, function),
@@ -94,11 +94,11 @@ namespace cc::grpc
                              function);
     }
 
-    void RequestHandlerBase::log_status(const Status& status,
-                                        const std::string& operation,
-                                        const fs::path& path,
-                                        const int& lineno,
-                                        const std::string& function)
+    void RequestHandlerBase::log_status(const Status &status,
+                                        const std::string &operation,
+                                        const fs::path &path,
+                                        const int &lineno,
+                                        const std::string &function)
     {
         auto msg = custom_log_message(
             core::status::Level::NOTICE,
@@ -120,9 +120,9 @@ namespace cc::grpc
     }
 
     std::string RequestHandlerBase::request_description(
-        const ::google::protobuf::Message& request,
-        const std::string& peer,
-        const std::string& function)
+        const ::google::protobuf::Message &request,
+        const std::string &peer,
+        const std::string &function)
     {
         std::stringstream ss;
         if (peer.size())

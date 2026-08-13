@@ -15,22 +15,22 @@ namespace cc::core::types
 {
     static const char pad_char = '=';
 
-    ByteVector::ByteVector(const Bytes& b)
+    ByteVector::ByteVector(const Bytes &b)
     {
         this->assign(b.begin(), b.end());
     }
 
-    ByteVector::ByteVector(const std::string& s)
+    ByteVector::ByteVector(const std::string &s)
     {
         this->assign(s.begin(), s.end());
     }
 
-    ByteVector::ByteVector(const std::string_view& s)
+    ByteVector::ByteVector(const std::string_view &s)
     {
         this->assign(s.begin(), s.end());
     }
 
-    void ByteVector::to_stream(std::ostream& stream) const
+    void ByteVector::to_stream(std::ostream &stream) const
     {
         static const std::string hex_digits = "0123456789abcdef";
 
@@ -53,33 +53,33 @@ namespace cc::core::types
 
     std::string_view ByteVector::stringview() const noexcept
     {
-        return std::string_view(reinterpret_cast<const char*>(this->data()),
+        return std::string_view(reinterpret_cast<const char *>(this->data()),
                                 this->size());
     }
 
     std::string ByteVector::as_string() const noexcept
     {
-        return std::string(reinterpret_cast<const char*>(this->data()),
+        return std::string(reinterpret_cast<const char *>(this->data()),
                            this->size());
     }
 
     ByteVector ByteVector::from_pointer(
-        const void* ptr,
+        const void *ptr,
         std::size_t size) noexcept
     {
         return ByteVector(
-            static_cast<const Byte*>(ptr),
-            static_cast<const Byte*>(ptr) + size);
+            static_cast<const Byte *>(ptr),
+            static_cast<const Byte *>(ptr) + size);
     }
 
     ByteVector ByteVector::from_string(
-        const std::string& s) noexcept
+        const std::string &s) noexcept
     {
         return ByteVector(s.begin(), s.end());
     }
 
     std::shared_ptr<ByteVector> ByteVector::shared_from_string(
-        const std::string& s) noexcept
+        const std::string &s) noexcept
     {
         return std::make_shared<ByteVector>(s.begin(), s.end());
     }
@@ -130,7 +130,7 @@ namespace cc::core::types
         return encoded;
     }
 
-    ByteVector ByteVector::from_base64(const std::string_view& input)
+    ByteVector ByteVector::from_base64(const std::string_view &input)
     {
         if (input.length() % 4 > 0)
         {
@@ -202,13 +202,13 @@ namespace cc::core::types
         return decoded;
     }
 
-    std::optional<ByteVector> ByteVector::try_from_base64(const std::string_view& input)
+    std::optional<ByteVector> ByteVector::try_from_base64(const std::string_view &input)
     {
         try
         {
             return ByteVector::from_base64(input);
         }
-        catch (const std::invalid_argument&)
+        catch (const std::invalid_argument &)
         {
             return {};
         }
@@ -221,7 +221,7 @@ namespace cc::core::types
             "0123456789abcdef",
             "0123456789ABCDEF",
         };
-        const std::string& xdigits = hex_digits.at(uppercase);
+        const std::string &xdigits = hex_digits.at(uppercase);
 
         std::string encoded;
         uint ndigits = this->size() * 2;
@@ -241,7 +241,7 @@ namespace cc::core::types
         return encoded;
     }
 
-    ByteVector ByteVector::from_hex(const std::string& input)
+    ByteVector ByteVector::from_hex(const std::string &input)
     {
         static std::vector<std::uint8_t> digit_values;
 

@@ -48,7 +48,7 @@ namespace cc::core::platform
         virtual types::TaggedValueList as_tvlist() const;
 
     protected:
-        void to_stream(std::ostream& stream) const override;
+        void to_stream(std::ostream &stream) const override;
     };
 
     //==========================================================================
@@ -99,7 +99,7 @@ namespace cc::core::platform
         types::TaggedValueList as_tvlist() const;
 
     protected:
-        void to_stream(std::ostream& stream) const override;
+        void to_stream(std::ostream &stream) const override;
 
     public:
         PID pid = 0;
@@ -130,11 +130,11 @@ namespace cc::core::platform
 
         /// @brief Convert a variant value of type string or valuelist to argument vector
         virtual ArgVector arg_vector(
-            const types::Value& command) const;
+            const types::Value &command) const;
 
         /// @brief Return an argument vector to run the specified command line in a shell
         virtual ArgVector shell_command(
-            const std::string& command_line) const;
+            const std::string &command_line) const;
 
         /// @brief Clone this process
         /// @return The process ID of the child if we are the parent, otherwise 0.
@@ -164,11 +164,11 @@ namespace cc::core::platform
         /// (parent) process.
 
         virtual PID invoke_async_fileio(
-            const ArgVector& argv,
-            const fs::path& cwd = {},
-            const fs::path& infile = path->devnull(),
-            const fs::path& outfile = {},
-            const fs::path& errfile = {}) const;
+            const ArgVector &argv,
+            const fs::path &cwd = {},
+            const fs::path &infile = path->devnull(),
+            const fs::path &outfile = {},
+            const fs::path &errfile = {}) const;
 
         /// @brief Invoke a command, and wait (block this thread) until it exits.
         /// @param[in] argv
@@ -188,11 +188,11 @@ namespace cc::core::platform
         ///     An underlying system call failed.
 
         virtual ExitStatus::ptr invoke_sync_fileio(
-            const ArgVector& argv,
-            const fs::path& cwd = {},
-            const fs::path& infile = path->devnull(),
-            const fs::path& outfile = {},
-            const fs::path& errfile = {}) const;
+            const ArgVector &argv,
+            const fs::path &cwd = {},
+            const fs::path &infile = path->devnull(),
+            const fs::path &outfile = {},
+            const fs::path &errfile = {}) const;
 
         /// @brief Invoke a command with UNIX pipes
         /// @param[in] argv
@@ -218,11 +218,11 @@ namespace cc::core::platform
         ///     `fdin`, `fdout`, and `fderr`, if provided.
 
         virtual PID invoke_async_pipe(
-            const ArgVector& argv,
-            const fs::path& cwd = {},
-            FileDescriptor* fdin = nullptr,
-            FileDescriptor* fdout = nullptr,
-            FileDescriptor* fderr = nullptr) const;
+            const ArgVector &argv,
+            const fs::path &cwd = {},
+            FileDescriptor *fdin = nullptr,
+            FileDescriptor *fdout = nullptr,
+            FileDescriptor *fderr = nullptr) const;
 
         /// @brief Communicate with a child process through an established pipe
         /// @param[in] pid
@@ -246,7 +246,7 @@ namespace cc::core::platform
             FileDescriptor fdin,
             FileDescriptor fdout,
             FileDescriptor fderr,
-            std::istream* instream) const;
+            std::istream *instream) const;
 
         /// @brief
         ///     Invoke a command with stdin/stdout/stderr capture.
@@ -264,9 +264,9 @@ namespace cc::core::platform
         ///     An underlying system call failed.
 
         virtual InvocationResult invoke_capture(
-            const ArgVector& argv,
-            const fs::path& cwd = {},
-            std::istream* instream = nullptr) const;
+            const ArgVector &argv,
+            const fs::path &cwd = {},
+            std::istream *instream = nullptr) const;
 
         /// @brief
         ///     Invoke a command with stdin/stdout/stderr capture.
@@ -283,9 +283,9 @@ namespace cc::core::platform
         ///     An underlying system call failed.
 
         virtual InvocationResult invoke_capture(
-            const ArgVector& argv,
-            const fs::path& cwd,
-            const std::string& input) const;
+            const ArgVector &argv,
+            const fs::path &cwd,
+            const std::string &input) const;
 
         /// @brief
         ///     Invoke a command with stdio capture,
@@ -303,9 +303,9 @@ namespace cc::core::platform
         ///     non-zero exit status.
 
         virtual void invoke_check(
-            const ArgVector& argv,
-            const fs::path& cwd = {},
-            std::istream* instream = nullptr) const;
+            const ArgVector &argv,
+            const fs::path &cwd = {},
+            std::istream *instream = nullptr) const;
 
         /// @brief
         ///     Invoke a command with stdio capture,
@@ -322,9 +322,9 @@ namespace cc::core::platform
         ///     non-zero exit status.
 
         virtual void invoke_check(
-            const ArgVector& argv,
-            const fs::path& cwd,
-            const std::string& input) const;
+            const ArgVector &argv,
+            const fs::path &cwd,
+            const std::string &input) const;
 
         /// @brief
         ///     Invoke multiple commands in parallel, with standard input to the
@@ -346,8 +346,8 @@ namespace cc::core::platform
         ///     captured from the last process.
 
         virtual InvocationResults pipe_from_stream(
-            const Invocations& invocations,
-            std::istream& instream,
+            const Invocations &invocations,
+            std::istream &instream,
             bool checkstatus = false) const;
 
         /// @brief
@@ -369,16 +369,16 @@ namespace cc::core::platform
         ///     captured from the last process.
 
         virtual InvocationResults pipeline(
-            const Invocations& invocations,
+            const Invocations &invocations,
             FileDescriptor fdin,
             bool checkstatus = false) const;
 
         virtual InvocationStates create_pipeline(
-            const Invocations& invocations,
+            const Invocations &invocations,
             FileDescriptor fdin) const = 0;
 
         virtual InvocationResults capture_pipeline(
-            const InvocationStates& states,
+            const InvocationStates &states,
             bool checkstatus) const = 0;
 
         /// @brief
@@ -398,7 +398,7 @@ namespace cc::core::platform
         ///     Readable file descriptor to the open file.
 
         virtual FileDescriptor open_read(
-            const fs::path& filename) const = 0;
+            const fs::path &filename) const = 0;
 
         /// @brief
         ///     Open a file for writing
@@ -410,7 +410,7 @@ namespace cc::core::platform
         ///     Writable file descriptor to the open file.
 
         virtual FileDescriptor open_write(
-            const fs::path& filename,
+            const fs::path &filename,
             int create_mode = 0644) const = 0;
 
         /// @brief
@@ -436,7 +436,7 @@ namespace cc::core::platform
 
         virtual std::size_t read_fd(
             FileDescriptor fd,
-            void* buffer,
+            void *buffer,
             std::size_t bufsize) const = 0;
 
         /// @brief
@@ -454,7 +454,7 @@ namespace cc::core::platform
 
         virtual std::size_t write_fd(
             FileDescriptor fd,
-            const void* buffer,
+            const void *buffer,
             std::size_t size) const = 0;
 
         /// @brief
@@ -465,14 +465,14 @@ namespace cc::core::platform
         ///     Writeable file descriptor to which data is written
 
         virtual void write_from_stream(
-            std::istream* stream,
+            std::istream *stream,
             FileDescriptor fd) const;
 
         /// @brief
         ///    Close both input/output file descriptors of a pipe
 
         virtual void close_pipe(
-            const Pipe& pipe) const = 0;
+            const Pipe &pipe) const = 0;
 
         /// @brief
         ///     Wait for the specified Process ID to exit.

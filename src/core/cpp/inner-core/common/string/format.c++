@@ -30,7 +30,7 @@ namespace cc::core::str
         "([m%])))"                           // (8) non-argument specifier
     );
 
-    Formatter::Formatter(std::ostream& stream, const std::string& format)
+    Formatter::Formatter(std::ostream &stream, const std::string &format)
         : stream(stream),
           locale(stream.getloc()),
           formatstring(format),
@@ -42,7 +42,7 @@ namespace cc::core::str
         this->stream << (parts_it++)->tail;
     }
 
-    Formatter::Parts Formatter::split_parts(const std::string& fmt) const
+    Formatter::Parts Formatter::split_parts(const std::string &fmt) const
     {
         uint pos = 0, next = 0;
 
@@ -94,7 +94,7 @@ namespace cc::core::str
         return parts;
     }
 
-    Formatter::Modifiers Formatter::apply_format(const Part& part, uint bytesize)
+    Formatter::Modifiers Formatter::apply_format(const Part &part, uint bytesize)
     {
         Formatter::Modifiers mods;
         this->apply_flags(part.flags, &mods);
@@ -117,7 +117,7 @@ namespace cc::core::str
         return mods;
     }
 
-    void Formatter::apply_flags(const std::string& flagstring, Formatter::Modifiers* modifiers)
+    void Formatter::apply_flags(const std::string &flagstring, Formatter::Modifiers *modifiers)
     {
         for (char flag : flagstring)
         {
@@ -168,7 +168,7 @@ namespace cc::core::str
 
     void Formatter::apply_conversion(char conversion,
                                      uint bytesize,
-                                     Formatter::Modifiers* modifiers)
+                                     Formatter::Modifiers *modifiers)
     {
         switch (conversion)
         {
@@ -259,7 +259,7 @@ namespace cc::core::str
             break;
 
         case 'p':
-            this->stream << std::setw(2 + sizeof(void*) * 2) << std::setfill('0')
+            this->stream << std::setw(2 + sizeof(void *) * 2) << std::setfill('0')
                          << std::showbase << std::internal << std::hex;
             break;
 
@@ -318,7 +318,7 @@ namespace cc::core::str
         }
     }
 
-    std::optional<uint> Formatter::optional_size(const std::string& size) const
+    std::optional<uint> Formatter::optional_size(const std::string &size) const
     {
         if (size.length())
         {
@@ -331,7 +331,7 @@ namespace cc::core::str
     }
 
     void Formatter::appendvalue(bool value,
-                                const Formatter::Modifiers& modifiers)
+                                const Formatter::Modifiers &modifiers)
     {
         if (modifiers.shortform)
         {
@@ -344,7 +344,7 @@ namespace cc::core::str
     }
 
     void Formatter::appendvalue(char value,
-                                const Formatter::Modifiers& modifiers)
+                                const Formatter::Modifiers &modifiers)
     {
         if (modifiers.lower)
             value = std::tolower(value);
@@ -357,14 +357,14 @@ namespace cc::core::str
             this->stream << value;
     }
 
-    void Formatter::appendvalue(const char* value,
-                                const Formatter::Modifiers& modifiers)
+    void Formatter::appendvalue(const char *value,
+                                const Formatter::Modifiers &modifiers)
     {
         this->appendvalue(std::string(value), modifiers);
     }
 
-    void Formatter::appendvalue(const std::string_view& value,
-                                const Formatter::Modifiers& modifiers)
+    void Formatter::appendvalue(const std::string_view &value,
+                                const Formatter::Modifiers &modifiers)
     {
         if (modifiers.upper || modifiers.lower || modifiers.hidden)
         {
@@ -380,8 +380,8 @@ namespace cc::core::str
         }
     }
 
-    void Formatter::appendvalue(const std::string& value,
-                                const Formatter::Modifiers& modifiers)
+    void Formatter::appendvalue(const std::string &value,
+                                const Formatter::Modifiers &modifiers)
     {
         if (modifiers.upper || modifiers.lower || modifiers.hidden)
         {
@@ -398,22 +398,22 @@ namespace cc::core::str
         }
     }
 
-    void Formatter::appendvalue(std::string&& rvalue,
-                                const Formatter::Modifiers& modifiers)
+    void Formatter::appendvalue(std::string &&rvalue,
+                                const Formatter::Modifiers &modifiers)
     {
         if (modifiers.hidden)
         {
-            for (auto& c : rvalue)
+            for (auto &c : rvalue)
                 c = '*';
         }
         else if (modifiers.lower)
         {
-            for (auto& c : rvalue)
+            for (auto &c : rvalue)
                 c = std::tolower(c);
         }
         else if (modifiers.upper)
         {
-            for (auto& c : rvalue)
+            for (auto &c : rvalue)
                 c = std::toupper(c);
         }
 
@@ -428,8 +428,8 @@ namespace cc::core::str
     }
 
     // Ouptut formatting for timepionts
-    void Formatter::appendvalue(const std::chrono::system_clock::time_point& tp,
-                                const Modifiers& modifiers)
+    void Formatter::appendvalue(const std::chrono::system_clock::time_point &tp,
+                                const Modifiers &modifiers)
     {
         switch (modifiers.timeformat)
         {
@@ -458,8 +458,8 @@ namespace cc::core::str
         }
     }
 
-    void Formatter::appendvalue(const std::tm& tm,
-                                const Modifiers& modifiers)
+    void Formatter::appendvalue(const std::tm &tm,
+                                const Modifiers &modifiers)
     {
         stream << std::put_time(&tm,
                                 modifiers.timeformat
@@ -480,8 +480,8 @@ namespace cc::core::str
     //         modifiers);
     // }
 
-    void Formatter::appendvalue(int* nargs,
-                                const Formatter::Modifiers& modifiers)
+    void Formatter::appendvalue(int *nargs,
+                                const Formatter::Modifiers &modifiers)
     {
         if (modifiers.saveargs)  // %n format.
         {
@@ -489,12 +489,12 @@ namespace cc::core::str
         }
         else
         {
-            this->appendvalue((void*)nargs, modifiers);
+            this->appendvalue((void *)nargs, modifiers);
         }
     }
 
-    void Formatter::appendvalue(const types::Streamable& value,
-                                const Modifiers& modifiers)
+    void Formatter::appendvalue(const types::Streamable &value,
+                                const Modifiers &modifiers)
     {
         if (modifiers.quoted)
         {

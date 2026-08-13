@@ -22,7 +22,7 @@ namespace cc::python
         static void global_init();
         static void global_cleanup();
 
-        ContainerObject& import(const std::string& module_name);
+        ContainerObject &import(const std::string &module_name);
 
         /// @brief
         ///    Call an imported Python method with variant inputs and return value
@@ -37,10 +37,10 @@ namespace cc::python
         /// @return
         ///    Returned value from the called method, decoded as a variant Value
         core::types::Value call(
-            const std::optional<std::string>& module_name,
-            const std::string& method_name,
-            const core::types::ValueList& args = {},
-            const core::types::KeyValueMap& kwargs = {});
+            const std::optional<std::string> &module_name,
+            const std::string &method_name,
+            const core::types::ValueList &args = {},
+            const core::types::KeyValueMap &kwargs = {});
 
         /// @brief
         ///    Call an imported Python method with encoded Python inputs and return value
@@ -55,10 +55,10 @@ namespace cc::python
         /// @return
         ///    Returned value from the called method
         ContainerObject call(
-            const std::optional<std::string>& module_name,
-            const std::string& method_name,
-            const SimpleObject::Vector& args,
-            const SimpleObject::Map& kwargs = {});
+            const std::optional<std::string> &module_name,
+            const std::string &method_name,
+            const SimpleObject::Vector &args,
+            const SimpleObject::Map &kwargs = {});
 
         /// @brief
         ///    Call an imported Python method with encoded Python inputs and return value
@@ -73,14 +73,14 @@ namespace cc::python
         /// @return
         ///    Return value from the called method as a Python object
         ContainerObject call(
-            const std::optional<std::string>& module_name,
-            const std::string& method_name,
-            const SimpleObject& args_tuple,
-            const SimpleObject& kwargs_dict);
+            const std::optional<std::string> &module_name,
+            const std::string &method_name,
+            const SimpleObject &args_tuple,
+            const SimpleObject &kwargs_dict);
 
     private:
-        ContainerObject& get_container(
-            const std::optional<std::string>& module_name);
+        ContainerObject &get_container(
+            const std::optional<std::string> &module_name);
 
         Exception get_exception() const;
 

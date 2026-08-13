@@ -25,15 +25,15 @@ namespace cc::core::yaml
         YamlParser();
         ~YamlParser();
 
-        types::Value parse_text(const std::string_view& text);
-        types::Value parse_file(const fs::path& path);
-        types::Value parse_stream(std::istream& stream);
+        types::Value parse_text(const std::string_view &text);
+        types::Value parse_file(const fs::path &path);
+        types::Value parse_stream(std::istream &stream);
 
     private:
-        static int read_handler(void* data,
-                                unsigned char* buffer,
+        static int read_handler(void *data,
+                                unsigned char *buffer,
                                 size_t size,
-                                size_t* size_read);
+                                size_t *size_read);
 
         yaml_event_t next_event();
         types::ValueList read_all();
@@ -42,23 +42,23 @@ namespace cc::core::yaml
         std::optional<types::Value> read_value();
 
         bool expect_next_event_type(
-            const EventTypeSet& expected_types,
-            const EventTypeSet& end_types = {});
+            const EventTypeSet &expected_types,
+            const EventTypeSet &end_types = {});
 
         bool expect_event_type(
-            const yaml_event_t& event,
-            const EventTypeSet& expected_types,
-            const EventTypeSet& end_types = {});
+            const yaml_event_t &event,
+            const EventTypeSet &expected_types,
+            const EventTypeSet &end_types = {});
 
         std::optional<types::Value> process_event(yaml_event_t event);
-        types::Value process_alias(const yaml_event_t& event);
-        types::Value process_scalar(const yaml_event_t& event);
-        types::Value process_sequence(const yaml_event_t& event);
-        types::Value process_mapping(const yaml_event_t& event);
+        types::Value process_alias(const yaml_event_t &event);
+        types::Value process_scalar(const yaml_event_t &event);
+        types::Value process_sequence(const yaml_event_t &event);
+        types::Value process_mapping(const yaml_event_t &event);
         types::Value record_value(
-            const yaml_char_t* anchor,
-            const yaml_char_t* tag,
-            const types::Value& value);
+            const yaml_char_t *anchor,
+            const yaml_char_t *tag,
+            const types::Value &value);
         std::size_t input_position() const;
 
     private:

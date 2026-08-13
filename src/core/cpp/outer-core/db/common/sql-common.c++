@@ -12,10 +12,10 @@
 namespace cc::db
 {
     std::string SQL::select_query(
-        const std::vector<std::string>& columns,
-        const std::string& table,
-        const std::vector<std::string>& conditions,
-        const std::string& order_by,
+        const std::vector<std::string> &columns,
+        const std::string &table,
+        const std::vector<std::string> &conditions,
+        const std::string &order_by,
         SortDirection direction,
         uint limit) const
     {
@@ -45,12 +45,12 @@ namespace cc::db
         return sql.str();
     }
 
-    std::string SQL::quote_literal(const std::string& literal)
+    std::string SQL::quote_literal(const std::string &literal)
     {
         return "'" + literal + "'";
     }
 
-    std::string SQL::quote_ident(const std::string& identifier)
+    std::string SQL::quote_ident(const std::string &identifier)
     {
         return "\"" + identifier + "\"";
     }

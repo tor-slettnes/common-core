@@ -19,8 +19,8 @@ namespace cc::zmq
         using ptr = std::shared_ptr<This>;
 
     public:
-        ExtendedPublisher(const std::string& address,
-                          const std::string& channel_name,
+        ExtendedPublisher(const std::string &address,
+                          const std::string &channel_name,
                           Role role = Role::HOST);
     };
 

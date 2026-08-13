@@ -61,7 +61,7 @@ namespace cc::core::platform
         }
         else if (uint signal = this->exit_signal())
         {
-            const char* abbrev = ::sigabbrev_np(signal);
+            const char *abbrev = ::sigabbrev_np(signal);
             return str::format("SIG%s", abbrev ? abbrev : "_UNKNOWN");
         }
         else
@@ -78,7 +78,7 @@ namespace cc::core::platform
         }
         else if (int signal = this->exit_signal())
         {
-            const char* descr = ::sigdescr_np(this->exit_signal());
+            const char *descr = ::sigdescr_np(this->exit_signal());
             return descr ? descr : "";
         }
         else
@@ -90,7 +90,7 @@ namespace cc::core::platform
     //==========================================================================
     // PosixProcessProvider
 
-    PosixProcessProvider::PosixProcessProvider(const std::string& name)
+    PosixProcessProvider::PosixProcessProvider(const std::string &name)
         : Super(name)
     {
     }
@@ -105,7 +105,7 @@ namespace cc::core::platform
         return getpid();
     }
 
-    ArgVector PosixProcessProvider::shell_command(const std::string& command_line) const
+    ArgVector PosixProcessProvider::shell_command(const std::string &command_line) const
     {
         return {"/bin/sh", "-c", command_line};
     }
@@ -116,11 +116,11 @@ namespace cc::core::platform
     }
 
     PID PosixProcessProvider::invoke_async_fileio(
-        const ArgVector& argv,
-        const fs::path& cwd,
-        const fs::path& infile,
-        const fs::path& outfile,
-        const fs::path& errfile) const
+        const ArgVector &argv,
+        const fs::path &cwd,
+        const fs::path &infile,
+        const fs::path &outfile,
+        const fs::path &errfile) const
     {
         if (argv.empty())
         {
@@ -161,22 +161,22 @@ namespace cc::core::platform
     }
 
     ExitStatus::ptr PosixProcessProvider::invoke_sync_fileio(
-        const ArgVector& argv,
-        const fs::path& cwd,
-        const fs::path& infile,
-        const fs::path& outfile,
-        const fs::path& errfile) const
+        const ArgVector &argv,
+        const fs::path &cwd,
+        const fs::path &infile,
+        const fs::path &outfile,
+        const fs::path &errfile) const
     {
         PID pid = this->invoke_async_fileio(argv, cwd, infile, outfile, errfile);
         return this->waitpid(pid);
     }
 
     PID PosixProcessProvider::invoke_async_pipe(
-        const ArgVector& argv,
-        const fs::path& cwd,
-        FileDescriptor* fdin,
-        FileDescriptor* fdout,
-        FileDescriptor* fderr) const
+        const ArgVector &argv,
+        const fs::path &cwd,
+        FileDescriptor *fdin,
+        FileDescriptor *fdout,
+        FileDescriptor *fderr) const
     {
         Pipe inpipe = {-1, -1};
 
@@ -194,7 +194,7 @@ namespace cc::core::platform
         FileDescriptor fdin,
         FileDescriptor fdout,
         FileDescriptor fderr,
-        std::istream* instream) const
+        std::istream *instream) const
     {
         std::vector<struct pollfd> pfds = {
             {fdin, POLLOUT, 0},
@@ -276,7 +276,7 @@ namespace cc::core::platform
     }
 
     InvocationStates PosixProcessProvider::create_pipeline(
-        const Invocations& invocations,
+        const Invocations &invocations,
         FileDescriptor fdin) const
     {
         FileDescriptor pipe_fd = fdin;
@@ -284,9 +284,9 @@ namespace cc::core::platform
         states.reserve(invocations.size());
 
         // Invoke commands
-        for (const Invocation& invocation : invocations)
+        for (const Invocation &invocation : invocations)
         {
-            InvocationState& state = states.emplace_back();
+            InvocationState &state = states.emplace_back();
             state.command = invocation.argv.front();
             state.stdin = pipe_fd;
             state.pid = this->invoke_async_from_fd(
@@ -302,7 +302,7 @@ namespace cc::core::platform
     }
 
     InvocationResults PosixProcessProvider::capture_pipeline(
-        const InvocationStates& states,
+        const InvocationStates &states,
         bool checkstatus) const
     {
         InvocationResults results;
@@ -338,11 +338,11 @@ namespace cc::core::platform
     }
 
     PID PosixProcessProvider::invoke_async_from_fd(
-        const ArgVector& argv,
-        const fs::path& cwd,
+        const ArgVector &argv,
+        const fs::path &cwd,
         FileDescriptor fdin,
-        FileDescriptor* fdout,
-        FileDescriptor* fderr) const
+        FileDescriptor *fdout,
+        FileDescriptor *fderr) const
     {
         if (argv.empty())
         {
@@ -387,7 +387,7 @@ namespace cc::core::platform
         return io::checkstatus(pid);
     }
 
-    void PosixProcessProvider::execute(ArgVector argv, const fs::path& cwd) const
+    void PosixProcessProvider::execute(ArgVector argv, const fs::path &cwd) const
     {
         if (!cwd.empty())
         {
@@ -396,9 +396,9 @@ namespace cc::core::platform
 
         // Convert our argument vector into a plain old
         // null-terminated array of null-terminated character arrays
-        std::vector<char*> c_argv(argv.size() + 1);
-        char** c_argp = c_argv.data();
-        for (std::string& arg : argv)
+        std::vector<char *> c_argv(argv.size() + 1);
+        char **c_argp = c_argv.data();
+        for (std::string &arg : argv)
         {
             *(c_argp++) = arg.data();
         }
@@ -421,9 +421,9 @@ namespace cc::core::platform
     }
 
     void PosixProcessProvider::trim_pipe(
-        const Pipe& pipe,
+        const Pipe &pipe,
         PipeDirection direction,
-        FileDescriptor* fd) const
+        FileDescriptor *fd) const
     {
         this->close_fd(pipe[!direction]);
 
@@ -438,7 +438,7 @@ namespace cc::core::platform
     }
 
     FileDescriptor PosixProcessProvider::open_read(
-        const fs::path& filename) const
+        const fs::path &filename) const
     {
         FileDescriptor fd = io::checkstatus(
             ::open(filename.c_str(), O_RDONLY));
@@ -448,7 +448,7 @@ namespace cc::core::platform
     }
 
     FileDescriptor PosixProcessProvider::open_write(
-        const fs::path& filename,
+        const fs::path &filename,
         int create_mode) const
     {
         FileDescriptor fd = io::checkstatus(
@@ -470,7 +470,7 @@ namespace cc::core::platform
 
     std::size_t PosixProcessProvider::read_fd(
         FileDescriptor fd,
-        void* buffer,
+        void *buffer,
         std::size_t bufsize) const
     {
         return io::checkstatus(::read(fd, buffer, bufsize));
@@ -478,7 +478,7 @@ namespace cc::core::platform
 
     std::size_t PosixProcessProvider::write_fd(
         FileDescriptor fd,
-        const void* buffer,
+        const void *buffer,
         std::size_t size) const
     {
         return io::checkstatus(::write(fd, buffer, size));
@@ -498,14 +498,14 @@ namespace cc::core::platform
         }
     }
 
-    void PosixProcessProvider::close_pipe(const Pipe& pipe) const
+    void PosixProcessProvider::close_pipe(const Pipe &pipe) const
     {
         this->close_fd(pipe[INPUT]);
         this->close_fd(pipe[OUTPUT]);
     }
 
     void PosixProcessProvider::close_poll(
-        struct pollfd* pfd) const
+        struct pollfd *pfd) const
     {
         this->close_fd(pfd->fd);
         pfd->fd = -1;
@@ -513,8 +513,8 @@ namespace cc::core::platform
     }
 
     void PosixProcessProvider::poll_outputs(
-        const InvocationStates& states,
-        InvocationResults* results) const
+        const InvocationStates &states,
+        InvocationResults *results) const
     {
         results->clear();
         results->reserve(states.size());
@@ -527,7 +527,7 @@ namespace cc::core::platform
 
         std::vector<struct pollfd> pfds;
         pfds.reserve(states.size());
-        for (const InvocationState& state : states)
+        for (const InvocationState &state : states)
         {
             results->push_back(state.pid);
             pfds.push_back({
@@ -544,7 +544,7 @@ namespace cc::core::platform
         });
 
         std::unordered_set<FileDescriptor> open_fds;
-        for (const struct pollfd& pfd : pfds)
+        for (const struct pollfd &pfd : pfds)
         {
             open_fds.insert(pfd.fd);
             fcntl(pfd.fd, F_SETFL, O_NONBLOCK);
@@ -554,7 +554,7 @@ namespace cc::core::platform
         {
             logf_trace("Polling %d FDs", pfds.size());
             io::checkstatus(
-                ::poll(const_cast<struct pollfd*>(pfds.data()), pfds.size(), -1));
+                ::poll(const_cast<struct pollfd *>(pfds.data()), pfds.size(), -1));
 
             for (uint c = 0; c < states.size(); c++)
             {
@@ -574,10 +574,10 @@ namespace cc::core::platform
     }
 
     bool PosixProcessProvider::check_poll(
-        const std::string& stream_name,
-        struct pollfd* pfd,
-        std::shared_ptr<std::stringstream>* outstream,
-        std::unordered_set<FileDescriptor>* open_fds) const
+        const std::string &stream_name,
+        struct pollfd *pfd,
+        std::shared_ptr<std::stringstream> *outstream,
+        std::unordered_set<FileDescriptor> *open_fds) const
     {
         static std::vector<char> outbuf(CHUNKSIZE);
         bool received = false;
@@ -610,8 +610,8 @@ namespace cc::core::platform
     }
 
     void PosixProcessProvider::wait_results(
-        const InvocationStates& states,
-        InvocationResults* results,
+        const InvocationStates &states,
+        InvocationResults *results,
         bool checkstatus) const
     {
         // Now wait for all subprocesses to complete.  We capture the error from
@@ -619,8 +619,8 @@ namespace cc::core::platform
         std::exception_ptr eptr;
         for (uint c = 0; c < states.size(); c++)
         {
-            const InvocationState& state = states.at(c);
-            InvocationResult& result = results->at(c);
+            const InvocationState &state = states.at(c);
+            InvocationResult &result = results->at(c);
             logf_trace("Waiting for PID %d: %s", state.pid, state.command);
 
             result.status = this->waitpid(state.pid);

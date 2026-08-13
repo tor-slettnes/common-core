@@ -28,7 +28,7 @@ namespace cc::core::platform
         return hostname;
     }
 
-    void PosixHostProvider::set_host_name(const std::string& hostname)
+    void PosixHostProvider::set_host_name(const std::string &hostname)
     {
         if (::sethostname(hostname.data(), hostname.size()) != 0)
         {

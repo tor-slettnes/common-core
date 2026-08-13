@@ -12,8 +12,8 @@
 
 namespace cc::dds
 {
-    DDSLogger::DDSLogger(const std::string& sink_id,
-                         const std::string& channel_name,
+    DDSLogger::DDSLogger(const std::string &sink_id,
+                         const std::string &channel_name,
                          int domain_id)
         : MessageSink(sink_id),
           Publisher(channel_name, domain_id)
@@ -35,7 +35,7 @@ namespace cc::dds
         Super::close();
     }
 
-    bool DDSLogger::handle_message(const core::logging::Message::ptr& message)
+    bool DDSLogger::handle_message(const core::logging::Message::ptr &message)
     {
         if (this->log_writer)
         {

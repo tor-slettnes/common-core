@@ -36,7 +36,7 @@ namespace cc::zmq
             cc::protobuf::SignalForwarder<ProtoT>::deinitialize();
         }
 
-        void forward(ProtoT&& message) override
+        void forward(ProtoT &&message) override
         {
             this->write(message);
         }

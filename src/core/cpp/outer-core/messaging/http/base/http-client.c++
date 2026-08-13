@@ -18,7 +18,7 @@
 
 namespace cc::http
 {
-    HTTPClient::HTTPClient(const std::string& base_url,
+    HTTPClient::HTTPClient(const std::string &base_url,
                            bool verify_cert)
         : base_url_(base_url),
           verify_cert_(verify_cert)
@@ -27,7 +27,7 @@ namespace cc::http
 
     HTTPClient::~HTTPClient()
     {
-        for (const auto& [thread_id, handle] : this->handles_)
+        for (const auto &[thread_id, handle] : this->handles_)
         {
             curl_easy_cleanup(handle);
         }
@@ -38,7 +38,7 @@ namespace cc::http
         return this->base_url_;
     }
 
-    std::string HTTPClient::url(const std::string& rel) const
+    std::string HTTPClient::url(const std::string &rel) const
     {
         return join_urls(this->base_url(), rel);
     }
@@ -46,7 +46,7 @@ namespace cc::http
     //======================================================================
     // get()
 
-    std::stringstream HTTPClient::get(const std::string& location) const
+    std::stringstream HTTPClient::get(const std::string &location) const
     {
         std::stringstream content;
         this->get(location,  // location
@@ -58,10 +58,10 @@ namespace cc::http
         return content;
     }
 
-    std::stringstream HTTPClient::get(const std::string& location,
-                                      const std::string& expected_content_type,
+    std::stringstream HTTPClient::get(const std::string &location,
+                                      const std::string &expected_content_type,
                                       bool fail_on_error,
-                                      ResponseCode* response_code) const
+                                      ResponseCode *response_code) const
     {
         std::string content_type;
         std::stringstream stream;
@@ -70,12 +70,12 @@ namespace cc::http
         return stream;
     }
 
-    bool HTTPClient::get(const std::string& location,
-                         std::string* content_type,
-                         std::ostream* header_stream,
-                         std::ostream* content_stream,
+    bool HTTPClient::get(const std::string &location,
+                         std::string *content_type,
+                         std::ostream *header_stream,
+                         std::ostream *content_stream,
                          bool fail_on_error,
-                         ResponseCode* response_code) const
+                         ResponseCode *response_code) const
     {
         return this->get(location,
                          content_type,
@@ -85,15 +85,15 @@ namespace cc::http
                          response_code);
     }
 
-    bool HTTPClient::get(const std::string& location,
-                         std::string* content_type,
-                         const ReceiveFunction& header_receiver,
-                         const ReceiveFunction& content_receiver,
+    bool HTTPClient::get(const std::string &location,
+                         std::string *content_type,
+                         const ReceiveFunction &header_receiver,
+                         const ReceiveFunction &content_receiver,
                          bool fail_on_error,
-                         ResponseCode* response_code) const
+                         ResponseCode *response_code) const
     {
         std::string url = this->url(location);
-        CURL* handle = this->handle();
+        CURL *handle = this->handle();
         CURLcode code = curl_easy_setopt(handle, CURLOPT_HTTPGET, true);
 
         if (code == CURLE_OK)
@@ -114,13 +114,13 @@ namespace cc::http
     //======================================================================
     // put()
 
-    std::stringstream HTTPClient::put(const std::string& location,
-                                      const std::string& content_type,
-                                      std::istream& upload_data,
-                                      const std::optional<std::size_t>& upload_size,
-                                      const std::string& expected_content_type,
+    std::stringstream HTTPClient::put(const std::string &location,
+                                      const std::string &content_type,
+                                      std::istream &upload_data,
+                                      const std::optional<std::size_t> &upload_size,
+                                      const std::string &expected_content_type,
                                       bool fail_on_error,
-                                      ResponseCode* response_code) const
+                                      ResponseCode *response_code) const
     {
         std::string received_content_type;
         std::stringstream received_content_stream;
@@ -138,15 +138,15 @@ namespace cc::http
         return received_content_stream;
     }
 
-    bool HTTPClient::put(const std::string& location,
-                         const std::string& content_type,
-                         std::istream& upload_stream,
-                         const std::optional<std::size_t>& upload_size,
-                         std::string* received_content_type,
-                         std::ostream* received_header_stream,
-                         std::ostream* received_content_stream,
+    bool HTTPClient::put(const std::string &location,
+                         const std::string &content_type,
+                         std::istream &upload_stream,
+                         const std::optional<std::size_t> &upload_size,
+                         std::string *received_content_type,
+                         std::ostream *received_header_stream,
+                         std::ostream *received_content_stream,
                          bool fail_on_error,
-                         ResponseCode* response_code) const
+                         ResponseCode *response_code) const
     {
         return this->put(location,
                          content_type,
@@ -159,20 +159,20 @@ namespace cc::http
                          response_code);
     }
 
-    bool HTTPClient::put(const std::string& location,
-                         const std::string& content_type,
-                         const SendFunction& sender,
-                         const std::optional<std::size_t>& upload_size,
-                         std::string* received_content_type,
-                         const ReceiveFunction& header_receiver,
-                         const ReceiveFunction& content_receiver,
+    bool HTTPClient::put(const std::string &location,
+                         const std::string &content_type,
+                         const SendFunction &sender,
+                         const std::optional<std::size_t> &upload_size,
+                         std::string *received_content_type,
+                         const ReceiveFunction &header_receiver,
+                         const ReceiveFunction &content_receiver,
                          bool fail_on_error,
-                         ResponseCode* response_code) const
+                         ResponseCode *response_code) const
     {
         ResponseCode response = 0;
         std::string url = this->url(location);
-        struct curl_slist* slist = NULL;
-        CURL* handle = this->handle();
+        struct curl_slist *slist = NULL;
+        CURL *handle = this->handle();
         CURLcode code = CURLE_OK;
         std::exception_ptr eptr = nullptr;
         bool ok = false;
@@ -242,12 +242,12 @@ namespace cc::http
     //======================================================================
     // post()
 
-    std::stringstream HTTPClient::post(const std::string& location,
-                                       const std::string& content_type,
-                                       const std::string& data,
-                                       const std::string& expected_content_type,
+    std::stringstream HTTPClient::post(const std::string &location,
+                                       const std::string &content_type,
+                                       const std::string &data,
+                                       const std::string &expected_content_type,
                                        bool fail_on_error,
-                                       ResponseCode* response_code) const
+                                       ResponseCode *response_code) const
     {
         std::string received_content_type;
         std::stringstream received_content_stream;
@@ -264,14 +264,14 @@ namespace cc::http
         return received_content_stream;
     }
 
-    bool HTTPClient::post(const std::string& location,
-                          const std::string& content_type,
-                          const std::string& data,
-                          std::string* received_content_type,
-                          std::ostream* received_header_stream,
-                          std::ostream* received_content_stream,
+    bool HTTPClient::post(const std::string &location,
+                          const std::string &content_type,
+                          const std::string &data,
+                          std::string *received_content_type,
+                          std::ostream *received_header_stream,
+                          std::ostream *received_content_stream,
                           bool fail_on_error,
-                          ResponseCode* response_code) const
+                          ResponseCode *response_code) const
     {
         return this->post(location,
                           content_type,
@@ -283,19 +283,19 @@ namespace cc::http
                           response_code);
     }
 
-    bool HTTPClient::post(const std::string& location,
-                          const std::string& content_type,
-                          const std::string& data,
-                          std::string* received_content_type,
-                          const ReceiveFunction& header_receiver,
-                          const ReceiveFunction& content_receiver,
+    bool HTTPClient::post(const std::string &location,
+                          const std::string &content_type,
+                          const std::string &data,
+                          std::string *received_content_type,
+                          const ReceiveFunction &header_receiver,
+                          const ReceiveFunction &content_receiver,
                           bool fail_on_error,
-                          ResponseCode* response_code) const
+                          ResponseCode *response_code) const
     {
         ResponseCode response = 0;
         std::string url = this->url(location);
-        struct curl_slist* slist = NULL;
-        CURL* handle = this->handle();
+        struct curl_slist *slist = NULL;
+        CURL *handle = this->handle();
         CURLcode code = CURLE_OK;
         std::exception_ptr eptr = nullptr;
         bool ok = false;
@@ -352,10 +352,10 @@ namespace cc::http
         return ok;
     }
 
-    std::stringstream HTTPClient::del(const std::string& location,
-                                      const std::string& expected_content_type,
+    std::stringstream HTTPClient::del(const std::string &location,
+                                      const std::string &expected_content_type,
                                       bool fail_on_error,
-                                      ResponseCode* response_code) const
+                                      ResponseCode *response_code) const
     {
         std::string content_type;
         std::stringstream stream;
@@ -364,12 +364,12 @@ namespace cc::http
         return stream;
     }
 
-    bool HTTPClient::del(const std::string& location,
-                         std::string* content_type,
-                         std::ostream* header_stream,
-                         std::ostream* content_stream,
+    bool HTTPClient::del(const std::string &location,
+                         std::string *content_type,
+                         std::ostream *header_stream,
+                         std::ostream *content_stream,
                          bool fail_on_error,
-                         ResponseCode* response_code) const
+                         ResponseCode *response_code) const
     {
         return this->del(location,
                          content_type,
@@ -379,15 +379,15 @@ namespace cc::http
                          response_code);
     }
 
-    bool HTTPClient::del(const std::string& location,
-                         std::string* content_type,
-                         const ReceiveFunction& receive_header_data,
-                         const ReceiveFunction& receive_content_data,
+    bool HTTPClient::del(const std::string &location,
+                         std::string *content_type,
+                         const ReceiveFunction &receive_header_data,
+                         const ReceiveFunction &receive_content_data,
                          bool fail_on_error,
-                         ResponseCode* response_code) const
+                         ResponseCode *response_code) const
     {
         std::string url = this->url(location);
-        CURL* handle = this->handle();
+        CURL *handle = this->handle();
         CURLcode code = curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "DELETE");
 
         if (code == CURLE_OK)
@@ -406,15 +406,15 @@ namespace cc::http
                                      response_code);           // response_code
     }
 
-    bool HTTPClient::perform_request(const std::string& url,
-                                     CURL* handle,
+    bool HTTPClient::perform_request(const std::string &url,
+                                     CURL *handle,
                                      CURLcode code,
-                                     std::string* received_content_type,
-                                     const ReceiveFunction& receive_header_data,
-                                     const ReceiveFunction& receive_content_data,
+                                     std::string *received_content_type,
+                                     const ReceiveFunction &receive_header_data,
+                                     const ReceiveFunction &receive_content_data,
                                      bool fail_on_error,
                                      bool verify_cert,
-                                     ResponseCode* response_code)
+                                     ResponseCode *response_code)
     {
         ResponseCode response = 0;
 
@@ -465,7 +465,7 @@ namespace cc::http
 
         if (received_content_type)
         {
-            char* ctype = nullptr;
+            char *ctype = nullptr;
             code = curl_easy_getinfo(handle, CURLINFO_CONTENT_TYPE, &ctype);
             received_content_type->assign(ctype ? ctype : "");
         }
@@ -490,9 +490,9 @@ namespace cc::http
         return this->verify_cert_;
     }
 
-    void HTTPClient::check_content_type(const std::string& location,
-                                        const std::string& received_content_type,
-                                        const std::string& expected_content_type) const
+    void HTTPClient::check_content_type(const std::string &location,
+                                        const std::string &received_content_type,
+                                        const std::string &expected_content_type) const
     {
         std::string content_type = core::str::tolower(received_content_type);
         if (!core::str::startswith(content_type + ";",
@@ -508,9 +508,9 @@ namespace cc::http
         }
     }
 
-    HTTPClient::ReceiveFunction HTTPClient::stream_receiver(std::ostream* stream)
+    HTTPClient::ReceiveFunction HTTPClient::stream_receiver(std::ostream *stream)
     {
-        return [=](const char* data, std::size_t size) -> void {
+        return [=](const char *data, std::size_t size) -> void {
             if (stream)
             {
                 stream->write(data, size);
@@ -518,18 +518,18 @@ namespace cc::http
         };
     }
 
-    HTTPClient::SendFunction HTTPClient::stream_sender(std::istream& stream)
+    HTTPClient::SendFunction HTTPClient::stream_sender(std::istream &stream)
     {
-        return [&](char* data, std::size_t size) -> std::size_t {
+        return [&](char *data, std::size_t size) -> std::size_t {
             stream.clear();
             stream.read(data, size);
             return stream.gcount();
         };
     }
 
-    std::size_t HTTPClient::receive(char* ptr, size_t item_size, size_t num_items, void* userdata)
+    std::size_t HTTPClient::receive(char *ptr, size_t item_size, size_t num_items, void *userdata)
     {
-        auto* callback = reinterpret_cast<const ReceiveFunction*>(userdata);
+        auto *callback = reinterpret_cast<const ReceiveFunction *>(userdata);
         std::size_t size = item_size * num_items;
         try
         {
@@ -548,9 +548,9 @@ namespace cc::http
         }
     }
 
-    std::size_t HTTPClient::send(char* ptr, size_t item_size, size_t num_items, void* userdata)
+    std::size_t HTTPClient::send(char *ptr, size_t item_size, size_t num_items, void *userdata)
     {
-        auto* callback = reinterpret_cast<const SendFunction*>(userdata);
+        auto *callback = reinterpret_cast<const SendFunction *>(userdata);
         std::size_t size = item_size * num_items;
         try
         {
@@ -572,23 +572,23 @@ namespace cc::http
         }
     }
 
-    CURL* HTTPClient::handle() const
+    CURL *HTTPClient::handle() const
     {
-        auto mtx = const_cast<std::mutex*>(&this->mtx_);
+        auto mtx = const_cast<std::mutex *>(&this->mtx_);
 
         std::scoped_lock lck(*mtx);
         std::thread::id thread_id = std::this_thread::get_id();
         try
         {
             // Renew an existing CURL handle
-            CURL* handle = this->handles_.at(thread_id);
+            CURL *handle = this->handles_.at(thread_id);
             curl_easy_reset(handle);
             return handle;
         }
-        catch (const std::out_of_range&)
+        catch (const std::out_of_range &)
         {
             // This thread has not performed any prior requests; create a new handle.
-            auto handles = const_cast<HandleMap*>(&this->handles_);
+            auto handles = const_cast<HandleMap *>(&this->handles_);
             auto [it, inserted] = handles->insert_or_assign(thread_id, curl_easy_init());
             return it->second;
         }

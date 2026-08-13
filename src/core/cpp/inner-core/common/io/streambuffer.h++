@@ -30,14 +30,14 @@ namespace cc::core::io
         ///     buffer to populate
         /// @return
         ///     Number of characters that was read
-        virtual inline bool read_some(BufferType* buffer) { return false; }
+        virtual inline bool read_some(BufferType *buffer) { return false; }
 
         /// Virtual method to read a new chunk into our string buffer.
         /// @param[in] buffer
         ///     buffer to populate
         /// @return
         ///     Number of characters that was written
-        virtual inline bool write_some(const BufferType& buffer) { return false; }
+        virtual inline bool write_some(const BufferType &buffer) { return false; }
 
     protected:
         // buffer management
@@ -45,12 +45,12 @@ namespace cc::core::io
 
         // get area
         std::streamsize showmanyc() override;
-        std::streamsize xsgetn(char_type* __s, std::streamsize __n) override;
+        std::streamsize xsgetn(char_type *__s, std::streamsize __n) override;
         int_type underflow() override;
         int_type pbackfail(int_type __c = traits_type::eof()) override;
 
         // put area
-        std::streamsize xsputn(const char_type* __s, std::streamsize __n) override;
+        std::streamsize xsputn(const char_type *__s, std::streamsize __n) override;
         int_type overflow(int_type __c = traits_type::eof()) override;
 
     private:

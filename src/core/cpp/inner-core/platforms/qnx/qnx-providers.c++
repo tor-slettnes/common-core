@@ -11,7 +11,7 @@
 
 namespace cc::core::platform
 {
-    void register_qnx_providers(const std::string& exec_name)
+    void register_qnx_providers(const std::string &exec_name)
     {
         path.registerProvider<QNXPathProvider>(exec_name);
     }
@@ -21,7 +21,7 @@ namespace cc::core::platform
         path.unregisterProvider<QNXPathProvider>();
     }
 
-    void register_providers(const std::string& exec_name)
+    void register_providers(const std::string &exec_name)
     {
         register_posix_providers(exec_name);
         register_qnx_providers(exec_name);

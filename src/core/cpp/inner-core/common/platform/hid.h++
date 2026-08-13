@@ -29,7 +29,7 @@ namespace cc::core::platform
     };
 
     extern types::SymbolMap<BusType> BusTypeNames;
-    std::ostream& operator<<(std::ostream& stream, BusType bustype);
+    std::ostream &operator<<(std::ostream &stream, BusType bustype);
 
     //==========================================================================
     // HID Device Info
@@ -54,11 +54,11 @@ namespace cc::core::platform
         BusType bus_type;
     };
 
-    types::TaggedValueList& operator<<(types::TaggedValueList& tvlist,
-                                       const HIDDeviceInfo& device_info);
-    std::ostream& operator<<(std::ostream& stream, const HIDDeviceInfo& device_info);
-    bool operator==(const HIDDeviceInfo& lhs, const HIDDeviceInfo& rhs);
-    bool operator!=(const HIDDeviceInfo& lhs, const HIDDeviceInfo& rhs);
+    types::TaggedValueList &operator<<(types::TaggedValueList &tvlist,
+                                       const HIDDeviceInfo &device_info);
+    std::ostream &operator<<(std::ostream &stream, const HIDDeviceInfo &device_info);
+    bool operator==(const HIDDeviceInfo &lhs, const HIDDeviceInfo &rhs);
+    bool operator!=(const HIDDeviceInfo &lhs, const HIDDeviceInfo &rhs);
 
     //==========================================================================
     // HID Device
@@ -69,10 +69,10 @@ namespace cc::core::platform
         using ptr = std::shared_ptr<HIDDevice>;
 
     public:
-        virtual void write(const types::ByteVector& buffer) = 0;
+        virtual void write(const types::ByteVector &buffer) = 0;
         virtual types::ByteVector read() = 0;
-        virtual std::optional<types::ByteVector> read(const dt::Duration& timeout) = 0;
-        virtual void send_feature_report(const types::ByteVector& data) = 0;
+        virtual std::optional<types::ByteVector> read(const dt::Duration &timeout) = 0;
+        virtual void send_feature_report(const types::ByteVector &data) = 0;
         virtual types::ByteVector get_feature_report(std::uint8_t report_id = 0) = 0;
         virtual types::ByteVector get_input_report(std::uint8_t report_id = 0) = 0;
         virtual std::string get_manufacturer() = 0;
@@ -107,12 +107,12 @@ namespace cc::core::platform
 
         virtual HIDDevice::ptr open(uint vendor_id,
                                     uint product_id,
-                                    const std::string& serial_number) = 0;
+                                    const std::string &serial_number) = 0;
 
-        virtual HIDDevice::ptr open(const fs::path& path) = 0;
+        virtual HIDDevice::ptr open(const fs::path &path) = 0;
 
     public:
-        void start_monitoring(const dt::Duration& poll_interval = std::chrono::seconds(1));
+        void start_monitoring(const dt::Duration &poll_interval = std::chrono::seconds(1));
         void stop_monitoring();
         void monitor_worker();
     };

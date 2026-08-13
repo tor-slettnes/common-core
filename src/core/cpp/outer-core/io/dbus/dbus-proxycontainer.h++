@@ -17,7 +17,7 @@ namespace cc::dbus
         using WrapperMap = std::map<ObjectPath, std::map<InterfaceName, ProxyWrapper::ptr>>;
 
     public:
-        ProxyContainer(Gio::DBus::BusType bus, const ServiceName& servicename);
+        ProxyContainer(Gio::DBus::BusType bus, const ServiceName &servicename);
 
         void connect();
         ConnectionPtr get_connection() const;
@@ -25,15 +25,15 @@ namespace cc::dbus
         const WrapperMap map() const;
 
         std::vector<ProxyWrapper::ptr> list() const;
-        std::vector<ProxyWrapper::ptr> list(const InterfaceName& interfacename) const;
-        std::vector<ProxyWrapper::ptr> list(const ObjectPath& prefix,
-                                            const InterfaceName& interfacename) const;
+        std::vector<ProxyWrapper::ptr> list(const InterfaceName &interfacename) const;
+        std::vector<ProxyWrapper::ptr> list(const ObjectPath &prefix,
+                                            const InterfaceName &interfacename) const;
 
         ProxyWrapper::ptr add(ProxyWrapper::ptr wrapper);
-        WrapperMap::iterator remove(const ObjectPath& objectpath);
+        WrapperMap::iterator remove(const ObjectPath &objectpath);
         // WrapperMap::iterator remove(WrapperMap::iterator it);
-        ProxyWrapper::ptr get(const ObjectPath& objectpath,
-                              const InterfaceName& interfacename) const;
+        ProxyWrapper::ptr get(const ObjectPath &objectpath,
+                              const InterfaceName &interfacename) const;
 
         virtual void set_wrapper_ready(ProxyWrapper::ptr wrapper);
         virtual void set_ready();
@@ -41,12 +41,12 @@ namespace cc::dbus
 
     public:
         template <class WrapperType>
-        inline std::shared_ptr<WrapperType> get(const ObjectPath& objectpath)
+        inline std::shared_ptr<WrapperType> get(const ObjectPath &objectpath)
         {
             auto it = this->wrappers.find(objectpath);
             if (it != this->wrappers.end())
             {
-                for (const auto& [ifname, candidate] : it->second)
+                for (const auto &[ifname, candidate] : it->second)
                 {
                     if (auto ref = std::dynamic_pointer_cast<WrapperType>(candidate))
                     {
@@ -61,9 +61,9 @@ namespace cc::dbus
         template <class WrapperType>
         inline std::shared_ptr<WrapperType> get()
         {
-            for (const auto& [objectpath, objects] : this->wrappers)
+            for (const auto &[objectpath, objects] : this->wrappers)
             {
-                for (const auto& [ifname, candidate] : objects)
+                for (const auto &[ifname, candidate] : objects)
                 {
                     if (auto ref = std::dynamic_pointer_cast<WrapperType>(candidate))
                     {
@@ -89,8 +89,8 @@ namespace cc::dbus
         /// /org/freedesktop/NetworkManager/1 or /org/freedesktop/NetworkManager/Settings/1.
         template <class WrapperType, class... Args>
         inline std::shared_ptr<WrapperType> add(
-            const ObjectPath& objectpath,
-            const Args&... args)
+            const ObjectPath &objectpath,
+            const Args &...args)
         {
             auto ref = this->get<WrapperType>(objectpath);
             if (!ref)
@@ -107,14 +107,14 @@ namespace cc::dbus
         }
 
         template <class WrapperType>
-        inline void synchronize(const ObjectPaths& paths)
+        inline void synchronize(const ObjectPaths &paths)
         {
             /// Keep track of object paths we want to keep
             std::set<ObjectPath> active;
             logf_trace("Synchronizing %s: %s", TYPE_NAME_BASE(WrapperType), paths);
 
             /// Go through the supplied list, add missing objects
-            for (const ObjectPath& path : paths)
+            for (const ObjectPath &path : paths)
             {
                 if (this->wrappers.count(path) == 0)
                 {
@@ -126,11 +126,11 @@ namespace cc::dbus
             /// Go through our current objects, remove those no longer present.
             for (auto it = this->wrappers.begin(); it != this->wrappers.end();)
             {
-                const auto& [path, interfaces] = *it;
+                const auto &[path, interfaces] = *it;
                 bool erase = interfaces.empty();
                 if (!erase && (active.count(path) == 0))
                 {
-                    for (auto& [ifname, ref] : interfaces)
+                    for (auto &[ifname, ref] : interfaces)
                     {
                         if (std::dynamic_pointer_cast<WrapperType>(ref))
                         {
@@ -154,9 +154,9 @@ namespace cc::dbus
         inline std::map<ObjectPath, std::shared_ptr<WrapperType>> instances()
         {
             std::map<ObjectPath, std::shared_ptr<WrapperType>> instances;
-            for (const auto& [path, interfacemap] : this->wrappers)
+            for (const auto &[path, interfacemap] : this->wrappers)
             {
-                for (const auto& [name, wrapper] : interfacemap)
+                for (const auto &[name, wrapper] : interfacemap)
                 {
                     if (auto ptr = std::dynamic_pointer_cast<WrapperType>(wrapper))
                     {
@@ -169,12 +169,12 @@ namespace cc::dbus
 
     private:
         void on_signal(
-            const Glib::RefPtr<Gio::DBus::Connection>& connection,
-            const Glib::ustring& sender_name,
-            const Glib::ustring& object_path,
-            const Glib::ustring& interface_name,
-            const Glib::ustring& signal_name,
-            const Glib::VariantContainerBase& parameters);
+            const Glib::RefPtr<Gio::DBus::Connection> &connection,
+            const Glib::ustring &sender_name,
+            const Glib::ustring &object_path,
+            const Glib::ustring &interface_name,
+            const Glib::ustring &signal_name,
+            const Glib::VariantContainerBase &parameters);
 
     private:
         Gio::DBus::BusType bus;

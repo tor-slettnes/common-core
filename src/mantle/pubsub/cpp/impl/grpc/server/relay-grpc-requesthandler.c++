@@ -27,9 +27,9 @@ namespace cc::platform::pubsub::grpc
     }
 
     ::grpc::Status RequestHandler::ServiceCheck(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        ServiceCheckResponse* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        ServiceCheckResponse *response)
     {
         response->set_api_level(APILEVEL_CURRENT);
         response->set_server_name(core::platform::path->exec_name());
@@ -38,12 +38,12 @@ namespace cc::platform::pubsub::grpc
     }
 
     ::grpc::Status RequestHandler::AssignReplayPolicies(
-        ::grpc::ServerContext* context,
-        const platform::pubsub::protobuf::ReplayPolicyMap* request,
-        ::google::protobuf::Empty* reply)
+        ::grpc::ServerContext *context,
+        const platform::pubsub::protobuf::ReplayPolicyMap *request,
+        ::google::protobuf::Empty *reply)
     {
         auto policy_map = cc::protobuf::decoded<ReplayPolicyMap>(*request);
-        for (const auto& [topic, policy] : policy_map)
+        for (const auto &[topic, policy] : policy_map)
         {
             this->relay_control->assign_replay_policy(topic, policy);
         }
@@ -51,9 +51,9 @@ namespace cc::platform::pubsub::grpc
     }
 
     ::grpc::Status RequestHandler::UnassignReplayPolicies(
-        ::grpc::ServerContext* context,
-        const platform::pubsub::protobuf::Topics* request,
-        ::google::protobuf::Empty* reply)
+        ::grpc::ServerContext *context,
+        const platform::pubsub::protobuf::Topics *request,
+        ::google::protobuf::Empty *reply)
     {
         if (request->topics().empty())
         {
@@ -61,7 +61,7 @@ namespace cc::platform::pubsub::grpc
         }
         else
         {
-            for (const Topic& topic : request->topics())
+            for (const Topic &topic : request->topics())
             {
                 this->relay_control->unassign_replay_policy(topic);
             }
@@ -70,9 +70,9 @@ namespace cc::platform::pubsub::grpc
     }
 
     ::grpc::Status RequestHandler::GetReplayPolicies(
-        ::grpc::ServerContext* context,
-        const platform::pubsub::protobuf::Topics* request,
-        platform::pubsub::protobuf::ReplayPolicyMap* reply)
+        ::grpc::ServerContext *context,
+        const platform::pubsub::protobuf::Topics *request,
+        platform::pubsub::protobuf::ReplayPolicyMap *reply)
     {
         if (request->topics().empty())
         {
@@ -82,10 +82,10 @@ namespace cc::platform::pubsub::grpc
         }
         else
         {
-            auto& reply_map = *reply->mutable_map();
-            for (const Topic& topic : request->topics())
+            auto &reply_map = *reply->mutable_map();
+            for (const Topic &topic : request->topics())
             {
-                if (const auto& policy = this->relay_control->get_replay_policy(topic))
+                if (const auto &policy = this->relay_control->get_replay_policy(topic))
                 {
                     cc::protobuf::encode(*policy, &reply_map[topic]);
                 }
@@ -96,9 +96,9 @@ namespace cc::platform::pubsub::grpc
     }
 
     ::grpc::Status RequestHandler::Publisher(
-        ::grpc::ServerContext* context,
-        ::grpc::ServerReader<platform::pubsub::protobuf::Publication>* reader,
-        ::google::protobuf::Empty* reply)
+        ::grpc::ServerContext *context,
+        ::grpc::ServerReader<platform::pubsub::protobuf::Publication> *reader,
+        ::google::protobuf::Empty *reply)
     {
         platform::pubsub::protobuf::Publication publication;
         while (reader->Read(&publication))
@@ -112,9 +112,9 @@ namespace cc::platform::pubsub::grpc
     }
 
     ::grpc::Status RequestHandler::Publish(
-        ::grpc::ServerContext* context,
-        const platform::pubsub::protobuf::Publication* message,
-        ::google::protobuf::Empty* reply)
+        ::grpc::ServerContext *context,
+        const platform::pubsub::protobuf::Publication *message,
+        ::google::protobuf::Empty *reply)
     {
         try
         {
@@ -130,9 +130,9 @@ namespace cc::platform::pubsub::grpc
     }
 
     ::grpc::Status RequestHandler::Subscriber(
-        ::grpc::ServerContext* context,
-        const platform::pubsub::protobuf::Filters* request,
-        ::grpc::ServerWriter<platform::pubsub::protobuf::Publication>* writer)
+        ::grpc::ServerContext *context,
+        const platform::pubsub::protobuf::Filters *request,
+        ::grpc::ServerWriter<platform::pubsub::protobuf::Publication> *writer)
     {
         pubsub::TopicSet topics(
             request->topics().begin(),
@@ -144,9 +144,9 @@ namespace cc::platform::pubsub::grpc
         {
             if (request->replay() != pubsub::protobuf::ReplayControl::REPLAY_OFF)
             {
-                for (const auto& [topic, payloads] : this->relay_control->replay_all())
+                for (const auto &[topic, payloads] : this->relay_control->replay_all())
                 {
-                    for (const core::types::Value& payload : payloads)
+                    for (const core::types::Value &payload : payloads)
                     {
                         queue.enqueue_message(topic, payload);
                     }

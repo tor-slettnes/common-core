@@ -12,13 +12,13 @@ namespace cc::core::logging
     //==========================================================================
     // Scope
 
-    Scope::Scope(const std::string& name, status::Level threshold)
+    Scope::Scope(const std::string &name, status::Level threshold)
         : name(name),
           threshold(threshold)
     {
     }
 
-    Scope::ptr Scope::create(const std::string& name, status::Level threshold)
+    Scope::ptr Scope::create(const std::string &name, status::Level threshold)
     {
         auto [it, inserted] = scopes.try_emplace(name);
         if (inserted)

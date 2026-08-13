@@ -33,28 +33,28 @@ namespace cc::platform::pubsub
 
         ReplayPolicyMap get_replay_policies() const override;
         std::optional<ReplayPolicy> get_replay_policy(
-            const Topic& topic) const override;
+            const Topic &topic) const override;
 
         void clear_replay_policies() override;
 
         void assign_replay_policy(
-            const std::string& topic,
-            const ReplayPolicy& policy) override;
+            const std::string &topic,
+            const ReplayPolicy &policy) override;
 
         void unassign_replay_policy(
-            const Topic& topic) override;
+            const Topic &topic) override;
 
         Snapshot replay_all() override;
         std::optional<Payloads> replay_topic(
-            const Topic& topic) override;
+            const Topic &topic) override;
 
     private:
         std::optional<MappingKey> mapping_key(
-            const std::string& topic,
-            const core::types::Value& payload);
+            const std::string &topic,
+            const core::types::Value &payload);
 
-        void on_message(const std::string& topic,
-                        const core::types::Value& payload);
+        void on_message(const std::string &topic,
+                        const core::types::Value &payload);
 
     private:
         std::string signal_handle;

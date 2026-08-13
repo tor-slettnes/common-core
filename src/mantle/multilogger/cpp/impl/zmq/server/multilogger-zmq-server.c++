@@ -10,8 +10,8 @@
 
 namespace cc::platform::multilogger::zmq
 {
-    Server::Server(const std::shared_ptr<API>& provider,
-                   const std::string& bind_address)
+    Server::Server(const std::shared_ptr<API> &provider,
+                   const std::string &bind_address)
         : Super(bind_address,
                 SERVICE_CHANNEL,
                 {

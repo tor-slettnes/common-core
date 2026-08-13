@@ -30,23 +30,23 @@ namespace cc::core::argparse
 
         void report_status_and_exit(bool success);
         std::optional<std::string> next_arg();
-        std::string get_arg(const std::string& what);
+        std::string get_arg(const std::string &what);
         std::vector<std::string> remaining_args();
         types::TaggedValueList get_tvlist(bool required);
         types::KeyValueMap get_attributes(bool required);
-        void get_flags(FlagMap* map, bool allow_leftovers = false);
+        void get_flags(FlagMap *map, bool allow_leftovers = false);
 
-        void add_command(const std::string& command,
-                         const std::vector<std::string>& args,
-                         const std::string& description,
-                         const Handler& handler);
+        void add_command(const std::string &command,
+                         const std::vector<std::string> &args,
+                         const std::string &description,
+                         const Handler &handler);
 
-        void help_all(std::ostream& out) override;
-        void help_commands(std::ostream& out);
+        void help_all(std::ostream &out) override;
+        void help_commands(std::ostream &out);
 
         Handler command_handler();
         bool handle_command();
-        virtual bool handle_command(const Handler& handler);
+        virtual bool handle_command(const Handler &handler);
 
         virtual void monitor();
         virtual void on_monitor_start() {}
@@ -55,14 +55,14 @@ namespace cc::core::argparse
         virtual void deinitialize() {}
 
         static std::string keywords_legend(
-            const std::vector<std::string>& alternatives);
+            const std::vector<std::string> &alternatives);
 
     protected:
         template <class T>
-        std::optional<T> get_from_map(const core::types::SymbolMap<T>& map)
+        std::optional<T> get_from_map(const core::types::SymbolMap<T> &map)
         {
             std::string arg = this->get_arg(map.joined_symbols());
-            if (const std::optional<T>& value = map.from_string(arg))
+            if (const std::optional<T> &value = map.from_string(arg))
             {
                 return value;
             }

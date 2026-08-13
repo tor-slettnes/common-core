@@ -17,17 +17,17 @@ namespace cc::demo
     /// @class API
 
     API::API(
-        const std::string& identity,
-        const std::string& implementation,
-        const core::dt::TimePoint& birth)
+        const std::string &identity,
+        const std::string &implementation,
+        const core::dt::TimePoint &birth)
         : identity_(identity),
           implementation_(implementation),
           birth_(birth)
     {
     }
 
-    void API::say_hello(const std::string& message,
-                        const core::types::KeyValueMap& data)
+    void API::say_hello(const std::string &message,
+                        const core::types::KeyValueMap &data)
     {
         this->say_hello(Greeting(message,
                                  this->identity(),

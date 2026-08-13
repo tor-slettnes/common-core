@@ -12,7 +12,7 @@
 
 namespace cc::core::platform
 {
-    LinuxSymbolsProvider::LinuxSymbolsProvider(const std::string& name)
+    LinuxSymbolsProvider::LinuxSymbolsProvider(const std::string &name)
         : PosixSymbolsProvider(name)
     {
     }

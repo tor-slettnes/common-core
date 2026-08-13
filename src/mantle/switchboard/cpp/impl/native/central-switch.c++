@@ -13,7 +13,7 @@
 namespace cc::platform::switchboard
 {
 
-    bool CentralSwitch::add_dependency(const DependencyRef& dependency,
+    bool CentralSwitch::add_dependency(const DependencyRef &dependency,
                                        bool allow_update,
                                        bool reevaluate)
     {
@@ -52,7 +52,7 @@ namespace cc::platform::switchboard
         return erased;
     }
 
-    bool CentralSwitch::add_interceptor(const InterceptorRef& interceptor,
+    bool CentralSwitch::add_interceptor(const InterceptorRef &interceptor,
                                         bool immediate)
     {
         auto [it, inserted] = this->spec_ref->interceptors.insert_or_assign(
@@ -84,7 +84,7 @@ namespace cc::platform::switchboard
     }
 
     bool CentralSwitch::remove_interceptor(
-        const InterceptorName& name)
+        const InterceptorName &name)
     {
         if (this->spec_ref->interceptors.erase(name))
         {
@@ -102,21 +102,21 @@ namespace cc::platform::switchboard
     }
 
     void CentralSwitch::set_spec(
-        const Specification& spec)
+        const Specification &spec)
     {
         Switch::set_spec(spec);
         this->notify_spec();
     }
 
     void CentralSwitch::update_spec(
-        const std::optional<bool>& primary,
-        const SwitchAliases& aliases,
+        const std::optional<bool> &primary,
+        const SwitchAliases &aliases,
         bool replace_aliases,
-        const LocalizationMap& localizations,
+        const LocalizationMap &localizations,
         bool replace_localizations,
-        const DependencyMap& dependencies,
+        const DependencyMap &dependencies,
         bool replace_dependencies,
-        const InterceptorMap& interceptors,
+        const InterceptorMap &interceptors,
         bool replace_interceptors,
         bool update_state)
     {
@@ -171,8 +171,8 @@ namespace cc::platform::switchboard
 
     bool CentralSwitch::set_target(
         State target_state,
-        const core::status::Error::ptr& error,
-        const core::types::KeyValueMap& attributes,
+        const core::status::Error::ptr &error,
+        const core::types::KeyValueMap &attributes,
         bool clear_existing,
         InvocationStyle invoke_interceptors,
         CascadeStyle cascade_descendants,
@@ -260,7 +260,7 @@ namespace cc::platform::switchboard
 
         if (inherit)
         {
-            for (const auto& sw : this->get_predecessors())
+            for (const auto &sw : this->get_predecessors())
             {
                 attributes.recursive_merge(sw->get_attributes(inherit));
             }
@@ -269,7 +269,7 @@ namespace cc::platform::switchboard
         return attributes;
     }
 
-    bool CentralSwitch::set_attributes(const core::types::KeyValueMap& attributes,
+    bool CentralSwitch::set_attributes(const core::types::KeyValueMap &attributes,
                                        bool clear_existing)
     {
         if (this->set_attributes_only(attributes, clear_existing))
@@ -291,7 +291,7 @@ namespace cc::platform::switchboard
         ExceptionHandling on_error)
     {
         bool success = true;
-        Status& status = *this->status_ref;
+        Status &status = *this->status_ref;
 
         logf_debug("Switch %r: state=%s, invoke_interceptors=%b, cascade_descendants=%s",
                    this->name(),
@@ -325,14 +325,14 @@ namespace cc::platform::switchboard
 
             if (cascade_descendants == CascadeStyle::ASYNC)
             {
-                for (auto& [sw, thread] : threads)
+                for (auto &[sw, thread] : threads)
                 {
                     thread.detach();
                 }
             }
             else
             {
-                for (auto& [sw, thread] : threads)
+                for (auto &[sw, thread] : threads)
                 {
                     thread.join();
                 }
@@ -370,7 +370,7 @@ namespace cc::platform::switchboard
         std::unordered_set<InterceptorRef> invoked_interceptors;
 
         /// Launch interceptors in parallel
-        for (const auto& [name, ic] : this->interceptors())
+        for (const auto &[name, ic] : this->interceptors())
         {
             if (ic->applicable(state, phase))
             {
@@ -408,7 +408,7 @@ namespace cc::platform::switchboard
 
         /// Wait for interceptors, collect any errors
         std::unordered_map<InterceptorRef, std::exception_ptr> errors;
-        for (auto& [ic, result] : results)
+        for (auto &[ic, result] : results)
         {
             try
             {
@@ -442,7 +442,7 @@ namespace cc::platform::switchboard
     }
 
     bool CentralSwitch::handle_cancel(
-        const std::unordered_set<InterceptorRef>& interceptors,
+        const std::unordered_set<InterceptorRef> &interceptors,
         State state,
         ExceptionHandling eh)
     {
@@ -450,7 +450,7 @@ namespace cc::platform::switchboard
         if (eh == EH_DEFAULT)
         {
             eh_source = "default behavior";
-            for (const InterceptorRef& ic : interceptors)
+            for (const InterceptorRef &ic : interceptors)
             {
                 if (ic->on_cancel() > eh)
                 {
@@ -471,7 +471,7 @@ namespace cc::platform::switchboard
     }
 
     bool CentralSwitch::handle_errors(
-        const std::unordered_map<InterceptorRef, std::exception_ptr>& exceptions,
+        const std::unordered_map<InterceptorRef, std::exception_ptr> &exceptions,
         State state,
         ExceptionHandling eh)
     {
@@ -480,7 +480,7 @@ namespace cc::platform::switchboard
         if (eh == EH_DEFAULT)
         {
             eh_source = "default behavior";
-            for (const auto& [ic, eptr] : exceptions)
+            for (const auto &[ic, eptr] : exceptions)
             {
                 if (!dominating_error || (ic->on_error() > eh))
                 {
@@ -512,7 +512,7 @@ namespace cc::platform::switchboard
         }
     }
 
-    bool CentralSwitch::handle_diversion(const core::status::Error::ptr& error,
+    bool CentralSwitch::handle_diversion(const core::status::Error::ptr &error,
                                          ExceptionHandling eh,
                                          ExceptionHandling eh_default)
     {
@@ -602,7 +602,7 @@ namespace cc::platform::switchboard
     }
 
     bool CentralSwitch::set_attributes_only(
-        const core::types::KeyValueMap& attributes,
+        const core::types::KeyValueMap &attributes,
         bool clear_existing)
     {
         if (StatusRef status = this->status())
@@ -624,14 +624,14 @@ namespace cc::platform::switchboard
     }
 
     void CentralSwitch::import_spec(
-        const core::types::KeyValueMap& declaration,
+        const core::types::KeyValueMap &declaration,
         bool replace_aliases,
         bool replace_localizations,
         bool replace_dependencies,
         bool replace_interceptors)
     {
         std::optional<bool> primary;
-        if (const auto& value = declaration.get(SETTING_SPEC_PRIMARY))
+        if (const auto &value = declaration.get(SETTING_SPEC_PRIMARY))
         {
             primary = value.as_bool();
         }
@@ -645,7 +645,7 @@ namespace cc::platform::switchboard
         SwitchAliases alias_set{aliases.begin(), aliases.end()};
 
         LocalizationMap localizations;
-        for (const auto& [language, decl] :
+        for (const auto &[language, decl] :
              declaration.get(SETTING_SPEC_LOCALIZATIONS).get_kvmap())
         {
             localizations.insert_or_assign(
@@ -654,7 +654,7 @@ namespace cc::platform::switchboard
         }
 
         DependencyMap dependencies;
-        for (const auto& [predecessor, decl] :
+        for (const auto &[predecessor, decl] :
              declaration.get(SETTING_SPEC_DEPENDENCIES).get_kvmap())
         {
             dependencies.insert_or_assign(
@@ -676,7 +676,7 @@ namespace cc::platform::switchboard
     }
 
     Localization CentralSwitch::import_localization(
-        const core::types::KeyValueMap& localization_map) const
+        const core::types::KeyValueMap &localization_map) const
     {
         Localization localization;
         localization.description =
@@ -694,7 +694,7 @@ namespace cc::platform::switchboard
                 .get(SETTING_LOC_DEACTIVATE_TEXT)
                 .as_string();
 
-        for (const auto& [key, value] :
+        for (const auto &[key, value] :
              localization_map.get(SETTING_LOC_STATE_TEXTS).get_kvmap())
         {
             localization.state_texts.emplace(
@@ -705,13 +705,13 @@ namespace cc::platform::switchboard
     }
 
     DependencyRef CentralSwitch::import_dependency(
-        const std::string& predecessor_name,
-        const core::types::KeyValueMap& dep_map) const
+        const std::string &predecessor_name,
+        const core::types::KeyValueMap &dep_map) const
     {
         StateSet trigger_states;
-        if (const auto& state_names = dep_map.get(SETTING_DEP_TRIGGERS).get_valuelist_ptr())
+        if (const auto &state_names = dep_map.get(SETTING_DEP_TRIGGERS).get_valuelist_ptr())
         {
-            for (const core::types::Value& value : *state_names)
+            for (const core::types::Value &value : *state_names)
             {
                 if (auto state = core::str::try_convert_to<State>(value.as_string()))
                 {
@@ -719,7 +719,7 @@ namespace cc::platform::switchboard
                 }
             }
         }
-        else if (const auto& automatic = dep_map.get(SETTING_DEP_AUTOMATIC))
+        else if (const auto &automatic = dep_map.get(SETTING_DEP_AUTOMATIC))
         {
             trigger_states = automatic.as_bool() ? SETTLED_STATES : StateSet();
         }
@@ -729,11 +729,11 @@ namespace cc::platform::switchboard
         }
 
         DependencyPolarity dir = DependencyPolarity::POSITIVE;
-        if (const core::types::Value& polarity = dep_map.get(SETTING_DEP_DIRECTION))
+        if (const core::types::Value &polarity = dep_map.get(SETTING_DEP_DIRECTION))
         {
             dir = core::str::convert_to<DependencyPolarity>(polarity.as_string(), dir);
         }
-        else if (const core::types::Value& inverted = dep_map.get(SETTING_DEP_INVERTED))
+        else if (const core::types::Value &inverted = dep_map.get(SETTING_DEP_INVERTED))
         {
             if (inverted.as_bool())
             {
@@ -753,19 +753,19 @@ namespace cc::platform::switchboard
     }
 
     void CentralSwitch::import_status(
-        const core::types::KeyValueMap& status,
+        const core::types::KeyValueMap &status,
         bool replace_attributes,
         bool set_state,
         InvocationStyle invoke_interceptors)
     {
-        if (const bool* active_update = status.get(SETTING_SWITCH_ACTIVE).get_if<bool>())
+        if (const bool *active_update = status.get(SETTING_SWITCH_ACTIVE).get_if<bool>())
         {
             this->status()->active = *active_update;
             set_state = true;
         }
 
-        const auto& attributes = status.get(SETTING_SWITCH_ATTRIBUTES).get_kvmap();
-        if (const core::types::Value& error_spec = status.get(SETTING_SWITCH_ERROR))
+        const auto &attributes = status.get(SETTING_SWITCH_ATTRIBUTES).get_kvmap();
+        if (const core::types::Value &error_spec = status.get(SETTING_SWITCH_ERROR))
         {
             auto error = std::make_shared<core::status::Error>(error_spec.get_kvmap());
 
@@ -784,7 +784,7 @@ namespace cc::platform::switchboard
                 replace_attributes,    // clear_existing
                 invoke_interceptors);  // invoke_interceptors
         }
-        else if (const bool* active = status.get(SETTING_SWITCH_ACTIVE).get_if<bool>())
+        else if (const bool *active = status.get(SETTING_SWITCH_ACTIVE).get_if<bool>())
         {
             this->set_active(
                 *active,               // target_state
@@ -808,13 +808,13 @@ namespace cc::platform::switchboard
     }
 
     void CentralSwitch::export_spec(
-        core::types::TaggedValueList* tvlist) const
+        core::types::TaggedValueList *tvlist) const
     {
         this->spec()->to_tvlist(tvlist);
     }
 
     void CentralSwitch::export_status(
-        core::types::TaggedValueList* tvlist) const
+        core::types::TaggedValueList *tvlist) const
     {
         tvlist->append(
             SETTING_SWITCH_ACTIVE,

@@ -28,8 +28,8 @@ namespace cc::demo::zmq
         using Super = cc::zmq::Publisher;
 
     protected:
-        Publisher(const std::string& bind_address = "",
-                  const std::string& channel_name = MESSAGE_CHANNEL);
+        Publisher(const std::string &bind_address = "",
+                  const std::string &channel_name = MESSAGE_CHANNEL);
 
     public:
         void initialize() override;

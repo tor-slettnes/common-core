@@ -15,12 +15,12 @@ namespace cc::platform::vfs::local
     //==========================================================================
     // LocalContext
 
-    LocalContext::LocalContext(const std::string& name,
-                               const fs::path& root,
+    LocalContext::LocalContext(const std::string &name,
+                               const fs::path &root,
                                bool writable,
-                               const std::string& preexec,
-                               const std::string& postexec,
-                               const std::string& title,
+                               const std::string &preexec,
+                               const std::string &postexec,
+                               const std::string &title,
                                bool removable)
         : Context(name, root, writable, removable, title),
           preexec(preexec),
@@ -108,7 +108,7 @@ namespace cc::platform::vfs::local
             {
                 fs::remove(this->root);
             }
-            catch (const fs::filesystem_error& e)
+            catch (const fs::filesystem_error &e)
             {
                 logf_info("Could not remove context %r root folder %r: %s",
                           this->name,

@@ -23,8 +23,8 @@ namespace cc::core::json
     {
     }
 
-    TokenParser::TokenPair TokenParser::next_of(const TokenMask& expected,
-                                                const TokenMask& endtokens)
+    TokenParser::TokenPair TokenParser::next_of(const TokenMask &expected,
+                                                const TokenMask &endtokens)
     {
         TokenPair tp = this->next_token();
 
@@ -223,7 +223,7 @@ namespace cc::core::json
         {
             return this->symbol_map.at(this->input->token());
         }
-        catch (const std::out_of_range& e)
+        catch (const std::out_of_range &e)
         {
             return {TI_INVALID, {}};
         }
@@ -292,11 +292,11 @@ namespace cc::core::json
     }
 
     template <class T, class... Args>
-    TokenParser::TokenPair TokenParser::parse_numeric(Args&&... args)
+    TokenParser::TokenPair TokenParser::parse_numeric(Args &&...args)
     {
         static const std::errc ok{};
-        const char* const start = &*this->input->token().begin();
-        const char* const end = &*this->input->token().end();
+        const char *const start = &*this->input->token().begin();
+        const char *const end = &*this->input->token().end();
         T number = 0;
 
         auto [ptr, ec] = std::from_chars(start, end, number, args...);

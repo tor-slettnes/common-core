@@ -20,17 +20,17 @@ namespace cc::platform::upgrade::native
         using Super = PackageHandler;
 
     public:
-        URLPackageHandler(const core::SettingsStore::ptr& settings);
+        URLPackageHandler(const core::SettingsStore::ptr &settings);
 
     public:
         void unpack(
-            const PackageSource& source,
-            const fs::path& staging_folder) override;
+            const PackageSource &source,
+            const fs::path &staging_folder) override;
 
     private:
         void unpack_url(
-            const URL& url,
-            const fs::path& staging_folder) const;
+            const URL &url,
+            const fs::path &staging_folder) const;
 
         static cc::http::HTTPClient::ReceiveFunction piper(
             core::platform::FileDescriptor fd);

@@ -17,7 +17,7 @@ namespace cc::platform::pubsub::grpc
 {
     void run_grpc_service(
         const std::shared_ptr<ControlInterface> relay_control,
-        const std::string& listen_address)
+        const std::string &listen_address)
     {
         log_debug("Creating gRPC server builder");
         cc::grpc::ServerBuilder builder(listen_address);

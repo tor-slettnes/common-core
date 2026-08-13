@@ -80,7 +80,7 @@ namespace cc::core::argparse
         }
     }
 
-    std::string CommandOptions::get_arg(const std::string& what)
+    std::string CommandOptions::get_arg(const std::string &what)
     {
         if (auto arg = this->next_arg())
         {
@@ -127,7 +127,7 @@ namespace cc::core::argparse
         return this->get_tvlist(required).as_kvmap();
     }
 
-    void CommandOptions::get_flags(FlagMap* map, bool allow_leftovers)
+    void CommandOptions::get_flags(FlagMap *map, bool allow_leftovers)
     {
         while (this->current_arg != this->args.end())
         {
@@ -136,7 +136,7 @@ namespace cc::core::argparse
                 map->at(*this->current_arg) = true;
                 this->current_arg++;
             }
-            catch (const std::out_of_range&)
+            catch (const std::out_of_range &)
             {
                 if (allow_leftovers)
                 {
@@ -152,16 +152,16 @@ namespace cc::core::argparse
     }
 
     void CommandOptions::add_command(
-        const std::string& command,
-        const std::vector<std::string>& args,
-        const std::string& description,
-        const Handler& handler)
+        const std::string &command,
+        const std::vector<std::string> &args,
+        const std::string &description,
+        const Handler &handler)
     {
         this->command_descriptions.emplace_back(command, args, description);
         this->handlers.insert_or_assign(command, handler);
     }
 
-    void CommandOptions::help_all(std::ostream& out)
+    void CommandOptions::help_all(std::ostream &out)
     {
         if (this->description.size())
         {
@@ -181,14 +181,14 @@ namespace cc::core::argparse
         }
     }
 
-    void CommandOptions::help_commands(std::ostream& out)
+    void CommandOptions::help_commands(std::ostream &out)
     {
         out << "Commands: " << std::endl;
 
         std::string intro = "  ";
         size_t left_margin = intro.length() + 2;
         bool sep = false;
-        for (const auto& [command, args, description] : this->command_descriptions)
+        for (const auto &[command, args, description] : this->command_descriptions)
         {
             if (sep)
             {
@@ -210,7 +210,7 @@ namespace cc::core::argparse
         {
             return this->handlers.at(this->command);
         }
-        catch (const std::out_of_range&)
+        catch (const std::out_of_range &)
         {
             this->fail(str::format("Unknown command %s", this->command), true);
             return {};
@@ -229,7 +229,7 @@ namespace cc::core::argparse
         }
     }
 
-    bool CommandOptions::handle_command(const Handler& handler)
+    bool CommandOptions::handle_command(const Handler &handler)
     {
         bool success = false;
         this->initialize();
@@ -269,7 +269,7 @@ namespace cc::core::argparse
     }
 
     std::string CommandOptions::keywords_legend(
-        const std::vector<std::string>& alternatives)
+        const std::vector<std::string> &alternatives)
     {
         return "[" + core::str::join(alternatives, "|") + "]";
     }

@@ -9,7 +9,7 @@
 
 namespace cc::core::parsers
 {
-    StringInput::StringInput(const std::string_view& string)
+    StringInput::StringInput(const std::string_view &string)
         : string_(string),
           pos_(0),
           token_pos_(string.size())

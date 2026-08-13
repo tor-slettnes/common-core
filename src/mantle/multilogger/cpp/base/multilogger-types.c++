@@ -10,7 +10,7 @@
 
 namespace cc::platform::multilogger
 {
-    std::ostream& operator<<(std::ostream& stream, const SinkSpec& spec)
+    std::ostream &operator<<(std::ostream &stream, const SinkSpec &spec)
     {
         core::types::TaggedValueList tvlist;
         tvlist.emplace_back("sink_id", spec.sink_id);
@@ -53,7 +53,7 @@ namespace cc::platform::multilogger
         return stream << tvlist;
     }
 
-    std::ostream& operator<<(std::ostream& stream, const ListenerSpec& spec)
+    std::ostream &operator<<(std::ostream &stream, const ListenerSpec &spec)
     {
         core::types::TaggedValueList tvlist;
         tvlist.emplace_back("sink_id", spec.sink_id);

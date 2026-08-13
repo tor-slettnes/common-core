@@ -40,7 +40,7 @@ namespace cc::core::platform
     class Provider
     {
     protected:
-        Provider(const std::string& name,
+        Provider(const std::string &name,
                  ProviderPriority priority = PRIORITY_NORMAL)
             : name_(name),
               priority_(priority)
@@ -70,7 +70,7 @@ namespace cc::core::platform
     class ProviderProxy
     {
     public:
-        ProviderProxy(const std::string& typeName)
+        ProviderProxy(const std::string &typeName)
             : typeName(typeName)
         {
         }
@@ -80,7 +80,7 @@ namespace cc::core::platform
         }
 
         template <class ProviderType, class... Args>
-        inline std::shared_ptr<ProviderType> registerProvider(Args&&... args)
+        inline std::shared_ptr<ProviderType> registerProvider(Args &&...args)
         {
             auto candidate =
                 types::create_shared<ProviderType>(std::forward<Args>(args)...);
@@ -122,7 +122,7 @@ namespace cc::core::platform
             return this->provider;
         }
 
-        inline Domain* get() const
+        inline Domain *get() const
         {
             if (auto ref = this->provider)
             {
@@ -139,12 +139,12 @@ namespace cc::core::platform
             }
         }
 
-        inline Domain& operator*() const
+        inline Domain &operator*() const
         {
             return *this->get();
         }
 
-        inline Domain* operator->() const
+        inline Domain *operator->() const
         {
             return this->get();
         }

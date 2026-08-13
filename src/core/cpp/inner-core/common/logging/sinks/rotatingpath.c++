@@ -22,8 +22,8 @@ namespace cc::core::logging
 {
     constexpr auto COMPRESSION_SUFFIX = ".gz";
 
-    RotatingPath::RotatingPath(const std::string& sink_name,
-                               const fs::path& default_suffix)
+    RotatingPath::RotatingPath(const std::string &sink_name,
+                               const fs::path &default_suffix)
         : sink_name_(sink_name),
           default_suffix_(default_suffix),
           name_template_(DEFAULT_NAME_TEMPLATE),
@@ -56,34 +56,34 @@ namespace cc::core::logging
         this->close_file();
     }
 
-    void RotatingPath::load_rotation(const types::KeyValueMap& settings)
+    void RotatingPath::load_rotation(const types::KeyValueMap &settings)
     {
-        if (const types::Value& log_folder = settings.get(SETTING_LOG_FOLDER))
+        if (const types::Value &log_folder = settings.get(SETTING_LOG_FOLDER))
         {
             this->set_log_folder(log_folder.as_string());
         }
 
-        if (const types::Value& name_template = settings.get(SETTING_NAME_TEMPLATE))
+        if (const types::Value &name_template = settings.get(SETTING_NAME_TEMPLATE))
         {
             this->set_filename_template(name_template.as_string());
         }
 
-        if (const types::Value& use_local_time = settings.get(SETTING_LOCAL_TIME))
+        if (const types::Value &use_local_time = settings.get(SETTING_LOCAL_TIME))
         {
             this->set_use_local_time(use_local_time.as_bool());
         }
 
-        if (const types::Value& compress_after_use = settings.get(SETTING_COMPRESS_AFTER_USE))
+        if (const types::Value &compress_after_use = settings.get(SETTING_COMPRESS_AFTER_USE))
         {
             this->set_compress_after_use(compress_after_use.as_bool());
         }
 
-        if (const auto& rotation = settings.try_convert_to<dt::DateTimeInterval>(SETTING_ROTATION))
+        if (const auto &rotation = settings.try_convert_to<dt::DateTimeInterval>(SETTING_ROTATION))
         {
             this->set_rotation_interval(rotation.value());
         }
 
-        if (const auto& expiration = settings.try_convert_to<dt::DateTimeInterval>(SETTING_EXPIRATION))
+        if (const auto &expiration = settings.try_convert_to<dt::DateTimeInterval>(SETTING_EXPIRATION))
         {
             this->set_expiration_interval(expiration.value());
         }
@@ -109,7 +109,7 @@ namespace cc::core::logging
         return this->name_template_;
     }
 
-    void RotatingPath::set_filename_template(const std::string& name_template)
+    void RotatingPath::set_filename_template(const std::string &name_template)
     {
         this->name_template_ = name_template;
     }
@@ -129,7 +129,7 @@ namespace cc::core::logging
         return this->log_folder_;
     }
 
-    void RotatingPath::set_log_folder(const fs::path& path)
+    void RotatingPath::set_log_folder(const fs::path &path)
     {
         this->log_folder_ = path;
     }
@@ -159,7 +159,7 @@ namespace cc::core::logging
         return this->rotation_interval_;
     }
 
-    void RotatingPath::set_rotation_interval(const dt::DateTimeInterval& interval)
+    void RotatingPath::set_rotation_interval(const dt::DateTimeInterval &interval)
     {
         this->rotation_interval_ = interval;
     }
@@ -169,12 +169,12 @@ namespace cc::core::logging
         return this->expiration_interval_;
     }
 
-    void RotatingPath::set_expiration_interval(const dt::DateTimeInterval& interval)
+    void RotatingPath::set_expiration_interval(const dt::DateTimeInterval &interval)
     {
         this->expiration_interval_ = interval;
     }
 
-    void RotatingPath::open_file(const dt::TimePoint& tp)
+    void RotatingPath::open_file(const dt::TimePoint &tp)
     {
         this->update_current_path(tp);
         auto future = std::async([=] {
@@ -183,13 +183,13 @@ namespace cc::core::logging
         });
     }
 
-    void RotatingPath::rotate(const dt::TimePoint& tp)
+    void RotatingPath::rotate(const dt::TimePoint &tp)
     {
         this->close_file();
         this->open_file(tp);
     }
 
-    void RotatingPath::check_rotation(const dt::TimePoint& tp)
+    void RotatingPath::check_rotation(const dt::TimePoint &tp)
     {
         if (this->rotation_interval())
         {
@@ -210,7 +210,7 @@ namespace cc::core::logging
         return this->current_rotation_;
     }
 
-    void RotatingPath::update_current_path(const dt::TimePoint& starttime,
+    void RotatingPath::update_current_path(const dt::TimePoint &starttime,
                                            bool create_directory)
     {
         this->current_path_ = this->construct_path(starttime);
@@ -222,7 +222,7 @@ namespace cc::core::logging
         }
     }
 
-    fs::path RotatingPath::construct_path(const dt::TimePoint& starttime) const
+    fs::path RotatingPath::construct_path(const dt::TimePoint &starttime) const
     {
         std::string log_name = dt::to_string(
             starttime,                                                    // tp
@@ -237,7 +237,7 @@ namespace cc::core::logging
         return fs::weakly_canonical(this->log_folder() / log_file);
     }
 
-    void RotatingPath::check_expiration(const dt::TimePoint& tp)
+    void RotatingPath::check_expiration(const dt::TimePoint &tp)
     {
         if (this->expiration_interval())
         {
@@ -254,22 +254,22 @@ namespace cc::core::logging
 
             try
             {
-                for (const fs::path& candidate_path : platform::path->locate(
+                for (const fs::path &candidate_path : platform::path->locate(
                          {plain_pattern, compressed_pattern},
                          this->log_folder()))
                 {
                     this->check_expiration(expiration_time, candidate_path);
                 }
             }
-            catch (const fs::filesystem_error& e)
+            catch (const fs::filesystem_error &e)
             {
                 logf_warning("Failed to expire old logs: ", e);
             }
         }
     }
 
-    void RotatingPath::check_expiration(const dt::TimePoint& expiration_time,
-                                        const fs::path& path)
+    void RotatingPath::check_expiration(const dt::TimePoint &expiration_time,
+                                        const fs::path &path)
     {
         if (auto stats = platform::path->try_get_stats(path))
         {
@@ -287,7 +287,7 @@ namespace cc::core::logging
         {
             fs::path pattern = fs::path("*") += this->current_suffix();
 
-            for (const fs::path& candidate_path : platform::path->locate(
+            for (const fs::path &candidate_path : platform::path->locate(
                      {pattern},
                      this->log_folder()))
             {
@@ -300,7 +300,7 @@ namespace cc::core::logging
         }
     }
 
-    void RotatingPath::compress(const fs::path& logfile)
+    void RotatingPath::compress(const fs::path &logfile)
     {
         if ((logfile.extension() != COMPRESSION_SUFFIX) && fs::exists(logfile))
         {

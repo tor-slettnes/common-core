@@ -15,7 +15,7 @@ namespace cc::platform::switchboard::dds
 {
     using namespace std::placeholders;
 
-    Subscriber::Subscriber(const std::string& name, int domain_id)
+    Subscriber::Subscriber(const std::string &name, int domain_id)
         : Super(name, domain_id),
           spec_reader(this->create_reader<CC::Switchboard::Specification>(
               CC::Switchboard::SPEC_TOPIC,  // topic_name
@@ -31,14 +31,14 @@ namespace cc::platform::switchboard::dds
     }
 
     void Subscriber::on_spec_update(core::signal::MappingAction action,
-                                    const CC::Switchboard::Specification& spec)
+                                    const CC::Switchboard::Specification &spec)
     {
         logf_trace("Received spec %s: %s", action, spec);
         signal_dds_spec.emit(action, spec.switch_name(), spec);
     }
 
     void Subscriber::on_status_update(core::signal::MappingAction action,
-                                      const CC::Switchboard::Status& status)
+                                      const CC::Switchboard::Status &status)
     {
         logf_trace("Received status %s: %s", action, status);
         signal_dds_status.emit(action, status.switch_name(), status);

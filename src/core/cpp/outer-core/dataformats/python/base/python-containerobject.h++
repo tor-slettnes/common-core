@@ -27,11 +27,11 @@ namespace cc::python
         /// @return
         ///    Attribute names contained in this instance
         virtual std::vector<std::string> dir() const;
-        virtual ContainerObject getattr(const std::string& name) const;
+        virtual ContainerObject getattr(const std::string &name) const;
 
         virtual Map attributes_as_objects() const;
         virtual core::types::KeyValueMap attributes_as_kvmap() const;
 
-        ContainerObject find_qualified_symbol(const std::string& qualified_name) const;
+        ContainerObject find_qualified_symbol(const std::string &qualified_name) const;
     };
 }  // namespace cc::python

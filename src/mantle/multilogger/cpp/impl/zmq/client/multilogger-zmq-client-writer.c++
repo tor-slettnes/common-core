@@ -11,12 +11,12 @@
 namespace cc::platform::multilogger::zmq
 {
 
-    ClientWriter::ClientWriter(const std::shared_ptr<cc::zmq::Publisher>& publisher)
+    ClientWriter::ClientWriter(const std::shared_ptr<cc::zmq::Publisher> &publisher)
         : Super(publisher)
     {
     }
 
-    void ClientWriter::write(const core::types::Loggable::ptr& loggable)
+    void ClientWriter::write(const core::types::Loggable::ptr &loggable)
     {
         Super::write(
             cc::protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(

@@ -12,5 +12,5 @@ namespace cc::platform::switchboard::grpc
 {
     void run_grpc_service(
         std::shared_ptr<switchboard::Provider> api_provider,
-        const std::string& listen_address = {});
+        const std::string &listen_address = {});
 }  // namespace cc::platform::switchboard::grpc

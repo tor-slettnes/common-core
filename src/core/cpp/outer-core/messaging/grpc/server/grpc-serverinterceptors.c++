@@ -25,20 +25,20 @@ namespace cc::grpc
     //==========================================================================
     // Exception Handling Interceptor
 
-    LoggingInterceptor::LoggingInterceptor(ServerRpcInfo* rpc_info)
+    LoggingInterceptor::LoggingInterceptor(ServerRpcInfo *rpc_info)
         : Interceptor(),
           rpc_info(rpc_info)
     {
     }
 
-    void LoggingInterceptor::Intercept(InterceptorBatchMethods* methods)
+    void LoggingInterceptor::Intercept(InterceptorBatchMethods *methods)
     {
         if (methods->QueryInterceptionHookPoint(
                 InterceptionHookPoints::POST_RECV_MESSAGE))
         {
-            if (void* data = methods->GetRecvMessage())
+            if (void *data = methods->GetRecvMessage())
             {
-                auto* message = static_cast<google::protobuf::Message*>(data);
+                auto *message = static_cast<google::protobuf::Message *>(data);
                 if (this->rpc_info && message)
                 {
                     logf_trace("Received invocation from %s: %s; inputs: %s",
@@ -67,7 +67,7 @@ namespace cc::grpc
     //==========================================================================
     // Exception Handling Interceptor Factory
 
-    Interceptor* LoggingInterceptorFactory::CreateServerInterceptor(ServerRpcInfo* rpc_info)
+    Interceptor *LoggingInterceptorFactory::CreateServerInterceptor(ServerRpcInfo *rpc_info)
     {
         return new LoggingInterceptor(rpc_info);
     }
@@ -75,7 +75,7 @@ namespace cc::grpc
     //==========================================================================
     // Exception Handling Interceptor
 
-    void EHInterceptor::Intercept(InterceptorBatchMethods* methods)
+    void EHInterceptor::Intercept(InterceptorBatchMethods *methods)
     {
         if (methods->QueryInterceptionHookPoint(
                 InterceptionHookPoints::PRE_SEND_STATUS))
@@ -98,7 +98,7 @@ namespace cc::grpc
     //==========================================================================
     // Exception Handling Interceptor Factory
 
-    Interceptor* EHInterceptorFactory::CreateServerInterceptor(ServerRpcInfo* info)
+    Interceptor *EHInterceptorFactory::CreateServerInterceptor(ServerRpcInfo *info)
     {
         return new EHInterceptor();
     }

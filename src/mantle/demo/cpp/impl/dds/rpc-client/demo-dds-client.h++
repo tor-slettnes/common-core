@@ -34,12 +34,12 @@ namespace cc::demo::dds
         using Super = API;
 
     protected:
-        ClientImpl(const std::string& identity, int domain_id);
+        ClientImpl(const std::string &identity, int domain_id);
 
     public:
         void initialize() override;
 
-        void say_hello(const Greeting& greeting) override;
+        void say_hello(const Greeting &greeting) override;
         TimeData get_current_time() override;
         void start_ticking() override;
         void stop_ticking() override;

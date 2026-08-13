@@ -99,7 +99,7 @@ namespace cc::core::platform
         This::ServiceStop();
     }
 
-    VOID WINAPI WindowsServiceProvider::ServiceStart(DWORD argc, LPTSTR* argv)
+    VOID WINAPI WindowsServiceProvider::ServiceStart(DWORD argc, LPTSTR *argv)
     {
         // Register our service control handler with the SCM
         This::service_status_handle = RegisterServiceCtrlHandler(

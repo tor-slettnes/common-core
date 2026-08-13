@@ -104,12 +104,12 @@ namespace cc::core::logging
         ///     not overridden in application settings or on the command line,
         ///     `default_threshold` is used.
 
-        Scope(const std::string& name, status::Level threshold);
+        Scope(const std::string &name, status::Level threshold);
 
         status::Level effective_threshold() const;
         bool is_applicable(status::Level level) const;
 
-        static ptr create(const std::string& name, status::Level threshold = status::Level::NONE);
+        static ptr create(const std::string &name, status::Level threshold = status::Level::NONE);
         static void set_default_threshold(status::Level threshold);
         static void set_universal_threshold(status::Level threshold);
         static void clear_universal_threshold();

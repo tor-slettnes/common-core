@@ -22,9 +22,9 @@ namespace cc::platform::switchboard::dds
         using Super = cc::dds::Service<CC::Switchboard::SwitchboardService>;
 
     public:
-        Service(const ::dds::rpc::Server& server,
+        Service(const ::dds::rpc::Server &server,
                 int domain_id,
-                const std::shared_ptr<Provider>& provider);
+                const std::shared_ptr<Provider> &provider);
 
         void initialize() override;
         void deinitialize() override;

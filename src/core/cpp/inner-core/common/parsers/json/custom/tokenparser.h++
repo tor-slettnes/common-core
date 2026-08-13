@@ -49,8 +49,8 @@ namespace cc::core::json
     public:
         TokenParser(parsers::Input::ptr input);
 
-        TokenPair next_of(const TokenMask& expected,
-                          const TokenMask& endtokens = TI_NONE);
+        TokenPair next_of(const TokenMask &expected,
+                          const TokenMask &endtokens = TI_NONE);
 
     protected:
         TokenPair next_token();
@@ -67,7 +67,7 @@ namespace cc::core::json
 
     private:
         template <class T, class... Args>
-        TokenPair parse_numeric(Args&&... args);
+        TokenPair parse_numeric(Args &&...args);
 
     protected:
         parsers::Input::ptr input;

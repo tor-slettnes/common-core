@@ -12,7 +12,7 @@ namespace cc::platform::vfs::local
     constexpr auto ATTRIBUTE_STORE = ".attributes";
     constexpr auto DIRECTORY_ENTRY = ".";
 
-    AttributeStore::AttributeStore(const fs::path& path,
+    AttributeStore::AttributeStore(const fs::path &path,
                                    fs::file_type type_hint)
         : SettingsStore(),
           filetype(this->file_type(path, type_hint)),
@@ -21,7 +21,7 @@ namespace cc::platform::vfs::local
         this->load(this->path(path));
     }
 
-    fs::file_type AttributeStore::file_type(const fs::path& path,
+    fs::file_type AttributeStore::file_type(const fs::path &path,
                                             fs::file_type hint)
     {
         if (hint == fs::file_type::none)
@@ -30,7 +30,7 @@ namespace cc::platform::vfs::local
             {
                 return fs::status(path).type();
             }
-            catch (const fs::filesystem_error& e)
+            catch (const fs::filesystem_error &e)
             {
                 return fs::file_type::none;
             }
@@ -41,7 +41,7 @@ namespace cc::platform::vfs::local
         }
     }
 
-    fs::path AttributeStore::path(const fs::path& path)
+    fs::path AttributeStore::path(const fs::path &path)
     {
         if (this->filetype == fs::file_type::directory)
         {
@@ -53,7 +53,7 @@ namespace cc::platform::vfs::local
         }
     }
 
-    std::string AttributeStore::key(const fs::path& basename)
+    std::string AttributeStore::key(const fs::path &basename)
     {
         if (!basename.empty())
         {
@@ -69,19 +69,19 @@ namespace cc::platform::vfs::local
         }
     }
 
-    core::types::KeyValueMap AttributeStore::get_attributes(const fs::path& basename)
+    core::types::KeyValueMap AttributeStore::get_attributes(const fs::path &basename)
     {
         return this->get(this->key(basename)).as_kvmap();
     }
 
-    core::types::Value AttributeStore::get_attribute(const fs::path& basename,
-                                                     const std::string& key)
+    core::types::Value AttributeStore::get_attribute(const fs::path &basename,
+                                                     const std::string &key)
     {
         return this->get(this->key(basename)).get(key);
     }
 
-    void AttributeStore::set_attributes(const fs::path& basename,
-                                        const core::types::KeyValueMap& map,
+    void AttributeStore::set_attributes(const fs::path &basename,
+                                        const core::types::KeyValueMap &map,
                                         bool save)
 
     {
@@ -100,14 +100,14 @@ namespace cc::platform::vfs::local
         }
     }
 
-    void AttributeStore::set_attributes(const core::types::KeyValueMap& map,
+    void AttributeStore::set_attributes(const core::types::KeyValueMap &map,
                                         bool save)
 
     {
         this->set_attributes({}, map, save);
     }
 
-    void AttributeStore::clear_attributes(const fs::path& basename, bool save)
+    void AttributeStore::clear_attributes(const fs::path &basename, bool save)
     {
         if (this->erase(this->key(basename)))
         {
@@ -137,7 +137,7 @@ namespace cc::platform::vfs::local
     {
         std::unordered_set<std::string> extraneous_names;
         extraneous_names.reserve(this->size());
-        for (auto& [key, value] : *this)
+        for (auto &[key, value] : *this)
         {
             if (key != DIRECTORY_ENTRY)
             {
@@ -157,7 +157,7 @@ namespace cc::platform::vfs::local
                        extraneous_names);
         }
 
-        for (const fs::path& extraneous_name : extraneous_names)
+        for (const fs::path &extraneous_name : extraneous_names)
         {
             this->erase(extraneous_name);
         }

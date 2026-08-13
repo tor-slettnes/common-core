@@ -31,17 +31,17 @@ namespace cc::platform::netconfig::dbus
         // Settings methods
 
         std::string get_hostname() const override;
-        void set_hostname(const std::string& hostname) override;
+        void set_hostname(const std::string &hostname) override;
 
         //======================================================================
         // Connection methods
 
         ConnectionMap get_connections() const override;
-        void define_connection(const ConnectionData& connection,
+        void define_connection(const ConnectionData &connection,
                                bool activate) override;
-        bool remove_connection(const Key& key) override;
-        void activate_connection(const Key& key) override;
-        void deactivate_connection(const Key& key) override;
+        bool remove_connection(const Key &key) override;
+        void activate_connection(const Key &key) override;
+        void deactivate_connection(const Key &key) override;
 
         //======================================================================
         // ActiveConnection methods
@@ -53,10 +53,10 @@ namespace cc::platform::netconfig::dbus
 
         void request_scan() override;
         AccessPointMap get_aps() const override;
-        void connect_ap(const Key& bssid,
-                        const ConnectionData& connection) override;
-        void connect_ap(const SSID& ssid,
-                        const ConnectionData& connection) override;
+        void connect_ap(const Key &bssid,
+                        const ConnectionData &connection) override;
+        void connect_ap(const SSID &ssid,
+                        const ConnectionData &connection) override;
 
         //======================================================================
         // Device methods

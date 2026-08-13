@@ -14,14 +14,14 @@ namespace cc::dbus
     {
     public:
         PropertiesProxy(
-            ProxyContainer* container,
-            const dbus::ConnectionPtr& connection,
-            const dbus::ServiceName& servicename,
-            const dbus::ObjectPath& objectpath,
-            const dbus::InterfaceName& interfacename);
+            ProxyContainer *container,
+            const dbus::ConnectionPtr &connection,
+            const dbus::ServiceName &servicename,
+            const dbus::ObjectPath &objectpath,
+            const dbus::InterfaceName &interfacename);
 
-        void set_property(const std::string& propertyname,
-                          const Glib::VariantBase& value);
+        void set_property(const std::string &propertyname,
+                          const Glib::VariantBase &value);
 
     protected:
         dbus::InterfaceName real_interface;

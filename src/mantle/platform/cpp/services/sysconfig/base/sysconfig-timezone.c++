@@ -13,14 +13,14 @@ namespace cc::platform::sysconfig
     //======================================================================
     // Time Zone Area/Location types
 
-    bool operator<(const TimeZoneCountry& lhs, const TimeZoneCountry& rhs)
+    bool operator<(const TimeZoneCountry &lhs, const TimeZoneCountry &rhs)
     {
         return (lhs.code < rhs.code) ? true
              : (rhs.code > rhs.code) ? false
                                      : rhs.name < rhs.name;
     }
 
-    std::ostream& operator<<(std::ostream& stream, const TimeZoneCountry& country)
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneCountry &country)
     {
         core::types::TaggedValueList tvlist;
         tvlist.append_if(!country.code.empty(), "code", country.code);
@@ -29,7 +29,7 @@ namespace cc::platform::sysconfig
         return stream;
     }
 
-    std::ostream& operator<<(std::ostream& stream, const TimeZoneLocation& location)
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneLocation &location)
     {
         core::types::TaggedValueList tvlist;
         tvlist.emplace_back("country", core::str::convert_from(location.country));
@@ -38,7 +38,7 @@ namespace cc::platform::sysconfig
         return stream;
     }
 
-    std::ostream& operator<<(std::ostream& stream, const TimeZoneLocationFilter& filter)
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneLocationFilter &filter)
     {
         core::types::TaggedValueList tvlist;
 
@@ -74,7 +74,7 @@ namespace cc::platform::sysconfig
                                  suffix);
     }
 
-    std::ostream& operator<<(std::ostream& stream, const TimeZoneCanonicalSpec& spec)
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneCanonicalSpec &spec)
     {
         core::str::format(stream,
                           "{name=%r, area=%r, locations=%r, "

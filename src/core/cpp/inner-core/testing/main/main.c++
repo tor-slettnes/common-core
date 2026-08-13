@@ -8,7 +8,7 @@
 #include "application/init.h++"
 #include <gtest/gtest.h>
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     cc::core::application::initialize(argc, argv);
     testing::InitGoogleTest(&argc, argv);

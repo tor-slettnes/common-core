@@ -14,21 +14,21 @@ namespace cc::core::status
     {
     }
 
-    Event::Event(const Event& src)
+    Event::Event(const Event &src)
     {
         *this = src;
     }
 
-    Event::Event(Event&& src)
+    Event::Event(Event &&src)
     {
         *this = std::move(src);
     }
 
-    Event::Event(const std::string& text,
+    Event::Event(const std::string &text,
                  Level level,
-                 const std::string& origin,
-                 const dt::TimePoint& timepoint,
-                 const types::KeyValueMap& attributes)
+                 const std::string &origin,
+                 const dt::TimePoint &timepoint,
+                 const types::KeyValueMap &attributes)
         : Super(timepoint, attributes),
           text_(text),
           level_(level),
@@ -36,7 +36,7 @@ namespace cc::core::status
     {
     }
 
-    Event::Event(const types::KeyValueMap& kvmap,
+    Event::Event(const types::KeyValueMap &kvmap,
                  Level default_level)
         : Super(kvmap),
           text_(kvmap.get(FIELD_TEXT).as_string()),
@@ -45,7 +45,7 @@ namespace cc::core::status
     {
     }
 
-    Event& Event::operator=(Event&& other) noexcept
+    Event &Event::operator=(Event &&other) noexcept
     {
         std::swap(this->text_, other.text_);
         std::swap(this->level_, other.level_);
@@ -54,7 +54,7 @@ namespace cc::core::status
         return *this;
     }
 
-    Event& Event::operator=(const Event& other) noexcept
+    Event &Event::operator=(const Event &other) noexcept
     {
         Super::operator=(other);
         this->text_ = other.text();
@@ -63,13 +63,13 @@ namespace cc::core::status
         return *this;
     }
 
-    bool Event::operator==(const Event& other) const noexcept
+    bool Event::operator==(const Event &other) const noexcept
     {
         return Super::operator==(other) &&
                this->equivalent(other);
     }
 
-    bool Event::equivalent(const Event& other) const noexcept
+    bool Event::equivalent(const Event &other) const noexcept
     {
         return (this->text() == other.text()) &&
                (this->level() == other.level()) &&
@@ -114,7 +114,7 @@ namespace cc::core::status
         return This::event_fields();
     }
 
-    types::Value Event::get_field_as_value(const std::string& field_name) const
+    types::Value Event::get_field_as_value(const std::string &field_name) const
     {
         if (field_name == This::FIELD_TEXT)
         {

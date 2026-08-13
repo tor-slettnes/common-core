@@ -16,7 +16,7 @@ namespace cc::core::parsers
     class StreamInput : public Input
     {
     public:
-        StreamInput(std::istream& stream);
+        StreamInput(std::istream &stream);
 
         std::size_t token_position() const override;
         std::string_view token() const override;
@@ -28,7 +28,7 @@ namespace cc::core::parsers
         void append_to_token(char c) override;
 
     private:
-        std::istream& stream_;
+        std::istream &stream_;
         std::string token_;
         std::size_t token_position_;
         std::size_t token_size_;

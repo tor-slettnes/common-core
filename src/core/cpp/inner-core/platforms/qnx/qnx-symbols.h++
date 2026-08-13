@@ -16,7 +16,7 @@ namespace cc::core::platform
         using Super = PosixSymbolsProvider;
 
     public:
-        QNXSymbolsProvider(const std::string& name = "QNXSymbolsProvider");
+        QNXSymbolsProvider(const std::string &name = "QNXSymbolsProvider");
 
         std::string uuid() const noexcept override;
     };

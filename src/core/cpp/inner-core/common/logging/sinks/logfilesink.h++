@@ -25,15 +25,15 @@ namespace cc::core::logging
         using Super = AsyncWrapper<MessageSink>;
 
     protected:
-        LogFileSink(const std::string& sink_id);
+        LogFileSink(const std::string &sink_id);
 
     protected:
-        void load_settings(const types::KeyValueMap& settings) override;
+        void load_settings(const types::KeyValueMap &settings) override;
         void open() override;
         void close() override;
-        void open_file(const dt::TimePoint& tp) override;
+        void open_file(const dt::TimePoint &tp) override;
         void close_file() override;
-        bool handle_message(const Message::ptr& message) override;
+        bool handle_message(const Message::ptr &message) override;
 
     private:
         std::shared_ptr<std::ofstream> stream_;
@@ -45,7 +45,7 @@ namespace cc::core::logging
     inline static SinkFactory file_factory(
         "logfile",
         "Log to a plain log file",
-        [](const SinkID& sink_id) -> Sink::ptr {
+        [](const SinkID &sink_id) -> Sink::ptr {
             return LogFileSink::create_shared(sink_id);
         });
 

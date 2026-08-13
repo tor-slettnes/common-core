@@ -30,16 +30,16 @@ namespace cc::demo::zmq
         using Super = API;
 
     protected:
-        ClientImpl(const std::string& identity,
-                   const std::string& host_address = "",
-                   const std::string& channel_name = SERVICE_CHANNEL,
-                   const std::string& interface_name = DEMO_INTERFACE);
+        ClientImpl(const std::string &identity,
+                   const std::string &host_address = "",
+                   const std::string &channel_name = SERVICE_CHANNEL,
+                   const std::string &interface_name = DEMO_INTERFACE);
 
     public:
         void initialize() override;
         void deinitialize() override;
 
-        void say_hello(const Greeting& greeting) override;
+        void say_hello(const Greeting &greeting) override;
         TimeData get_current_time() override;
         void start_ticking() override;
         void stop_ticking() override;

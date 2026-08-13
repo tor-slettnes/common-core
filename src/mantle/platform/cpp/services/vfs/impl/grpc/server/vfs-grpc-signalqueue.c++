@@ -17,14 +17,14 @@ namespace cc::platform::vfs::grpc
         this->connect<Context::ptr>(
             vfs::protobuf::Signal::kContext,
             vfs::signal_context,
-            [=](Context::ptr ref, vfs::protobuf::Signal* msg) {
+            [=](Context::ptr ref, vfs::protobuf::Signal *msg) {
                 cc::protobuf::encode_shared(ref, msg->mutable_context());
             });
 
         this->connect<Context::ptr>(
             vfs::protobuf::Signal::kContextInUse,
             vfs::signal_context_in_use,
-            [=](Context::ptr ref, vfs::protobuf::Signal* msg) {
+            [=](Context::ptr ref, vfs::protobuf::Signal *msg) {
                 cc::protobuf::encode_shared(ref, msg->mutable_context_in_use());
             });
 

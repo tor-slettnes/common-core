@@ -22,11 +22,11 @@ namespace cc::platform::pubsub
         virtual void deinitialize();
 
     public:
-        void subscribe(const std::string& handle,
-                       const TopicSet& topics,
-                       const MessageHandler& handler);
+        void subscribe(const std::string &handle,
+                       const TopicSet &topics,
+                       const MessageHandler &handler);
 
-        void unsubscribe(const std::string& handle);
+        void unsubscribe(const std::string &handle);
 
     protected:
         virtual void start_reader() {}

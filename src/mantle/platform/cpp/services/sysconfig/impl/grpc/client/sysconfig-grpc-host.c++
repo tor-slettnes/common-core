@@ -13,7 +13,7 @@
 
 namespace cc::platform::sysconfig::grpc
 {
-    HostConfigProvider::HostConfigProvider(const std::shared_ptr<Client>& client)
+    HostConfigProvider::HostConfigProvider(const std::shared_ptr<Client> &client)
         : Super(TYPE_NAME_FULL(This)),
           client(client)
     {
@@ -24,7 +24,7 @@ namespace cc::platform::sysconfig::grpc
         Super::initialize();
         this->client->add_handler(
             platform::sysconfig::protobuf::Signal::kHostInfo,
-            [&](const platform::sysconfig::protobuf::Signal& signal) {
+            [&](const platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_hostinfo.emit(
                     cc::protobuf::decoded<HostInfo>(signal.host_info()));
             });
@@ -37,7 +37,7 @@ namespace cc::platform::sysconfig::grpc
                 &Client::Stub::GetHostInfo));
     }
 
-    void HostConfigProvider::set_host_name(const std::string& hostname)
+    void HostConfigProvider::set_host_name(const std::string &hostname)
     {
         this->client->call_check(
             &Client::Stub::SetHostName,

@@ -14,7 +14,7 @@
 
 namespace cc::platform::sysconfig::grpc
 {
-    void register_providers(const std::string& target_host,
+    void register_providers(const std::string &target_host,
                             bool wait_for_ready,
                             bool start_watching)
     {

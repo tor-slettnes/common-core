@@ -20,13 +20,13 @@ namespace cc::platform::netconfig::dbus
 
     public:
         AccessPoint(
-            cc::dbus::ProxyContainer* container,
-            const cc::dbus::ConnectionPtr& connection,
-            const cc::dbus::ServiceName& servicename,
-            const cc::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer *container,
+            const cc::dbus::ConnectionPtr &connection,
+            const cc::dbus::ServiceName &servicename,
+            const cc::dbus::ObjectPath &objectpath);
 
         static std::shared_ptr<AccessPoint> get_by_ssid(
-            const core::types::Bytes& ssid,
+            const core::types::Bytes &ssid,
             bool required);
 
         std::string identifier() const override;
@@ -36,7 +36,7 @@ namespace cc::platform::netconfig::dbus
 
     private:
         void on_property_lastseen(
-            const Glib::VariantBase& change);
+            const Glib::VariantBase &change);
     };
 
 }  // namespace cc::platform::netconfig::dbus

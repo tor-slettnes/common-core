@@ -12,7 +12,7 @@ namespace cc::platform::vfs
     //==========================================================================
     /// Operational flags for copy(), move(), remove(), create_folder()
 
-    std::ostream& operator<<(std::ostream& stream, const OperationFlags& flags)
+    std::ostream &operator<<(std::ostream &stream, const OperationFlags &flags)
     {
         std::vector<std::string> strings = {};
         if (flags.inside_target)
@@ -62,7 +62,7 @@ namespace cc::platform::vfs
     //==========================================================================
     // VFS Path
 
-    Path::Path(const ContextName& context, const fs::path& relpath)
+    Path::Path(const ContextName &context, const fs::path &relpath)
         : context(context),
           relpath(relpath)
     {
@@ -80,9 +80,9 @@ namespace cc::platform::vfs
         return this->relpath.filename();
     }
 
-    void Path::check_relative(const ContextName& context,
-                              const fs::path& relpath,
-                              const fs::path& abspath)
+    void Path::check_relative(const ContextName &context,
+                              const fs::path &relpath,
+                              const fs::path &abspath)
     {
         if (relpath.is_absolute())
         {
@@ -94,19 +94,19 @@ namespace cc::platform::vfs
         }
     }
 
-    void Path::to_literal_stream(std::ostream& stream) const
+    void Path::to_literal_stream(std::ostream &stream) const
     {
         stream << this->as_tvlist();
     }
 
-    void Path::to_stream(std::ostream& stream) const
+    void Path::to_stream(std::ostream &stream) const
     {
         stream << this->context
                << ":"
                << this->relpath.string();
     }
 
-    void Path::to_tvlist(core::types::TaggedValueList* tvlist) const
+    void Path::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
         tvlist->append("context", this->context);
         tvlist->append("relpath", this->relpath.string());
@@ -117,27 +117,27 @@ namespace cc::platform::vfs
         return this->context.size();
     }
 
-    Path& Path::operator/=(const fs::path& relpath)
+    Path &Path::operator/=(const fs::path &relpath)
     {
         Path::check_relative(this->context, this->relpath / relpath);
         this->relpath /= relpath;
         return *this;
     }
 
-    Path& Path::operator+=(const fs::path& relpath)
+    Path &Path::operator+=(const fs::path &relpath)
     {
         Path::check_relative(this->context, this->relpath / relpath);
         this->relpath += relpath;
         return *this;
     }
 
-    bool Path::operator==(const Path& other) const
+    bool Path::operator==(const Path &other) const
     {
         return (this->context == other.context) &&
                (this->relpath == other.relpath);
     }
 
-    Path operator/(const Path& lhs, const fs::path& rhs)
+    Path operator/(const Path &lhs, const fs::path &rhs)
     {
         Path::check_relative(lhs.context, lhs.relpath / rhs);
         return {lhs.context, lhs.relpath / rhs};
@@ -146,9 +146,9 @@ namespace cc::platform::vfs
 
 namespace std::filesystem
 {
-    cc::core::types::TaggedValueList& operator<<(
-        cc::core::types::TaggedValueList& tvlist,
-        const space_info& volinfo)
+    cc::core::types::TaggedValueList &operator<<(
+        cc::core::types::TaggedValueList &tvlist,
+        const space_info &volinfo)
     {
         return tvlist.extend({
             {"capacity", volinfo.capacity},
@@ -157,7 +157,7 @@ namespace std::filesystem
         });
     }
 
-    std::ostream& operator<<(std::ostream& stream, const space_info& info)
+    std::ostream &operator<<(std::ostream &stream, const space_info &info)
     {
         return stream << cc::core::types::TaggedValueList::create_from(info);
     }

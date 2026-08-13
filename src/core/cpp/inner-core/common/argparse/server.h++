@@ -25,7 +25,7 @@ namespace cc::core::argparse
         void daemonize();
 
     private:
-        std::ofstream openpidfile(const fs::path& path);
+        std::ofstream openpidfile(const fs::path &path);
 
     public:
         bool install_service = false;

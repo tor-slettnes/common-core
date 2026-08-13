@@ -11,8 +11,8 @@
 namespace cc::protobuf
 {
     std::vector<std::string> enum_names(
-        const google::protobuf::EnumDescriptor* desc,
-        const std::optional<std::string>& delimiter)
+        const google::protobuf::EnumDescriptor *desc,
+        const std::optional<std::string> &delimiter)
     {
         std::vector<std::string> symbols;
         symbols.reserve(desc->value_count());
@@ -24,7 +24,7 @@ namespace cc::protobuf
         if (delimiter)
         {
             std::size_t prefix_length = common_prefix_length(desc, *delimiter);
-            for (std::string& symbol : symbols)
+            for (std::string &symbol : symbols)
             {
                 symbol = symbol.substr(prefix_length);
             }
@@ -35,11 +35,11 @@ namespace cc::protobuf
 
     std::string enum_name(
         int enum_value,
-        const google::protobuf::EnumDescriptor* enum_desc,
-        const std::optional<std::string>& delimiter,
-        const std::string& fallback)
+        const google::protobuf::EnumDescriptor *enum_desc,
+        const std::optional<std::string> &delimiter,
+        const std::string &fallback)
     {
-        if (const auto* value = enum_desc->FindValueByNumber(enum_value))
+        if (const auto *value = enum_desc->FindValueByNumber(enum_value))
         {
             std::string name = value->name();
             if (delimiter)
@@ -55,15 +55,15 @@ namespace cc::protobuf
     }
 
     std::optional<int> enum_value(
-        const std::string& name,
-        const google::protobuf::EnumDescriptor* enum_desc,
-        const std::string& delimiter)
+        const std::string &name,
+        const google::protobuf::EnumDescriptor *enum_desc,
+        const std::string &delimiter)
     {
-        if (const auto* vd = enum_desc->FindValueByName(name))
+        if (const auto *vd = enum_desc->FindValueByName(name))
         {
             return vd->number();
         }
-        else if (const auto* vd = enum_desc->FindValueByName(
+        else if (const auto *vd = enum_desc->FindValueByName(
                      common_prefix(enum_desc, delimiter) +
                      name))
         {
@@ -76,19 +76,19 @@ namespace cc::protobuf
     }
 
     std::string common_prefix(
-        const google::protobuf::EnumDescriptor* desc,
-        const std::string& delimiter)
+        const google::protobuf::EnumDescriptor *desc,
+        const std::string &delimiter)
     {
         static std::unordered_map<
             std::string,
-            std::unordered_map<const google::protobuf::EnumDescriptor*, std::string>>
+            std::unordered_map<const google::protobuf::EnumDescriptor *, std::string>>
             cached_prefixes;
 
         try
         {
             return cached_prefixes[delimiter].at(desc);
         }
-        catch (const std::out_of_range&)
+        catch (const std::out_of_range &)
         {
             std::vector<std::string> symbols;
             symbols.reserve(desc->value_count());
@@ -105,8 +105,8 @@ namespace cc::protobuf
     }
 
     std::size_t common_prefix_length(
-        const google::protobuf::EnumDescriptor* desc,
-        const std::string& delimiter)
+        const google::protobuf::EnumDescriptor *desc,
+        const std::string &delimiter)
     {
         return common_prefix(desc, delimiter).size();
     }

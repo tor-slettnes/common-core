@@ -21,15 +21,15 @@ namespace cc::grpc
     class ClientBase : public Base
     {
     protected:
-        ClientBase(const std::string& full_service_name,
-                   const std::string& host,
+        ClientBase(const std::string &full_service_name,
+                   const std::string &host,
                    bool wait_for_ready = false,
-                   const std::shared_ptr<::grpc::ChannelCredentials>& creds =
+                   const std::shared_ptr<::grpc::ChannelCredentials> &creds =
                        ::grpc::InsecureChannelCredentials());
 
     private:
         std::shared_ptr<::grpc::ChannelInterface> create_channel(
-            const std::shared_ptr<::grpc::ChannelCredentials>& creds) const;
+            const std::shared_ptr<::grpc::ChannelCredentials> &creds) const;
 
     public:
         std::string host() const;
@@ -64,7 +64,7 @@ namespace cc::grpc
         ///     server. The call may block for up to this duration.
         /// @return
         ///      `true` if server is available, `false` otherwise.
-        bool wait_for_connected(const core::dt::Duration& timeout) const;
+        bool wait_for_connected(const core::dt::Duration &timeout) const;
 
         /// @brief Wait up to a specified duration for service to become available.
         /// @param[in] deadline
@@ -72,7 +72,7 @@ namespace cc::grpc
         ///     server.  The call may block for up to this duration.
         /// @return
         ///      `true` if server is available, `false` otherwise.
-        bool wait_for_connected(const core::dt::TimePoint& deadline) const;
+        bool wait_for_connected(const core::dt::TimePoint &deadline) const;
 
         /// @brief Check the provided gRPC status code, and throw an appropriate
         ///     exception if appropriate.
@@ -83,8 +83,8 @@ namespace cc::grpc
         /// @throw cc::grpc::ServiceError
         ///     An error response was received from the server.
         ///
-        void check(const ::grpc::Status& status) const;
-        void check(const Status& status) const;
+        void check(const ::grpc::Status &status) const;
+        void check(const Status &status) const;
 
     protected:
         std::string host_;

@@ -13,7 +13,7 @@
 
 namespace cc::platform::netconfig::grpc
 {
-    ClientProvider::ClientProvider(const std::shared_ptr<Client>& client,
+    ClientProvider::ClientProvider(const std::shared_ptr<Client> &client,
                                    bool use_cached)
         : Super("netconfig::ClientProvider"),
           client(client),
@@ -34,8 +34,8 @@ namespace cc::platform::netconfig::grpc
         this->client->add_mapping_handler(
             platform::netconfig::protobuf::Signal::kConnection,
             [](core::signal::MappingAction action,
-               const std::string& key,
-               const platform::netconfig::protobuf::Signal& signal) {
+               const std::string &key,
+               const platform::netconfig::protobuf::Signal &signal) {
                 netconfig::signal_connection.emit(
                     action,
                     key,
@@ -45,8 +45,8 @@ namespace cc::platform::netconfig::grpc
         this->client->add_mapping_handler(
             platform::netconfig::protobuf::Signal::kActiveConnection,
             [](core::signal::MappingAction action,
-               const std::string& key,
-               const platform::netconfig::protobuf::Signal& signal) {
+               const std::string &key,
+               const platform::netconfig::protobuf::Signal &signal) {
                 netconfig::signal_active_connection.emit(
                     action,
                     key,
@@ -56,8 +56,8 @@ namespace cc::platform::netconfig::grpc
         this->client->add_mapping_handler(
             platform::netconfig::protobuf::Signal::kAccesspoint,
             [](core::signal::MappingAction action,
-               const std::string& key,
-               const platform::netconfig::protobuf::Signal& signal) {
+               const std::string &key,
+               const platform::netconfig::protobuf::Signal &signal) {
                 netconfig::signal_accesspoint.emit(
                     action,
                     key,
@@ -67,8 +67,8 @@ namespace cc::platform::netconfig::grpc
         this->client->add_mapping_handler(
             platform::netconfig::protobuf::Signal::kDevice,
             [](core::signal::MappingAction action,
-               const std::string& key,
-               const platform::netconfig::protobuf::Signal& signal) {
+               const std::string &key,
+               const platform::netconfig::protobuf::Signal &signal) {
                 netconfig::signal_device.emit(
                     action,
                     key,
@@ -77,7 +77,7 @@ namespace cc::platform::netconfig::grpc
 
         this->client->add_handler(
             platform::netconfig::protobuf::Signal::kGlobal,
-            [](const platform::netconfig::protobuf::Signal& signal) {
+            [](const platform::netconfig::protobuf::Signal &signal) {
                 netconfig::signal_globaldata.emit(
                     cc::protobuf::decoded_shared<GlobalData>(signal.global()));
             });
@@ -102,7 +102,7 @@ namespace cc::platform::netconfig::grpc
             this->client->call_check(&Client::Stub::GetHostName));
     }
 
-    void ClientProvider::set_hostname(const std::string& hostname)
+    void ClientProvider::set_hostname(const std::string &hostname)
     {
         this->client->call_check(
             &Client::Stub::SetHostName,
@@ -126,7 +126,7 @@ namespace cc::platform::netconfig::grpc
     }
 
     void ClientProvider::define_connection(
-        const ConnectionData& connection,
+        const ConnectionData &connection,
         bool activate)
     {
         platform::netconfig::protobuf::ConnectionRequest request;
@@ -135,7 +135,7 @@ namespace cc::platform::netconfig::grpc
         this->client->call_check(&Client::Stub::DefineConnection, request);
     }
 
-    bool ClientProvider::remove_connection(const Key& key)
+    bool ClientProvider::remove_connection(const Key &key)
     {
         platform::netconfig::protobuf::MappingKey req;
         req.set_key(key);
@@ -144,14 +144,14 @@ namespace cc::platform::netconfig::grpc
                 &Client::Stub::RemoveConnection, req));
     }
 
-    void ClientProvider::activate_connection(const Key& key)
+    void ClientProvider::activate_connection(const Key &key)
     {
         platform::netconfig::protobuf::MappingKey req;
         req.set_key(key);
         this->client->call_check(&Client::Stub::ActivateConnection, req);
     }
 
-    void ClientProvider::deactivate_connection(const Key& key)
+    void ClientProvider::deactivate_connection(const Key &key)
     {
         platform::netconfig::protobuf::MappingKey req;
         req.set_key(key);
@@ -195,8 +195,8 @@ namespace cc::platform::netconfig::grpc
         }
     }
 
-    void ClientProvider::connect_ap(const Key& bssid,
-                                    const ConnectionData& connection)
+    void ClientProvider::connect_ap(const Key &bssid,
+                                    const ConnectionData &connection)
     {
         platform::netconfig::protobuf::WirelessConnectionRequest req;
         req.set_bssid(bssid);
@@ -204,8 +204,8 @@ namespace cc::platform::netconfig::grpc
         this->client->call_check(&Client::Stub::ConnectAccessPoint, req);
     }
 
-    void ClientProvider::connect_ap(const core::types::ByteVector& ssid,
-                                    const ConnectionData& connection)
+    void ClientProvider::connect_ap(const core::types::ByteVector &ssid,
+                                    const ConnectionData &connection)
     {
         platform::netconfig::protobuf::WirelessConnectionRequest req;
         req.set_ssid(ssid.data(), ssid.size());

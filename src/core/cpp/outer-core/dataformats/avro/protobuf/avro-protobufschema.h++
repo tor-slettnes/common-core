@@ -24,8 +24,8 @@ namespace cc::avro
         using This = ProtoBufSchema;
         using Super = RecordSchema;
 
-        using DescriptorSet = std::unordered_set<const google::protobuf::Descriptor*>;
-        using SchemaMap = core::types::ValueMap<const google::protobuf::Descriptor*,
+        using DescriptorSet = std::unordered_set<const google::protobuf::Descriptor *>;
+        using SchemaMap = core::types::ValueMap<const google::protobuf::Descriptor *,
                                                 SchemaWrapper>;
         using NameTranslationMap = core::types::ValueMap<std::string, std::string>;
 
@@ -34,8 +34,8 @@ namespace cc::avro
         //     ProtoBuf message descriptor
 
         ProtoBufSchema(
-            const ContextRef& context,
-            const google::protobuf::Descriptor* descriptor);
+            const ContextRef &context,
+            const google::protobuf::Descriptor *descriptor);
 
     public:
         //--------------------------------------------------------------------------
@@ -51,40 +51,40 @@ namespace cc::avro
         /// instance.  New instances are cached for future reuse.
 
         static SchemaWrapper from_proto(
-            const google::protobuf::Descriptor* descriptor);
+            const google::protobuf::Descriptor *descriptor);
 
     private:
         void add_fields();
 
         core::types::Value field(
-            const google::protobuf::FieldDescriptor* fd) const;
+            const google::protobuf::FieldDescriptor *fd) const;
 
         core::types::Value field_schema(
-            const google::protobuf::FieldDescriptor* fd) const;
+            const google::protobuf::FieldDescriptor *fd) const;
 
         EnumSchema enum_schema(
-            const google::protobuf::EnumDescriptor* ed,
-            const google::protobuf::EnumValueDescriptor* default_value) const;
+            const google::protobuf::EnumDescriptor *ed,
+            const google::protobuf::EnumValueDescriptor *default_value) const;
 
         MapSchema map_schema(
-            const google::protobuf::Descriptor* md) const;
+            const google::protobuf::Descriptor *md) const;
 
         static SchemaWrapper from_descriptor(
-            const ContextRef& context,
-            const google::protobuf::Descriptor* descriptor);
+            const ContextRef &context,
+            const google::protobuf::Descriptor *descriptor);
 
         static std::optional<std::string> field_comment(
-            const google::protobuf::FieldDescriptor* fd);
+            const google::protobuf::FieldDescriptor *fd);
 
     public:
         static std::string schema_name(
-            const google::protobuf::Descriptor* descriptor);
+            const google::protobuf::Descriptor *descriptor);
 
         static std::string translated_namespace(
-            const std::string& protobuf_namespace);
+            const std::string &protobuf_namespace);
 
     private:
-        const google::protobuf::Descriptor* descriptor;
+        const google::protobuf::Descriptor *descriptor;
     };
 
 }  // namespace cc::avro

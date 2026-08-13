@@ -17,8 +17,8 @@ namespace cc::zmq
                                   public MessageWriter
     {
     protected:
-        ProtoBufMessageWriter(const std::shared_ptr<Publisher>& publisher,
-                              const std::optional<core::types::ByteVector>& header = {})
+        ProtoBufMessageWriter(const std::shared_ptr<Publisher> &publisher,
+                              const std::optional<core::types::ByteVector> &header = {})
             : ProtoBufMessageBase<ProtoT>(),
               MessageWriter(publisher,
                             header.value_or(this->default_filter()))
@@ -26,7 +26,7 @@ namespace cc::zmq
         }
 
     public:
-        void write(const ProtoT& message)
+        void write(const ProtoT &message)
         {
             MessageWriter::write(cc::protobuf::to_bytes(message));
         }

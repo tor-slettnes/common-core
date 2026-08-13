@@ -16,7 +16,7 @@
 
 namespace cc::platform::switchboard::dds
 {
-    Proxy::Proxy(int domain_id, const core::dt::Duration& ready_timeout)
+    Proxy::Proxy(int domain_id, const core::dt::Duration &ready_timeout)
         : Provider(TYPE_NAME_FULL(This)),
           ClientWrapper(CC::Switchboard::SERVICE_INTERFACE_ID, domain_id),
           ready_timeout_(ready_timeout),
@@ -68,20 +68,20 @@ namespace cc::platform::switchboard::dds
 
     SwitchMap Proxy::get_switches() const
     {
-        const_cast<Proxy*>(this)->synchronize_switches();
+        const_cast<Proxy *>(this)->synchronize_switches();
         return Provider::get_switches();
     }
 
     SwitchRef Proxy::get_switch(
-        const SwitchName& name,
+        const SwitchName &name,
         bool required) const
     {
-        const_cast<Proxy*>(this)->synchronize_switches();
+        const_cast<Proxy *>(this)->synchronize_switches();
         return Provider::get_switch(name, required);
     }
 
     std::pair<SwitchRef, bool> Proxy::add_switch(
-        const SwitchName& name,
+        const SwitchName &name,
         bool active)
     {
         auto [sw, inserted] = this->find_or_insert<RemoteSwitch>(
@@ -98,7 +98,7 @@ namespace cc::platform::switchboard::dds
     }
 
     bool Proxy::remove_switch(
-        const SwitchName& name,
+        const SwitchName &name,
         bool propagate)
     {
         return this->client()->remove_switch({name, propagate});
@@ -113,7 +113,7 @@ namespace cc::platform::switchboard::dds
     }
 
     uint Proxy::import_switches(
-        const core::types::KeyValueMap& declarations,
+        const core::types::KeyValueMap &declarations,
         bool replace_specifications,
         bool replace_statuses,
         InvocationStyle invoke_interceptors)
@@ -128,7 +128,7 @@ namespace cc::platform::switchboard::dds
     }
 
     core::types::KeyValueMap Proxy::export_switches(
-        const std::optional<SwitchSelection>& selection,
+        const std::optional<SwitchSelection> &selection,
         bool include_specifications,
         bool include_statuses) const
     {
@@ -141,8 +141,8 @@ namespace cc::platform::switchboard::dds
     }
 
     bool Proxy::add_interceptor(
-        const InterceptorRef& interceptor,
-        const SwitchSelection& switch_selection,
+        const InterceptorRef &interceptor,
+        const SwitchSelection &switch_selection,
         bool immediate,
         bool future)
     {
@@ -155,8 +155,8 @@ namespace cc::platform::switchboard::dds
     }
 
     bool Proxy::remove_interceptor(
-        const InterceptorName& name,
-        const std::optional<SwitchSelection>& switch_selection)
+        const InterceptorName &name,
+        const std::optional<SwitchSelection> &switch_selection)
     {
         CC::Switchboard::RemoveInterceptorRequest req;
         req.interceptor_name(name);
@@ -165,14 +165,14 @@ namespace cc::platform::switchboard::dds
     }
 
     bool Proxy::wait_for_service(
-        const core::dt::Duration& timeout) const
+        const core::dt::Duration &timeout) const
     {
         try
         {
             this->client()->wait_for_service(timeout);
             return true;
         }
-        catch (const std::runtime_error&)
+        catch (const std::runtime_error &)
         {
             return false;
         }
@@ -184,7 +184,7 @@ namespace cc::platform::switchboard::dds
         {
             logf_debug("Reading switches from server");
             CC::Switchboard::SwitchSelection request;
-            for (const CC::Switchboard::Switch& data : this->client()->get_switches(request).list())
+            for (const CC::Switchboard::Switch &data : this->client()->get_switches(request).list())
             {
                 this->on_spec_update(
                     core::signal::MAP_ADDITION,
@@ -203,8 +203,8 @@ namespace cc::platform::switchboard::dds
 
     void Proxy::on_spec_update(
         core::signal::MappingAction action,
-        const std::string& switch_name,
-        const CC::Switchboard::Specification& spec)
+        const std::string &switch_name,
+        const CC::Switchboard::Specification &spec)
     {
         logf_trace("Received spec %s: %s", action, spec);
         if (SwitchRef sw = this->sync_switch<RemoteSwitch>(action, switch_name))
@@ -220,8 +220,8 @@ namespace cc::platform::switchboard::dds
 
     void Proxy::on_status_update(
         core::signal::MappingAction action,
-        const std::string& switch_name,
-        const CC::Switchboard::Status& status)
+        const std::string &switch_name,
+        const CC::Switchboard::Status &status)
     {
         logf_trace("Received spec %s: %s", action, status);
         if (SwitchRef sw = this->sync_switch<RemoteSwitch>(action, switch_name))

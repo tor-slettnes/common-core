@@ -36,19 +36,19 @@ namespace cc::demo
     class Greeting : public core::types::Listable
     {
     public:
-        Greeting(const std::string& text = {},
-                 const std::string& identity = {},
-                 const std::string& implementation = {},
-                 const core::dt::TimePoint& birth = {},
-                 const core::types::KeyValueMap& data = {});
+        Greeting(const std::string &text = {},
+                 const std::string &identity = {},
+                 const std::string &implementation = {},
+                 const core::dt::TimePoint &birth = {},
+                 const core::types::KeyValueMap &data = {});
 
     public:
         // Greeting &operator=(const Greeting &other) = default;
-        bool operator==(const Greeting& other) const;
-        bool operator!=(const Greeting& other) const;
+        bool operator==(const Greeting &other) const;
+        bool operator!=(const Greeting &other) const;
 
     protected:
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     public:
         // Message presented by the greeter
@@ -74,17 +74,17 @@ namespace cc::demo
     class TimeData : public core::types::Listable
     {
     public:
-        TimeData(const core::dt::TimePoint& tp = {});
-        TimeData(const core::dt::TimePoint& tp,
-                 const std::tm& localtime,
-                 const std::tm& utctime);
+        TimeData(const core::dt::TimePoint &tp = {});
+        TimeData(const core::dt::TimePoint &tp,
+                 const std::tm &localtime,
+                 const std::tm &utctime);
 
     public:
-        bool operator==(const TimeData& other) const;
-        bool operator!=(const TimeData& other) const;
+        bool operator==(const TimeData &other) const;
+        bool operator!=(const TimeData &other) const;
 
     protected:
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     public:
         core::dt::TimePoint timepoint;

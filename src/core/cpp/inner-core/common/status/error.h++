@@ -37,24 +37,24 @@ namespace cc::core::status
     public:
         Error();
 
-        Error(Error&& src);
+        Error(Error &&src);
 
-        Error(const Error& src);
+        Error(const Error &src);
 
-        Error(const std::string& text,
+        Error(const std::string &text,
               Domain domain,
-              const std::string& origin,
-              const Code& code,
-              const Symbol& symbol,
+              const std::string &origin,
+              const Code &code,
+              const Symbol &symbol,
               Level level = Level::NONE,
-              const dt::TimePoint& timepoint = {},
-              const types::KeyValueMap& attributes = {});
+              const dt::TimePoint &timepoint = {},
+              const types::KeyValueMap &attributes = {});
 
-        Error(const types::KeyValueMap& kvmap);
+        Error(const types::KeyValueMap &kvmap);
 
-        Error& operator=(Error&& other) noexcept;
-        Error& operator=(const Error& other) noexcept;
-        bool equivalent(const Event& other) const noexcept override;
+        Error &operator=(Error &&other) noexcept;
+        Error &operator=(const Error &other) noexcept;
+        bool equivalent(const Event &other) const noexcept override;
 
         /// @brief
         ///     Determine if this Status object is fundamentally equivalent to another.
@@ -71,8 +71,8 @@ namespace cc::core::status
         virtual operator bool() const noexcept;
         virtual bool is_error() const noexcept;
 
-        void to_stream(std::ostream& stream) const override;
-        void to_literal_stream(std::ostream& stream) const override;
+        void to_stream(std::ostream &stream) const override;
+        void to_literal_stream(std::ostream &stream) const override;
 
     protected:
         std::string class_name() const noexcept override;
@@ -80,7 +80,7 @@ namespace cc::core::status
     public:
         static std::vector<std::string> error_fields() noexcept;
         std::vector<std::string> field_names() const noexcept override;
-        types::Value get_field_as_value(const std::string& field_name) const override;
+        types::Value get_field_as_value(const std::string &field_name) const override;
 
     public:
         virtual void throw_if_error() const;

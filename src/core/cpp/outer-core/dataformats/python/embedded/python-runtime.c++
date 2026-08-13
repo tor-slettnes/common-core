@@ -26,19 +26,19 @@ namespace cc::python
         Py_FinalizeEx();
     }
 
-    ContainerObject& Runtime::import(const std::string& module_name)
+    ContainerObject &Runtime::import(const std::string &module_name)
     {
         try
         {
             return this->modules.at(module_name);
         }
-        catch (const std::out_of_range&)
+        catch (const std::out_of_range &)
         {
             if (SimpleObject py_module_name = PyUnicode_DecodeFSDefaultAndSize(
                     module_name.data(),
                     module_name.size()))
             {
-                if (PyObject* py_module = PyImport_Import(py_module_name.borrow()))
+                if (PyObject *py_module = PyImport_Import(py_module_name.borrow()))
                 {
                     auto [it, inserted] = this->modules.try_emplace(module_name, py_module);
                     return it->second;
@@ -50,10 +50,10 @@ namespace cc::python
     }
 
     core::types::Value Runtime::call(
-        const std::optional<std::string>& module_name,
-        const std::string& method_name,
-        const core::types::ValueList& args,
-        const core::types::KeyValueMap& kwargs)
+        const std::optional<std::string> &module_name,
+        const std::string &method_name,
+        const core::types::ValueList &args,
+        const core::types::KeyValueMap &kwargs)
     {
         SimpleObject py_args(SimpleObject::pytuple_from_values(args));
         SimpleObject py_kwargs(SimpleObject::pydict_from_kvmap(kwargs));
@@ -61,10 +61,10 @@ namespace cc::python
     }
 
     ContainerObject Runtime::call(
-        const std::optional<std::string>& module_name,
-        const std::string& method_name,
-        const SimpleObject::Vector& args,
-        const SimpleObject::Map& kwargs)
+        const std::optional<std::string> &module_name,
+        const std::string &method_name,
+        const SimpleObject::Vector &args,
+        const SimpleObject::Map &kwargs)
     {
         SimpleObject py_args(SimpleObject::pytuple_from_objects(args));
         SimpleObject py_kwargs(SimpleObject::pydict_from_objects(kwargs));
@@ -72,17 +72,17 @@ namespace cc::python
     }
 
     ContainerObject Runtime::call(
-        const std::optional<std::string>& module_name,
-        const std::string& method_name,
-        const SimpleObject& args,
-        const SimpleObject& kwargs)
+        const std::optional<std::string> &module_name,
+        const std::string &method_name,
+        const SimpleObject &args,
+        const SimpleObject &kwargs)
     {
-        ContainerObject& container = this->get_container(module_name);
+        ContainerObject &container = this->get_container(module_name);
         if (auto method = container.find_qualified_symbol(method_name))
         {
             if (PyCallable_Check(method.borrow()))
             {
-                if (PyObject* result = PyObject_Call(method.borrow(),
+                if (PyObject *result = PyObject_Call(method.borrow(),
                                                      args.borrow(),
                                                      kwargs.borrow()))
                 {
@@ -111,8 +111,8 @@ namespace cc::python
         }
     }
 
-    ContainerObject& Runtime::get_container(
-        const std::optional<std::string>& module_name)
+    ContainerObject &Runtime::get_container(
+        const std::optional<std::string> &module_name)
     {
         return module_name ? this->import(module_name.value()) : this->builtin;
     }

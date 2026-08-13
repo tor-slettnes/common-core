@@ -12,9 +12,9 @@
 namespace cc::ws
 {
     Endpoint::Endpoint(
-        const std::string& address,
-        const std::string& endpoint_type,
-        const std::string& channel_name)
+        const std::string &address,
+        const std::string &endpoint_type,
+        const std::string &channel_name)
         : messaging::Endpoint("WebSockets", endpoint_type, channel_name)
     {
         this->split_address(address,
@@ -45,10 +45,10 @@ namespace cc::ws
     }
 
     void Endpoint::split_address(
-        const std::string& address,
-        std::string* scheme,
-        std::string* host,
-        uint* port)
+        const std::string &address,
+        std::string *scheme,
+        std::string *host,
+        uint *port)
     {
         static const std::regex rx(
             "(?:(\\w*)://)?"                       // (1) scheme

@@ -35,23 +35,23 @@ namespace cc::core::logging
         using Super = AsyncWrapper<Sink>;
 
     protected:
-        CSVFileSink(const std::string& sink_id);
+        CSVFileSink(const std::string &sink_id);
 
     protected:
-        void load_settings(const types::KeyValueMap& settings) override;
-        void load_csv_settings(const types::KeyValueMap& settings);
+        void load_settings(const types::KeyValueMap &settings) override;
+        void load_csv_settings(const types::KeyValueMap &settings);
 
         void open() override;
         void close() override;
-        void open_file(const dt::TimePoint& tp) override;
+        void open_file(const dt::TimePoint &tp) override;
         void close_file() override;
-        bool handle_item(const types::Loggable::ptr& loggable) override;
+        bool handle_item(const types::Loggable::ptr &loggable) override;
 
         void write_header();
 
-        const std::string& separator() const;
-        void set_separator(const std::string& separator);
-        std::string protect_separator(std::string&& field) const;
+        const std::string &separator() const;
+        void set_separator(const std::string &separator);
+        std::string protect_separator(std::string &&field) const;
 
     private:
         std::string separator_;
@@ -64,7 +64,7 @@ namespace cc::core::logging
     inline static SinkFactory csv_factory(
         "csvfile",
         "Log to a CSV file, capturing specific message fields per column",
-        [](const SinkID& sink_id) -> Sink::ptr {
+        [](const SinkID &sink_id) -> Sink::ptr {
             return CSVFileSink::create_shared(sink_id);
         });
 

@@ -32,39 +32,39 @@ namespace cc::platform::pubsub::grpc
             const std::shared_ptr<ControlInterface> relay_control);
 
         ::grpc::Status ServiceCheck(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
             ServiceCheckResponse *response) override;
 
         ::grpc::Status AssignReplayPolicies(
-            ::grpc::ServerContext* context,
-            const platform::pubsub::protobuf::ReplayPolicyMap* request,
-            ::google::protobuf::Empty* reply) override;
+            ::grpc::ServerContext *context,
+            const platform::pubsub::protobuf::ReplayPolicyMap *request,
+            ::google::protobuf::Empty *reply) override;
 
         ::grpc::Status UnassignReplayPolicies(
-            ::grpc::ServerContext* context,
-            const platform::pubsub::protobuf::Topics* request,
-            ::google::protobuf::Empty* reply) override;
+            ::grpc::ServerContext *context,
+            const platform::pubsub::protobuf::Topics *request,
+            ::google::protobuf::Empty *reply) override;
 
         ::grpc::Status GetReplayPolicies(
-            ::grpc::ServerContext* context,
-            const platform::pubsub::protobuf::Topics* request,
-            platform::pubsub::protobuf::ReplayPolicyMap* reply) override;
+            ::grpc::ServerContext *context,
+            const platform::pubsub::protobuf::Topics *request,
+            platform::pubsub::protobuf::ReplayPolicyMap *reply) override;
 
         ::grpc::Status Publisher(
-            ::grpc::ServerContext* context,
-            ::grpc::ServerReader<platform::pubsub::protobuf::Publication>* reader,
-            ::google::protobuf::Empty* reply) override;
+            ::grpc::ServerContext *context,
+            ::grpc::ServerReader<platform::pubsub::protobuf::Publication> *reader,
+            ::google::protobuf::Empty *reply) override;
 
         ::grpc::Status Publish(
-            ::grpc::ServerContext* context,
-            const platform::pubsub::protobuf::Publication* message,
-            ::google::protobuf::Empty* reply) override;
+            ::grpc::ServerContext *context,
+            const platform::pubsub::protobuf::Publication *message,
+            ::google::protobuf::Empty *reply) override;
 
         ::grpc::Status Subscriber(
-            ::grpc::ServerContext* context,
-            const platform::pubsub::protobuf::Filters* request,
-            MessageWriter* writer) override;
+            ::grpc::ServerContext *context,
+            const platform::pubsub::protobuf::Filters *request,
+            MessageWriter *writer) override;
 
     private:
         std::shared_ptr<ControlInterface> relay_control;

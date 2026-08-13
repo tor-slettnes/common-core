@@ -19,49 +19,49 @@ namespace cc::core::types
     public:
         using MapType::MapType;
 
-        const V& get(const K& key, const V& fallback = {}) const noexcept
+        const V &get(const K &key, const V &fallback = {}) const noexcept
         {
             try
             {
                 return this->at(key);
             }
-            catch (const std::out_of_range&)
+            catch (const std::out_of_range &)
             {
                 return fallback;
             }
         }
 
-        const V* get_ptr(const K& key) const noexcept
+        const V *get_ptr(const K &key) const noexcept
         {
             try
             {
                 return &this->at(key);
             }
-            catch (const std::out_of_range&)
+            catch (const std::out_of_range &)
             {
                 return nullptr;
             }
         }
 
-        V* get_ptr(const K& key) noexcept
+        V *get_ptr(const K &key) noexcept
         {
             try
             {
                 return &this->at(key);
             }
-            catch (const std::out_of_range&)
+            catch (const std::out_of_range &)
             {
                 return nullptr;
             }
         }
 
-        std::optional<V> get_opt(const K& key) const noexcept
+        std::optional<V> get_opt(const K &key) const noexcept
         {
             try
             {
                 return this->at(key);
             }
-            catch (const std::out_of_range&)
+            catch (const std::out_of_range &)
             {
                 return {};
             }
@@ -71,7 +71,7 @@ namespace cc::core::types
         {
             std::vector<K> result;
             result.reserve(this->size());
-            for (const auto& [key, value] : *this)
+            for (const auto &[key, value] : *this)
             {
                 result.push_back(key);
             }
@@ -82,7 +82,7 @@ namespace cc::core::types
         {
             std::vector<V> result;
             result.reserve(this->size());
-            for (const auto& [key, value] : *this)
+            for (const auto &[key, value] : *this)
             {
                 result.push_back(value);
             }

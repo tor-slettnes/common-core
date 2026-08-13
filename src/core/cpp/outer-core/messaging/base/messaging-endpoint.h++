@@ -40,9 +40,9 @@ namespace cc::messaging
         /// @param[in] channel_name
         ///     Name used to identify communications endpoint,
         ///     e.g. look up communication parameters between peers.
-        Endpoint(const std::string& messaging_flavor,
-                 const std::string& endpoint_type,
-                 const std::string& channel_name);
+        Endpoint(const std::string &messaging_flavor,
+                 const std::string &endpoint_type,
+                 const std::string &channel_name);
         virtual ~Endpoint();
 
     public:
@@ -58,14 +58,14 @@ namespace cc::messaging
 
         std::shared_ptr<core::SettingsStore> settings() const;
         core::types::Value setting(
-            const std::string& key,
-            const core::types::Value& fallback = {}) const;
+            const std::string &key,
+            const core::types::Value &fallback = {}) const;
 
         std::optional<fs::path> settings_file(
-            const std::string& flavor) const;
+            const std::string &flavor) const;
 
     protected:
-        void to_stream(std::ostream& stream) const override;
+        void to_stream(std::ostream &stream) const override;
 
     private:
         std::string messaging_flavor_;

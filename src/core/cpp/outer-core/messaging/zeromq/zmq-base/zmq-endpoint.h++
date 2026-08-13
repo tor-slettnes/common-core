@@ -60,51 +60,51 @@ namespace cc::zmq
         };
 
     protected:
-        Endpoint(const std::string& address,
-                 const std::string& endpoint_type,
-                 const std::string& channel_name,
+        Endpoint(const std::string &address,
+                 const std::string &endpoint_type,
+                 const std::string &channel_name,
                  SocketType socket_type,
                  Role role);
 
         ~Endpoint();
 
     public:
-        static Context* context();
+        static Context *context();
         static void terminate_context();
 
         Role role() const;
         std::string address() const;
 
-        Socket* socket() const;
+        Socket *socket() const;
 
         virtual void open_socket();
         virtual void close_socket();
 
-        std::string bind_address(const std::optional<std::string>& provided = {}) const;
-        void bind(const std::optional<std::string>& address = {});
+        std::string bind_address(const std::optional<std::string> &provided = {}) const;
+        void bind(const std::optional<std::string> &address = {});
         void unbind();
 
-        std::string host_address(const std::optional<std::string>& provided = {}) const;
-        void connect(const std::optional<std::string>& address = {},
-                     const std::optional<core::dt::Duration>& timeout = {});
+        std::string host_address(const std::optional<std::string> &provided = {}) const;
+        void connect(const std::optional<std::string> &address = {},
+                     const std::optional<core::dt::Duration> &timeout = {});
         void disconnect();
 
         void initialize() override;
         void deinitialize() override;
 
     protected:
-        static void* check_error(void* ptr);
+        static void *check_error(void *ptr);
         static int check_error(int rc);
         std::string get_last_address() const;
-        void try_or_log(int rc, const std::string& preamble) const;
-        void log_zmq_error(const std::string& action, const Error& e) const;
+        void try_or_log(int rc, const std::string &preamble) const;
+        void log_zmq_error(const std::string &action, const Error &e) const;
 
         void setsockopt(int option, int value);
-        void setsockopt(int option, const void* data, std::size_t data_size);
+        void setsockopt(int option, const void *data, std::size_t data_size);
 
     public:
         void send(
-            const core::types::ByteVector& bytes,
+            const core::types::ByteVector &bytes,
             SendFlags flags = 0) const;
 
         std::shared_ptr<core::types::ByteVector> receive(
@@ -114,7 +114,7 @@ namespace cc::zmq
             RecvFlags flags = 0) const;
 
         std::size_t receive(
-            std::vector<core::types::ByteVector>* parts,
+            std::vector<core::types::ByteVector> *parts,
             RecvFlags flags = 0) const;
 
     protected:
@@ -155,10 +155,10 @@ namespace cc::zmq
         /// * Any attribute(s) that are still missing are populated from
         ///   `defaultScheme`, `defaultHost` or `defaultPort`, respectively.
 
-        std::string realaddress(const std::string& address,
-                                const std::string& schemeOption,
-                                const std::string& hostOption,
-                                const std::string& portOption,
+        std::string realaddress(const std::string &address,
+                                const std::string &schemeOption,
+                                const std::string &hostOption,
+                                const std::string &portOption,
                                 std::string defaultScheme,
                                 std::string defaultHost,
                                 uint defaultPort = 0) const;
@@ -166,19 +166,19 @@ namespace cc::zmq
     private:
         // Split an address of the form `[SCHEME://][HOST][:PORT]` into
         // separate values
-        void splitaddress(const std::string& address,
-                          std::string* scheme,
-                          std::string* host,
-                          uint* port) const;
+        void splitaddress(const std::string &address,
+                          std::string *scheme,
+                          std::string *host,
+                          uint *port) const;
 
         // Join host and port into a string of the form "host:port"
-        std::string joinaddress(const std::string& scheme,
-                                const std::string& name,
+        std::string joinaddress(const std::string &scheme,
+                                const std::string &name,
                                 uint port) const;
 
     private:
-        static Context* context_;
-        Socket* socket_;
+        static Context *context_;
+        Socket *socket_;
         SocketType socket_type_;
         std::mutex socket_mtx_;
         Role role_;

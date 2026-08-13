@@ -21,8 +21,8 @@ namespace cc::platform::pubsub::grpc
                    public core::types::enable_create_shared<Reader>
     {
     protected:
-        Reader(const std::unique_ptr<platform::pubsub::grpc::Relay::Stub>& stub,
-               const platform::pubsub::protobuf::Filters& filters);
+        Reader(const std::unique_ptr<platform::pubsub::grpc::Relay::Stub> &stub,
+               const platform::pubsub::protobuf::Filters &filters);
 
     public:
         ~Reader();

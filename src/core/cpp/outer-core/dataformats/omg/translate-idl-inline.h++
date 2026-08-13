@@ -26,13 +26,13 @@ namespace cc::idl
     // Template to support encode()/decode() semantics for identical types
 
     template <class SimpleType>
-    inline void encode(const SimpleType& native, SimpleType* idl)
+    inline void encode(const SimpleType &native, SimpleType *idl)
     {
         *idl = native;
     }
 
     template <class SimpleType>
-    inline void decode(const SimpleType& idl, SimpleType* native)
+    inline void decode(const SimpleType &idl, SimpleType *native)
     {
         *native = idl;
     }
@@ -41,7 +41,7 @@ namespace cc::idl
     // Template to return converted value
 
     template <class IdlType, class... Args>
-    inline IdlType encoded(Args&&... args)
+    inline IdlType encoded(Args &&...args)
     {
         IdlType obj;
         encode(args..., &obj);
@@ -49,7 +49,7 @@ namespace cc::idl
     }
 
     template <class NativeType, class... Args>
-    inline NativeType decoded(Args&&... args) noexcept
+    inline NativeType decoded(Args &&...args) noexcept
     {
         NativeType value;
         decode(args..., &value);
@@ -60,7 +60,7 @@ namespace cc::idl
     // Encode/decode wrapper for std::shared_ptr<> references
 
     template <class IdlType, class NativeType>
-    void encode_shared(std::shared_ptr<NativeType> ref, IdlType* obj)
+    void encode_shared(std::shared_ptr<NativeType> ref, IdlType *obj)
     {
         if (ref)
         {
@@ -69,7 +69,7 @@ namespace cc::idl
     }
 
     template <class IdlType, class NativeType>
-    IdlType encoded_shared(const std::shared_ptr<NativeType>& ref)
+    IdlType encoded_shared(const std::shared_ptr<NativeType> &ref)
     {
         IdlType obj;
         if (ref)
@@ -80,7 +80,7 @@ namespace cc::idl
     }
 
     template <class NativeType, class IdlType>
-    void decode_shared(const IdlType& obj, std::shared_ptr<NativeType>* ref)
+    void decode_shared(const IdlType &obj, std::shared_ptr<NativeType> *ref)
     {
         if (!*ref)
         {
@@ -90,7 +90,7 @@ namespace cc::idl
     }
 
     template <class NativeType, class... Args>
-    std::shared_ptr<NativeType> decoded_shared(Args&&... args)
+    std::shared_ptr<NativeType> decoded_shared(Args &&...args)
     {
         auto ref = std::make_shared<NativeType>();
         decode(args..., ref.get());
@@ -101,8 +101,8 @@ namespace cc::idl
     // Encode/decode witin optional containers
 
     template <class DDSType, class NativeType>
-    void encode_optional(const std::optional<NativeType>& native,
-                         rti::core::optional<DDSType>* idl)
+    void encode_optional(const std::optional<NativeType> &native,
+                         rti::core::optional<DDSType> *idl)
     {
         if (native.has_value())
         {
@@ -112,8 +112,8 @@ namespace cc::idl
     }
 
     template <class NativeType, class DDSType>
-    void decode_optional(const rti::core::optional<DDSType>& idl,
-                         std::optional<NativeType>* native)
+    void decode_optional(const rti::core::optional<DDSType> &idl,
+                         std::optional<NativeType> *native)
     {
         if (idl.has_value())
         {
@@ -126,7 +126,7 @@ namespace cc::idl
     // Encode/decode witin optional containers
 
     template <class DDSType, class NativeType>
-    rti::core::optional<DDSType> encoded_optional(const std::optional<NativeType>& native)
+    rti::core::optional<DDSType> encoded_optional(const std::optional<NativeType> &native)
     {
         rti::core::optional<DDSType> idl;
         encode_optional<DDSType, NativeType>(native, &idl);
@@ -134,7 +134,7 @@ namespace cc::idl
     }
 
     template <class NativeType, class DDSType>
-    std::optional<NativeType> decoded_optional(const rti::core::optional<DDSType>& idl)
+    std::optional<NativeType> decoded_optional(const rti::core::optional<DDSType> &idl)
     {
         std::optional<NativeType> native;
         decode_optional<NativeType, DDSType>(idl, &native);
@@ -145,13 +145,13 @@ namespace cc::idl
     // Encode/decode optional built-in types
 
     template <class T>
-    rti::core::optional<T> assign_optional(const std::optional<T>& native)
+    rti::core::optional<T> assign_optional(const std::optional<T> &native)
     {
         return native.value_or({});
     }
 
     template <class T>
-    std::optional<T> assign_optional(const rti::core::optional<T>& rti)
+    std::optional<T> assign_optional(const rti::core::optional<T> &rti)
     {
         if (rti.has_value())
         {

@@ -11,13 +11,13 @@
 
 namespace cc::core::logging
 {
-    LogFileSink::LogFileSink(const std::string& sink_id)
+    LogFileSink::LogFileSink(const std::string &sink_id)
         : Super(sink_id),
           RotatingPath(sink_id, ".log")
     {
     }
 
-    void LogFileSink::load_settings(const types::KeyValueMap& settings)
+    void LogFileSink::load_settings(const types::KeyValueMap &settings)
     {
         Super::load_settings(settings);
         this->load_message_settings(settings);
@@ -37,7 +37,7 @@ namespace cc::core::logging
         this->close_file();
     }
 
-    void LogFileSink::open_file(const dt::TimePoint& tp)
+    void LogFileSink::open_file(const dt::TimePoint &tp)
     {
         RotatingPath::open_file(tp);
         this->stream_ = std::make_shared<std::ofstream>(this->current_path(), std::ios::ate);
@@ -54,12 +54,12 @@ namespace cc::core::logging
         RotatingPath::close_file();
     }
 
-    bool LogFileSink::handle_message(const Message::ptr& message)
+    bool LogFileSink::handle_message(const Message::ptr &message)
     {
         if (this->stream_ && this->stream_->good())
         {
             this->check_rotation(message->timepoint());
-            auto& stream = *this->stream_;
+            auto &stream = *this->stream_;
             this->send_preamble(stream, message);
             stream << message->text() << std::endl;
             return true;

@@ -46,7 +46,7 @@ namespace cc::platform::netconfig
     {
         std::string hostname;
 
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     struct AddressData : public core::types::Listable
@@ -54,8 +54,8 @@ namespace cc::platform::netconfig
         IPAddress address;
         uint prefixlength;
 
-        void to_stream(std::ostream& stream) const override;
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     using AddressVector = std::vector<AddressData>;
@@ -71,7 +71,7 @@ namespace cc::platform::netconfig
         std::vector<Domain> searches;
 
         void clear();
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     //==========================================================================
@@ -80,7 +80,7 @@ namespace cc::platform::netconfig
     struct WiredConnectionData : public core::types::Listable
     {
         bool auto_negotiate;
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     //==========================================================================
@@ -159,14 +159,14 @@ namespace cc::platform::netconfig
         uint key_idx = 0;
         NMWepKeyType key_type = NM_WEP_KEY_TYPE_KEY;
 
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     struct WPA_Data : public core::types::Listable
     {
         std::string psk;
 
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     struct EAP_Data : public core::types::Listable
@@ -186,7 +186,7 @@ namespace cc::platform::netconfig
         std::filesystem::path pac_file;
         FAST_Provisioning fast_provisioning = Provisioning_NONE;
 
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     enum AuthenticationType
@@ -223,10 +223,10 @@ namespace cc::platform::netconfig
 
         KeyManagement key_mgmt_type() const;
         AuthenticationType auth_type() const;
-        WEP_Data* auth_wep();
-        WPA_Data* auth_wpa();
-        EAP_Data* auth_eap();
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        WEP_Data *auth_wep();
+        WPA_Data *auth_wpa();
+        EAP_Data *auth_eap();
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     //==========================================================================
@@ -257,10 +257,10 @@ namespace cc::platform::netconfig
 
         std::string key() const override;
         ConnectionType type() const;
-        WiredConnectionData* wired_data();
-        WirelessConnectionData* wifi_data();
+        WiredConnectionData *wired_data();
+        WirelessConnectionData *wifi_data();
         bool is_valid() const;
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     using ConnectionMap = core::types::ValueMap<Key, ConnectionData::ptr>;
@@ -285,7 +285,7 @@ namespace cc::platform::netconfig
         bool vpn = false;
 
         std::string key() const override;
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
         bool is_connected() const;
         bool is_busy() const;
         bool has_gateway() const;
@@ -320,7 +320,7 @@ namespace cc::platform::netconfig
         AuthenticationType auth_type() const;
         bool auth_required() const;
         WirelessBandSelection band() const;
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     using AccessPointMap = core::types::ValueMap<Key, AccessPointData::ptr>;
@@ -333,7 +333,7 @@ namespace cc::platform::netconfig
     {
         uint speed = 0;
 
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     struct WirelessDeviceData : public core::types::Listable
@@ -343,7 +343,7 @@ namespace cc::platform::netconfig
         Key active_accesspoint;
         core::dt::TimePoint lastScan;
 
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     using DeviceSpecificData =
@@ -369,10 +369,10 @@ namespace cc::platform::netconfig
         DeviceSpecificData specific_data;
 
         std::string key() const override;
-        const WiredDeviceData* wired_data() const;
-        const WirelessDeviceData* wifi_data() const;
+        const WiredDeviceData *wired_data() const;
+        const WirelessDeviceData *wifi_data() const;
         bool is_managed() const;
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     using DeviceMap = core::types::ValueMap<Key, DeviceData::ptr>;
@@ -396,26 +396,26 @@ namespace cc::platform::netconfig
         bool wireless_allowed = true;
         WirelessBandSelection wireless_band_selection = BAND_ANY;
 
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     /// Input stream support for enumerated types and variants
-    std::istream& operator>>(std::istream& stream, WirelessBandSelection& band);
+    std::istream &operator>>(std::istream &stream, WirelessBandSelection &band);
 
     /// Output stream support for enumerated types and variants
-    std::ostream& operator<<(std::ostream& stream, WirelessBandSelection band);
-    std::ostream& operator<<(std::ostream& stream, IPConfigMethod method);
-    std::ostream& operator<<(std::ostream& stream, KeyManagement key_mgmt);
-    std::ostream& operator<<(std::ostream& stream, AuthenticationProtocol auth_proto);
-    std::ostream& operator<<(std::ostream& stream, AuthenticationAlgorithm auth_alg);
-    std::ostream& operator<<(std::ostream& stream, EAP_Type eap_type);
-    std::ostream& operator<<(std::ostream& stream, EAP_Phase2 eap_phase2);
-    std::ostream& operator<<(std::ostream& stream, FAST_Provisioning provisioning);
-    std::ostream& operator<<(std::ostream& stream, AuthenticationType auth_type);
-    std::ostream& operator<<(std::ostream& stream, AuthenticationData auth_data);
-    std::ostream& operator<<(std::ostream& stream, ConnectionType conn_type);
-    std::ostream& operator<<(std::ostream& stream, ConnectionSpecificData conn_data);
-    std::ostream& operator<<(std::ostream& stream, DeviceSpecificData dev_data);
+    std::ostream &operator<<(std::ostream &stream, WirelessBandSelection band);
+    std::ostream &operator<<(std::ostream &stream, IPConfigMethod method);
+    std::ostream &operator<<(std::ostream &stream, KeyManagement key_mgmt);
+    std::ostream &operator<<(std::ostream &stream, AuthenticationProtocol auth_proto);
+    std::ostream &operator<<(std::ostream &stream, AuthenticationAlgorithm auth_alg);
+    std::ostream &operator<<(std::ostream &stream, EAP_Type eap_type);
+    std::ostream &operator<<(std::ostream &stream, EAP_Phase2 eap_phase2);
+    std::ostream &operator<<(std::ostream &stream, FAST_Provisioning provisioning);
+    std::ostream &operator<<(std::ostream &stream, AuthenticationType auth_type);
+    std::ostream &operator<<(std::ostream &stream, AuthenticationData auth_data);
+    std::ostream &operator<<(std::ostream &stream, ConnectionType conn_type);
+    std::ostream &operator<<(std::ostream &stream, ConnectionSpecificData conn_data);
+    std::ostream &operator<<(std::ostream &stream, DeviceSpecificData dev_data);
 
     /// Lookup maps to from enumerated values to strings
     extern const core::types::SymbolMap<NMState> state_map;
@@ -440,12 +440,12 @@ namespace cc::platform::netconfig
 
 }  // namespace cc::platform::netconfig
 
-std::ostream& operator<<(std::ostream& stream, NMState state);
-std::ostream& operator<<(std::ostream& stream, NMWepKeyType key_type);
-std::ostream& operator<<(std::ostream& stream, NMDeviceType dev_type);
-std::ostream& operator<<(std::ostream& stream, NMDeviceState dev_state);
-std::ostream& operator<<(std::ostream& stream, NMDeviceStateReason dev_state_reasy);
-std::ostream& operator<<(std::ostream& stream, NM80211Mode mode);
-std::ostream& operator<<(std::ostream& stream, NMActiveConnectionState state);
-std::ostream& operator<<(std::ostream& stream, NMActiveConnectionStateReason reason);
-std::ostream& operator<<(std::ostream& stream, NMConnectivityState state);
+std::ostream &operator<<(std::ostream &stream, NMState state);
+std::ostream &operator<<(std::ostream &stream, NMWepKeyType key_type);
+std::ostream &operator<<(std::ostream &stream, NMDeviceType dev_type);
+std::ostream &operator<<(std::ostream &stream, NMDeviceState dev_state);
+std::ostream &operator<<(std::ostream &stream, NMDeviceStateReason dev_state_reasy);
+std::ostream &operator<<(std::ostream &stream, NM80211Mode mode);
+std::ostream &operator<<(std::ostream &stream, NMActiveConnectionState state);
+std::ostream &operator<<(std::ostream &stream, NMActiveConnectionStateReason reason);
+std::ostream &operator<<(std::ostream &stream, NMConnectivityState state);

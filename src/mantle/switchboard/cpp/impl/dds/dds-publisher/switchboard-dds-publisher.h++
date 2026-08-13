@@ -30,7 +30,7 @@ namespace cc::platform::switchboard::dds
         using Super = cc::dds::Publisher;
 
     protected:
-        Publisher(const std::string& name, int domain_id);
+        Publisher(const std::string &name, int domain_id);
 
     public:
         void initialize() override;
@@ -38,12 +38,12 @@ namespace cc::platform::switchboard::dds
 
     private:
         void on_spec_update(core::signal::MappingAction action,
-                            const SwitchName& name,
-                            const Specification& spec);
+                            const SwitchName &name,
+                            const Specification &spec);
 
         void on_status_update(core::signal::MappingAction action,
-                              const SwitchName& name,
-                              const Status& status);
+                              const SwitchName &name,
+                              const Status &status);
 
     private:
         DataWriterPtr<CC::Switchboard::Specification> spec_writer;

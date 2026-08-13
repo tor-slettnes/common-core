@@ -24,9 +24,9 @@ namespace cc::platform::switchboard::grpc
         friend class RemoteSwitch;
 
     protected:
-        Proxy(const std::string& host,
+        Proxy(const std::string &host,
               bool wait_for_ready = false,
-              const core::dt::Duration& ready_timeout = std::chrono::seconds(10));
+              const core::dt::Duration &ready_timeout = std::chrono::seconds(10));
 
     public:
         void initialize() override;
@@ -40,49 +40,49 @@ namespace cc::platform::switchboard::grpc
         //     bool required) const override;
 
         std::pair<SwitchRef, bool> add_switch(
-            const SwitchName& switch_name,
+            const SwitchName &switch_name,
             bool active = false) override;
 
         bool remove_switch(
-            const SwitchName& switch_name,
+            const SwitchName &switch_name,
             bool propagate = true) override;
 
         bool clear_switches(
             bool reload = false) override;
 
         uint import_switches(
-            const core::types::KeyValueMap& declarations,
+            const core::types::KeyValueMap &declarations,
             bool replace_specifications,
             bool replace_statuses,
             InvocationStyle invoke_interceptors) override;
 
         core::types::KeyValueMap export_switches(
-            const std::optional<SwitchSelection>& selection,
+            const std::optional<SwitchSelection> &selection,
             bool include_specifications,
             bool include_statuses) const override;
 
         bool add_interceptor(
-            const InterceptorRef& interceptor,
-            const SwitchSelection& switch_selection,
+            const InterceptorRef &interceptor,
+            const SwitchSelection &switch_selection,
             bool immediate = false,
             bool future = true) override;
 
         bool remove_interceptor(
-            const InterceptorName& name,
-            const std::optional<SwitchSelection>& switch_selection = {}) override;
+            const InterceptorName &name,
+            const std::optional<SwitchSelection> &switch_selection = {}) override;
 
     private:
         void synchronize_switches();
 
         void on_spec_update(
             core::signal::MappingAction action,
-            const std::string& switch_name,
-            const cc::platform::switchboard::protobuf::Signal& signal);
+            const std::string &switch_name,
+            const cc::platform::switchboard::protobuf::Signal &signal);
 
         void on_status_update(
             core::signal::MappingAction action,
-            const std::string& switch_name,
-            const cc::platform::switchboard::protobuf::Signal& signal);
+            const std::string &switch_name,
+            const cc::platform::switchboard::protobuf::Signal &signal);
 
     protected:
         core::dt::Duration ready_timeout;

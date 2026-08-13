@@ -26,152 +26,152 @@ namespace cc::http
     class HTTPClient
     {
         using This = HTTPClient;
-        using HandleMap = std::unordered_map<std::thread::id, CURL*>;
+        using HandleMap = std::unordered_map<std::thread::id, CURL *>;
 
     public:
-        using ReceiveFunction = std::function<void(const char*, std::size_t)>;
-        using SendFunction = std::function<std::size_t(char*, std::size_t)>;
+        using ReceiveFunction = std::function<void(const char *, std::size_t)>;
+        using SendFunction = std::function<std::size_t(char *, std::size_t)>;
 
     public:
-        HTTPClient(const URL& base_url = {},
+        HTTPClient(const URL &base_url = {},
                    bool verify_cert = true);
         virtual ~HTTPClient();
 
     public:
         virtual std::string base_url() const;
-        virtual std::string url(const std::string& rel) const;
+        virtual std::string url(const std::string &rel) const;
 
         //======================================================================
         // get()
 
-        std::stringstream get(const std::string& location) const;
+        std::stringstream get(const std::string &location) const;
 
-        std::stringstream get(const std::string& location,
-                              const std::string& expected_content_type,
+        std::stringstream get(const std::string &location,
+                              const std::string &expected_content_type,
                               bool fail_on_error = true,
-                              ResponseCode* response_code = nullptr) const;
+                              ResponseCode *response_code = nullptr) const;
 
-        bool get(const std::string& location,
-                 std::string* content_type,
-                 std::ostream* header_stream,
-                 std::ostream* content_stream,
+        bool get(const std::string &location,
+                 std::string *content_type,
+                 std::ostream *header_stream,
+                 std::ostream *content_stream,
                  bool fail_on_error = false,
-                 ResponseCode* response_code = nullptr) const;
+                 ResponseCode *response_code = nullptr) const;
 
-        bool get(const std::string& location,
-                 std::string* content_type,
-                 const ReceiveFunction& header_receiver,
-                 const ReceiveFunction& content_receiver,
+        bool get(const std::string &location,
+                 std::string *content_type,
+                 const ReceiveFunction &header_receiver,
+                 const ReceiveFunction &content_receiver,
                  bool fail_on_error = false,
-                 ResponseCode* response_code = nullptr) const;
+                 ResponseCode *response_code = nullptr) const;
 
         //======================================================================
         // put()
 
-        std::stringstream put(const std::string& location,
-                              const std::string& content_type,
-                              std::istream& upload_data,
-                              const std::optional<std::size_t>& upload_size,
-                              const std::string& expected_content_type,
+        std::stringstream put(const std::string &location,
+                              const std::string &content_type,
+                              std::istream &upload_data,
+                              const std::optional<std::size_t> &upload_size,
+                              const std::string &expected_content_type,
                               bool fail_on_error = true,
-                              ResponseCode* response_code = nullptr) const;
+                              ResponseCode *response_code = nullptr) const;
 
-        bool put(const std::string& location,
-                 const std::string& content_type,
-                 std::istream& upload_stream,
-                 const std::optional<std::size_t>& upload_size,
-                 std::string* received_content_type,
-                 std::ostream* received_header_stream,
-                 std::ostream* received_content_stream,
+        bool put(const std::string &location,
+                 const std::string &content_type,
+                 std::istream &upload_stream,
+                 const std::optional<std::size_t> &upload_size,
+                 std::string *received_content_type,
+                 std::ostream *received_header_stream,
+                 std::ostream *received_content_stream,
                  bool fail_on_error = false,
-                 ResponseCode* response_code = nullptr) const;
+                 ResponseCode *response_code = nullptr) const;
 
-        bool put(const std::string& location,
-                 const std::string& content_type,
-                 const SendFunction& sender,
-                 const std::optional<std::size_t>& upload_size,
-                 std::string* received_content_type,
-                 const ReceiveFunction& header_receiver,
-                 const ReceiveFunction& content_receiver,
+        bool put(const std::string &location,
+                 const std::string &content_type,
+                 const SendFunction &sender,
+                 const std::optional<std::size_t> &upload_size,
+                 std::string *received_content_type,
+                 const ReceiveFunction &header_receiver,
+                 const ReceiveFunction &content_receiver,
                  bool fail_on_error = false,
-                 ResponseCode* response_code = nullptr) const;
+                 ResponseCode *response_code = nullptr) const;
 
         //======================================================================
         // post()
 
-        std::stringstream post(const std::string& location,
-                               const std::string& content_type,
-                               const std::string& data,
-                               const std::string& expected_content_type,
+        std::stringstream post(const std::string &location,
+                               const std::string &content_type,
+                               const std::string &data,
+                               const std::string &expected_content_type,
                                bool fail_on_error = true,
-                               ResponseCode* response_code = nullptr) const;
+                               ResponseCode *response_code = nullptr) const;
 
-        bool post(const std::string& location,
-                  const std::string& content_type,
-                  const std::string& data,
-                  std::string* received_content_type,
-                  std::ostream* received_header_stream,
-                  std::ostream* received_content_stream,
+        bool post(const std::string &location,
+                  const std::string &content_type,
+                  const std::string &data,
+                  std::string *received_content_type,
+                  std::ostream *received_header_stream,
+                  std::ostream *received_content_stream,
                   bool fail_on_error = false,
-                  ResponseCode* response_code = nullptr) const;
+                  ResponseCode *response_code = nullptr) const;
 
-        bool post(const std::string& location,
-                  const std::string& content_type,
-                  const std::string& data,
-                  std::string* received_content_type,
-                  const ReceiveFunction& header_receiver,
-                  const ReceiveFunction& content_receiver,
+        bool post(const std::string &location,
+                  const std::string &content_type,
+                  const std::string &data,
+                  std::string *received_content_type,
+                  const ReceiveFunction &header_receiver,
+                  const ReceiveFunction &content_receiver,
                   bool fail_on_error = false,
-                  ResponseCode* response_code = nullptr) const;
+                  ResponseCode *response_code = nullptr) const;
 
         //======================================================================
         // del()
 
-        std::stringstream del(const std::string& location,
-                              const std::string& expected_content_type,
+        std::stringstream del(const std::string &location,
+                              const std::string &expected_content_type,
                               bool fail_on_error = true,
-                              ResponseCode* response_code = nullptr) const;
+                              ResponseCode *response_code = nullptr) const;
 
-        bool del(const std::string& location,
-                 std::string* received_content_type,
-                 std::ostream* received_header_stream,
-                 std::ostream* received_content_stream,
+        bool del(const std::string &location,
+                 std::string *received_content_type,
+                 std::ostream *received_header_stream,
+                 std::ostream *received_content_stream,
                  bool fail_on_error = false,
-                 ResponseCode* response_code = nullptr) const;
+                 ResponseCode *response_code = nullptr) const;
 
-        bool del(const std::string& location,
-                 std::string* received_content_type,
-                 const ReceiveFunction& receive_header_data,
-                 const ReceiveFunction& receive_content_data,
+        bool del(const std::string &location,
+                 std::string *received_content_type,
+                 const ReceiveFunction &receive_header_data,
+                 const ReceiveFunction &receive_content_data,
                  bool fail_on_error = false,
-                 ResponseCode* response_code = nullptr) const;
+                 ResponseCode *response_code = nullptr) const;
 
     protected:
         virtual bool get_verify_cert() const;
 
         void check_content_type(
-            const std::string& location,
-            const std::string& received_content_type,
-            const std::string& expected_content_type) const;
+            const std::string &location,
+            const std::string &received_content_type,
+            const std::string &expected_content_type) const;
 
     private:
         static bool perform_request(
-            const std::string& url,
-            CURL* handle,
+            const std::string &url,
+            CURL *handle,
             CURLcode code,
-            std::string* received_content_type,
-            const ReceiveFunction& receive_header_data,
-            const ReceiveFunction& receive_content_data,
+            std::string *received_content_type,
+            const ReceiveFunction &receive_header_data,
+            const ReceiveFunction &receive_content_data,
             bool fail_on_error,
             bool verify_cert,
-            ResponseCode* response_code);
+            ResponseCode *response_code);
 
-        static ReceiveFunction stream_receiver(std::ostream* stream);
-        static SendFunction stream_sender(std::istream& stream);
+        static ReceiveFunction stream_receiver(std::ostream *stream);
+        static SendFunction stream_sender(std::istream &stream);
 
-        static std::size_t receive(char* ptr, size_t item_size, size_t num_items, void* userdata);
-        static std::size_t send(char* ptr, size_t item_size, size_t num_items, void* userdata);
-        CURL* handle() const;
+        static std::size_t receive(char *ptr, size_t item_size, size_t num_items, void *userdata);
+        static std::size_t send(char *ptr, size_t item_size, size_t num_items, void *userdata);
+        CURL *handle() const;
 
     private:
         std::string base_url_;

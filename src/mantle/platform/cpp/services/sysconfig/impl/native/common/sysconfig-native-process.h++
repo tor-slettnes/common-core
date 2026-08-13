@@ -27,16 +27,16 @@ namespace cc::platform::sysconfig::native
 
     public:
         InvocationResult invoke_sync(
-            const Invocation& invocation,
-            const std::string& input) override;
+            const Invocation &invocation,
+            const std::string &input) override;
 
         PID invoke_async(
-            const Invocation& invocation,
-            const std::string& input) override;
+            const Invocation &invocation,
+            const std::string &input) override;
 
         InvocationResult invoke_finish(
             PID pid,
-            const std::string& input) override;
+            const std::string &input) override;
 
     private:
         std::unordered_map<PID, FDSet> process_map;

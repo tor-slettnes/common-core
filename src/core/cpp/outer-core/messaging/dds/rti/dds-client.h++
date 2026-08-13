@@ -26,7 +26,7 @@ namespace cc::dds
         using This = Client<BaseClient>;
 
     public:
-        Client(const std::string& service_name, int domain_id)
+        Client(const std::string &service_name, int domain_id)
             : Endpoint("client", service_name, domain_id),
               BaseClient(this->client_params())
         {
@@ -62,14 +62,14 @@ namespace cc::dds
     class ClientWrapper
     {
     protected:
-        ClientWrapper(const std::string& service_name, int domain_id)
+        ClientWrapper(const std::string &service_name, int domain_id)
             : client_(std::make_shared<Client<ClientT>>(service_name, domain_id))
         {
         }
 
     public:
         inline std::shared_ptr<Client<ClientT>> client(
-            const core::steady::Duration& max_wait = std::chrono::seconds(10)) const
+            const core::steady::Duration &max_wait = std::chrono::seconds(10)) const
         {
             this->client_->wait_for_service(max_wait);
             return this->client_;

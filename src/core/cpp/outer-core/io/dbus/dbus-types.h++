@@ -15,7 +15,7 @@
 #include <giomm/dbusobjectproxy.h>
 
 #define SLOT(method)  sigc::mem_fun(this, &method)
-#define DATASLOT(ptr) [&](const Glib::VariantBase& v) { \
+#define DATASLOT(ptr) [&](const Glib::VariantBase &v) { \
     cc::glib::variant_cast(v, ptr);                     \
 }
 

@@ -16,8 +16,8 @@
 namespace cc::grpc
 {
     ServerBuilder::ServerBuilder(
-        const std::string& listen_address,
-        const std::shared_ptr<::grpc::ServerCredentials>& credentials,
+        const std::string &listen_address,
+        const std::shared_ptr<::grpc::ServerCredentials> &credentials,
         bool dnssd_advertise,
         bool enable_reflection)
         : ::grpc::ServerBuilder(),
@@ -71,7 +71,7 @@ namespace cc::grpc
         }
     }
 
-    void ServerBuilder::add_listener(const std::string& address)
+    void ServerBuilder::add_listener(const std::string &address)
     {
         if (!this->listeners_.count(address))
         {
@@ -81,7 +81,7 @@ namespace cc::grpc
     }
 
     void ServerBuilder::add_dnssd(std::shared_ptr<RequestHandlerBase> handler,
-                                  const std::string& address)
+                                  const std::string &address)
     {
         if (core::platform::dns_sd && !handler->dnssd_type().empty())
         {
@@ -114,7 +114,7 @@ namespace cc::grpc
         this->experimental().SetInterceptorCreators(std::move(creators));
     }
 
-    void ServerBuilder::adjust_max(uint candidate, uint* target)
+    void ServerBuilder::adjust_max(uint candidate, uint *target)
     {
         if (candidate > *target)
         {

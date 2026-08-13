@@ -20,7 +20,7 @@ namespace cc::platform::sysconfig::native
         void initialize() override;
 
         HostInfo get_host_info() const override;
-        void set_host_name(const std::string& hostname) override;
+        void set_host_name(const std::string &hostname) override;
         void reboot() override;
 
     private:

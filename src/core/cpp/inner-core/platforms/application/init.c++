@@ -33,9 +33,9 @@ namespace cc::core::application
 
     void initialize(
         int argc,
-        char** argv,
-        const std::optional<std::string>& application,
-        const std::optional<std::string>& flavor)
+        char **argv,
+        const std::optional<std::string> &application,
+        const std::optional<std::string> &flavor)
     {
         ::signal(SIGINT, shutdown_handler);
         ::signal(SIGTERM, shutdown_handler);
@@ -56,8 +56,8 @@ namespace cc::core::application
 
     void initialize_daemon(
         int argc,
-        char** argv,
-        const std::optional<std::string>& application)
+        char **argv,
+        const std::optional<std::string> &application)
     {
         initialize(argc, argv, application, "daemon");
     }

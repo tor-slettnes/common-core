@@ -21,8 +21,8 @@ namespace cc::platform::sysconfig::native
         void initialize() override;
 
         ProductInfo get_product_info() const override;
-        void set_serial_number(const std::string& serial) override;
-        void set_model_name(const std::string& model) override;
+        void set_serial_number(const std::string &serial) override;
+        void set_model_name(const std::string &model) override;
 
     private:
         std::string get_product_name() const;

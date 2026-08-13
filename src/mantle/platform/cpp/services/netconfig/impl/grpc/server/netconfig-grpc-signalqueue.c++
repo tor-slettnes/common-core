@@ -18,35 +18,35 @@ namespace cc::platform::netconfig::grpc
         this->connect<ConnectionData::ptr>(
             protobuf::Signal::kConnection,
             signal_connection,
-            [](ConnectionData::ptr ref, protobuf::Signal* msg) {
+            [](ConnectionData::ptr ref, protobuf::Signal *msg) {
                 cc::protobuf::encode_shared(ref, msg->mutable_connection());
             });
 
         this->connect<ActiveConnectionData::ptr>(
             protobuf::Signal::kActiveConnection,
             signal_active_connection,
-            [](ActiveConnectionData::ptr ref, protobuf::Signal* msg) {
+            [](ActiveConnectionData::ptr ref, protobuf::Signal *msg) {
                 cc::protobuf::encode_shared(ref, msg->mutable_active_connection());
             });
 
         this->connect<AccessPointData::ptr>(
             protobuf::Signal::kAccesspoint,
             signal_accesspoint,
-            [](AccessPointData::ptr ref, protobuf::Signal* msg) {
+            [](AccessPointData::ptr ref, protobuf::Signal *msg) {
                 cc::protobuf::encode_shared(ref, msg->mutable_accesspoint());
             });
 
         this->connect<DeviceData::ptr>(
             protobuf::Signal::kDevice,
             signal_device,
-            [](DeviceData::ptr ref, protobuf::Signal* msg) {
+            [](DeviceData::ptr ref, protobuf::Signal *msg) {
                 cc::protobuf::encode_shared(ref, msg->mutable_device());
             });
 
         this->connect<GlobalData::ptr>(
             protobuf::Signal::kGlobal,
             signal_globaldata,
-            [](GlobalData::ptr ref, protobuf::Signal* msg) {
+            [](GlobalData::ptr ref, protobuf::Signal *msg) {
                 cc::protobuf::encode_shared(ref, msg->mutable_global());
             });
         Super::initialize();

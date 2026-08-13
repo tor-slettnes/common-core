@@ -72,8 +72,8 @@ namespace cc::core
 
         using Invocation = std::variant<
             std::function<void()>,
-            std::function<void(const dt::TimePoint&)>,
-            std::function<void(const dt::TimePoint&, const Task&)>>;
+            std::function<void(const dt::TimePoint &)>,
+            std::function<void(const dt::TimePoint &, const Task &)>>;
 
     public:  // Types
         enum Alignment
@@ -126,8 +126,8 @@ namespace cc::core
         ///     system load). Using this could lead to starvation.
         /// @return
         ///     Unique handle which can subsequently be used to remove task.
-        Handle add(const Invocation& invocation,
-                   const dt::Duration& interval,
+        Handle add(const Invocation &invocation,
+                   const dt::Duration &interval,
                    const Alignment align = ALIGN_NEXT,
                    status::Level loglevel = status::Level::DEBUG,
                    uint count = 0,
@@ -161,9 +161,9 @@ namespace cc::core
         ///     system load). Using this could lead to starvation.
         /// @return
         ///     Reference to the scheduled task
-        Task& add(const Handle& handle,
-                  const Invocation& invocation,
-                  const dt::Duration& interval,
+        Task &add(const Handle &handle,
+                  const Invocation &invocation,
+                  const dt::Duration &interval,
                   const Alignment align = ALIGN_NEXT,
                   status::Level loglevel = status::Level::DEBUG,
                   uint count = 0,
@@ -171,9 +171,9 @@ namespace cc::core
                   bool catchup = false);
 
         /// @brief Add a scheduled task if the specified ID does not already exist. @sa add
-        Task& add_if_missing(const Handle& handle,
-                             const Invocation& invocation,
-                             const dt::Duration& interval,
+        Task &add_if_missing(const Handle &handle,
+                             const Invocation &invocation,
+                             const dt::Duration &interval,
                              const Alignment align = ALIGN_NEXT,
                              status::Level loglevel = status::Level::DEBUG,
                              uint count = 0,
@@ -181,18 +181,18 @@ namespace cc::core
                              bool catchup = false);
 
         /// @brief Schedule a task/method to be invoked at specified time interval
-        bool remove(const Handle& handle);
-        bool remove(const Task& task);
+        bool remove(const Handle &handle);
+        bool remove(const Task &task);
 
         /// @brief indicate whether the specifed task ID exists
-        bool exists(const Handle& handle);
+        bool exists(const Handle &handle);
 
         /// @brief Find any scheduled task by the specified name
         /// @param[in] handle
         ///     Task ID
         /// @return
         ///     Iterator to the task if found, or `this->end()` if not found.
-        TaskMap::iterator find(const Handle& handle) noexcept;
+        TaskMap::iterator find(const Handle &handle) noexcept;
         TaskMap::iterator begin() noexcept;
         TaskMap::iterator end() noexcept;
 
@@ -201,16 +201,16 @@ namespace cc::core
         ///     Task ID
         /// @return
         ///     `true` if the task exists, `false` otherwise.
-        bool has_task(const Handle& handle) const noexcept;
+        bool has_task(const Handle &handle) const noexcept;
 
         /// @brief stop the scheduler
         void stop();
 
     private:  // Methods
-        dt::Duration local_offset(const dt::TimePoint& tp);
-        void adjust_times(const dt::TimePoint& expected, const dt::TimePoint& now);
-        Task& add_task(const dt::TimePoint& tp, Task&& task);
-        bool remove_task(const Handle& handle, const Task* ptask = nullptr);
+        dt::Duration local_offset(const dt::TimePoint &tp);
+        void adjust_times(const dt::TimePoint &expected, const dt::TimePoint &now);
+        Task &add_task(const dt::TimePoint &tp, Task &&task);
+        bool remove_task(const Handle &handle, const Task *ptask = nullptr);
         void start_watcher();
         void stop_watcher();
         void watcher();
@@ -219,7 +219,7 @@ namespace cc::core
         dt::Duration max_jitter;
         //dt::TimePoint timebase;
         TaskMap tasks;
-        Task* current = nullptr;
+        Task *current = nullptr;
         std::thread activeWatcher;
         std::mutex mtx;
         std::condition_variable stop_request;
@@ -232,25 +232,25 @@ namespace cc::core
             friend class Scheduler;
 
         private:
-            Task(const Handle& handle,
-                 const Invocation& invocation,
-                 const dt::Duration& interval,
+            Task(const Handle &handle,
+                 const Invocation &invocation,
+                 const dt::Duration &interval,
                  Alignment align,
                  uint count,
                  uint retries,
                  bool catchup,
                  status::Level loglevel);
 
-            bool invoke(const dt::TimePoint& tp);
-            dt::TimePoint aligned_time(const dt::TimePoint& now = dt::Clock::now()) const;
-            dt::TimePoint next_time(const dt::TimePoint& tp,
-                                    const dt::TimePoint& now = dt::Clock::now()) const;
-            dt::TimePoint adjusted_time(const dt::TimePoint& old_time,
-                                        const dt::TimePoint& new_time,
-                                        const dt::TimePoint& tp) const;
+            bool invoke(const dt::TimePoint &tp);
+            dt::TimePoint aligned_time(const dt::TimePoint &now = dt::Clock::now()) const;
+            dt::TimePoint next_time(const dt::TimePoint &tp,
+                                    const dt::TimePoint &now = dt::Clock::now()) const;
+            dt::TimePoint adjusted_time(const dt::TimePoint &old_time,
+                                        const dt::TimePoint &new_time,
+                                        const dt::TimePoint &tp) const;
 
-            dt::TimePoint next_aligned(const dt::TimePoint& reference,
-                                       const dt::TimePoint& now) const;
+            dt::TimePoint next_aligned(const dt::TimePoint &reference,
+                                       const dt::TimePoint &now) const;
 
         public:
             Handle handle;

@@ -16,7 +16,7 @@
 
 namespace cc::demo::grpc
 {
-    RequestHandler::RequestHandler(const std::shared_ptr<API>& api_provider)
+    RequestHandler::RequestHandler(const std::shared_ptr<API> &api_provider)
         : Super(),
           provider(api_provider)
     {
@@ -24,9 +24,9 @@ namespace cc::demo::grpc
     }
 
     ::grpc::Status RequestHandler::ServiceCheck(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        ServiceCheckResponse* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        ServiceCheckResponse *response)
     {
         response->set_api_level(APILEVEL_CURRENT);
         response->set_server_name(core::platform::path->exec_name());
@@ -35,9 +35,9 @@ namespace cc::demo::grpc
     }
 
     ::grpc::Status RequestHandler::SayHello(
-        ::grpc::ServerContext* context,
-        const demo::protobuf::Greeting* request,
-        ::google::protobuf::Empty* response)
+        ::grpc::ServerContext *context,
+        const demo::protobuf::Greeting *request,
+        ::google::protobuf::Empty *response)
     {
         // We received a greeting from a client.  We decode and pass this on to
         // our `api_provider`. Normally this is the host-native implementation,
@@ -58,9 +58,9 @@ namespace cc::demo::grpc
     }
 
     ::grpc::Status RequestHandler::GetCurrentTime(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        demo::protobuf::TimeData* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        demo::protobuf::TimeData *response)
     {
         try
         {
@@ -74,9 +74,9 @@ namespace cc::demo::grpc
     }
 
     ::grpc::Status RequestHandler::StartTicking(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        ::google::protobuf::Empty* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        ::google::protobuf::Empty *response)
     {
         try
         {
@@ -90,9 +90,9 @@ namespace cc::demo::grpc
     }
 
     ::grpc::Status RequestHandler::StopTicking(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        ::google::protobuf::Empty* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        ::google::protobuf::Empty *response)
     {
         try
         {
@@ -106,9 +106,9 @@ namespace cc::demo::grpc
     }
 
     ::grpc::Status RequestHandler::Watch(
-        ::grpc::ServerContext* context,
-        const cc::protobuf::signal::Filter* request,
-        ::grpc::ServerWriter<cc::demo::protobuf::Signal>* writer)
+        ::grpc::ServerContext *context,
+        const cc::protobuf::signal::Filter *request,
+        ::grpc::ServerWriter<cc::demo::protobuf::Signal> *writer)
     {
         return this->stream_signals<cc::demo::protobuf::Signal, SignalQueue>(context, request, writer);
     }

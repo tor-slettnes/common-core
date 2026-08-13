@@ -22,9 +22,9 @@ namespace cc::demo
     {
     protected:
         /// @brief Constructor. This will be invoked only from derived classes.
-        API(const std::string& identity,
-            const std::string& implementation,
-            const core::dt::TimePoint& birth = core::dt::Clock::now());
+        API(const std::string &identity,
+            const std::string &implementation,
+            const core::dt::TimePoint &birth = core::dt::Clock::now());
 
     public:
         virtual void initialize() {}
@@ -35,8 +35,8 @@ namespace cc::demo
         ///     What we're telling our listeners
         /// @param[in] data
         ///     Arbitrary key/value items to include in greeting
-        void say_hello(const std::string& message,
-                       const core::types::KeyValueMap& data = {});
+        void say_hello(const std::string &message,
+                       const core::types::KeyValueMap &data = {});
 
         /// @brief Issue a greeting to anyone who may be listening
         /// @param[in] greeting
@@ -44,7 +44,7 @@ namespace cc::demo
         /// @note​
         ///     To receive greetings from others, connect a callback
         ///     function ("slot") ​to `demo::signal_greeting`.​
-        virtual void say_hello(const Greeting& greeting) = 0;
+        virtual void say_hello(const Greeting &greeting) = 0;
 
         /// @brief Get current time data.
         /// @return

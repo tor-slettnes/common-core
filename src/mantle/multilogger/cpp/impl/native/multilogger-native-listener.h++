@@ -25,11 +25,11 @@ namespace cc::platform::multilogger::native
 
     protected:
         QueueListener(
-            const SinkID& sink_id,
+            const SinkID &sink_id,
             core::status::Level threshold,
-            const std::optional<Loggable::ContractID>& contract_id = {},
-            const std::set<std::string>& hosts = {},
-            const std::set<std::string>& applications = {},
+            const std::optional<Loggable::ContractID> &contract_id = {},
+            const std::set<std::string> &hosts = {},
+            const std::set<std::string> &applications = {},
             unsigned int maxsize = 0,
             OverflowDisposition overflow_disposition = OverflowDisposition::DISCARD_OLDEST);
 
@@ -40,10 +40,10 @@ namespace cc::platform::multilogger::native
         void close() override;
 
     protected:
-        bool handle_item(const core::types::Loggable::ptr& item) override;
+        bool handle_item(const core::types::Loggable::ptr &item) override;
 
-        bool applicable_host(const std::string& host) const;
-        bool applicable_application(const std::string& application) const;
+        bool applicable_host(const std::string &host) const;
+        bool applicable_application(const std::string &application) const;
 
     private:
         std::set<std::string> hosts;

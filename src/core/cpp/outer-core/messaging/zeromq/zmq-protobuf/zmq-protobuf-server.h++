@@ -25,9 +25,9 @@ namespace cc::zmq
         using RequestHandlerMap = core::types::ValueMap<std::string, RequestHandlerPtr>;
 
     protected:
-        ProtoBufServer(const std::string& bind_address,
-                       const std::string& channel_name,
-                       RequestHandlerMap&& handler_map = {},
+        ProtoBufServer(const std::string &bind_address,
+                       const std::string &channel_name,
+                       RequestHandlerMap &&handler_map = {},
                        Role role = Role::HOST);
 
     public:
@@ -35,17 +35,17 @@ namespace cc::zmq
         void deinitialize() override;
 
     protected:
-        void process_binary_request(const core::types::ByteVector& packed_request,
-                                    core::types::ByteVector* packed_reply) override;
+        void process_binary_request(const core::types::ByteVector &packed_request,
+                                    core::types::ByteVector *packed_reply) override;
 
-        void process_protobuf_request(const cc::protobuf::request_reply::Request& request,
-                                      cc::protobuf::request_reply::Reply* reply);
+        void process_protobuf_request(const cc::protobuf::request_reply::Request &request,
+                                      cc::protobuf::request_reply::Reply *reply);
 
     private:
-        void insert_error_response(cc::protobuf::request_reply::Reply* reply,
+        void insert_error_response(cc::protobuf::request_reply::Reply *reply,
                                    cc::protobuf::request_reply::StatusCode status_code,
-                                   const std::string& text,
-                                   const core::types::KeyValueMap& attributes);
+                                   const std::string &text,
+                                   const core::types::KeyValueMap &attributes);
 
     private:
         RequestHandlerMap handler_map;

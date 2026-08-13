@@ -13,15 +13,15 @@
 
 namespace cc::demo
 {
-    constexpr const char* SIGNAL_HANDLE = "demo-notify";
-    constexpr const char* TIMER_TASK_HANDLE = "demo-timer";
+    constexpr const char *SIGNAL_HANDLE = "demo-notify";
+    constexpr const char *TIMER_TASK_HANDLE = "demo-timer";
 
-    NativeImpl::NativeImpl(const std::string& identity)
+    NativeImpl::NativeImpl(const std::string &identity)
         : Super(identity, "Native")
     {
     }
 
-    void NativeImpl::say_hello(const Greeting& greeting)
+    void NativeImpl::say_hello(const Greeting &greeting)
     {
         log_notice("Received and redistributing greeting: ", greeting);
         /// Emit `signal_greeting` to registered slots/callbacks.
@@ -47,7 +47,7 @@ namespace cc::demo
         log_notice("Starting periodic time updates");
         core::scheduler.add_if_missing(
             TIMER_TASK_HANDLE,
-            [](const core::dt::TimePoint& tp) {
+            [](const core::dt::TimePoint &tp) {
                 demo::signal_time.emit(TimeData(tp));
             },
             std::chrono::seconds(1),

@@ -28,16 +28,16 @@ namespace cc::core::json
     class RapidBuilderBase
     {
     protected:
-        RapidBuilderBase(std::ostream& stream)
+        RapidBuilderBase(std::ostream &stream)
             : stream(stream)
         {
         }
 
     public:
-        virtual void write_stream(const types::Value& value) = 0;
+        virtual void write_stream(const types::Value &value) = 0;
 
     protected:
-        std::ostream& stream;
+        std::ostream &stream;
     };
 
     //==========================================================================
@@ -49,12 +49,12 @@ namespace cc::core::json
         using Super = RapidBuilderBase;
 
     public:
-        RapidBuilder(std::ostream& stream);
-        void write_stream(const types::Value& value) override;
-        bool encode_value(const types::Value& value);
-        bool encode_array(const types::ValueList& list);
-        bool encode_object(const types::KeyValueMap& kvmap);
-        bool encode_object(const types::TaggedValueList& tvlist);
+        RapidBuilder(std::ostream &stream);
+        void write_stream(const types::Value &value) override;
+        bool encode_value(const types::Value &value);
+        bool encode_array(const types::ValueList &list);
+        bool encode_object(const types::KeyValueMap &kvmap);
+        bool encode_object(const types::TaggedValueList &tvlist);
 
     private:
         rapidjson::OStreamWrapper streamwrapper;

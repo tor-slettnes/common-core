@@ -11,9 +11,9 @@
 
 namespace cc::core::platform
 {
-    std::optional<std::string> RunTimeProvider::getenv(const std::string& variable)
+    std::optional<std::string> RunTimeProvider::getenv(const std::string &variable)
     {
-        if (char* value = std::getenv(variable.data()))
+        if (char *value = std::getenv(variable.data()))
         {
             return value;
         }
@@ -24,15 +24,15 @@ namespace cc::core::platform
     }
 
     void RunTimeProvider::setenv(
-        const std::string& variable,
-        const std::string& value)
+        const std::string &variable,
+        const std::string &value)
     {
-        std::string& envstring = This::env[variable] = variable + "=" + value;
+        std::string &envstring = This::env[variable] = variable + "=" + value;
         this->putenv(envstring);
     }
 
     void RunTimeProvider::unsetenv(
-        const std::string& variable)
+        const std::string &variable)
     {
         this->putenv(variable);
         This::env.erase(variable);

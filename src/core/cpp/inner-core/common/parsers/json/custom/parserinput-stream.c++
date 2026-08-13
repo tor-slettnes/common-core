@@ -10,7 +10,7 @@
 
 namespace cc::core::parsers
 {
-    StreamInput::StreamInput(std::istream& stream)
+    StreamInput::StreamInput(std::istream &stream)
         : stream_(stream),
           token_position_(0),
           token_size_(0)

@@ -27,7 +27,7 @@ namespace cc::platform::vfs
         this->add_ref();
     }
 
-    ContextProxy::ContextProxy(const ContextProxy& other)
+    ContextProxy::ContextProxy(const ContextProxy &other)
         : modify(other.modify)
     {
         this->del_ref();
@@ -45,7 +45,7 @@ namespace cc::platform::vfs
         return bool(this->context);
     }
 
-    Context* ContextProxy::operator->() const
+    Context *ContextProxy::operator->() const
     {
         if (this->context)
         {
@@ -89,12 +89,12 @@ namespace cc::platform::vfs
         this->check_access(true);
     }
 
-    fs::path ContextProxy::localPath(const fs::path& relpath) const
+    fs::path ContextProxy::localPath(const fs::path &relpath) const
     {
         return (*this)->localPath(relpath);
     }
 
-    Path ContextProxy::virtualPath(const fs::path& relpath) const
+    Path ContextProxy::virtualPath(const fs::path &relpath) const
     {
         return (*this)->virtualPath(relpath);
     }
@@ -104,7 +104,7 @@ namespace cc::platform::vfs
         return this->localPath();
     }
 
-    void ContextProxy::to_stream(std::ostream& stream) const
+    void ContextProxy::to_stream(std::ostream &stream) const
     {
         if (this->context)
         {
@@ -129,7 +129,7 @@ namespace cc::platform::vfs
     }
 
     Location::Location(Context::ptr ref,
-                       const fs::path& relpath,
+                       const fs::path &relpath,
                        bool modify)
         : Super(ref, modify),
           relpath(relpath)
@@ -143,7 +143,7 @@ namespace cc::platform::vfs
     {
     }
 
-    Location::Location(const Location& other)
+    Location::Location(const Location &other)
         : Super(other),
           relpath(other.relpath)
     {
@@ -154,7 +154,7 @@ namespace cc::platform::vfs
         return Super::localPath(this->relpath);
     }
 
-    fs::path Location::localPath(const fs::path& relpath) const
+    fs::path Location::localPath(const fs::path &relpath) const
     {
         return Super::localPath(this->relpath / relpath);
     }
@@ -164,12 +164,12 @@ namespace cc::platform::vfs
         return Super::virtualPath(this->relpath);
     }
 
-    Path Location::virtualPath(const fs::path& relpath) const
+    Path Location::virtualPath(const fs::path &relpath) const
     {
         return Super::virtualPath(this->relpath / relpath);
     }
 
-    void Location::to_stream(std::ostream& stream) const
+    void Location::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
                           "Location(\"%s:%s\", localpath=%s, modify=%b)",

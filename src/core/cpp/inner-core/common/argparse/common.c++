@@ -38,19 +38,19 @@ namespace cc::core::argparse
             platform::path->exec_name(false));  // defaultValue
     }
 
-    void CommonOptions::apply(int argc, char** argv)
+    void CommonOptions::apply(int argc, char **argv)
     {
         this->apply(ArgList(argv, argv + argc));
     }
 
-    void CommonOptions::apply(const ArgList& args)
+    void CommonOptions::apply(const ArgList &args)
     {
         try
         {
             this->add_options();
             this->parse_args(args);
         }
-        catch (const std::exception& e)
+        catch (const std::exception &e)
         {
             this->fail(e.what(), true);
         }
@@ -62,9 +62,9 @@ namespace cc::core::argparse
         logging::dispatcher.initialize();
     }
 
-    void CommonOptions::fail(const std::string& message,
+    void CommonOptions::fail(const std::string &message,
                              bool show_hint,
-                             std::ostream& out)
+                             std::ostream &out)
     {
         str::format(out, "%s: %s\n", this->command, message);
         if (show_hint)
@@ -76,22 +76,22 @@ namespace cc::core::argparse
         std::exit(EINVAL);
     }
 
-    void CommonOptions::show_help_and_exit(const std::string& section,
-                                           std::ostream& out)
+    void CommonOptions::show_help_and_exit(const std::string &section,
+                                           std::ostream &out)
     {
         try
         {
             this->help(section, out);
             std::exit(0);
         }
-        catch (const std::exception& e)
+        catch (const std::exception &e)
         {
             std::cerr << e.what() << std::endl;
             std::exit(EINVAL);
         }
     }
 
-    void CommonOptions::show_version_and_exit(std::ostream& out)
+    void CommonOptions::show_version_and_exit(std::ostream &out)
     {
         out << PROJECT_VERSION << std::endl;
         std::exit(0);
@@ -104,7 +104,7 @@ namespace cc::core::argparse
             "SECTION",
             "Print help section SECTION (default: %default). "
             "Use \"--help=list\" to print a list of help sections.",
-            [&](const std::string& section) {
+            [&](const std::string &section) {
                 this->show_help_and_exit(section);
             },
             "all",
@@ -193,7 +193,7 @@ namespace cc::core::argparse
     void CommonOptions::add_log_scope_options()
     {
         types::KeyValueMap thresholds = core::settings->get("log thresholds").as_kvmap();
-        for (auto& [name, scope] : logging::scopes)
+        for (auto &[name, scope] : logging::scopes)
         {
             std::string levelname("(default)");
 
@@ -213,7 +213,7 @@ namespace cc::core::argparse
 
     void CommonOptions::add_log_sinks()
     {
-        for (auto& [sink_id, customization] : logging::sink_registry)
+        for (auto &[sink_id, customization] : logging::sink_registry)
         {
             this->add_log_sink_option(sink_id, customization);
         }
@@ -225,8 +225,8 @@ namespace cc::core::argparse
     }
 
     void CommonOptions::add_log_sink_option(
-        const logging::SinkID& sink_id,
-        const std::shared_ptr<logging::SinkCustomization>& customization)
+        const logging::SinkID &sink_id,
+        const std::shared_ptr<logging::SinkCustomization> &customization)
     {
         this->add_opt<status::Level>(
             {str::format("--log-to-%s", sink_id)},
@@ -238,7 +238,7 @@ namespace cc::core::argparse
     }
 
     void CommonOptions::add_verbosity_options(
-        const std::shared_ptr<logging::SinkCustomization>& customization)
+        const std::shared_ptr<logging::SinkCustomization> &customization)
     {
         this->add_void(
             {"--quiet"},
@@ -267,10 +267,10 @@ namespace cc::core::argparse
     }
 
     std::optional<status::Level> CommonOptions::get_optional_level(
-        const std::string& option,
-        const types::KeyValueMap& config) const
+        const std::string &option,
+        const types::KeyValueMap &config) const
     {
-        if (const types::Value& value = config.get(option))
+        if (const types::Value &value = config.get(option))
         {
             try
             {

@@ -65,9 +65,9 @@ namespace cc::platform::vfs
     void Options::on_monitor_start()
     {
         FlagMap flags;
-        bool& except = flags["except"];
-        bool& show_context = flags["context"];
-        bool& show_context_in_use = flags["context_in_use"];
+        bool &except = flags["except"];
+        bool &show_context = flags["context"];
+        bool &show_context_in_use = flags["context_in_use"];
         this->get_flags(&flags, false);
 
         if (!show_context && !show_context_in_use)
@@ -100,8 +100,8 @@ namespace cc::platform::vfs
 
     void Options::on_context(
         core::signal::MappingAction action,
-        const std::string& key,
-        const Context::ptr& cxt)
+        const std::string &key,
+        const Context::ptr &cxt)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_context(%s, %s, %s)\n",
@@ -113,8 +113,8 @@ namespace cc::platform::vfs
 
     void Options::on_context_in_use(
         core::signal::MappingAction action,
-        const std::string& key,
-        const Context::ptr& cxt)
+        const std::string &key,
+        const Context::ptr &cxt)
     {
         core::str::format(std::cout,
                           "[%.0s] signal_context_in_use(%s, %s, %s)\n",

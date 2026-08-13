@@ -22,10 +22,10 @@ namespace cc::platform::netconfig::dbus
 
     public:
         WirelessDevice(
-            cc::dbus::ProxyContainer* container,
-            const cc::dbus::ConnectionPtr& connection,
-            const cc::dbus::ServiceName& servicename,
-            const cc::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer *container,
+            const cc::dbus::ConnectionPtr &connection,
+            const cc::dbus::ServiceName &servicename,
+            const cc::dbus::ObjectPath &objectpath);
 
         static std::shared_ptr<WirelessDevice> get_by_ap(
             const std::shared_ptr<AccessPoint> ap,
@@ -40,25 +40,25 @@ namespace cc::platform::netconfig::dbus
 
     private:
         void on_signal_accesspoint_added(
-            const Glib::VariantContainerBase& parameters);
+            const Glib::VariantContainerBase &parameters);
 
         void on_signal_accesspoint_removed(
-            const Glib::VariantContainerBase& parameters);
+            const Glib::VariantContainerBase &parameters);
 
         void on_property_active_accesspoint(
-            const Glib::VariantBase& change);
+            const Glib::VariantBase &change);
 
         void on_property_lastscan(
-            const Glib::VariantBase& change);
+            const Glib::VariantBase &change);
 
         void on_property_hwaddress(
-            const Glib::VariantBase& change);
+            const Glib::VariantBase &change);
 
         void on_property_active_connection(
-            const Glib::VariantBase& change);
+            const Glib::VariantBase &change);
 
         bool update_active_accesspoint(
-            const cc::dbus::ProxyWrapper* source,
+            const cc::dbus::ProxyWrapper *source,
             core::signal::MappingAction action);
 
     private:

@@ -13,7 +13,7 @@ namespace cc::core::parsers
     class StringInput : public Input
     {
     public:
-        StringInput(const std::string_view& string);
+        StringInput(const std::string_view &string);
 
         std::size_t token_position() const override;
         std::string_view token() const override;

@@ -44,27 +44,27 @@ namespace cc::platform::multilogger
         using Super = core::logging::AsyncWrapper<core::logging::Sink>;
 
     protected:
-        SQLiteSink(const std::string& sink_id);
+        SQLiteSink(const std::string &sink_id);
         ~SQLiteSink();
 
     protected:
-        void load_settings(const core::types::KeyValueMap& settings) override;
-        void load_db_settings(const core::types::KeyValueMap& settings);
+        void load_settings(const core::types::KeyValueMap &settings) override;
+        void load_db_settings(const core::types::KeyValueMap &settings);
 
         std::string table_name() const;
-        void set_table_name(const std::string& name);
+        void set_table_name(const std::string &name);
 
         std::size_t batch_size() const;
-        void set_batch_size(const std::size_t& size);
+        void set_batch_size(const std::size_t &size);
 
         core::dt::Duration batch_timeout() const;
-        void set_batch_timeout(const core::dt::Duration& timeout);
+        void set_batch_timeout(const core::dt::Duration &timeout);
 
         void open() override;
         void close() override;
-        void open_file(const core::dt::TimePoint& tp) override;
+        void open_file(const core::dt::TimePoint &tp) override;
         void close_file() override;
-        bool handle_item(const core::types::Loggable::ptr& item) override;
+        bool handle_item(const core::types::Loggable::ptr &item) override;
 
         void worker();
         void flush();
@@ -89,7 +89,7 @@ namespace cc::platform::multilogger
     inline static core::logging::SinkFactory sqlite3_factory(
         "sqlite3",
         "Log to a Sqlite3 database, capturing specific fields per column",
-        [](const core::logging::SinkID& sink_id) -> core::logging::Sink::ptr {
+        [](const core::logging::SinkID &sink_id) -> core::logging::Sink::ptr {
             return SQLiteSink::create_shared(sink_id);
         });
 }  // namespace cc::platform::multilogger

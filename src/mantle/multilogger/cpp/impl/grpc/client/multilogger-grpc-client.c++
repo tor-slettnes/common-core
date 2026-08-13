@@ -12,14 +12,14 @@
 
 namespace cc::platform::multilogger::grpc
 {
-    void ClientImpl::submit(const core::types::Loggable::ptr& item)
+    void ClientImpl::submit(const core::types::Loggable::ptr &item)
     {
         this->call_check(
             &Stub::Submit,
             cc::protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(item));
     }
 
-    bool ClientImpl::add_sink(const SinkSpec& spec)
+    bool ClientImpl::add_sink(const SinkSpec &spec)
     {
         return this->call_check(
                        &Stub::AddSink,
@@ -27,7 +27,7 @@ namespace cc::platform::multilogger::grpc
             .added();
     }
 
-    bool ClientImpl::remove_sink(const SinkID& id)
+    bool ClientImpl::remove_sink(const SinkID &id)
     {
         return this->call_check(
                        &Stub::RemoveSink,
@@ -35,7 +35,7 @@ namespace cc::platform::multilogger::grpc
             .removed();
     }
 
-    SinkSpec ClientImpl::get_sink_spec(const SinkID& id) const
+    SinkSpec ClientImpl::get_sink_spec(const SinkID &id) const
     {
         return cc::protobuf::decoded<SinkSpec>(
             this->call_check(
@@ -73,7 +73,7 @@ namespace cc::platform::multilogger::grpc
             this->call_check(&Stub::ListErrorFields).field_names());
     }
 
-    std::shared_ptr<LogSource> ClientImpl::listen(const ListenerSpec& spec)
+    std::shared_ptr<LogSource> ClientImpl::listen(const ListenerSpec &spec)
     {
         return ClientListener::create_shared(this->stub, spec);
     }
@@ -107,7 +107,7 @@ namespace cc::platform::multilogger::grpc
         }
     }
 
-    bool ClientImpl::write_item(const core::types::Loggable::ptr& item)
+    bool ClientImpl::write_item(const core::types::Loggable::ptr &item)
     {
         if (!this->writer)
         {

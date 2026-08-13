@@ -15,26 +15,26 @@
 namespace cc::protobuf
 {
     std::vector<std::string> enum_names(
-        const google::protobuf::EnumDescriptor* desc,
-        const std::optional<std::string>& delimiter = "_");
+        const google::protobuf::EnumDescriptor *desc,
+        const std::optional<std::string> &delimiter = "_");
 
     std::string enum_name(
         int enum_value,
-        const google::protobuf::EnumDescriptor* enum_desc,
-        const std::optional<std::string>& delimiter = "_",
-        const std::string& fallback = "");
+        const google::protobuf::EnumDescriptor *enum_desc,
+        const std::optional<std::string> &delimiter = "_",
+        const std::string &fallback = "");
 
     std::optional<int> enum_value(
-        const std::string& name,
-        const google::protobuf::EnumDescriptor* enum_desc,
-        const std::string& delimiter = "_");
+        const std::string &name,
+        const google::protobuf::EnumDescriptor *enum_desc,
+        const std::string &delimiter = "_");
 
     std::string common_prefix(
-        const google::protobuf::EnumDescriptor* desc,
-        const std::string& delimiter = "_");
+        const google::protobuf::EnumDescriptor *desc,
+        const std::string &delimiter = "_");
 
     std::size_t common_prefix_length(
-        const google::protobuf::EnumDescriptor* desc,
-        const std::string& delimiter = "_");
+        const google::protobuf::EnumDescriptor *desc,
+        const std::string &delimiter = "_");
 
 }  // namespace cc::protobuf

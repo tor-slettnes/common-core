@@ -38,8 +38,8 @@ namespace cc::grpc
         static constexpr auto DNSSD_TYPE_OPTION = "dnssd type";
 
     protected:
-        Base(const std::string& endpoint_type,
-             const std::string& full_service_name);
+        Base(const std::string &endpoint_type,
+             const std::string &full_service_name);
 
     public:
         /// @brief
@@ -55,7 +55,7 @@ namespace cc::grpc
         std::string dnssd_type() const;
 
         template <class Context>
-        std::string peer(Context* context) const
+        std::string peer(Context *context) const
         {
             return core::str::url_decoded(context->peer());
         }
@@ -84,9 +84,9 @@ namespace cc::grpc
         /// @return
         ///     Sanitized address of the form HOST:PORT (where HOST may still be empty)
 
-        std::string realaddress(const std::string& address,
-                                const std::string& hostOption,
-                                const std::string& portOption,
+        std::string realaddress(const std::string &address,
+                                const std::string &hostOption,
+                                const std::string &portOption,
                                 std::string defaultHost,
                                 uint defaultPort) const;
 
@@ -98,12 +98,12 @@ namespace cc::grpc
 
         // Split an address of the form [PERSONALITY@][HOST][:PORT] into
         // separate values
-        void splitaddress(const std::string& address,
-                          std::string* host,
-                          uint* port) const;
+        void splitaddress(const std::string &address,
+                          std::string *host,
+                          uint *port) const;
 
         // Join host and port into a string of the form "host:port"
-        std::string joinaddress(const std::string& host, uint port) const;
+        std::string joinaddress(const std::string &host, uint port) const;
 
     private:
         const std::string full_service_name_;

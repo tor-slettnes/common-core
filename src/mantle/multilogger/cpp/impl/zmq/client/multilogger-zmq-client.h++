@@ -30,16 +30,16 @@ namespace cc::platform::multilogger::zmq
         using Super = API;
 
     protected:
-        ClientImpl(const std::string& host = "");
+        ClientImpl(const std::string &host = "");
 
     public:
         void initialize() override;
         void deinitialize() override;
 
-        void submit(const core::types::Loggable::ptr& item) override;
-        bool add_sink(const SinkSpec& spec) override;
-        bool remove_sink(const SinkID& id) override;
-        SinkSpec get_sink_spec(const SinkID& id) const override;
+        void submit(const core::types::Loggable::ptr &item) override;
+        bool add_sink(const SinkSpec &spec) override;
+        bool remove_sink(const SinkID &id) override;
+        SinkSpec get_sink_spec(const SinkID &id) const override;
         SinkSpecs get_all_sink_specs() const override;
         SinkIDs list_sinks() const override;
         SinkTypes list_sink_types() const override;
@@ -48,7 +48,7 @@ namespace cc::platform::multilogger::zmq
 
         // Create a listener to read loggable items from server.
         std::shared_ptr<LogSource> listen(
-            const ListenerSpec& spec) override;
+            const ListenerSpec &spec) override;
 
         std::shared_ptr<cc::zmq::Subscriber> subscriber();
         std::shared_ptr<cc::zmq::Publisher> publisher();

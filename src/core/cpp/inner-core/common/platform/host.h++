@@ -21,7 +21,7 @@ namespace cc::core::platform
         using Super::Super;
 
     public:
-        virtual void set_host_name(const std::string& hostname) = 0;
+        virtual void set_host_name(const std::string &hostname) = 0;
         virtual std::string get_host_name() const = 0;
 
         virtual std::string get_system_name() const;

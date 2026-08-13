@@ -20,23 +20,23 @@ namespace cc::platform::netconfig::dbus
 
     public:
         Settings(
-            cc::dbus::ProxyContainer* container,
-            const cc::dbus::ConnectionPtr& connection,
-            const cc::dbus::ServiceName& servicename,
-            const cc::dbus::ObjectPath& objectpath = NM_DBUS_PATH_SETTINGS);
+            cc::dbus::ProxyContainer *container,
+            const cc::dbus::ConnectionPtr &connection,
+            const cc::dbus::ServiceName &servicename,
+            const cc::dbus::ObjectPath &objectpath = NM_DBUS_PATH_SETTINGS);
 
-        void define_connection(const ConnectionData& connection);
-        bool remove_connection(const std::string& id, bool required = false);
-        void set_hostname(const std::string& hostname);
+        void define_connection(const ConnectionData &connection);
+        bool remove_connection(const std::string &id, bool required = false);
+        void set_hostname(const std::string &hostname);
 
     private:
-        void add_connection(const ConnectionData& connection);
+        void add_connection(const ConnectionData &connection);
 
     protected:
         void initialize_properties() override;
-        void on_signal_connection_added(const Glib::VariantContainerBase& parameters);
-        void on_signal_connection_removed(const Glib::VariantContainerBase& parameters);
-        void on_property_hostname(const Glib::VariantBase& change);
+        void on_signal_connection_added(const Glib::VariantContainerBase &parameters);
+        void on_signal_connection_removed(const Glib::VariantContainerBase &parameters);
+        void on_property_hostname(const Glib::VariantBase &change);
     };
 
 }  // namespace cc::platform::netconfig::dbus

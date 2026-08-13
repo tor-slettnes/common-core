@@ -19,14 +19,14 @@ namespace cc::demo::grpc
         this->connect<Greeting>(
             cc::demo::protobuf::Signal::kSignalGreeting,
             signal_greeting,
-            [](const Greeting& greeting, Signal* msg) {
+            [](const Greeting &greeting, Signal *msg) {
                 cc::protobuf::encode(greeting, msg->mutable_signal_greeting());
             });
 
         this->connect<TimeData>(
             cc::demo::protobuf::Signal::kSignalTime,
             signal_time,
-            [](const TimeData& timedata, Signal* msg) {
+            [](const TimeData &timedata, Signal *msg) {
                 cc::protobuf::encode(timedata, msg->mutable_signal_time());
             });
 

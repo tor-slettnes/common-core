@@ -10,7 +10,7 @@
 
 namespace cc::core::platform
 {
-    QNXSymbolsProvider::QNXSymbolsProvider(const std::string& name)
+    QNXSymbolsProvider::QNXSymbolsProvider(const std::string &name)
         : PosixSymbolsProvdier(name)
     {
     }

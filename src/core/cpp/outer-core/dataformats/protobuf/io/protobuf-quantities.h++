@@ -12,16 +12,16 @@ namespace cc::protobuf
 {
     void encode_quantity(double value,
                          int decimal_exponent,
-                         quantities::Scalar* scalar);
+                         quantities::Scalar *scalar);
 
     void encode_quantity(double value,
-                         quantities::Scalar* scalar);
+                         quantities::Scalar *scalar);
 
     template <class Quantity, class Unit>
     void encode_quantity(double value,
                          int decimal_exponent,
                          Unit unit,
-                         Quantity* quantity)
+                         Quantity *quantity)
     {
         quantity->set_value(value);
         quantity->set_decimal_exponent(decimal_exponent);
@@ -31,7 +31,7 @@ namespace cc::protobuf
     template <class Quantity, class Unit>
     void encode_quantity(double value,
                          Unit unit,
-                         Quantity* quantity)
+                         Quantity *quantity)
     {
         quantity->set_value(value);
         quantity->set_unit(unit);

@@ -28,13 +28,13 @@
 namespace cc::platform::netconfig::dbus
 {
     void extract_addressdata(
-        const cc::glib::VariantMaps& configs,
-        AddressVector* addresses)
+        const cc::glib::VariantMaps &configs,
+        AddressVector *addresses)
     {
         addresses->clear();
-        for (const auto& config : configs)
+        for (const auto &config : configs)
         {
-            auto& conf = addresses->emplace_back();
+            auto &conf = addresses->emplace_back();
             cc::glib::extract_value(config, "address", &conf.address);
             cc::glib::extract_value(config, "prefix", &conf.prefixlength);
         }
@@ -47,7 +47,7 @@ namespace cc::platform::netconfig::dbus
         NM_SETTING_WIRELESS_SECURITY_WEP_KEY3,
     };
 
-    core::types::ByteVector file_url(const fs::path& path)
+    core::types::ByteVector file_url(const fs::path &path)
     {
         return URI_PREFIX_FILE + path.string() + "\0"s;
     }
@@ -58,8 +58,8 @@ namespace cc::platform::netconfig::dbus
         // Methods to extract from Settings::Connection maps
 
         void extract_connection(
-            const cc::glib::VariantMap& map,
-            ConnectionData* data)
+            const cc::glib::VariantMap &map,
+            ConnectionData *data)
         {
             cc::glib::extract_value(
                 map,
@@ -78,8 +78,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void extract_wired(
-            const cc::glib::VariantMap& map,
-            WiredConnectionData* wired)
+            const cc::glib::VariantMap &map,
+            WiredConnectionData *wired)
         {
             cc::glib::extract_value(
                 map,
@@ -88,8 +88,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void extract_wireless(
-            const cc::glib::VariantMap& map,
-            WirelessConnectionData* wireless)
+            const cc::glib::VariantMap &map,
+            WirelessConnectionData *wireless)
         {
             cc::glib::extract_value<core::types::Bytes>(
                 map,
@@ -128,7 +128,7 @@ namespace cc::platform::netconfig::dbus
         }
 
         WEP_Data
-        auth_data_wep(const cc::glib::VariantMap& map)
+        auth_data_wep(const cc::glib::VariantMap &map)
         {
             WEP_Data wep;
             cc::glib::extract_mapped(
@@ -162,7 +162,7 @@ namespace cc::platform::netconfig::dbus
         }
 
         WPA_Data
-        auth_data_wpa(const cc::glib::VariantMap& map)
+        auth_data_wpa(const cc::glib::VariantMap &map)
         {
             WPA_Data wpa;
             cc::glib::extract_value(
@@ -173,7 +173,7 @@ namespace cc::platform::netconfig::dbus
         }
 
         EAP_Data
-        auth_data_eap(const cc::glib::VariantMap& map)
+        auth_data_eap(const cc::glib::VariantMap &map)
         {
             EAP_Data eap;
             cc::glib::extract_mapped(
@@ -185,8 +185,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void extract_wireless_security(
-            const cc::glib::VariantMap& map,
-            WirelessConnectionData* wireless)
+            const cc::glib::VariantMap &map,
+            WirelessConnectionData *wireless)
         {
             std::string key_mgmt_name;
             if (cc::glib::extract_value(
@@ -201,7 +201,7 @@ namespace cc::platform::netconfig::dbus
             if (cc::glib::extract_value(
                     map, NM_SETTING_WIRELESS_SECURITY_PROTO, &protos))
             {
-                for (const std::string& proto : protos)
+                for (const std::string &proto : protos)
                 {
                     if (auto mask = auth_proto_map.try_from_string(proto))
                     {
@@ -234,8 +234,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void extract_eap(
-            const cc::glib::VariantMap& map,
-            EAP_Data* data)
+            const cc::glib::VariantMap &map,
+            EAP_Data *data)
         {
             std::vector<std::string> eap_schemes;
 
@@ -305,8 +305,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void extract_ipconfig(
-            const cc::glib::VariantMap& map,
-            IPConfigData* ipconfig)
+            const cc::glib::VariantMap &map,
+            IPConfigData *ipconfig)
         {
             cc::glib::extract_mapped(
                 map,
@@ -334,8 +334,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void extract_ip4config(
-            const cc::glib::VariantMap& map,
-            IPConfigData* ipconfig)
+            const cc::glib::VariantMap &map,
+            IPConfigData *ipconfig)
         {
             extract_ipconfig(map, ipconfig);
             std::vector<std::uint32_t> addrs;
@@ -357,8 +357,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void extract_ip6config(
-            const cc::glib::VariantMap& map,
-            IPConfigData* ipconfig)
+            const cc::glib::VariantMap &map,
+            IPConfigData *ipconfig)
         {
             extract_ipconfig(map, ipconfig);
 
@@ -370,7 +370,7 @@ namespace cc::platform::netconfig::dbus
 
             ipconfig->dns.clear();
             ipconfig->dns.reserve(addrs.size());
-            for (const std::vector<std::uint8_t>& bytes : addrs)
+            for (const std::vector<std::uint8_t> &bytes : addrs)
             {
                 char buf[INET6_ADDRSTRLEN];
                 if (inet_ntop(AF_INET6, bytes.data(), buf, sizeof(buf)))
@@ -381,8 +381,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void extract_settings(
-            const cc::glib::SettingsMap& map,
-            ConnectionData* data)
+            const cc::glib::SettingsMap &map,
+            ConnectionData *data)
         {
             auto it = map.find(NM_SETTING_CONNECTION_SETTING_NAME);
             if (it != map.end())
@@ -407,7 +407,7 @@ namespace cc::platform::netconfig::dbus
 
                     if ((it = map.find(NM_SETTING_802_1X_SETTING_NAME)) != map.end())
                     {
-                        if (auto* auth = std::get_if<EAP_Data>(&wireless.auth))
+                        if (auto *auth = std::get_if<EAP_Data>(&wireless.auth))
                         {
                             extract_eap(it->second, auth);
                         }
@@ -427,8 +427,8 @@ namespace cc::platform::netconfig::dbus
             }
         }
 
-        void extract_settings(const cc::glib::SettingsContainer& container,
-                              ConnectionData* data)
+        void extract_settings(const cc::glib::SettingsContainer &container,
+                              ConnectionData *data)
         {
             extract_settings(cc::glib::variant_cast<cc::glib::SettingsMap>(container), data);
         }
@@ -437,8 +437,8 @@ namespace cc::platform::netconfig::dbus
         // Methods to build Settings::Connection maps
 
         void insert_connection(
-            const ConnectionData& data,
-            cc::glib::VariantMap* map)
+            const ConnectionData &data,
+            cc::glib::VariantMap *map)
         {
             cc::glib::insert_value(
                 map,
@@ -463,8 +463,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void insert_wired(
-            const WiredConnectionData& wired,
-            cc::glib::VariantMap* map)
+            const WiredConnectionData &wired,
+            cc::glib::VariantMap *map)
         {
             cc::glib::insert_value(
                 map,
@@ -473,8 +473,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void insert_wireless(
-            const WirelessConnectionData& wireless,
-            cc::glib::VariantMap* map)
+            const WirelessConnectionData &wireless,
+            cc::glib::VariantMap *map)
         {
             cc::glib::insert_value<core::types::Bytes>(
                 map,
@@ -510,8 +510,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void insert_wireless_security(
-            const WirelessConnectionData& wireless,
-            cc::glib::VariantMap* map)
+            const WirelessConnectionData &wireless,
+            cc::glib::VariantMap *map)
         {
             cc::glib::insert_mapped(
                 map,
@@ -522,7 +522,7 @@ namespace cc::platform::netconfig::dbus
             if (wireless.auth_protos)
             {
                 std::vector<Glib::ustring> protos;
-                for (const auto& [mask, proto] : auth_proto_map)
+                for (const auto &[mask, proto] : auth_proto_map)
                 {
                     if (wireless.auth_protos & mask)
                     {
@@ -535,7 +535,7 @@ namespace cc::platform::netconfig::dbus
                     protos);
             }
 
-            if (auto* wep = std::get_if<WEP_Data>(&wireless.auth))
+            if (auto *wep = std::get_if<WEP_Data>(&wireless.auth))
             {
                 if (wep->auth_alg != AUTH_ALG_NONE)
                 {
@@ -568,7 +568,7 @@ namespace cc::platform::netconfig::dbus
                 }
             }
 
-            else if (auto* wpa = std::get_if<WPA_Data>(&wireless.auth))
+            else if (auto *wpa = std::get_if<WPA_Data>(&wireless.auth))
             {
                 cc::glib::insert_value(
                     map,
@@ -576,7 +576,7 @@ namespace cc::platform::netconfig::dbus
                     std::string(wpa->psk));
             }
 
-            else if (auto* eap = std::get_if<EAP_Data>(&wireless.auth))
+            else if (auto *eap = std::get_if<EAP_Data>(&wireless.auth))
             {
                 cc::glib::insert_mapped(
                     map,
@@ -587,10 +587,10 @@ namespace cc::platform::netconfig::dbus
         }
 
         void insert_eap(
-            const EAP_Data& data,
-            cc::glib::VariantMap* map)
+            const EAP_Data &data,
+            cc::glib::VariantMap *map)
         {
-            if (const auto& eap_scheme = eap_type_map.try_to_string(data.eap_type))
+            if (const auto &eap_scheme = eap_type_map.try_to_string(data.eap_type))
             {
                 cc::glib::insert_value(
                     map,
@@ -681,11 +681,11 @@ namespace cc::platform::netconfig::dbus
             }
         }
 
-        Glib::VariantBase wrap_address_data(const std::vector<AddressData>& data)
+        Glib::VariantBase wrap_address_data(const std::vector<AddressData> &data)
         {
             GVariantBuilder builder;
             g_variant_builder_init(&builder, G_VARIANT_TYPE("aa{sv}"));
-            for (const auto& item : data)
+            for (const auto &item : data)
             {
                 g_variant_builder_open(&builder, G_VARIANT_TYPE("a{sv}"));
 
@@ -704,11 +704,11 @@ namespace cc::platform::netconfig::dbus
             return Glib::wrap(g_variant_builder_end(&builder));
         }
 
-        Glib::VariantBase wrap_string_vector(const std::vector<std::string>& data)
+        Glib::VariantBase wrap_string_vector(const std::vector<std::string> &data)
         {
             GVariantBuilder builder;
             g_variant_builder_init(&builder, G_VARIANT_TYPE("as"));
-            for (const std::string& s : data)
+            for (const std::string &s : data)
             {
                 g_variant_builder_add(&builder,
                                       "s",
@@ -718,8 +718,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void insert_ipconfig(
-            const IPConfigData& ipconfig,
-            cc::glib::VariantMap* map)
+            const IPConfigData &ipconfig,
+            cc::glib::VariantMap *map)
         {
             cc::glib::insert_mapped(
                 map,
@@ -745,8 +745,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void insert_ip4config(
-            const IPConfigData& ipconfig,
-            cc::glib::VariantMap* map)
+            const IPConfigData &ipconfig,
+            cc::glib::VariantMap *map)
         {
             insert_ipconfig(ipconfig, map);
 
@@ -768,8 +768,8 @@ namespace cc::platform::netconfig::dbus
         }
 
         void insert_ip6config(
-            const IPConfigData& ipconfig,
-            cc::glib::VariantMap* map)
+            const IPConfigData &ipconfig,
+            cc::glib::VariantMap *map)
         {
             insert_ipconfig(ipconfig, map);
 
@@ -791,18 +791,18 @@ namespace cc::platform::netconfig::dbus
         }
 
         void insert_settings(
-            const ConnectionData& data,
-            cc::glib::SettingsMap* settings)
+            const ConnectionData &data,
+            cc::glib::SettingsMap *settings)
         {
             insert_connection(data,
                               &(*settings)[NM_SETTING_CONNECTION_SETTING_NAME]);
 
-            if (auto* wired = std::get_if<WiredConnectionData>(&data.specific_data))
+            if (auto *wired = std::get_if<WiredConnectionData>(&data.specific_data))
             {
                 insert_wired(*wired,
                              &(*settings)[NM_SETTING_WIRED_SETTING_NAME]);
             }
-            else if (auto* wireless = std::get_if<WirelessConnectionData>(&data.specific_data))
+            else if (auto *wireless = std::get_if<WirelessConnectionData>(&data.specific_data))
             {
                 insert_wireless(*wireless,
                                 &(*settings)[NM_SETTING_WIRELESS_SETTING_NAME]);
@@ -814,7 +814,7 @@ namespace cc::platform::netconfig::dbus
                         &(*settings)[NM_SETTING_WIRELESS_SECURITY_SETTING_NAME]);
                 }
 
-                if (auto* eap = std::get_if<EAP_Data>(&wireless->auth))
+                if (auto *eap = std::get_if<EAP_Data>(&wireless->auth))
                 {
                     insert_eap(*eap,
                                &(*settings)[NM_SETTING_802_1X_SETTING_NAME]);
@@ -829,7 +829,7 @@ namespace cc::platform::netconfig::dbus
         }
 
         cc::glib::SettingsContainer build_settings_container(
-            const ConnectionData& data)
+            const ConnectionData &data)
         {
             // Unfortunately Glibmm does not have a good way to construct
             // VariantContainer values from Variant values, so we use C here. :(
@@ -840,13 +840,13 @@ namespace cc::platform::netconfig::dbus
             cc::glib::SettingsMap map;
             insert_settings(data, &map);
 
-            for (const auto& outer : map)
+            for (const auto &outer : map)
             {
                 g_variant_builder_open(&builder, G_VARIANT_TYPE("{sa{sv}}"));
                 g_variant_builder_add(&builder, "s", outer.first.c_str());
                 g_variant_builder_open(&builder, G_VARIANT_TYPE("a{sv}"));
 
-                for (const auto& inner : outer.second)
+                for (const auto &inner : outer.second)
                 {
                     // g_variant_builder_add(&builder,
                     //                       G_VARIANT_TYPE("{sv}"),

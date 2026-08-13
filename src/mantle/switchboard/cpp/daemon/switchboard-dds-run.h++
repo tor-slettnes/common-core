@@ -14,6 +14,6 @@ namespace cc::platform::switchboard::dds
 {
     void run_dds_service(
         std::shared_ptr<switchboard::Provider> api_provider,
-        const std::string& identity,
+        const std::string &identity,
         int domain_id);
 }

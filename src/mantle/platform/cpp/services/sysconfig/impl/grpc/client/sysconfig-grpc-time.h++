@@ -17,17 +17,17 @@ namespace cc::platform::sysconfig::grpc
         using Super = TimeConfigInterface;
 
     public:
-        TimeConfigProvider(const std::shared_ptr<Client>& client);
+        TimeConfigProvider(const std::shared_ptr<Client> &client);
 
         void initialize() override;
 
     protected:
         // Current timestamp
-        void set_current_time(const core::dt::TimePoint& tp) override;
+        void set_current_time(const core::dt::TimePoint &tp) override;
         core::dt::TimePoint get_current_time() const override;
 
         // Get or set time configuration
-        void set_time_config(const TimeConfig& config) override;
+        void set_time_config(const TimeConfig &config) override;
         TimeConfig get_time_config() const override;
 
     private:

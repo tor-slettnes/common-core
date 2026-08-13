@@ -21,9 +21,9 @@ using namespace std::literals::string_literals;  // ""s
 namespace cc::core::str
 {
     // std::string type_description(const std::type_info &ti);
-    void checkstream(const std::istream& ss,
-                     const std::string_view& s,
-                     const std::type_info& ti);
+    void checkstream(const std::istream &ss,
+                     const std::string_view &s,
+                     const std::type_info &ti);
 
     //==========================================================================
     /// Convert string to other arbitrary type T, using istringstream >> operator.
@@ -32,7 +32,7 @@ namespace cc::core::str
     class StringConvert
     {
     public:
-        static T from_string(const std::string_view& s)
+        static T from_string(const std::string_view &s)
         {
             T value;
             std::stringstream ss;
@@ -42,7 +42,7 @@ namespace cc::core::str
             return value;
         }
 
-        static std::string to_string(const T& value)
+        static std::string to_string(const T &value)
         {
             std::ostringstream ss;
             ss << value;
@@ -57,11 +57,11 @@ namespace cc::core::str
     class StringConvert<T, typename std::enable_if_t<std::is_integral_v<T>>>
     {
     public:
-        static T from_string(const std::string_view& s)
+        static T from_string(const std::string_view &s)
         {
             static const std::errc ok{};
-            const char* start = &*s.begin();
-            const char* end = &*s.end();
+            const char *start = &*s.begin();
+            const char *end = &*s.end();
             int base = 10;
 
             if ((start != end) && (*start == '+'))
@@ -94,7 +94,7 @@ namespace cc::core::str
             }
         }
 
-        static std::string to_string(const T& value)
+        static std::string to_string(const T &value)
         {
             std::ostringstream ss;
             ss << value;
@@ -109,11 +109,11 @@ namespace cc::core::str
     class StringConvert<T, typename std::enable_if_t<std::is_floating_point_v<T>>>
     {
     public:
-        static T from_string(const std::string_view& s)
+        static T from_string(const std::string_view &s)
         {
             static const std::errc ok{};
-            const char* start = &*s.begin();
-            const char* end = &*s.end();
+            const char *start = &*s.begin();
+            const char *end = &*s.end();
 
             if ((start != end) && (*start == '+'))
             {
@@ -134,7 +134,7 @@ namespace cc::core::str
             return value;
         }
 
-        static std::string to_string(const T& value)
+        static std::string to_string(const T &value)
         {
             std::ostringstream ss;
             ss << value;
@@ -148,8 +148,8 @@ namespace cc::core::str
     class StringConvert<std::string>
     {
     public:
-        static std::string from_string(const std::string_view& s);
-        static std::string to_string(const std::string& s);
+        static std::string from_string(const std::string_view &s);
+        static std::string to_string(const std::string &s);
     };
 
     //==========================================================================
@@ -158,8 +158,8 @@ namespace cc::core::str
     class StringConvert<bool>
     {
     public:
-        static bool from_string(const std::string_view& s);
-        static std::string to_string(const bool& value);
+        static bool from_string(const std::string_view &s);
+        static std::string to_string(const bool &value);
     };
 
     //==========================================================================
@@ -172,7 +172,7 @@ namespace cc::core::str
     ///     Any exception from underlying conversion routines.
 
     template <class T>
-    T convert_to(const std::string_view& s)
+    T convert_to(const std::string_view &s)
     {
         return StringConvert<T>::from_string(s);
     }
@@ -193,9 +193,9 @@ namespace cc::core::str
     /// can be accessed via `std::rethrow_exception()`.
 
     template <class T>
-    T convert_to(const std::string_view& s,
-                 const T& fallback,
-                 std::exception_ptr* eptr = nullptr) noexcept
+    T convert_to(const std::string_view &s,
+                 const T &fallback,
+                 std::exception_ptr *eptr = nullptr) noexcept
     {
         try
         {
@@ -227,9 +227,9 @@ namespace cc::core::str
     /// can be accessed via `std::rethrow_exception()`.
 
     template <class T>
-    T convert_optional_to(const std::optional<std::string_view>& s,
-                          const T& fallback,
-                          std::exception_ptr* eptr = nullptr) noexcept
+    T convert_optional_to(const std::optional<std::string_view> &s,
+                          const T &fallback,
+                          std::exception_ptr *eptr = nullptr) noexcept
     {
         if (s)
         {
@@ -256,7 +256,7 @@ namespace cc::core::str
     ///     Optional container containing converted value iff successful.
 
     template <class T>
-    std::optional<T> try_convert_to(const std::string_view& s)
+    std::optional<T> try_convert_to(const std::string_view &s)
     {
         try
         {
@@ -274,13 +274,13 @@ namespace cc::core::str
     /// @return
     ///     String representation of value.
     template <class T>
-    std::string convert_from(const T& value) noexcept
+    std::string convert_from(const T &value) noexcept
     {
         return StringConvert<T>::to_string(value);
     }
 
     template <class T>
-    std::string convert_from(const std::optional<T>& value) noexcept
+    std::string convert_from(const std::optional<T> &value) noexcept
     {
         if (value)
         {

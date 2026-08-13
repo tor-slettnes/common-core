@@ -16,11 +16,11 @@ namespace cc::dbus
     // ProxyContainer
 
     ProxyWrapper::ProxyWrapper(
-        ProxyContainer* container,
-        const ConnectionPtr& connection,
-        const ServiceName& servicename,
-        const ObjectPath& objectpath,
-        const InterfaceName& interfacename,
+        ProxyContainer *container,
+        const ConnectionPtr &connection,
+        const ServiceName &servicename,
+        const ObjectPath &objectpath,
+        const InterfaceName &interfacename,
         SignalHandlerMap signal_handlers,
         PropertyHandlerMap property_handlers)
         : container(container),
@@ -77,8 +77,8 @@ namespace cc::dbus
                                  this->shortpath());
     }
 
-    void ProxyWrapper::on_ready(const Glib::RefPtr<Gio::AsyncResult>& result,
-                                const std::string& identifier)
+    void ProxyWrapper::on_ready(const Glib::RefPtr<Gio::AsyncResult> &result,
+                                const std::string &identifier)
     {
         if (result)
         {
@@ -108,14 +108,14 @@ namespace cc::dbus
         logf_trace("Adding %s PropertiesChanged handler", this->identifier());
         this->signal_handlers.insert_or_assign(
             "PropertiesChanged",
-            [=](const Glib::VariantContainerBase& parameters) {
+            [=](const Glib::VariantContainerBase &parameters) {
                 this->on_properties_change(
                     cc::glib::variant_cast<Gio::DBus::Proxy::MapChangedProperties>(
                         parameters, 0));
             });
 
         Gio::DBus::Proxy::MapChangedProperties props;
-        for (const auto& [name, handler] : this->property_handlers)
+        for (const auto &[name, handler] : this->property_handlers)
         {
             logf_trace("Getting %s property %r", this->identifier(), name);
             Glib::VariantBase prop;
@@ -126,9 +126,9 @@ namespace cc::dbus
         this->update_properties(props);
     }
 
-    void ProxyWrapper::call(const std::string& methodname,
-                            const Glib::VariantContainerBase& parameters,
-                            const Gio::SlotAsyncReady& slot) const
+    void ProxyWrapper::call(const std::string &methodname,
+                            const Glib::VariantContainerBase &parameters,
+                            const Gio::SlotAsyncReady &slot) const
     {
         logf_trace("%s.%s(%s)", this->identifier(), methodname, parameters);
         // auto callback = sigc::bind(
@@ -142,9 +142,9 @@ namespace cc::dbus
 
     void ProxyWrapper::callback_handler(
         ResultPtr result,
-        const std::string& methodname,
-        const Glib::VariantContainerBase& parameters,
-        const Gio::SlotAsyncReady& slot) const
+        const std::string &methodname,
+        const Glib::VariantContainerBase &parameters,
+        const Gio::SlotAsyncReady &slot) const
     {
         try
         {
@@ -168,8 +168,8 @@ namespace cc::dbus
     }
 
     Glib::VariantContainerBase ProxyWrapper::call_sync(
-        const std::string& methodname,
-        const Glib::VariantContainerBase& parameters) const
+        const std::string &methodname,
+        const Glib::VariantContainerBase &parameters) const
     {
         std::string preamble = core::str::format("%s.%s(%s)",
                                                  this->identifier(),
@@ -180,7 +180,7 @@ namespace cc::dbus
         {
             return this->proxy->call_sync(methodname, this->cancellable, parameters);
         }
-        catch (const Glib::Error& e)
+        catch (const Glib::Error &e)
         {
             throw cc::glib::Error(e, preamble);
         }
@@ -211,7 +211,7 @@ namespace cc::dbus
     }
 
     uint ProxyWrapper::update_properties(
-        const Gio::DBus::Proxy::MapChangedProperties& changes)
+        const Gio::DBus::Proxy::MapChangedProperties &changes)
     {
         uint numchanges = 0;
         for (const auto [property, data] : changes)
@@ -239,8 +239,8 @@ namespace cc::dbus
     }
 
     void ProxyWrapper::on_properties_change(
-        const Gio::DBus::Proxy::MapChangedProperties& changes,
-        const std::vector<Glib::ustring>& invalidated)
+        const Gio::DBus::Proxy::MapChangedProperties &changes,
+        const std::vector<Glib::ustring> &invalidated)
     {
         uint numchanges = this->update_properties(changes);
         if (numchanges > 0 && this->ready)
@@ -250,9 +250,9 @@ namespace cc::dbus
     }
 
     void ProxyWrapper::on_signal(
-        const std::string& sender_name,
-        const std::string& signal_name,
-        const Glib::VariantContainerBase& parameters)
+        const std::string &sender_name,
+        const std::string &signal_name,
+        const Glib::VariantContainerBase &parameters)
     {
         auto handler = this->signal_handlers.find(signal_name);
         if (handler != this->signal_handlers.end())
@@ -265,17 +265,17 @@ namespace cc::dbus
         }
     }
 
-    ObjectPath ProxyWrapper::get_cached_path(const std::string& name) const
+    ObjectPath ProxyWrapper::get_cached_path(const std::string &name) const
     {
         return this->get_cached_property<ObjectPath>(name);
     }
 
-    bool ProxyWrapper::valid_path(const ObjectPath& path)
+    bool ProxyWrapper::valid_path(const ObjectPath &path)
     {
         return path.size() > 1;
     }
 
-    void ProxyWrapper::subscribe_updates(ProxyWrapper* requestor,
+    void ProxyWrapper::subscribe_updates(ProxyWrapper *requestor,
                                          ProxyWrapper::UpdateMethod updatemethod)
     {
         bool subscribe = false;
@@ -315,8 +315,8 @@ namespace cc::dbus
                  it != this->subscribers.end();
                  it = keep ? ++it : this->subscribers.erase(it))
             {
-                const auto& [path, subscription] = *it;
-                const auto& [weakref, updatemethod] = subscription;
+                const auto &[path, subscription] = *it;
+                const auto &[weakref, updatemethod] = subscription;
 
                 if (ProxyWrapper::ptr dep = weakref.lock())
                 {

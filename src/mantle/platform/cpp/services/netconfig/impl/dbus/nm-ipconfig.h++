@@ -25,7 +25,7 @@ namespace cc::platform::netconfig::dbus
         void emit_change(core::signal::MappingAction action) override;
 
         void on_property_addressdata(
-            const Glib::VariantBase& change);
+            const Glib::VariantBase &change);
     };
 
     //==========================================================================
@@ -38,14 +38,14 @@ namespace cc::platform::netconfig::dbus
 
     public:
         IP4Config(
-            cc::dbus::ProxyContainer* container,
-            const cc::dbus::ConnectionPtr& connection,
-            const cc::dbus::ServiceName& servicename,
-            const cc::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer *container,
+            const cc::dbus::ConnectionPtr &connection,
+            const cc::dbus::ServiceName &servicename,
+            const cc::dbus::ObjectPath &objectpath);
 
     protected:
         void on_property_dns(
-            const Glib::VariantBase& change);
+            const Glib::VariantBase &change);
     };
 
     //==========================================================================
@@ -58,14 +58,14 @@ namespace cc::platform::netconfig::dbus
 
     public:
         IP6Config(
-            cc::dbus::ProxyContainer* container,
-            const cc::dbus::ConnectionPtr& connection,
-            const cc::dbus::ServiceName& servicename,
-            const cc::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer *container,
+            const cc::dbus::ConnectionPtr &connection,
+            const cc::dbus::ServiceName &servicename,
+            const cc::dbus::ObjectPath &objectpath);
 
     protected:
         void on_property_dns(
-            const Glib::VariantBase& change);
+            const Glib::VariantBase &change);
     };
 
 }  // namespace cc::platform::netconfig::dbus

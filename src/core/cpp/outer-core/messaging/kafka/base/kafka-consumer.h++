@@ -22,8 +22,8 @@ namespace cc::kafka
         using Super = Endpoint;
 
     protected:
-        Consumer(const std::string& profile_name,
-                 const core::types::KeyValueMap& settings = {});
+        Consumer(const std::string &profile_name,
+                 const core::types::KeyValueMap &settings = {});
         ~Consumer();
 
     public:
@@ -33,10 +33,10 @@ namespace cc::kafka
     protected:
         void init_dr_capture();
         void init_handle();
-        RdKafka::KafkaConsumer* handle() override;
+        RdKafka::KafkaConsumer *handle() override;
 
     public:
-        void subscribe(const std::vector<std::string>& topics);
+        void subscribe(const std::vector<std::string> &topics);
         void clear_subscriptions();
 
     private:
@@ -45,27 +45,27 @@ namespace cc::kafka
         void consume_worker();
 
     protected:
-        virtual void handle_message(RdKafka::Message* message);
+        virtual void handle_message(RdKafka::Message *message);
 
         virtual void handle_message(
-            const core::dt::TimePoint& tp,
-            const std::string& topic,
-            const std::string& key,
-            const core::types::KeyValueMap& header,
-            const core::types::ByteVector& payload);
+            const core::dt::TimePoint &tp,
+            const std::string &topic,
+            const std::string &key,
+            const core::types::KeyValueMap &header,
+            const core::types::ByteVector &payload);
 
     protected:
-        void set_consumer_key(const std::optional<std::string>& key);
-        const std::optional<std::string>& consumer_key() const;
+        void set_consumer_key(const std::optional<std::string> &key);
+        const std::optional<std::string> &consumer_key() const;
 
     private:
         core::types::KeyValueMap extract_headers(
-            const RdKafka::Headers* headers) const;
+            const RdKafka::Headers *headers) const;
 
         void shutdown();
 
     private:
-        RdKafka::KafkaConsumer* consumer_handle_;
+        RdKafka::KafkaConsumer *consumer_handle_;
         core::dt::Duration shutdown_timeout_;
         std::thread consumer_thread_;
         bool keep_consuming_;

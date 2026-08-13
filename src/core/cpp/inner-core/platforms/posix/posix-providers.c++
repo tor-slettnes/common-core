@@ -14,7 +14,7 @@
 
 namespace cc::core::platform
 {
-    void register_posix_providers(const std::string& exec_name)
+    void register_posix_providers(const std::string &exec_name)
     {
         runtime.registerProvider<PosixRunTimeProvider>();
         timezone.registerProvider<PosixTimeZoneProvider>();

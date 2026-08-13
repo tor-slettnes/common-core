@@ -32,15 +32,15 @@ namespace cc::core::logging
         types::ValueType column_type = types::ValueType::NONE;
     };
 
-    std::ostream& operator<<(std::ostream& stream, const ColumnSpec& spec);
-    types::TaggedValueList& operator<<(types::TaggedValueList& tvlist,
-                                       const ColumnSpec& spec);
+    std::ostream &operator<<(std::ostream &stream, const ColumnSpec &spec);
+    types::TaggedValueList &operator<<(types::TaggedValueList &tvlist,
+                                       const ColumnSpec &spec);
 
     using ColumnNames = std::vector<std::string>;
     using ColumnSpecs = std::vector<ColumnSpec>;
 
-    types::ValueList& operator<<(types::ValueList& valuelist,
-                                 const ColumnSpecs& specs);
+    types::ValueList &operator<<(types::ValueList &valuelist,
+                                 const ColumnSpecs &specs);
 
     //--------------------------------------------------------------------------
     /// @class TabularData
@@ -52,23 +52,23 @@ namespace cc::core::logging
         using LevelMap = types::ValueMap<status::Level, types::Value>;
 
     protected:
-        TabularData(const ColumnSpecs& columns = {});
+        TabularData(const ColumnSpecs &columns = {});
 
     protected:
-        void load_level_map(const types::KeyValueMap& settings);
-        void load_columns(const types::KeyValueMap& settings);
+        void load_level_map(const types::KeyValueMap &settings);
+        void load_columns(const types::KeyValueMap &settings);
 
     public:
-        const ColumnSpecs& columns() const;
-        void set_columns(const ColumnSpecs& columns);
+        const ColumnSpecs &columns() const;
+        void set_columns(const ColumnSpecs &columns);
 
-        const LevelMap& level_map() const;
-        void set_level_map(const LevelMap& level_map);
+        const LevelMap &level_map() const;
+        void set_level_map(const LevelMap &level_map);
 
         std::vector<std::string> column_names() const;
 
     private:
-        std::optional<ColumnSpec> column_spec(const types::Value& column_data) const;
+        std::optional<ColumnSpec> column_spec(const types::Value &column_data) const;
 
     protected:
         types::ValueList row_data(types::Loggable::ptr loggable,
@@ -76,12 +76,12 @@ namespace cc::core::logging
 
     private:
         types::Value column_data(
-            const logging::ColumnSpec& spec,
+            const logging::ColumnSpec &spec,
             types::Loggable::ptr loggable,
             bool use_local_time) const;
 
         types::Value time_value(
-            const dt::TimePoint& tp,
+            const dt::TimePoint &tp,
             types::ValueType value_type,
             bool use_local_time) const;
 

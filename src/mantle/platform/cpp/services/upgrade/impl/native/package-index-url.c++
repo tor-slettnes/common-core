@@ -12,12 +12,12 @@
 
 namespace cc::platform::upgrade::native
 {
-    URLPackageIndex::URLPackageIndex(const URL& url)
+    URLPackageIndex::URLPackageIndex(const URL &url)
         : url(url)
     {
     }
 
-    PackageSource URLPackageIndex::package_source(const std::string& package_name) const
+    PackageSource URLPackageIndex::package_source(const std::string &package_name) const
     {
         std::string base_url = this->url.substr(0, this->url.rfind("/")) + "/";
         return {cc::http::join_urls(base_url, package_name)};
@@ -33,7 +33,7 @@ namespace cc::platform::upgrade::native
         std::stringstream ss = http.get({});
         core::types::Value response = core::json::reader.read_stream(ss);
 
-        for (const auto& [package_name, package_info_data] : response.get_kvmap())
+        for (const auto &[package_name, package_info_data] : response.get_kvmap())
         {
             if (core::types::KeyValueMapPtr package_info_settings = package_info_data.get_kvmap_ptr())
             {

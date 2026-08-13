@@ -11,8 +11,8 @@
 
 namespace cc::platform::pubsub::zmq
 {
-    Publisher::Publisher(const std::string& bind_address,
-                         const std::string& channel_name,
+    Publisher::Publisher(const std::string &bind_address,
+                         const std::string &channel_name,
                          Role role)
         : cc::zmq::Publisher(bind_address, channel_name, role)
     {
@@ -47,8 +47,8 @@ namespace cc::platform::pubsub::zmq
         }
     }
 
-    bool Publisher::write(const std::string& topic,
-                          const core::types::Value& payload)
+    bool Publisher::write(const std::string &topic,
+                          const core::types::Value &payload)
     {
         cc::zmq::Publisher::publish(
             core::types::ByteVector::from_string(topic),

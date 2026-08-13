@@ -24,12 +24,12 @@ namespace cc::grpc
     class LoggingInterceptor : public Interceptor
     {
     public:
-        LoggingInterceptor(ServerRpcInfo* rpc_info);
+        LoggingInterceptor(ServerRpcInfo *rpc_info);
 
-        void Intercept(InterceptorBatchMethods* methods) override;
+        void Intercept(InterceptorBatchMethods *methods) override;
 
     private:
-        ServerRpcInfo* rpc_info;
+        ServerRpcInfo *rpc_info;
     };
 
     //==========================================================================
@@ -41,7 +41,7 @@ namespace cc::grpc
                                                    ServerInterceptorFactoryInterface>
     {
     protected:
-        Interceptor* CreateServerInterceptor(ServerRpcInfo* rpc_info) override;
+        Interceptor *CreateServerInterceptor(ServerRpcInfo *rpc_info) override;
     };
 
     //==========================================================================
@@ -50,7 +50,7 @@ namespace cc::grpc
     class EHInterceptor : public Interceptor
     {
     public:
-        void Intercept(InterceptorBatchMethods* methods) override;
+        void Intercept(InterceptorBatchMethods *methods) override;
     };
 
     //==========================================================================
@@ -62,7 +62,7 @@ namespace cc::grpc
                                                    ServerInterceptorFactoryInterface>
     {
     protected:
-        Interceptor* CreateServerInterceptor(ServerRpcInfo* info) override;
+        Interceptor *CreateServerInterceptor(ServerRpcInfo *info) override;
     };
 
 }  // namespace cc::grpc

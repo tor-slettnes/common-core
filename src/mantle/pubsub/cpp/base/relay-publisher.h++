@@ -24,8 +24,8 @@ namespace cc::platform::pubsub
     public:
         virtual void initialize();
         virtual void deinitialize();
-        void publish(const std::string& topic,
-                     const core::types::Value& payload);
+        void publish(const std::string &topic,
+                     const core::types::Value &payload);
 
     protected:
         virtual void start_writer();
@@ -33,8 +33,8 @@ namespace cc::platform::pubsub
         void write_worker();
 
     protected:
-        virtual bool write(const std::string& topic,
-                           const core::types::Value& payload) = 0;
+        virtual bool write(const std::string &topic,
+                           const core::types::Value &payload) = 0;
 
     private:
         std::thread writer_thread_;

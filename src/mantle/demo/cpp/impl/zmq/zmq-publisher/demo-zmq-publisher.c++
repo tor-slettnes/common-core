@@ -10,8 +10,8 @@
 
 namespace cc::demo::zmq
 {
-    Publisher::Publisher(const std::string& bind_address,
-                         const std::string& channel_name)
+    Publisher::Publisher(const std::string &bind_address,
+                         const std::string &channel_name)
         : Super(bind_address, channel_name)
     {
     }

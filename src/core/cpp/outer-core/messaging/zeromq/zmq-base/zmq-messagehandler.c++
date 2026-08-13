@@ -11,9 +11,9 @@
 namespace cc::zmq
 {
     MessageHandler::MessageHandler(
-        const std::string& id,
-        const std::optional<Filter>& filter,
-        const std::weak_ptr<Subscriber>& subscriber)
+        const std::string &id,
+        const std::optional<Filter> &filter,
+        const std::weak_ptr<Subscriber> &subscriber)
         : id_(id),
           filter_(filter),
           subscriber_(subscriber)
@@ -34,12 +34,12 @@ namespace cc::zmq
         }
     }
 
-    const std::string& MessageHandler::id() const noexcept
+    const std::string &MessageHandler::id() const noexcept
     {
         return this->id_;
     }
 
-    const std::optional<Filter>& MessageHandler::filter() const noexcept
+    const std::optional<Filter> &MessageHandler::filter() const noexcept
     {
         return this->filter_;
     }
@@ -60,13 +60,13 @@ namespace cc::zmq
         }
     }
 
-    void MessageHandler::handle(const MessageParts& parts)
+    void MessageHandler::handle(const MessageParts &parts)
     {
         this->handle(this->combine_parts(parts, this->filter().has_value()));
     }
 
     core::types::ByteVector MessageHandler::combine_parts(
-        const MessageParts& parts,
+        const MessageParts &parts,
         bool remove_header) const
     {
         core::types::ByteVector payload;

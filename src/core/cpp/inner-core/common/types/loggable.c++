@@ -9,51 +9,51 @@
 
 namespace cc::core::types
 {
-    Loggable::Loggable(const dt::TimePoint& tp,
-                       const types::KeyValueMap& attributes)
+    Loggable::Loggable(const dt::TimePoint &tp,
+                       const types::KeyValueMap &attributes)
         : timepoint_(tp),
           attributes_(attributes)
     {
     }
 
-    Loggable::Loggable(Loggable&& src)
+    Loggable::Loggable(Loggable &&src)
     {
         *this = src;
     }
 
-    Loggable::Loggable(const Loggable& src)
+    Loggable::Loggable(const Loggable &src)
     {
         *this = std::move(src);
     }
 
-    Loggable::Loggable(const types::KeyValueMap& kvmap)
+    Loggable::Loggable(const types::KeyValueMap &kvmap)
         : timepoint_(kvmap.get(FIELD_TIME).as_timepoint()),
           attributes_(kvmap.get(FIELD_ATTRIBUTES).as_kvmap())
     {
     }
 
-    Loggable& Loggable::operator=(Loggable&& other) noexcept
+    Loggable &Loggable::operator=(Loggable &&other) noexcept
     {
         std::swap(this->timepoint_, other.timepoint_);
         std::swap(this->attributes_, other.attributes_);
         return *this;
     }
 
-    Loggable& Loggable::operator=(const Loggable& other) noexcept
+    Loggable &Loggable::operator=(const Loggable &other) noexcept
     {
         this->timepoint_ = other.timepoint();
         this->attributes_ = other.attributes();
         return *this;
     }
 
-    bool Loggable::operator==(const Loggable& other) const noexcept
+    bool Loggable::operator==(const Loggable &other) const noexcept
     {
         return (this->contract_id() == other.contract_id()) &&
                (this->timepoint() == other.timepoint()) &&
                (this->attributes() == other.attributes());
     }
 
-    bool Loggable::operator!=(const Loggable& other) const noexcept
+    bool Loggable::operator!=(const Loggable &other) const noexcept
     {
         return !(*this == other);
     }
@@ -63,19 +63,19 @@ namespace cc::core::types
         return this->timepoint_;
     }
 
-    const types::KeyValueMap& Loggable::attributes() const noexcept
+    const types::KeyValueMap &Loggable::attributes() const noexcept
     {
         return this->attributes_;
     }
 
-    types::KeyValueMap& Loggable::attributes() noexcept
+    types::KeyValueMap &Loggable::attributes() noexcept
     {
         return this->attributes_;
     }
 
     types::Value Loggable::attribute(
-        const std::string& key,
-        const types::Value& fallback) const noexcept
+        const std::string &key,
+        const types::Value &fallback) const noexcept
     {
         return this->attributes_.get(key, fallback);
     }
@@ -98,7 +98,7 @@ namespace cc::core::types
         return This::loggable_fields();
     }
 
-    types::Value Loggable::get_field_as_value(const std::string& field_name) const
+    types::Value Loggable::get_field_as_value(const std::string &field_name) const
     {
         if (field_name == This::FIELD_TIME)
         {
@@ -114,16 +114,16 @@ namespace cc::core::types
         }
     }
 
-    void Loggable::to_tvlist(types::TaggedValueList* tvlist) const
+    void Loggable::to_tvlist(types::TaggedValueList *tvlist) const
     {
-        for (const std::string& field_name : this->field_names())
+        for (const std::string &field_name : this->field_names())
         {
             tvlist->append_if_value(field_name,
                                     this->get_field_as_value(field_name));
         }
     }
 
-    void Loggable::to_stream(std::ostream& stream) const
+    void Loggable::to_stream(std::ostream &stream) const
     {
         stream << this->class_name() << this->as_tvlist();
     }

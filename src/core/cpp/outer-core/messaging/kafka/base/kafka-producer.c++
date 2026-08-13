@@ -14,8 +14,8 @@ namespace cc::kafka
     const auto SETTING_SHUTDOWN_TIMEOUT = "shutdown timeout";
     const auto DEFAULT_SHUTDOWN_TIMEOUT = 2.0;
 
-    Producer::Producer(const std::string& profile_name,
-                       const core::types::KeyValueMap& settings)
+    Producer::Producer(const std::string &profile_name,
+                       const core::types::KeyValueMap &settings)
         : Super("Producer", profile_name, settings),
           producer_handle_(nullptr),
           shutdown_timeout_(
@@ -53,7 +53,7 @@ namespace cc::kafka
     void Producer::init_handle()
     {
         std::string error_string;
-        if (RdKafka::Producer* producer = RdKafka::Producer::create(
+        if (RdKafka::Producer *producer = RdKafka::Producer::create(
                 this->conf(),
                 error_string))
         {
@@ -66,7 +66,7 @@ namespace cc::kafka
         }
     }
 
-    RdKafka::Producer* Producer::handle()
+    RdKafka::Producer *Producer::handle()
     {
         if (!this->producer_handle_)
         {
@@ -76,7 +76,7 @@ namespace cc::kafka
         return this->producer_handle_;
     }
 
-    void Producer::set_dr_callback(const DeliveryReportCapture::Callback& callback)
+    void Producer::set_dr_callback(const DeliveryReportCapture::Callback &callback)
     {
         this->dr_capture_.set_callback(callback);
     }
@@ -108,23 +108,23 @@ namespace cc::kafka
         }
     }
 
-    void Producer::set_producer_key(const std::optional<std::string>& key)
+    void Producer::set_producer_key(const std::optional<std::string> &key)
     {
         this->producer_key_ = key;
     }
 
-    const std::optional<std::string>& Producer::producer_key() const
+    const std::optional<std::string> &Producer::producer_key() const
     {
         return this->producer_key_;
     }
 
     void Producer::produce(
-        const std::string& topic,
-        const core::types::Bytes& payload,
-        const std::optional<core::dt::TimePoint>& timepoint,
-        const std::optional<std::string_view>& key,
-        const HeaderMap& headers,
-        const DeliveryReportCapture::CallbackData::ptr& cb_data)
+        const std::string &topic,
+        const core::types::Bytes &payload,
+        const std::optional<core::dt::TimePoint> &timepoint,
+        const std::optional<std::string_view> &key,
+        const HeaderMap &headers,
+        const DeliveryReportCapture::CallbackData::ptr &cb_data)
     {
         core::dt::TimePoint tp_ = timepoint.value_or(core::dt::Clock::now());
 
@@ -134,23 +134,23 @@ namespace cc::kafka
             key_ = this->producer_key();
         }
 
-        RdKafka::Headers* headers_ = RdKafka::Headers::create();
-        for (const auto& [key, value] : headers)
+        RdKafka::Headers *headers_ = RdKafka::Headers::create();
+        for (const auto &[key, value] : headers)
         {
             headers_->add(key, value);
         }
 
         RdKafka::ErrorCode error_code = this->handle()->produce(
-            topic,                                             // topic_name
-            RdKafka::Topic::PARTITION_UA,                      // partition
-            RdKafka::Producer::RK_MSG_COPY,                    // msgflags
-            const_cast<core::types::Byte*>(payload.data()),    // payload
-            payload.size(),                                    // len
-            key_ ? const_cast<char*>(key_->data()) : nullptr,  // key
-            key_ ? key_->size() : 0,                           // key_len
-            core::dt::to_milliseconds(tp_),                    // timestamp
-            headers_,                                          // headers
-            this->dr_capture_.add_callback_data(cb_data));     // msg_opaque
+            topic,                                              // topic_name
+            RdKafka::Topic::PARTITION_UA,                       // partition
+            RdKafka::Producer::RK_MSG_COPY,                     // msgflags
+            const_cast<core::types::Byte *>(payload.data()),    // payload
+            payload.size(),                                     // len
+            key_ ? const_cast<char *>(key_->data()) : nullptr,  // key
+            key_ ? key_->size() : 0,                            // key_len
+            core::dt::to_milliseconds(tp_),                     // timestamp
+            headers_,                                           // headers
+            this->dr_capture_.add_callback_data(cb_data));      // msg_opaque
 
         if (error_code != RdKafka::ERR_NO_ERROR)
         {

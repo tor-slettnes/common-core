@@ -14,9 +14,9 @@
 
 namespace cc::zmq
 {
-    ProtoBufClient::ProtoBufClient(const std::string& address,
-                                   const std::string& channel_name,
-                                   const std::string& interface_name,
+    ProtoBufClient::ProtoBufClient(const std::string &address,
+                                   const std::string &channel_name,
+                                   const std::string &interface_name,
                                    Role role)
         : Super(address, channel_name, role),
           interface_name_(interface_name),
@@ -30,20 +30,20 @@ namespace cc::zmq
         return this->interface_name_;
     }
 
-    void ProtoBufClient::send_request(const cc::protobuf::request_reply::Request& request,
+    void ProtoBufClient::send_request(const cc::protobuf::request_reply::Request &request,
                                       SendFlags flags) const
     {
         try
         {
             this->send(cc::protobuf::to_bytes(request), flags);
         }
-        catch (const Error& e)
+        catch (const Error &e)
         {
             this->log_zmq_error("send request", e);
         }
     }
 
-    bool ProtoBufClient::receive_reply(cc::protobuf::request_reply::Reply* reply,
+    bool ProtoBufClient::receive_reply(cc::protobuf::request_reply::Reply *reply,
                                        RecvFlags flags) const
     {
         try
@@ -57,15 +57,15 @@ namespace cc::zmq
                 return false;
             }
         }
-        catch (const Error& e)
+        catch (const Error &e)
         {
             this->log_zmq_error("receive reply from server", e);
             return false;
         }
     }
 
-    bool ProtoBufClient::send_receive(const cc::protobuf::request_reply::Request& request,
-                                      cc::protobuf::request_reply::Reply* reply,
+    bool ProtoBufClient::send_receive(const cc::protobuf::request_reply::Request &request,
+                                      cc::protobuf::request_reply::Reply *reply,
                                       SendFlags send_flags,
                                       RecvFlags recv_flags) const
     {
@@ -75,11 +75,11 @@ namespace cc::zmq
 
     uint ProtoBufClient::next_request_id() const
     {
-        return ++const_cast<ProtoBufClient*>(this)->last_request_id;
+        return ++const_cast<ProtoBufClient *>(this)->last_request_id;
     }
 
-    void ProtoBufClient::send_invocation(const std::string& method_name,
-                                         const cc::protobuf::request_reply::Parameter& param,
+    void ProtoBufClient::send_invocation(const std::string &method_name,
+                                         const cc::protobuf::request_reply::Parameter &param,
                                          SendFlags flags) const
     {
         cc::protobuf::request_reply::Request request;
@@ -91,8 +91,8 @@ namespace cc::zmq
         this->send_request(request, flags);
     }
 
-    bool ProtoBufClient::read_result(cc::protobuf::request_reply::Parameter* param,
-                                     cc::protobuf::request_reply::Status* status,
+    bool ProtoBufClient::read_result(cc::protobuf::request_reply::Parameter *param,
+                                     cc::protobuf::request_reply::Status *status,
                                      RecvFlags flags) const
     {
         cc::protobuf::request_reply::Reply reply;
@@ -108,7 +108,7 @@ namespace cc::zmq
         }
     }
 
-    bool ProtoBufClient::read_result(cc::protobuf::request_reply::Parameter* param,
+    bool ProtoBufClient::read_result(cc::protobuf::request_reply::Parameter *param,
                                      RecvFlags flags) const
     {
         cc::protobuf::request_reply::Status status;
@@ -138,8 +138,8 @@ namespace cc::zmq
     //==========================================================================
     // Invoke method  with variant request/reply parameters
 
-    core::types::Value ProtoBufClient::call(const std::string& method_name,
-                                            const core::types::Value& request,
+    core::types::Value ProtoBufClient::call(const std::string &method_name,
+                                            const core::types::Value &request,
                                             SendFlags send_flags,
                                             RecvFlags recv_flags) const
     {
@@ -168,7 +168,7 @@ namespace cc::zmq
     }
 
     void ProtoBufClient::send_protobuf_invocation(const std::string method_name,
-                                                  const ::google::protobuf::Message& request,
+                                                  const ::google::protobuf::Message &request,
                                                   SendFlags send_flags) const
     {
         cc::protobuf::request_reply::Parameter request_param;
@@ -178,7 +178,7 @@ namespace cc::zmq
         this->send_invocation(method_name, request_param, send_flags);
     }
 
-    bool ProtoBufClient::read_protobuf_result(core::types::ByteVector* bytes,
+    bool ProtoBufClient::read_protobuf_result(core::types::ByteVector *bytes,
                                               RecvFlags recv_flags) const
     {
         cc::protobuf::request_reply::Parameter response_param;
@@ -188,7 +188,7 @@ namespace cc::zmq
             {
             case cc::protobuf::request_reply::Parameter::ParamCase::kSerializedProto:
             {
-                const std::string& serialized = response_param.serialized_proto();
+                const std::string &serialized = response_param.serialized_proto();
                 bytes->assign(serialized.begin(), serialized.end());
                 return true;
             }

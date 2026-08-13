@@ -15,21 +15,21 @@ namespace cc::core::types
     {
     public:
         template <class... Args>
-        Container(Args&&... args)
+        Container(Args &&...args)
             : BaseContainer(std::forward<Args>(args)...)
         {
         }
 
-        Container& extend(const BaseContainer& other)
+        Container &extend(const BaseContainer &other)
         {
             this->insert(this->end(), other.begin(), other.end());
             return *this;
         }
 
-        Container& extend(BaseContainer&& other)
+        Container &extend(BaseContainer &&other)
         {
             this->reserve(this->size() + other.size());
-            for (T& item : other)
+            for (T &item : other)
             {
                 this->push_back(std::move(item));
             }
@@ -37,23 +37,23 @@ namespace cc::core::types
         }
 
         template <class InputIt = typename BaseContainer::iterator>
-        T& extend(const InputIt& begin, const InputIt& end)
+        T &extend(const InputIt &begin, const InputIt &end)
         {
             this->insert(this->end(), begin, end);
             return *this;
         }
 
-        Container& operator=(BaseContainer&& other)
+        Container &operator=(BaseContainer &&other)
         {
             return this->extend(std::forward<BaseContainer>(other));
         }
 
-        Container& operator+=(BaseContainer&& other)
+        Container &operator+=(BaseContainer &&other)
         {
             return this->extend(std::forward<BaseContainer>(other));
         }
 
-        Container& operator+=(T&& other)
+        Container &operator+=(T &&other)
         {
             return this->push_back(std::move(other));
         }
@@ -63,8 +63,8 @@ namespace cc::core::types
 namespace std
 {
     template <class T>
-    std::vector<T> operator+(const std::vector<T>& first,
-                             const std::vector<T>& second)
+    std::vector<T> operator+(const std::vector<T> &first,
+                             const std::vector<T> &second)
     {
         std::vector<T> result;
         result.reserve(first.size() + second.size());

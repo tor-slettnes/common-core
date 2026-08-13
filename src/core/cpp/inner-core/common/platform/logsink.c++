@@ -9,8 +9,8 @@
 
 namespace cc::core::platform
 {
-    LogSinkProvider::LogSinkProvider(const std::string& implementation,
-                                     const std::string& sink_id)
+    LogSinkProvider::LogSinkProvider(const std::string &implementation,
+                                     const std::string &sink_id)
         : Super(sink_id),
           Provider(implementation)
     {

@@ -27,16 +27,16 @@ namespace cc::demo::dds
         using Super = cc::dds::Subscriber;
 
     protected:
-        Subscriber(const std::string& channel_name, int domain_id);
+        Subscriber(const std::string &channel_name, int domain_id);
 
     private:
         static void on_time_update(
             core::signal::MappingAction mapping_action,
-            const CC::Demo::TimeData& time_data);
+            const CC::Demo::TimeData &time_data);
 
         static void on_greeting_update(
             core::signal::MappingAction mapping_action,
-            const CC::Demo::Greeting& greeting);
+            const CC::Demo::Greeting &greeting);
 
     private:
         DataReaderPtr<CC::Demo::TimeData> time_reader;

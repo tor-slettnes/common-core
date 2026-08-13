@@ -54,7 +54,7 @@ namespace cc::platform::vfs::local::volume
     //==========================================================================
     /// Volume Base - UDev Device Events
 
-    Event::Event(struct udev_device* device, ActionType actiontype)
+    Event::Event(struct udev_device *device, ActionType actiontype)
         : action(string(udev_device_get_action(device))),
           devpath(string(udev_device_get_devpath(device))),
           subsystem(string(udev_device_get_subsystem(device))),
@@ -89,7 +89,7 @@ namespace cc::platform::vfs::local::volume
         return devicetype_map.from_string(this->devtype, DEVTYPE_UNKNOWN);
     }
 
-    void Event::to_tvlist(core::types::TaggedValueList* tvlist) const
+    void Event::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
         tvlist->extend({
             {"action", this->action},
@@ -115,11 +115,11 @@ namespace cc::platform::vfs::local::volume
         });
     }
 
-    Event::KeyValueMap Event::valuemap(struct udev_list_entry* list) noexcept
+    Event::KeyValueMap Event::valuemap(struct udev_list_entry *list) noexcept
     {
         KeyValueMap map;
 
-        for (struct udev_list_entry* entry = list;
+        for (struct udev_list_entry *entry = list;
              entry != nullptr;
              entry = udev_list_entry_get_next(entry))
         {
@@ -130,11 +130,11 @@ namespace cc::platform::vfs::local::volume
         return map;
     }
 
-    Event::ValueList Event::valuelist(struct udev_list_entry* list) noexcept
+    Event::ValueList Event::valuelist(struct udev_list_entry *list) noexcept
     {
         ValueList values;
 
-        for (struct udev_list_entry* entry = list;
+        for (struct udev_list_entry *entry = list;
              entry != nullptr;
              entry = udev_list_entry_get_next(entry))
         {
@@ -143,11 +143,11 @@ namespace cc::platform::vfs::local::volume
         return values;
     }
 
-    Event::ValueSet Event::valueset(struct udev_list_entry* list) noexcept
+    Event::ValueSet Event::valueset(struct udev_list_entry *list) noexcept
     {
         ValueSet values;
 
-        for (struct udev_list_entry* entry = list;
+        for (struct udev_list_entry *entry = list;
              entry != nullptr;
              entry = udev_list_entry_get_next(entry))
         {
@@ -156,15 +156,15 @@ namespace cc::platform::vfs::local::volume
         return values;
     }
 
-    Event::KeyValueMap Event::systemattributes(struct udev_device* device) noexcept
+    Event::KeyValueMap Event::systemattributes(struct udev_device *device) noexcept
     {
         KeyValueMap map;
 
-        for (struct udev_list_entry* entry = udev_device_get_sysattr_list_entry(device);
+        for (struct udev_list_entry *entry = udev_device_get_sysattr_list_entry(device);
              entry != nullptr;
              entry = udev_list_entry_get_next(entry))
         {
-            const char* name = udev_list_entry_get_name(entry);
+            const char *name = udev_list_entry_get_name(entry);
             if (name)
             {
                 map[name] = Event::string(udev_device_get_sysattr_value(device, name));
@@ -173,14 +173,14 @@ namespace cc::platform::vfs::local::volume
         return map;
     }
 
-    std::string Event::string(const char* cstr) noexcept
+    std::string Event::string(const char *cstr) noexcept
     {
         return cstr ? cstr : "";
     }
 
-    udev_device* Event::find_parent(udev_device* device,
+    udev_device *Event::find_parent(udev_device *device,
                                     ParameterType parameter,
-                                    const std::string& value) noexcept
+                                    const std::string &value) noexcept
     {
         if (auto handler = udev_device_lookup_map.get(parameter))
         {
@@ -200,7 +200,7 @@ namespace cc::platform::vfs::local::volume
     //==========================================================================
     // Disk Info
 
-    DiskInfo::DiskInfo(const Event& event)
+    DiskInfo::DiskInfo(const Event &event)
         : devnode(event.devnode),
           serial(event.properties.get(PROP_SERIAL).as_string()),
           removable(event.is_usb),
@@ -208,7 +208,7 @@ namespace cc::platform::vfs::local::volume
     {
     }
 
-    void DiskInfo::to_tvlist(core::types::TaggedValueList* tvlist) const
+    void DiskInfo::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
         tvlist->extend({
             {"devnode", this->devnode},
@@ -218,7 +218,7 @@ namespace cc::platform::vfs::local::volume
         });
     }
 
-    bool DiskInfo::is_removable(const Event& event)
+    bool DiskInfo::is_removable(const Event &event)
     {
         return event.is_usb;
     }
@@ -226,7 +226,7 @@ namespace cc::platform::vfs::local::volume
     //==========================================================================
     // Disk Info
 
-    PartitionInfo::PartitionInfo(const Event& event)
+    PartitionInfo::PartitionInfo(const Event &event)
         : devnode(event.devnode),
           sysname(event.sysname),
           type(event.properties.get(PROP_TYPE).as_string()),
@@ -247,7 +247,7 @@ namespace cc::platform::vfs::local::volume
     {
     }
 
-    void PartitionInfo::to_tvlist(core::types::TaggedValueList* tvlist) const
+    void PartitionInfo::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
         tvlist->extend({
             {"devnode", this->devnode},
@@ -330,7 +330,7 @@ namespace cc::platform::vfs::local::volume
 
         if (this->dev_list_entry)
         {
-            const char* path = udev_list_entry_get_name(this->dev_list_entry);
+            const char *path = udev_list_entry_get_name(this->dev_list_entry);
             this->device = udev_device_new_from_syspath(this->udev, path);
             this->dev_list_entry = udev_list_entry_get_next(this->dev_list_entry);
             return std::make_shared<Event>(this->device, ACTION_ADD);

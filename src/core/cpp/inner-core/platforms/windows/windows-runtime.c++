@@ -22,8 +22,8 @@ namespace cc::core::platform
         return _isatty(fd);
     }
 
-    void WindowsRunTimeProvider::putenv(const std::string& envstring)
+    void WindowsRunTimeProvider::putenv(const std::string &envstring)
     {
-        _putenv(const_cast<char*>(envstring.data()));
+        _putenv(const_cast<char *>(envstring.data()));
     }
 }  // namespace cc::core::platform

@@ -28,15 +28,15 @@ namespace cc::dbus
         friend class ProxyContainer;
 
         // Callback method to hande updates propagated from another object.
-        using UpdateMethod = std::function<bool(const ProxyWrapper* source,
+        using UpdateMethod = std::function<bool(const ProxyWrapper *source,
                                                 core::signal::MappingAction change)>;
         using UpdateRequest = std::pair<std::weak_ptr<ProxyWrapper>, UpdateMethod>;
 
         // using SignalHandler = void (ProxyWrapper::*)(const Glib::VariantContainerBase& params);
         // using PropertyHandler = void (ProxyWrapper::*)(const Glib::VariantBase& change);
 
-        using SignalHandler = std::function<void(const Glib::VariantContainerBase&)>;
-        using PropertyHandler = std::function<void(const Glib::VariantBase&)>;
+        using SignalHandler = std::function<void(const Glib::VariantContainerBase &)>;
+        using PropertyHandler = std::function<void(const Glib::VariantBase &)>;
 
         using SignalHandlerMap = std::unordered_map<SignalName, SignalHandler>;
         using PropertyHandlerMap = std::unordered_map<PropertyName, PropertyHandler>;
@@ -45,11 +45,11 @@ namespace cc::dbus
 
     protected:
         ProxyWrapper(
-            ProxyContainer* container,
-            const ConnectionPtr& connection,
-            const ServiceName& servicename,
-            const ObjectPath& objectpath,
-            const InterfaceName& interfacename,
+            ProxyContainer *container,
+            const ConnectionPtr &connection,
+            const ServiceName &servicename,
+            const ObjectPath &objectpath,
+            const InterfaceName &interfacename,
             SignalHandlerMap signal_handlers = {},
             PropertyHandlerMap property_handlers = {});
 
@@ -59,7 +59,7 @@ namespace cc::dbus
         virtual std::string identifier() const;
 
     private:
-        void on_ready(const ResultPtr& result, const std::string& identifier);
+        void on_ready(const ResultPtr &result, const std::string &identifier);
 
     protected:
         virtual void initialize();
@@ -68,50 +68,50 @@ namespace cc::dbus
         virtual void on_remove();
 
         void call(
-            const std::string& methodname,
-            const Glib::VariantContainerBase& parameters = {},
-            const Gio::SlotAsyncReady& slot = {}) const;
+            const std::string &methodname,
+            const Glib::VariantContainerBase &parameters = {},
+            const Gio::SlotAsyncReady &slot = {}) const;
 
         void callback_handler(
             ResultPtr result,
-            const std::string& methodname,
-            const Glib::VariantContainerBase& parameters,
-            const Gio::SlotAsyncReady& slot) const;
+            const std::string &methodname,
+            const Glib::VariantContainerBase &parameters,
+            const Gio::SlotAsyncReady &slot) const;
 
         Glib::VariantContainerBase call_finish(
             ResultPtr result) const;
 
         Glib::VariantContainerBase call_sync(
-            const std::string& methodname,
-            const Glib::VariantContainerBase& parameters = {}) const;
+            const std::string &methodname,
+            const Glib::VariantContainerBase &parameters = {}) const;
 
     public:
-        void subscribe_updates(ProxyWrapper* requestor, UpdateMethod method);
+        void subscribe_updates(ProxyWrapper *requestor, UpdateMethod method);
 
     protected:
         virtual void propagate_update(core::signal::MappingAction change);
 
         virtual uint update_properties(
-            const Gio::DBus::Proxy::MapChangedProperties& changes);
+            const Gio::DBus::Proxy::MapChangedProperties &changes);
 
         void on_signal(
-            const std::string& sender_name,
-            const std::string& signal_name,
-            const Glib::VariantContainerBase& parameters);
+            const std::string &sender_name,
+            const std::string &signal_name,
+            const Glib::VariantContainerBase &parameters);
 
         void on_properties_change(
-            const Gio::DBus::Proxy::MapChangedProperties& changes,
-            const std::vector<Glib::ustring>& invalidated = {});
+            const Gio::DBus::Proxy::MapChangedProperties &changes,
+            const std::vector<Glib::ustring> &invalidated = {});
 
         virtual void emit_change(core::signal::MappingAction action) {}
 
-        ObjectPath get_cached_path(const std::string& name) const;
+        ObjectPath get_cached_path(const std::string &name) const;
 
-        static bool valid_path(const ObjectPath& path);
+        static bool valid_path(const ObjectPath &path);
 
     protected:
         template <class T>
-        inline bool get_cached_property(const std::string& name, T* value) const
+        inline bool get_cached_property(const std::string &name, T *value) const
         {
             Glib::VariantBase prop;
             if (this->proxy)
@@ -135,7 +135,7 @@ namespace cc::dbus
         }
 
         template <class T>
-        inline T get_cached_property(const std::string& name) const
+        inline T get_cached_property(const std::string &name) const
         {
             T value = {};
             get_cached_property<T>(name, &value);
@@ -143,7 +143,7 @@ namespace cc::dbus
         }
 
     protected:
-        ProxyContainer* container;
+        ProxyContainer *container;
 
     public:
         ConnectionPtr connection;

@@ -15,9 +15,9 @@
 
 namespace cc::core::str
 {
-    void checkstream(const std::istream& is,
-                     const std::string_view& s,
-                     const std::type_info& ti)
+    void checkstream(const std::istream &is,
+                     const std::string_view &s,
+                     const std::type_info &ti)
     {
         if (is.fail() || !is.eof())
         {
@@ -31,12 +31,12 @@ namespace cc::core::str
     //==========================================================================
     // String-to-string passthrough
 
-    std::string StringConvert<std::string>::from_string(const std::string_view& s)
+    std::string StringConvert<std::string>::from_string(const std::string_view &s)
     {
         return {s.begin(), s.end()};
     }
 
-    std::string StringConvert<std::string>::to_string(const std::string& s)
+    std::string StringConvert<std::string>::to_string(const std::string &s)
     {
         return s;
     }
@@ -44,7 +44,7 @@ namespace cc::core::str
     //==========================================================================
     // Boolean integer conversions
 
-    bool StringConvert<bool>::from_string(const std::string_view& s)
+    bool StringConvert<bool>::from_string(const std::string_view &s)
     {
         static const std::regex rxfalse("(?:false|no|off)", std::regex_constants::icase);
         static const std::regex rxtrue("(?:true|yes|on)", std::regex_constants::icase);
@@ -64,7 +64,7 @@ namespace cc::core::str
         {
             return convert_to<std::int64_t>(s) != 0;
         }
-        catch (const std::exception&)
+        catch (const std::exception &)
         {
         }
 
@@ -72,7 +72,7 @@ namespace cc::core::str
         {
             return convert_to<double>(s) != 0.0;
         }
-        catch (const std::exception&)
+        catch (const std::exception &)
         {
         }
 
@@ -80,7 +80,7 @@ namespace cc::core::str
             str::format("not a boolean value: %r", s));
     }
 
-    std::string StringConvert<bool>::to_string(const bool& value)
+    std::string StringConvert<bool>::to_string(const bool &value)
     {
         return value ? "true" : "false";
     }

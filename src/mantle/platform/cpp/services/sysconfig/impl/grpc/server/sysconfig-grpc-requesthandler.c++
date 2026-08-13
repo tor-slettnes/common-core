@@ -19,9 +19,9 @@ namespace cc::platform::sysconfig::grpc
     // Server status check
 
     ::grpc::Status RequestHandler::ServiceCheck(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        ServiceCheckResponse* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        ServiceCheckResponse *response)
     {
         response->set_api_level(APILEVEL_CURRENT);
         response->set_server_name(core::platform::path->exec_name());
@@ -29,14 +29,13 @@ namespace cc::platform::sysconfig::grpc
         return ::grpc::Status::OK;
     }
 
-
     //======================================================================
     // Product information
 
     ::grpc::Status RequestHandler::GetProductInfo(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        platform::sysconfig::protobuf::ProductInfo* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        platform::sysconfig::protobuf::ProductInfo *response)
     {
         try
         {
@@ -50,9 +49,9 @@ namespace cc::platform::sysconfig::grpc
     }
 
     ::grpc::Status RequestHandler::SetSerialNumber(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::StringValue* request,
-        ::google::protobuf::Empty* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::StringValue *request,
+        ::google::protobuf::Empty *response)
     {
         try
         {
@@ -66,9 +65,9 @@ namespace cc::platform::sysconfig::grpc
     }
 
     ::grpc::Status RequestHandler::SetModelName(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::StringValue* request,
-        ::google::protobuf::Empty* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::StringValue *request,
+        ::google::protobuf::Empty *response)
     {
         try
         {
@@ -85,9 +84,9 @@ namespace cc::platform::sysconfig::grpc
     // Host Information
 
     ::grpc::Status RequestHandler::GetHostInfo(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        platform::sysconfig::protobuf::HostInfo* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        platform::sysconfig::protobuf::HostInfo *response)
     {
         try
         {
@@ -101,9 +100,9 @@ namespace cc::platform::sysconfig::grpc
     }
 
     ::grpc::Status RequestHandler::SetHostName(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::StringValue* request,
-        ::google::protobuf::Empty* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::StringValue *request,
+        ::google::protobuf::Empty *response)
     {
         try
         {
@@ -121,9 +120,9 @@ namespace cc::platform::sysconfig::grpc
 
     // Get or set time configuration
     ::grpc::Status RequestHandler::SetTimeConfig(
-        ::grpc::ServerContext* context,
-        const platform::sysconfig::protobuf::TimeConfig* request,
-        ::google::protobuf::Empty* response)
+        ::grpc::ServerContext *context,
+        const platform::sysconfig::protobuf::TimeConfig *request,
+        ::google::protobuf::Empty *response)
     {
         try
         {
@@ -138,9 +137,9 @@ namespace cc::platform::sysconfig::grpc
     }
 
     ::grpc::Status RequestHandler::GetTimeConfig(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        platform::sysconfig::protobuf::TimeConfig* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        platform::sysconfig::protobuf::TimeConfig *response)
     {
         try
         {
@@ -156,9 +155,9 @@ namespace cc::platform::sysconfig::grpc
     // Current timestamp
 
     ::grpc::Status RequestHandler::SetCurrentTime(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Timestamp* request,
-        ::google::protobuf::Empty* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Timestamp *request,
+        ::google::protobuf::Empty *response)
     {
         try
         {
@@ -173,9 +172,9 @@ namespace cc::platform::sysconfig::grpc
     }
 
     ::grpc::Status RequestHandler::GetCurrentTime(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        ::google::protobuf::Timestamp* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        ::google::protobuf::Timestamp *response)
     {
         try
         {
@@ -194,9 +193,9 @@ namespace cc::platform::sysconfig::grpc
     // Obtain geographic information about all available time zones.
 
     ::grpc::Status RequestHandler::ListTimezoneAreas(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        platform::sysconfig::protobuf::TimeZoneAreas* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        platform::sysconfig::protobuf::TimeZoneAreas *response)
     {
         try
         {
@@ -212,9 +211,9 @@ namespace cc::platform::sysconfig::grpc
     }
 
     ::grpc::Status RequestHandler::ListTimezoneCountries(
-        ::grpc::ServerContext* context,
-        const platform::sysconfig::protobuf::TimeZoneArea* request,
-        platform::sysconfig::protobuf::TimeZoneCountries* response)
+        ::grpc::ServerContext *context,
+        const platform::sysconfig::protobuf::TimeZoneArea *request,
+        platform::sysconfig::protobuf::TimeZoneCountries *response)
     {
         try
         {
@@ -230,9 +229,9 @@ namespace cc::platform::sysconfig::grpc
     }
 
     ::grpc::Status RequestHandler::ListTimezoneRegions(
-        ::grpc::ServerContext* context,
-        const platform::sysconfig::protobuf::TimeZoneLocationFilter* request,
-        platform::sysconfig::protobuf::TimeZoneRegions* response)
+        ::grpc::ServerContext *context,
+        const platform::sysconfig::protobuf::TimeZoneLocationFilter *request,
+        platform::sysconfig::protobuf::TimeZoneRegions *response)
     {
         try
         {
@@ -249,9 +248,9 @@ namespace cc::platform::sysconfig::grpc
     }
 
     ::grpc::Status RequestHandler::ListTimezoneSpecs(
-        ::grpc::ServerContext* context,
-        const platform::sysconfig::protobuf::TimeZoneLocationFilter* request,
-        platform::sysconfig::protobuf::TimeZoneCanonicalSpecs* response)
+        ::grpc::ServerContext *context,
+        const platform::sysconfig::protobuf::TimeZoneLocationFilter *request,
+        platform::sysconfig::protobuf::TimeZoneCanonicalSpecs *response)
     {
         try
         {
@@ -270,9 +269,9 @@ namespace cc::platform::sysconfig::grpc
     // Return geographic information about an arbitrary timezone.
     // If no zone name is provided, return information about the configured zone.
     ::grpc::Status RequestHandler::GetTimezoneSpec(
-        ::grpc::ServerContext* context,
-        const platform::sysconfig::protobuf::TimeZoneCanonicalName* request,
-        platform::sysconfig::protobuf::TimeZoneCanonicalSpec* response)
+        ::grpc::ServerContext *context,
+        const platform::sysconfig::protobuf::TimeZoneCanonicalName *request,
+        platform::sysconfig::protobuf::TimeZoneCanonicalSpec *response)
     {
         try
         {
@@ -290,9 +289,9 @@ namespace cc::platform::sysconfig::grpc
 
     // Get or set the timezone configuration
     ::grpc::Status RequestHandler::SetTimezone(
-        ::grpc::ServerContext* context,
-        const platform::sysconfig::protobuf::TimeZoneConfig* request,
-        platform::sysconfig::protobuf::TimeZoneInfo* response)
+        ::grpc::ServerContext *context,
+        const platform::sysconfig::protobuf::TimeZoneConfig *request,
+        platform::sysconfig::protobuf::TimeZoneInfo *response)
     {
         try
         {
@@ -322,9 +321,9 @@ namespace cc::platform::sysconfig::grpc
     }
 
     ::grpc::Status RequestHandler::GetTimezoneInfo(
-        ::grpc::ServerContext* context,
-        const platform::sysconfig::protobuf::TimeZoneInfoRequest* request,
-        platform::sysconfig::protobuf::TimeZoneInfo* response)
+        ::grpc::ServerContext *context,
+        const platform::sysconfig::protobuf::TimeZoneInfoRequest *request,
+        platform::sysconfig::protobuf::TimeZoneInfo *response)
     {
         try
         {
@@ -345,9 +344,9 @@ namespace cc::platform::sysconfig::grpc
     // Spawn a new process, with or without capturing stdin/stdout/stderr.
 
     ::grpc::Status RequestHandler::InvokeSync(
-        ::grpc::ServerContext* context,
-        const platform::sysconfig::protobuf::CommandInvocation* request,
-        platform::sysconfig::protobuf::CommandResponse* response)
+        ::grpc::ServerContext *context,
+        const platform::sysconfig::protobuf::CommandInvocation *request,
+        platform::sysconfig::protobuf::CommandResponse *response)
     {
         try
         {
@@ -365,9 +364,9 @@ namespace cc::platform::sysconfig::grpc
     }
 
     ::grpc::Status RequestHandler::InvokeAsync(
-        ::grpc::ServerContext* context,
-        const platform::sysconfig::protobuf::CommandInvocation* request,
-        platform::sysconfig::protobuf::CommandInvocationResponse* response)
+        ::grpc::ServerContext *context,
+        const platform::sysconfig::protobuf::CommandInvocation *request,
+        platform::sysconfig::protobuf::CommandInvocationResponse *response)
     {
         try
         {
@@ -385,9 +384,9 @@ namespace cc::platform::sysconfig::grpc
     }
 
     ::grpc::Status RequestHandler::InvokeFinish(
-        ::grpc::ServerContext* context,
-        const platform::sysconfig::protobuf::CommandContinuation* request,
-        platform::sysconfig::protobuf::CommandResponse* response)
+        ::grpc::ServerContext *context,
+        const platform::sysconfig::protobuf::CommandContinuation *request,
+        platform::sysconfig::protobuf::CommandResponse *response)
     {
         try
         {
@@ -404,9 +403,9 @@ namespace cc::platform::sysconfig::grpc
     }
 
     ::grpc::Status RequestHandler::Reboot(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        ::google::protobuf::Empty* response)
+        ::grpc::ServerContext *context,
+        const ::google::protobuf::Empty *request,
+        ::google::protobuf::Empty *response)
     {
         try
         {
@@ -423,9 +422,9 @@ namespace cc::platform::sysconfig::grpc
     // Watch for changes from server
 
     ::grpc::Status RequestHandler::Watch(
-        ::grpc::ServerContext* context,
-        const cc::protobuf::signal::Filter* filter,
-        ::grpc::ServerWriter<platform::sysconfig::protobuf::Signal>* writer)
+        ::grpc::ServerContext *context,
+        const cc::protobuf::signal::Filter *filter,
+        ::grpc::ServerWriter<platform::sysconfig::protobuf::Signal> *writer)
     {
         return this->stream_signals<platform::sysconfig::protobuf::Signal, SignalQueue>(
             context,

@@ -22,7 +22,7 @@ namespace cc::core::platform
         {BusType::SPI, "SPI"},
     };
 
-    std::ostream& operator<<(std::ostream& stream, BusType bustype)
+    std::ostream &operator<<(std::ostream &stream, BusType bustype)
     {
         return BusTypeNames.to_stream(stream, bustype, "UNKNOWN");
     }
@@ -30,8 +30,8 @@ namespace cc::core::platform
     //==========================================================================
     // Device Info
 
-    types::TaggedValueList& operator<<(types::TaggedValueList& tvlist,
-                                       const HIDDeviceInfo& info)
+    types::TaggedValueList &operator<<(types::TaggedValueList &tvlist,
+                                       const HIDDeviceInfo &info)
     {
         tvlist.append_if(!info.path.empty(), "path", info.path.string());
         tvlist.append("vendor_id", info.vendor_id);
@@ -46,12 +46,12 @@ namespace cc::core::platform
         tvlist.append_if(info.bus_type != BusType::UNKNOWN, "bus_type", info.bus_type);
     }
 
-    std::ostream& operator<<(std::ostream& stream, const HIDDeviceInfo& info)
+    std::ostream &operator<<(std::ostream &stream, const HIDDeviceInfo &info)
     {
         return stream << types::TaggedValueList::create_from(info);
     }
 
-    bool operator==(const HIDDeviceInfo& lhs, const HIDDeviceInfo& rhs)
+    bool operator==(const HIDDeviceInfo &lhs, const HIDDeviceInfo &rhs)
     {
         return (lhs.path == rhs.path) &&
                (lhs.vendor_id == rhs.vendor_id) &&
@@ -64,7 +64,7 @@ namespace cc::core::platform
                (lhs.bus_type == rhs.bus_type);
     }
 
-    bool operator!=(const HIDDeviceInfo& lhs, const HIDDeviceInfo& rhs)
+    bool operator!=(const HIDDeviceInfo &lhs, const HIDDeviceInfo &rhs)
     {
         return !(lhs == rhs);
     }
@@ -84,7 +84,7 @@ namespace cc::core::platform
         Super::deinitialize();
     }
 
-    void HIDProvider::start_monitoring(const dt::Duration& poll_interval)
+    void HIDProvider::start_monitoring(const dt::Duration &poll_interval)
     {
         core::scheduler.add_if_missing(
             this->name,
@@ -103,7 +103,7 @@ namespace cc::core::platform
     void HIDProvider::monitor_worker()
     {
         std::unordered_map<std::string, HIDDeviceInfo> available_devices;
-        for (const HIDDeviceInfo& info : this->enumerate())
+        for (const HIDDeviceInfo &info : this->enumerate())
         {
             available_devices.insert_or_assign(info.serial_number, info);
         }

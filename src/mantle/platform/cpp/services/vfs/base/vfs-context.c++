@@ -14,8 +14,8 @@ namespace cc::platform::vfs
     //==========================================================================
     // Context methods
 
-    Context::Context(const ContextName& name,
-                     const fs::path& root,
+    Context::Context(const ContextName &name,
+                     const fs::path &root,
                      bool writable,
                      bool removable,
                      std::string title)
@@ -27,7 +27,7 @@ namespace cc::platform::vfs
     {
     }
 
-    fs::path Context::localPath(const fs::path& relpath) const
+    fs::path Context::localPath(const fs::path &relpath) const
     {
         Path::check_relative(this->name,
                              relpath,
@@ -37,13 +37,13 @@ namespace cc::platform::vfs
         return fs::weakly_canonical(this->root / relpath);
     }
 
-    Path Context::virtualPath(const fs::path& relpath) const
+    Path Context::virtualPath(const fs::path &relpath) const
     {
         Path::check_relative(this->name, relpath);
         return {this->name, relpath};
     }
 
-    void Context::to_stream(std::ostream& stream) const
+    void Context::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
                           "Context(%r, root=%r, writable=%b, removable=%b, title=%r)",
@@ -54,7 +54,7 @@ namespace cc::platform::vfs
                           this->title);
     }
 
-    void Context::check_jail(const fs::path& relpath) const
+    void Context::check_jail(const fs::path &relpath) const
     {
         fs::path jail = fs::weakly_canonical(this->root);
         fs::path provided = fs::weakly_canonical(this->root / relpath.relative_path());

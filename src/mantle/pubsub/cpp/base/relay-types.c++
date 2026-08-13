@@ -11,11 +11,11 @@
 
 namespace cc::platform::pubsub
 {
-    std::ostream& operator<<(std::ostream& stream, const ReplayPolicy& policy)
+    std::ostream &operator<<(std::ostream &stream, const ReplayPolicy &policy)
     {
         std::vector<std::string> key_paths;
         key_paths.reserve(policy.key_paths.size());
-        for (const auto& path : policy.key_paths)
+        for (const auto &path : policy.key_paths)
         {
             key_paths.push_back(core::str::join(path, KEY_PATH_DELIMITER));
         }

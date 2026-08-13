@@ -11,8 +11,8 @@
 namespace cc::core::platform
 {
     PosixLogSinkProvider::PosixLogSinkProvider(
-        const std::string& application_id,
-        const std::string& sink_id)
+        const std::string &application_id,
+        const std::string &sink_id)
         : LogSinkProvider("PosixLogSinkProvider", sink_id),
           application_id_(application_id)
     {
@@ -32,7 +32,7 @@ namespace cc::core::platform
         Super::close();
     }
 
-    bool PosixLogSinkProvider::handle_message(const logging::Message::ptr& message)
+    bool PosixLogSinkProvider::handle_message(const logging::Message::ptr &message)
     {
         if (std::optional<int> level = levelmap.get_opt(message->level()))
         {

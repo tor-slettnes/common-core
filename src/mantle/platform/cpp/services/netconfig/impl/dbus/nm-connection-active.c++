@@ -13,10 +13,10 @@
 namespace cc::platform::netconfig::dbus
 {
     ActiveConnection::ActiveConnection(
-        cc::dbus::ProxyContainer* container,
-        const cc::dbus::ConnectionPtr& connection,
-        const cc::dbus::ServiceName& servicename,
-        const cc::dbus::ObjectPath& objectpath)
+        cc::dbus::ProxyContainer *container,
+        const cc::dbus::ConnectionPtr &connection,
+        const cc::dbus::ServiceName &servicename,
+        const cc::dbus::ObjectPath &objectpath)
         : MappedDataWrapper<ActiveConnectionData>(
               container,
               connection,
@@ -42,7 +42,7 @@ namespace cc::platform::netconfig::dbus
     }
 
     std::shared_ptr<ActiveConnection> ActiveConnection::get_by_key(
-        const Key& key,
+        const Key &key,
         bool required)
     {
         if (auto ref = lookup<ActiveConnection>(key, false))
@@ -59,10 +59,10 @@ namespace cc::platform::netconfig::dbus
     }
 
     std::shared_ptr<ActiveConnection> ActiveConnection::get_by_id(
-        const std::string& id,
+        const std::string &id,
         bool required)
     {
-        for (const auto& [path, ref] : dbus::container.instances<ActiveConnection>())
+        for (const auto &[path, ref] : dbus::container.instances<ActiveConnection>())
         {
             if (ref->id == id)
             {
@@ -97,20 +97,20 @@ namespace cc::platform::netconfig::dbus
     }
 
     void ActiveConnection::on_signal_state_changed(
-        const Glib::VariantContainerBase& parameters)
+        const Glib::VariantContainerBase &parameters)
     {
         cc::glib::variant_cast(parameters, 0, &this->state);
         cc::glib::variant_cast(parameters, 1, &this->state_reason);
         this->emit_change(core::signal::MAP_UPDATE);
     }
 
-    void ActiveConnection::on_property_type(const Glib::VariantBase& change)
+    void ActiveConnection::on_property_type(const Glib::VariantBase &change)
     {
         auto typestring = cc::glib::variant_cast<std::string>(change);
         this->type = connection_type_map.from_string(typestring, CONN_TYPE_UNKNOWN);
     }
 
-    void ActiveConnection::on_property_ip4config(const Glib::VariantBase& change)
+    void ActiveConnection::on_property_ip4config(const Glib::VariantBase &change)
     {
         auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(change);
         if (this->valid_path(path))
@@ -120,7 +120,7 @@ namespace cc::platform::netconfig::dbus
         }
     }
 
-    void ActiveConnection::on_property_ip6config(const Glib::VariantBase& change)
+    void ActiveConnection::on_property_ip6config(const Glib::VariantBase &change)
     {
         auto path = cc::glib::variant_cast<cc::dbus::ObjectPath>(change);
         if (this->valid_path(path))
@@ -131,10 +131,10 @@ namespace cc::platform::netconfig::dbus
     }
 
     bool ActiveConnection::update_ip4config(
-        const cc::dbus::ProxyWrapper* source,
+        const cc::dbus::ProxyWrapper *source,
         core::signal::MappingAction action)
     {
-        if (const auto* datasource = dynamic_cast<const IP4Config*>(source))
+        if (const auto *datasource = dynamic_cast<const IP4Config *>(source))
         {
             this->ip4config = *datasource;
             this->emit_change(core::signal::MAP_UPDATE);
@@ -143,10 +143,10 @@ namespace cc::platform::netconfig::dbus
     }
 
     bool ActiveConnection::update_ip6config(
-        const cc::dbus::ProxyWrapper* source,
+        const cc::dbus::ProxyWrapper *source,
         core::signal::MappingAction action)
     {
-        if (const auto* datasource = dynamic_cast<const IP6Config*>(source))
+        if (const auto *datasource = dynamic_cast<const IP6Config *>(source))
         {
             this->ip6config = *datasource;
             this->emit_change(core::signal::MAP_UPDATE);

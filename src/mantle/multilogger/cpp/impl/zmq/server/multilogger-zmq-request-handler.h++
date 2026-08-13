@@ -23,42 +23,42 @@ namespace cc::platform::multilogger::zmq
         using Super = cc::zmq::ProtoBufRequestHandler;
 
     protected:
-        RequestHandler(const std::shared_ptr<API>& api,
-                       const std::string& interface_name = MULTILOGGER_INTERFACE);
+        RequestHandler(const std::shared_ptr<API> &api,
+                       const std::string &interface_name = MULTILOGGER_INTERFACE);
 
         void initialize() override;
 
         void add_sink(
-            const cc::platform::multilogger::protobuf::SinkSpec& request,
-            cc::platform::multilogger::protobuf::AddSinkResult* response);
+            const cc::platform::multilogger::protobuf::SinkSpec &request,
+            cc::platform::multilogger::protobuf::AddSinkResult *response);
 
         void remove_sink(
-            const cc::platform::multilogger::protobuf::SinkID& request,
-            cc::platform::multilogger::protobuf::RemoveSinkResult* response);
+            const cc::platform::multilogger::protobuf::SinkID &request,
+            cc::platform::multilogger::protobuf::RemoveSinkResult *response);
 
         void get_sink(
-            const cc::platform::multilogger::protobuf::SinkID& request,
-            cc::platform::multilogger::protobuf::SinkSpec* response);
+            const cc::platform::multilogger::protobuf::SinkID &request,
+            cc::platform::multilogger::protobuf::SinkSpec *response);
 
         void get_all_sinks(
-            const google::protobuf::Empty&,
-            cc::platform::multilogger::protobuf::SinkSpecs* response);
+            const google::protobuf::Empty &,
+            cc::platform::multilogger::protobuf::SinkSpecs *response);
 
         void list_sinks(
-            const google::protobuf::Empty&,
-            cc::platform::multilogger::protobuf::SinkNames* response);
+            const google::protobuf::Empty &,
+            cc::platform::multilogger::protobuf::SinkNames *response);
 
         void list_sink_types(
-            const google::protobuf::Empty&,
-            cc::platform::multilogger::protobuf::SinkTypes* response);
+            const google::protobuf::Empty &,
+            cc::platform::multilogger::protobuf::SinkTypes *response);
 
         void list_message_fields(
-            const google::protobuf::Empty&,
-            cc::platform::multilogger::protobuf::FieldNames* response);
+            const google::protobuf::Empty &,
+            cc::platform::multilogger::protobuf::FieldNames *response);
 
         void list_error_fields(
-            const google::protobuf::Empty&,
-            cc::platform::multilogger::protobuf::FieldNames* response);
+            const google::protobuf::Empty &,
+            cc::platform::multilogger::protobuf::FieldNames *response);
 
     private:
         std::shared_ptr<API> provider;

@@ -13,11 +13,11 @@
 namespace cc::platform::multilogger::native
 {
     QueueListener::QueueListener(
-        const SinkID& sink_id,
+        const SinkID &sink_id,
         core::status::Level threshold,
-        const std::optional<Loggable::ContractID>& contract_id,
-        const std::set<std::string>& hosts,
-        const std::set<std::string>& applications,
+        const std::optional<Loggable::ContractID> &contract_id,
+        const std::set<std::string> &hosts,
+        const std::set<std::string> &applications,
         unsigned int maxsize,
         OverflowDisposition overflow_disposition)
         : Sink(sink_id),
@@ -51,7 +51,7 @@ namespace cc::platform::multilogger::native
         Sink::close();
     }
 
-    bool QueueListener::handle_item(const core::types::Loggable::ptr& item)
+    bool QueueListener::handle_item(const core::types::Loggable::ptr &item)
     {
         if (auto message = std::dynamic_pointer_cast<core::logging::Message>(item))
         {
@@ -71,12 +71,12 @@ namespace cc::platform::multilogger::native
         }
     }
 
-    bool QueueListener::applicable_host(const std::string& host) const
+    bool QueueListener::applicable_host(const std::string &host) const
     {
         return this->hosts.empty() || this->hosts.count(host);
     }
 
-    bool QueueListener::applicable_application(const std::string& application) const
+    bool QueueListener::applicable_application(const std::string &application) const
     {
         return (application != core::platform::path->application_name()) &&
                (this->applications.empty() || this->applications.count(application));

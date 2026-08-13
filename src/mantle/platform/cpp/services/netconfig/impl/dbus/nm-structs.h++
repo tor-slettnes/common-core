@@ -14,18 +14,18 @@
 namespace cc::platform::netconfig::dbus
 {
     void extract_addressdata(
-        const cc::glib::VariantMaps& configs,
-        AddressVector* addresses);
+        const cc::glib::VariantMaps &configs,
+        AddressVector *addresses);
 
     namespace connection
     {
-        void extract_settings(const cc::glib::SettingsContainer& settings,
-                              ConnectionData* data);
+        void extract_settings(const cc::glib::SettingsContainer &settings,
+                              ConnectionData *data);
 
-        void insert_settings(const ConnectionData& data,
-                             cc::glib::SettingsMap* settings);
+        void insert_settings(const ConnectionData &data,
+                             cc::glib::SettingsMap *settings);
 
         cc::glib::SettingsContainer build_settings_container(
-            const ConnectionData& data);
+            const ConnectionData &data);
     }  // namespace connection
 }  // namespace cc::platform::netconfig::dbus

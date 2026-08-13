@@ -23,15 +23,15 @@ namespace cc::protobuf
     // Message deserialization
 
     /// Convert a ProtoBuf message to a printable string.
-    std::string to_string(const google::protobuf::Message& msg,
+    std::string to_string(const google::protobuf::Message &msg,
                           bool single_line = true);
 
     /// Convert a protobuf message to a serialized byte array
-    void to_bytes(const google::protobuf::Message& msg,
-                  core::types::ByteVector* bytes);
+    void to_bytes(const google::protobuf::Message &msg,
+                  core::types::ByteVector *bytes);
 
     /// Convert a protobuf message to a serialized byte array
-    core::types::ByteVector to_bytes(const google::protobuf::Message& msg);
+    core::types::ByteVector to_bytes(const google::protobuf::Message &msg);
 
     //==========================================================================
     // Message serialization
@@ -39,8 +39,8 @@ namespace cc::protobuf
     /// Convert a serialized byte array to a ProtoBuf message of type ProtoBufType.
     template <class ProtoBufType>
     inline void to_message(
-        const ByteVector& bytes,
-        ProtoBufType* msg)
+        const ByteVector &bytes,
+        ProtoBufType *msg)
     {
         msg->ParseFromArray(bytes.data(), bytes.size());
     }
@@ -48,7 +48,7 @@ namespace cc::protobuf
     /// Convert a serialized byte array to a ProtoBuf message of type ProtoBufType.
     template <class ProtoBufType>
     inline ProtoBufType to_message(
-        const ByteVector& bytes)
+        const ByteVector &bytes)
     {
         ProtoBufType msg;
         msg.ParseFromArray(bytes.data(), bytes.size());
@@ -58,8 +58,8 @@ namespace cc::protobuf
     /// Convert a serialized byte array to a ProtoBuf message of type ProtoBufType.
     template <class ProtoBufType>
     inline void to_message(
-        const std::string& packed_string,
-        ProtoBufType* msg)
+        const std::string &packed_string,
+        ProtoBufType *msg)
     {
         msg->ParseFromString(packed_string);
     }
@@ -67,7 +67,7 @@ namespace cc::protobuf
     /// Convert a serialized byte array to a ProtoBuf message of type ProtoBufType.
     template <class ProtoBufType>
     inline ProtoBufType to_message(
-        const std::string& packed_string)
+        const std::string &packed_string)
     {
         ProtoBufType msg;
         msg.ParseFromString(packed_string);
@@ -79,14 +79,14 @@ namespace cc::protobuf
 /// Additional convenience operators for ProtoBuf messages
 namespace google::protobuf
 {
-    bool operator==(const Message& left, const Message& right);
-    bool operator!=(const Message& left, const Message& right);
+    bool operator==(const Message &left, const Message &right);
+    bool operator!=(const Message &left, const Message &right);
 
-    std::ostream& operator<<(std::ostream& stream, const Message& msg);
+    std::ostream &operator<<(std::ostream &stream, const Message &msg);
 
     template <class T>
-    std::ostream& operator<<(std::ostream& stream,
-                             const RepeatedPtrField<T>& ptr_field)
+    std::ostream &operator<<(std::ostream &stream,
+                             const RepeatedPtrField<T> &ptr_field)
     {
         return cc::core::stream::write_sequence(stream, ptr_field);
     }

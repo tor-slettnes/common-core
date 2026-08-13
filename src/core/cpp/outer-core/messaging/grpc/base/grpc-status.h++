@@ -49,25 +49,25 @@ namespace cc::grpc
         ///     This constructor deserializes the error_details() string of the
         ///     existing instance, under the assumption that it represents a
         ///     Status payload.
-        Status(const ::grpc::Status& status);
+        Status(const ::grpc::Status &status);
 
         /// @brief
         ///     Constructor from another Status instance
         /// @param[in] status
         ///     Status instance
-        Status(const Status& status);
+        Status(const Status &status);
 
         /// @brief
         ///     Constructor from a `status::Error` instance
         /// @param[in] error
         ///     Error instance
-        Status(const Error& error);
+        Status(const Error &error);
 
         /// @brief
         ///     Constructor with an existing Details input
         /// @param[in] details
         ///     Already-constructed cc::protobuf::status::Error ProtoBuf container
-        Status(const cc::protobuf::status::Error& details);
+        Status(const cc::protobuf::status::Error &details);
 
         /// @brief
         ///     Constructor with an existing Details input
@@ -78,8 +78,8 @@ namespace cc::grpc
         /// @param[in] details
         ///     Already-constructed cc::protobuf::status::Error ProtoBuf container
         Status(::grpc::StatusCode status_code,
-               const std::string& text,
-               const cc::protobuf::status::Error& details);
+               const std::string &text,
+               const cc::protobuf::status::Error &details);
 
         /// @brief
         ///     Constructor from an Error instance with explicit status code
@@ -87,7 +87,7 @@ namespace cc::grpc
         ///     gRPC Status
         /// @param[in] error
         ///     Error instance
-        Status(::grpc::StatusCode status_code, const Error& error);
+        Status(::grpc::StatusCode status_code, const Error &error);
 
         /// @brief
         ///     Constructor from individual attributes
@@ -110,14 +110,14 @@ namespace cc::grpc
         /// @param[in] attributes
         ///     Additional information specific to the error
         Status(::grpc::StatusCode status_code,
-               const std::string& text,
+               const std::string &text,
                core::status::Domain domain = core::status::Domain::APPLICATION,
-               const std::string& origin = "",
+               const std::string &origin = "",
                Code code = 0,
-               const Symbol& symbol = "",
+               const Symbol &symbol = "",
                core::status::Level level = core::status::Level::NONE,
-               const core::dt::TimePoint& timepoint = core::dt::Clock::now(),
-               const core::types::KeyValueMap& attributes = {});
+               const core::dt::TimePoint &timepoint = core::dt::Clock::now(),
+               const core::types::KeyValueMap &attributes = {});
 
         /// @brief
         ///     Determine if this Status object is fundamentally equivalent to another.
@@ -128,7 +128,7 @@ namespace cc::grpc
         ///     sufficient to distinghish a repeated instance of this from
         ///     another type of status.  For example, status codes and texts are
         ///     compared, but not timestamps.
-        bool equivalent(const Event& other) const noexcept override;
+        bool equivalent(const Event &other) const noexcept override;
 
         /// @brief
         ///     Get the gRPC status code that was provided in the constructor.
@@ -165,14 +165,14 @@ namespace cc::grpc
     public:
         static std::vector<std::string> status_fields() noexcept;
         std::vector<std::string> field_names() const noexcept override;
-        core::types::Value get_field_as_value(const std::string& field_name) const override;
+        core::types::Value get_field_as_value(const std::string &field_name) const override;
 
     protected:
         std::string class_name() const noexcept override;
         std::exception_ptr as_application_error() const override;
 
     private:
-        static ::grpc::StatusCode code_from_error(const core::status::Error& event) noexcept;
+        static ::grpc::StatusCode code_from_error(const core::status::Error &event) noexcept;
         static ::grpc::StatusCode code_from_errno(int code) noexcept;
     };
 }  // namespace cc::grpc

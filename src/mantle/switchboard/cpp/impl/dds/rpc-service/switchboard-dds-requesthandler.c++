@@ -15,7 +15,7 @@
 namespace cc::platform::switchboard::dds
 {
     RequestHandler::RequestHandler(
-        const std::shared_ptr<Provider>& provider)
+        const std::shared_ptr<Provider> &provider)
         : Super(),
           provider(provider)
     {
@@ -23,14 +23,14 @@ namespace cc::platform::switchboard::dds
     }
 
     CC::Switchboard::SwitchList RequestHandler::get_switches(
-        const CC::Switchboard::SwitchSelection& req)
+        const CC::Switchboard::SwitchSelection &req)
     {
         return idl::encoded<CC::Switchboard::SwitchList>(
             this->provider->get_selected_switches(
                 idl::decoded<switchboard::SwitchSelection>(req)));
     }
 
-    CC::Switchboard::Switch RequestHandler::get_switch(const SwitchName& switch_name)
+    CC::Switchboard::Switch RequestHandler::get_switch(const SwitchName &switch_name)
     {
         logf_debug("Received get_switch(%r)", switch_name);
         if (SwitchRef sw = this->provider->get_switch(switch_name))
@@ -44,7 +44,7 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RequestHandler::add_switch(
-        const CC::Switchboard::AddSwitchRequest& req)
+        const CC::Switchboard::AddSwitchRequest &req)
     {
         logf_debug("Add_switch(%r)", req.switch_name());
 
@@ -55,7 +55,7 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RequestHandler::remove_switch(
-        const CC::Switchboard::RemoveSwitchRequest& req)
+        const CC::Switchboard::RemoveSwitchRequest &req)
     {
         return this->provider->remove_switch(
             req.switch_name(),
@@ -63,14 +63,14 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RequestHandler::clear_switches(
-        const CC::Switchboard::ClearSwitchesRequest& req)
+        const CC::Switchboard::ClearSwitchesRequest &req)
     {
         return this->provider->clear_switches(
             req.reload());
     }
 
     std::uint32_t RequestHandler::import_switches(
-        const CC::Switchboard::ImportRequest& req)
+        const CC::Switchboard::ImportRequest &req)
     {
         return this->provider->import_switches(
             idl::decoded<core::types::KeyValueMap>(req.declarations()),
@@ -80,10 +80,10 @@ namespace cc::platform::switchboard::dds
     }
 
     CC::Variant::TaggedValueList RequestHandler::export_switches(
-        const CC::Switchboard::ExportRequest& req)
+        const CC::Switchboard::ExportRequest &req)
     {
         std::optional<SwitchSelection> opt_selection;
-        if (auto* idl_selection = req.selection().get_ptr())
+        if (auto *idl_selection = req.selection().get_ptr())
         {
             opt_selection = SwitchSelection(
                 idl_selection->patterns(),
@@ -98,9 +98,9 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RequestHandler::set_specification(
-        const CC::Switchboard::SetSpecificationRequest& req)
+        const CC::Switchboard::SetSpecificationRequest &req)
     {
-        const CC::Switchboard::Specification& spec = req.spec();
+        const CC::Switchboard::Specification &spec = req.spec();
         if (auto sw = this->provider->get_switch(spec.switch_name(), true))
         {
             sw->update_spec(
@@ -123,7 +123,7 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RequestHandler::add_dependency(
-        const CC::Switchboard::AddDependencyRequest& req)
+        const CC::Switchboard::AddDependencyRequest &req)
     {
         SwitchRef sw = this->provider->get_switch(req.switch_name(), true);
         DependencyRef dep = idl::decoded<DependencyRef>(req.dependency(), this->provider);
@@ -131,7 +131,7 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RequestHandler::remove_dependency(
-        const CC::Switchboard::RemoveDependencyRequest& req)
+        const CC::Switchboard::RemoveDependencyRequest &req)
     {
         if (auto sw = this->provider->get_switch(req.switch_name(), true))
         {
@@ -144,7 +144,7 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RequestHandler::add_interceptor(
-        const CC::Switchboard::AddInterceptorRequest& req)
+        const CC::Switchboard::AddInterceptorRequest &req)
     {
         InterceptorRef interceptor = idl::decoded<InterceptorRef>(
             req.spec(),
@@ -164,7 +164,7 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RequestHandler::remove_interceptor(
-        const CC::Switchboard::RemoveInterceptorRequest& req)
+        const CC::Switchboard::RemoveInterceptorRequest &req)
     {
         return this->provider->remove_interceptor(
             req.interceptor_name(),
@@ -172,7 +172,7 @@ namespace cc::platform::switchboard::dds
     }
 
     CC::Switchboard::InterceptorResult RequestHandler::invoke_interceptor(
-        const CC::Switchboard::InterceptorInvocation& req)
+        const CC::Switchboard::InterceptorInvocation &req)
     {
         CC::Switchboard::InterceptorResult result;
 
@@ -199,12 +199,12 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RequestHandler::set_target(
-        const CC::Switchboard::SetTargetRequest& req)
+        const CC::Switchboard::SetTargetRequest &req)
     {
         if (SwitchRef sw = this->provider->get_switch(req.switch_name(), true))
         {
             core::status::Error::ptr error;
-            if (auto* error_data = req.error().get_ptr())
+            if (auto *error_data = req.error().get_ptr())
             {
                 idl::decode_shared(*error_data, &error);
             }
@@ -226,7 +226,7 @@ namespace cc::platform::switchboard::dds
     }
 
     CC::Variant::TaggedValueList RequestHandler::get_attributes(
-        const CC::Switchboard::GetAttributesRequest& req)
+        const CC::Switchboard::GetAttributesRequest &req)
     {
         if (SwitchRef sw = this->provider->get_switch(req.switch_name(), true))
         {
@@ -240,7 +240,7 @@ namespace cc::platform::switchboard::dds
     }
 
     bool RequestHandler::set_attributes(
-        const CC::Switchboard::SetAttributesRequest& req)
+        const CC::Switchboard::SetAttributesRequest &req)
     {
         if (SwitchRef sw = this->provider->get_switch(req.switch_name(), true))
         {
@@ -255,12 +255,12 @@ namespace cc::platform::switchboard::dds
     }
 
     CC::Switchboard::StatusList RequestHandler::get_culprits(
-        const CC::Switchboard::CulpritsQuery& req)
+        const CC::Switchboard::CulpritsQuery &req)
     {
         std::vector<CC::Switchboard::Status> list;
         if (SwitchRef sw = this->provider->get_switch(req.switch_name(), true))
         {
-            for (const auto& [switch_name, status] : sw->culprits(req.expected_active()))
+            for (const auto &[switch_name, status] : sw->culprits(req.expected_active()))
             {
                 idl::encode(switch_name, *status, &list.emplace_back());
             }

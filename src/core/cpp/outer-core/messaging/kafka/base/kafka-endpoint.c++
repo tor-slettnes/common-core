@@ -11,9 +11,9 @@
 
 namespace cc::kafka
 {
-    Endpoint::Endpoint(const std::string& endpoint_type,
-                       const std::string& profile_name,
-                       const core::types::KeyValueMap& settings)
+    Endpoint::Endpoint(const std::string &endpoint_type,
+                       const std::string &profile_name,
+                       const core::types::KeyValueMap &settings)
         : Super("Kafka", endpoint_type, profile_name),
           conf_(RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL))
     {
@@ -23,7 +23,7 @@ namespace cc::kafka
 
     Endpoint::~Endpoint()
     {
-        for (RdKafka::Topic* topic : this->topics)
+        for (RdKafka::Topic *topic : this->topics)
         {
             delete topic;
         }
@@ -46,9 +46,9 @@ namespace cc::kafka
         Super::deinitialize();
     }
 
-    void Endpoint::init_conf(const core::types::KeyValueMap& settings)
+    void Endpoint::init_conf(const core::types::KeyValueMap &settings)
     {
-        for (const auto& [key, value] : settings)
+        for (const auto &[key, value] : settings)
         {
             this->set_config(key, value.as_string());
         }
@@ -59,27 +59,27 @@ namespace cc::kafka
         this->set_config("event_cb", &this->log_capture_, "LogCapture()");
     }
 
-    void Endpoint::set_server_address(const std::string& server_address)
+    void Endpoint::set_server_address(const std::string &server_address)
     {
         this->set_config("bootstrap.servers", server_address);
     }
 
-    RdKafka::Conf* Endpoint::conf() const
+    RdKafka::Conf *Endpoint::conf() const
     {
         return this->conf_;
     }
 
-    RdKafka::Conf* Endpoint::topic_conf() const
+    RdKafka::Conf *Endpoint::topic_conf() const
     {
         return RdKafka::Conf::create(RdKafka::Conf::CONF_TOPIC);
     }
 
-    RdKafka::Topic* Endpoint::add_topic(const std::string& name,
-                                        const core::types::KeyValueMap& topic_settings)
+    RdKafka::Topic *Endpoint::add_topic(const std::string &name,
+                                        const core::types::KeyValueMap &topic_settings)
     {
-        RdKafka::Conf* conf = this->topic_conf();
+        RdKafka::Conf *conf = this->topic_conf();
         std::string errstr;
-        for (const auto& [key, value] : topic_settings)
+        for (const auto &[key, value] : topic_settings)
         {
             this->check(conf->set(key, value.as_string(), errstr),
                         key,
@@ -89,11 +89,11 @@ namespace cc::kafka
         return this->add_topic(name, conf);
     }
 
-    RdKafka::Topic* Endpoint::add_topic(const std::string& name,
-                                        const RdKafka::Conf* topic_conf)
+    RdKafka::Topic *Endpoint::add_topic(const std::string &name,
+                                        const RdKafka::Conf *topic_conf)
     {
         std::string error_string;
-        if (RdKafka::Topic* topic = RdKafka::Topic::create(
+        if (RdKafka::Topic *topic = RdKafka::Topic::create(
                 this->handle(),
                 name,
                 topic_conf,
@@ -108,9 +108,9 @@ namespace cc::kafka
         }
     }
 
-    RdKafka::Topic* Endpoint::find_topic(const std::string& name) const
+    RdKafka::Topic *Endpoint::find_topic(const std::string &name) const
     {
-        for (RdKafka::Topic* candidate : this->topics)
+        for (RdKafka::Topic *candidate : this->topics)
         {
             if (candidate->name() == name)
             {
@@ -120,14 +120,14 @@ namespace cc::kafka
         return nullptr;
     }
 
-    void Endpoint::set_config(const std::string& key,
-                              const std::string& value)
+    void Endpoint::set_config(const std::string &key,
+                              const std::string &value)
     {
         this->set_config<std::string>(key, value, value);
     }
 
     void Endpoint::check(RdKafka::ErrorCode code,
-                         const core::types::KeyValueMap& attributes) const
+                         const core::types::KeyValueMap &attributes) const
     {
         if (code != RdKafka::ERR_NO_ERROR)
         {
@@ -137,8 +137,8 @@ namespace cc::kafka
         }
     }
 
-    void Endpoint::check(RdKafka::Error* error,
-                         const core::types::KeyValueMap& attributes) const
+    void Endpoint::check(RdKafka::Error *error,
+                         const core::types::KeyValueMap &attributes) const
     {
         if (error != nullptr)
         {
@@ -154,9 +154,9 @@ namespace cc::kafka
     }
 
     void Endpoint::check(RdKafka::Conf::ConfResult result,
-                         const std::string& key,
-                         const std::string& value,
-                         const std::string& errstr) const
+                         const std::string &key,
+                         const std::string &value,
+                         const std::string &errstr) const
     {
         switch (result)
         {

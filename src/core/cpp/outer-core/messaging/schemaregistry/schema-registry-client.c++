@@ -14,9 +14,9 @@
 namespace cc::sr
 {
     SchemaRegistryClient::SchemaRegistryClient(
-        const std::string& registry_url,
-        const std::string& registry_name,
-        const std::string& messaging_flavor)
+        const std::string &registry_url,
+        const std::string &registry_name,
+        const std::string &messaging_flavor)
         : Super(registry_url,
                 registry_name,
                 "SchemaRegistry",
@@ -29,7 +29,7 @@ namespace cc::sr
         return this->real_url({});
     }
 
-    void SchemaRegistryClient::set_registry_url(const std::string& url)
+    void SchemaRegistryClient::set_registry_url(const std::string &url)
     {
         (*this->settings())[this->channel_name()]["url"] = url;
         this->settings()->save();
@@ -55,7 +55,7 @@ namespace cc::sr
     }
 
     SchemaRecord SchemaRegistryClient::fetch_by_subject(
-        const SchemaSubject& subject) const
+        const SchemaSubject &subject) const
     {
         std::string rel_path = core::str::expand(
             this->setting("fetch_by_subject").as_string(),
@@ -74,15 +74,15 @@ namespace cc::sr
     }
 
     SchemaRecord SchemaRegistryClient::register_schema(
-        const SchemaSubject& subject,
-        const core::types::Value& schema)
+        const SchemaSubject &subject,
+        const core::types::Value &schema)
     {
         return this->register_schema(subject, core::json::writer.encoded(schema));
     }
 
     SchemaRecord SchemaRegistryClient::register_schema(
-        const SchemaSubject& subject,
-        const SchemaText& schema_text)
+        const SchemaSubject &subject,
+        const SchemaText &schema_text)
     {
         std::string rel_path = core::str::expand(
             this->setting("register").as_string(),
@@ -106,7 +106,7 @@ namespace cc::sr
     }
 
     std::string SchemaRegistryClient::extract_name(
-        const core::types::Value& schema) const
+        const core::types::Value &schema) const
     {
         std::vector<std::string> parts = {
             schema.get("namespace").to_string(),
@@ -116,7 +116,7 @@ namespace cc::sr
     }
 
     core::types::Value SchemaRegistryClient::extract_schema(
-        const core::types::Value& response) const
+        const core::types::Value &response) const
     {
         core::types::Value schema = response.get("schema");
         if (schema.is_string())

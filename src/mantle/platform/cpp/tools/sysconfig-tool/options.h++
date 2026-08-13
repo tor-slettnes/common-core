@@ -28,12 +28,12 @@ namespace cc::platform::sysconfig
         void on_monitor_start() override;
         void on_monitor_end() override;
 
-        void on_time(const core::dt::TimePoint& tp);
-        void on_time_config(const sysconfig::TimeConfig& tc);
-        void on_tz_info(const core::dt::TimeZoneInfo& ti);
-        void on_tz_spec(const sysconfig::TimeZoneCanonicalSpec& spec);
-        void on_hostinfo(const sysconfig::HostInfo& hi);
-        void on_productinfo(const sysconfig::ProductInfo& pi);
+        void on_time(const core::dt::TimePoint &tp);
+        void on_time_config(const sysconfig::TimeConfig &tc);
+        void on_tz_info(const core::dt::TimeZoneInfo &ti);
+        void on_tz_spec(const sysconfig::TimeZoneCanonicalSpec &spec);
+        void on_hostinfo(const sysconfig::HostInfo &hi);
+        void on_productinfo(const sysconfig::ProductInfo &pi);
 
         void get_time();
         void set_time();

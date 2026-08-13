@@ -11,7 +11,7 @@
 
 namespace cc::platform::upgrade::grpc
 {
-    ClientProvider::ClientProvider(const std::shared_ptr<Client>& client)
+    ClientProvider::ClientProvider(const std::shared_ptr<Client> &client)
         : Super("grpc"),
           client(client)
     {
@@ -23,7 +23,7 @@ namespace cc::platform::upgrade::grpc
     }
 
     PackageCatalogue ClientProvider::scan(
-        const PackageSource& source)
+        const PackageSource &source)
     {
         return cc::protobuf::decoded<PackageCatalogue>(
             this->client->call_check(
@@ -38,7 +38,7 @@ namespace cc::platform::upgrade::grpc
     }
 
     PackageCatalogue ClientProvider::list_available(
-        const PackageSource& source) const
+        const PackageSource &source) const
     {
         return cc::protobuf::decoded<PackageCatalogue>(
             this->client->call_check(
@@ -47,7 +47,7 @@ namespace cc::platform::upgrade::grpc
     }
 
     PackageInfo::ptr ClientProvider::best_available(
-        const PackageSource& source) const
+        const PackageSource &source) const
     {
         return cc::protobuf::decoded_shared<PackageInfo>(
             this->client->call_check(
@@ -56,7 +56,7 @@ namespace cc::platform::upgrade::grpc
     }
 
     PackageInfo::ptr ClientProvider::install(
-        const PackageSource& source)
+        const PackageSource &source)
     {
         platform::upgrade::protobuf::InstallRequest request;
         cc::protobuf::encode(source, request.mutable_source());

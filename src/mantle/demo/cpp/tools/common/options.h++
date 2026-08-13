@@ -17,7 +17,7 @@ namespace cc::demo
         using Super = core::argparse::CommandOptions;
 
     public:
-        Options(const std::string& implementation);
+        Options(const std::string &implementation);
 
     protected:
         void add_options() override;
@@ -26,11 +26,11 @@ namespace cc::demo
         void on_monitor_start() override;
         void on_monitor_end() override;
 
-        void on_time(const demo::TimeData& time);
+        void on_time(const demo::TimeData &time);
 
         void on_greeting(core::signal::MappingAction mapping_action,
-                         const std::string& mapping_key,
-                         const demo::Greeting& greeting);
+                         const std::string &mapping_key,
+                         const demo::Greeting &greeting);
 
         void say_hello();
         void get_current_time();

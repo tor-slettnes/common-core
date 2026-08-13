@@ -16,10 +16,10 @@ namespace cc::core::platform
         using Super = SymbolsProvider;
 
     public:
-        PosixSymbolsProvider(const std::string& name = "PosixSymbolsProvider");
+        PosixSymbolsProvider(const std::string &name = "PosixSymbolsProvider");
 
         std::string cpp_demangle(
-            const std::string& abiname,
+            const std::string &abiname,
             bool stem_only) const noexcept override;
     };
 

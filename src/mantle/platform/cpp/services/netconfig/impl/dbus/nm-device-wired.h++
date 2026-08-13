@@ -22,20 +22,20 @@ namespace cc::platform::netconfig::dbus
 
     public:
         WiredDevice(
-            cc::dbus::ProxyContainer* container,
-            const cc::dbus::ConnectionPtr& connection,
-            const cc::dbus::ServiceName& servicename,
-            const cc::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer *container,
+            const cc::dbus::ConnectionPtr &connection,
+            const cc::dbus::ServiceName &servicename,
+            const cc::dbus::ObjectPath &objectpath);
         void emit_change(core::signal::MappingAction action) override;
 
         static std::shared_ptr<WiredDevice> first();
 
     private:
         void on_property_hwaddress(
-            const Glib::VariantBase& change);
+            const Glib::VariantBase &change);
 
         void on_property_active_connection(
-            const Glib::VariantBase& change);
+            const Glib::VariantBase &change);
     };
 
 }  // namespace cc::platform::netconfig::dbus

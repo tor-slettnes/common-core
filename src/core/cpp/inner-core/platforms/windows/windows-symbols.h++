@@ -19,7 +19,7 @@ namespace cc::core::platform
         WindowsSymbolsProvider();
 
         std::string cpp_demangle(
-            const std::string& abiname,
+            const std::string &abiname,
             bool stem_only) const noexcept override;
     };
 

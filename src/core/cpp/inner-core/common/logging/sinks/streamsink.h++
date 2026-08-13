@@ -43,24 +43,24 @@ namespace cc::core::logging
         ///     Identity of this log sink
         /// @param[in] stream
         ///     Stream to log the messages to
-        StreamSink(const std::string& sink_id,
-                   std::ostream& stream);
+        StreamSink(const std::string &sink_id,
+                   std::ostream &stream);
 
-        StreamSink(const std::string& sink_id,
-                   std::ostream&& stream);
+        StreamSink(const std::string &sink_id,
+                   std::ostream &&stream);
 
     public:
-        void load_settings(const types::KeyValueMap& settings) override;
-        bool handle_message(const Message::ptr& message) override;
+        void load_settings(const types::KeyValueMap &settings) override;
+        bool handle_message(const Message::ptr &message) override;
 
     private:
-        void load_styles(const types::KeyValueMap& stylemap);
-        void load_styles(const types::KeyValueMap& stylemap,
+        void load_styles(const types::KeyValueMap &stylemap);
+        void load_styles(const types::KeyValueMap &stylemap,
                          MessagePart part,
-                         const std::string& partname);
+                         const std::string &partname);
 
     protected:
-        std::ostream& stream;
+        std::ostream &stream;
         types::ValueMap<status::Level, StyleMap> styles;
     };
 
@@ -70,14 +70,14 @@ namespace cc::core::logging
     inline static SinkFactory stdout_factory(
         "stdout",
         "Log to standard output.",
-        [](const SinkID& sink_id) -> Sink::ptr {
+        [](const SinkID &sink_id) -> Sink::ptr {
             return std::make_shared<StreamSink>(sink_id, std::cout);
         });
 
     inline static SinkFactory stderr_factory(
         "stderr",
         "Log to standard error. Enabled by default if standard output is a terminal.",
-        [](const SinkID& sink_id) -> Sink::ptr {
+        [](const SinkID &sink_id) -> Sink::ptr {
             return std::make_shared<StreamSink>(sink_id, std::cerr);
         },
         DefaultOption::IF_INTERACTIVE);

@@ -26,8 +26,8 @@ namespace cc::platform::pubsub::grpc
         ClientBase::deinitialize();
     }
 
-    bool ClientImpl::write(const std::string& topic,
-                           const core::types::Value& value)
+    bool ClientImpl::write(const std::string &topic,
+                           const core::types::Value &value)
     {
         cc::platform::pubsub::protobuf::Publication msg;
         msg.set_topic(topic);
@@ -83,7 +83,7 @@ namespace cc::platform::pubsub::grpc
     }
 
     Reader::ptr ClientImpl::create_reader(
-        const std::vector<std::string>& topics)
+        const std::vector<std::string> &topics)
     {
         cc::platform::pubsub::protobuf::Filters filters;
         cc::protobuf::assign_repeated(topics, filters.mutable_topics());
@@ -92,7 +92,7 @@ namespace cc::platform::pubsub::grpc
 
     void ClientImpl::read_worker()
     {
-        while (const auto& message_data = this->reader_->get())
+        while (const auto &message_data = this->reader_->get())
         {
             pubsub::signal_publication.emit(
                 message_data->first,

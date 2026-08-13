@@ -22,9 +22,9 @@ namespace cc::glib
     class Error_Category : public std::error_category
     {
     public:
-        Error_Category(const std::string& classname);
+        Error_Category(const std::string &classname);
 
-        const char* name() const noexcept override;
+        const char *name() const noexcept override;
 
         std::string message(int condition = 0) const override;
 
@@ -41,29 +41,29 @@ namespace cc::glib
     class Error : public std::system_error
     {
     public:
-        Error(const Glib::Error& e,
-              const std::optional<std::string>& preamble = {});
+        Error(const Glib::Error &e,
+              const std::optional<std::string> &preamble = {});
 
-        Error(const Gio::DBus::Error& e,
-              const std::optional<std::string>& preamble = {});
+        Error(const Gio::DBus::Error &e,
+              const std::optional<std::string> &preamble = {});
     };
 
     //==========================================================================
     // @brief Log information from an std::exception_ptr capture
 
     void log_exception(std::exception_ptr eptr,
-                       const std::string& preamble = {},
+                       const std::string &preamble = {},
                        core::status::Level level = core::status::Level::NOTICE,
                        core::logging::Scope::ptr scope = log_scope,
-                       const core::dt::TimePoint& tp = core::dt::Clock::now(),
-                       const std::filesystem::path& path = __builtin_FILE(),
-                       const int& lineno = __builtin_LINE(),
-                       const std::string& function = __builtin_FUNCTION());
+                       const core::dt::TimePoint &tp = core::dt::Clock::now(),
+                       const std::filesystem::path &path = __builtin_FILE(),
+                       const int &lineno = __builtin_LINE(),
+                       const std::string &function = __builtin_FUNCTION());
 
 }  // namespace cc::glib
 
 /// Output stream support for Glib VariantBase, for use in log output.
 namespace Glib
 {
-    std::ostream& operator<<(std::ostream& stream, const Error& e);
+    std::ostream &operator<<(std::ostream &stream, const Error &e);
 }  // namespace Glib

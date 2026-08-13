@@ -19,11 +19,11 @@ namespace cc::core::io
     class GZipOutputBuffer : public GZipBuffer
     {
     public:
-        GZipOutputBuffer(const fs::path& file_path,
+        GZipOutputBuffer(const fs::path &file_path,
                          uint compression_level = 6);
         ~GZipOutputBuffer();
 
-        bool write_some(const BufferType& buffer) override;
+        bool write_some(const BufferType &buffer) override;
     };
 
     //--------------------------------------------------------------------------
@@ -33,7 +33,7 @@ namespace cc::core::io
     class GZipOutputStream : public std::ostream
     {
     public:
-        GZipOutputStream(const fs::path& file_path);
+        GZipOutputStream(const fs::path &file_path);
 
     private:
         GZipOutputBuffer output_buffer;

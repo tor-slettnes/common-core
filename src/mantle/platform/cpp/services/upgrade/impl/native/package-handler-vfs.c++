@@ -13,14 +13,14 @@
 namespace cc::platform::upgrade::native
 {
     VFSPackageHandler::VFSPackageHandler(
-        const core::SettingsStore::ptr& settings)
+        const core::SettingsStore::ptr &settings)
         : Super(settings)
     {
     }
 
     void VFSPackageHandler::unpack(
-        const PackageSource& source,
-        const fs::path& staging_folder)
+        const PackageSource &source,
+        const fs::path &staging_folder)
     {
         if (source.empty())
         {
@@ -33,8 +33,8 @@ namespace cc::platform::upgrade::native
     }
 
     void VFSPackageHandler::unpack_file(
-        const fs::path& filepath,
-        const fs::path& staging_folder)
+        const fs::path &filepath,
+        const fs::path &staging_folder)
     {
         logf_debug("Unpacking file %r", filepath);
         this->unpack_from_fd(

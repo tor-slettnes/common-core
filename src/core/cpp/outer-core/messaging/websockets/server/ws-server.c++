@@ -9,8 +9,8 @@
 
 namespace cc::ws
 {
-    Server::Server(const std::string& address,
-                   const std::string& service_name)
+    Server::Server(const std::string &address,
+                   const std::string &service_name)
         : Super(address, "Server", service_name)
     {
         this->ws_server_.set_error_channels(

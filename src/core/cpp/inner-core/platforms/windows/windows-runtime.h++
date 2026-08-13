@@ -25,6 +25,6 @@ namespace cc::core::platform
 
     protected:
         /// @brief Return the maximum length of a filesystem path.
-        void putenv(const std::string& envstring) override;
+        void putenv(const std::string &envstring) override;
     };
 }  // namespace cc::core::platform

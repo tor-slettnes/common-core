@@ -33,7 +33,7 @@ namespace cc::platform::pubsub::zmq
     private:
         void write_message(
             core::signal::MappingAction action,
-            const std::string& topic,
-            const core::types::Value& payload);
+            const std::string &topic,
+            const core::types::Value &payload);
     };
 }  // namespace cc::platform::pubsub::zmq

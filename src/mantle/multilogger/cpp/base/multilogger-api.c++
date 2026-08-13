@@ -19,7 +19,7 @@ namespace cc::platform::multilogger
         this->stop_listening();
     }
 
-    void API::start_listening(const ListenerSpec& spec)
+    void API::start_listening(const ListenerSpec &spec)
     {
         this->keep_listening_ = true;
         if (!this->listener_thread_.joinable())
@@ -46,7 +46,7 @@ namespace cc::platform::multilogger
         }
     }
 
-    void API::keep_listening(const ListenerSpec& spec)
+    void API::keep_listening(const ListenerSpec &spec)
     {
         while (this->keep_listening_)
         {

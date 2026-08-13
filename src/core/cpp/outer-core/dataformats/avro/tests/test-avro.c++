@@ -40,7 +40,7 @@ namespace cc::avro
 
     TEST(AvroTest, ProtoBufEventToJsonSchema)
     {
-        const SchemaWrapper& wrapper = ProtoBufSchema::from_proto(
+        const SchemaWrapper &wrapper = ProtoBufSchema::from_proto(
             cc::protobuf::status::Error::GetDescriptor());
 
         // std::string json = wrapper.as_json();

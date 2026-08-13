@@ -27,8 +27,8 @@ namespace cc::core::argparse
         /// @brief
         ///     Parse command line options from main() and invoke associated
         ///     actions (create logger instances, daemonize, etc).
-        void apply(int argc, char** argv);
-        void apply(const ArgList& args);
+        void apply(int argc, char **argv);
+        void apply(const ArgList &args);
 
         /// @brief
         ///     Parse input arguments provided in constructor and execute
@@ -39,18 +39,18 @@ namespace cc::core::argparse
         /// @brief
         ///     Print a message on standard error and exit with a nonzero
         ///     status.
-        void fail(const std::string& message,
+        void fail(const std::string &message,
                   bool show_hint = false,
-                  std::ostream& out = std::cerr);
+                  std::ostream &out = std::cerr);
 
         /// @brief
         ///     Show help on standard output, then exit.
-        void show_help_and_exit(const std::string& section = "ALL",
-                                std::ostream& out = std::cout);
+        void show_help_and_exit(const std::string &section = "ALL",
+                                std::ostream &out = std::cout);
 
         /// @brief
         ///     Show help on standard output, then exit.
-        void show_version_and_exit(std::ostream& out = std::cout);
+        void show_version_and_exit(std::ostream &out = std::cout);
 
     protected:
         /// @brief
@@ -63,12 +63,12 @@ namespace cc::core::argparse
     private:
         /// Add option to log to specific sink
         void add_log_sink_option(
-            const logging::SinkID& sink_id,
-            const std::shared_ptr<logging::SinkCustomization>& customization);
+            const logging::SinkID &sink_id,
+            const std::shared_ptr<logging::SinkCustomization> &customization);
 
         /// Add flags `--debug`, `--info`, etc to set `stderr` sink threshold.
         void add_verbosity_options(
-            const std::shared_ptr<logging::SinkCustomization>& customization);
+            const std::shared_ptr<logging::SinkCustomization> &customization);
 
         /// Add options related to logging in a specific scope
         void add_log_scope_options();
@@ -83,8 +83,8 @@ namespace cc::core::argparse
         //     const logging::sinks::CreatorFunction &creator);
 
         std::optional<status::Level> get_optional_level(
-            const std::string& option,
-            const types::KeyValueMap& config = *core::settings) const;
+            const std::string &option,
+            const types::KeyValueMap &config = *core::settings) const;
 
     public:
         bool is_server;
@@ -99,7 +99,7 @@ namespace cc::core::argparse
         bool log_to_csv;
     };
 
-    using RegisterLoggerFunction = std::function<void(Parser*)>;
+    using RegisterLoggerFunction = std::function<void(Parser *)>;
     extern std::unordered_map<LongOpt, RegisterLoggerFunction> add_logger_methods;
 
 }  // namespace cc::core::argparse

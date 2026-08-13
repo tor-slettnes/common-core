@@ -64,7 +64,7 @@ namespace cc::avro
     class SchemaWrapper : public core::types::Value
     {
     public:
-        SchemaWrapper(const core::types::Value& value);
+        SchemaWrapper(const core::types::Value &value);
         ~SchemaWrapper();
 
     public:
@@ -77,7 +77,7 @@ namespace cc::avro
         std::string as_json() const;
 
     protected:
-        void set(const std::string& key, const core::types::Value& value);
+        void set(const std::string &key, const core::types::Value &value);
 
     private:
         avro_schema_t avro_schema;
@@ -89,8 +89,8 @@ namespace cc::avro
     class BuilderContext
     {
     public:
-        core::types::Value build(const std::string& name,
-                                 core::types::TaggedValueList&& spec);
+        core::types::Value build(const std::string &name,
+                                 core::types::TaggedValueList &&spec);
 
     public:
         std::unordered_set<std::string> defined_schemas;
@@ -104,13 +104,13 @@ namespace cc::avro
     class RecordSchema : public SchemaWrapper
     {
     public:
-        RecordSchema(const ContextRef& context,
-                     const std::string& name);
+        RecordSchema(const ContextRef &context,
+                     const std::string &name);
 
-        void add_field(const std::string& name,
-                       const core::types::Value& type,
-                       const std::optional<core::types::Value>& default_value = {},
-                       const std::optional<std::string>& doc = {});
+        void add_field(const std::string &name,
+                       const core::types::Value &type,
+                       const std::optional<core::types::Value> &default_value = {},
+                       const std::optional<std::string> &doc = {});
 
     protected:
         ContextRef context;
@@ -122,7 +122,7 @@ namespace cc::avro
     class MapSchema : public SchemaWrapper
     {
     public:
-        MapSchema(const core::types::Value& valuetype);
+        MapSchema(const core::types::Value &valuetype);
     };
 
     //--------------------------------------------------------------------------
@@ -131,7 +131,7 @@ namespace cc::avro
     class ArraySchema : public SchemaWrapper
     {
     public:
-        ArraySchema(const core::types::Value& itemtype);
+        ArraySchema(const core::types::Value &itemtype);
     };
 
     //--------------------------------------------------------------------------
@@ -140,11 +140,11 @@ namespace cc::avro
     class EnumSchema : public SchemaWrapper
     {
     public:
-        EnumSchema(const ContextRef& context,
-                   const std::string& name,
-                   const std::vector<std::string>& symbols,
-                   const std::optional<std::string>& default_symbol = {},
-                   const std::optional<std::string>& doc = {});
+        EnumSchema(const ContextRef &context,
+                   const std::string &name,
+                   const std::vector<std::string> &symbols,
+                   const std::optional<std::string> &default_symbol = {},
+                   const std::optional<std::string> &doc = {});
     };
 
     //--------------------------------------------------------------------------
@@ -156,7 +156,7 @@ namespace cc::avro
     class CalendarTimeIntervalSchema : public SchemaWrapper
     {
     public:
-        CalendarTimeIntervalSchema(const ContextRef& context);
+        CalendarTimeIntervalSchema(const ContextRef &context);
     };
 
     //--------------------------------------------------------------------------
@@ -177,7 +177,7 @@ namespace cc::avro
     class TimeIntervalSchema : public SchemaWrapper
     {
     public:
-        TimeIntervalSchema(const ContextRef& context);
+        TimeIntervalSchema(const ContextRef &context);
     };
 
     //--------------------------------------------------------------------------
@@ -189,7 +189,7 @@ namespace cc::avro
     class TimestampSchema : public SchemaWrapper
     {
     public:
-        TimestampSchema(const ContextRef& context);
+        TimestampSchema(const ContextRef &context);
     };
 
     //--------------------------------------------------------------------------
@@ -212,7 +212,7 @@ namespace cc::avro
             // VT_ARRAY       // 7
         };
 
-        VariantSchema(const ContextRef& context,
+        VariantSchema(const ContextRef &context,
                       const std::optional<core::types::Value> &default_value = {});
 
     private:
@@ -225,7 +225,7 @@ namespace cc::avro
     class VariantMapSchema : public MapSchema
     {
     public:
-        VariantMapSchema(const ContextRef& context);
+        VariantMapSchema(const ContextRef &context);
     };
 
     //--------------------------------------------------------------------------
@@ -234,7 +234,7 @@ namespace cc::avro
     class VariantListSchema : public ArraySchema
     {
     public:
-        VariantListSchema(const ContextRef& context);
+        VariantListSchema(const ContextRef &context);
     };
 
 }  // namespace cc::avro

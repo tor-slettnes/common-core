@@ -19,10 +19,10 @@
 namespace cc::platform::netconfig::dbus
 {
     Manager::Manager(
-        cc::dbus::ProxyContainer* container,
-        const cc::dbus::ConnectionPtr& connection,
-        const cc::dbus::ServiceName& servicename,
-        const cc::dbus::ObjectPath& objectpath)
+        cc::dbus::ProxyContainer *container,
+        const cc::dbus::ConnectionPtr &connection,
+        const cc::dbus::ServiceName &servicename,
+        const cc::dbus::ObjectPath &objectpath)
         : DataWrapper<GlobalData>(
               container,
               connection,
@@ -76,26 +76,26 @@ namespace cc::platform::netconfig::dbus
         netconfig::signal_globaldata.emit(ref);
     }
 
-    void Manager::on_signal_state_changed(const Glib::VariantContainerBase& parameters)
+    void Manager::on_signal_state_changed(const Glib::VariantContainerBase &parameters)
     {
         auto state = cc::glib::variant_cast<uint>(parameters, 0);
         logf_trace("NetworkManager state change: %0x", state);
     }
 
-    void Manager::on_property_devices(const Glib::VariantBase& change)
+    void Manager::on_property_devices(const Glib::VariantBase &change)
     {
         auto devices = cc::glib::variant_cast<cc::dbus::ObjectPaths>(change);
         this->container->synchronize<Device>(devices);
     }
 
-    void Manager::on_property_active_connections(const Glib::VariantBase& change)
+    void Manager::on_property_active_connections(const Glib::VariantBase &change)
     {
         auto active_connections = cc::glib::variant_cast<cc::dbus::ObjectPaths>(change);
         logf_trace("NetworkManager active connections: %s", active_connections);
         this->container->synchronize<ActiveConnection>(active_connections);
     }
 
-    void Manager::on_property_wireless_enabled(const Glib::VariantBase& change)
+    void Manager::on_property_wireless_enabled(const Glib::VariantBase &change)
     {
         this->wireless_enabled = cc::glib::variant_cast<bool>(change);
         if (this->wireless_enabled && !this->wireless_allowed)
@@ -142,7 +142,7 @@ namespace cc::platform::netconfig::dbus
 
     void Manager::request_scan() const
     {
-        for (const auto& [path, ref] : this->container->instances<WirelessDevice>())
+        for (const auto &[path, ref] : this->container->instances<WirelessDevice>())
         {
             ref->request_scan();
         }
@@ -150,14 +150,14 @@ namespace cc::platform::netconfig::dbus
 
     void Manager::add_and_activate_connection(ConnectionData data)
     {
-        if (WiredConnectionData* wired_data = data.wired_data())
+        if (WiredConnectionData *wired_data = data.wired_data())
         {
             if (auto dev = WiredDevice::first())
             {
                 this->add_and_activate_connection(data, dev->objectpath);
             }
         }
-        else if (WirelessConnectionData* wifi_data = data.wifi_data())
+        else if (WirelessConnectionData *wifi_data = data.wifi_data())
         {
             if (!wifi_data->band)
             {
@@ -176,9 +176,9 @@ namespace cc::platform::netconfig::dbus
     }
 
     void Manager::add_and_activate_connection(
-        const ConnectionData& data,
-        const Glib::DBusObjectPathString& device_path,
-        const Glib::DBusObjectPathString& specific_path)
+        const ConnectionData &data,
+        const Glib::DBusObjectPathString &device_path,
+        const Glib::DBusObjectPathString &specific_path)
     {
         auto settings = connection::build_settings_container(data);
 
@@ -198,7 +198,7 @@ namespace cc::platform::netconfig::dbus
         this->call_sync("AddAndActivateConnection", inputs);
     }
 
-    void Manager::activate_connection(const Key& key)
+    void Manager::activate_connection(const Key &key)
     {
         auto conn = Connection::get_by_key(key, true);
         cc::dbus::ObjectPath devpath = conn->find_suitable_device();
@@ -215,7 +215,7 @@ namespace cc::platform::netconfig::dbus
         this->call_sync("ActivateConnection", inputs);
     }
 
-    void Manager::deactivate_connection(const Key& key)
+    void Manager::deactivate_connection(const Key &key)
     {
         if (auto ac = ActiveConnection::get_by_key(key, false))
         {
@@ -227,16 +227,16 @@ namespace cc::platform::netconfig::dbus
         }
     }
 
-    void Manager::connect_ap(const Key& bssid,
-                             const ConnectionData& data)
+    void Manager::connect_ap(const Key &bssid,
+                             const ConnectionData &data)
     {
         auto ap = lookup<AccessPoint>(bssid, true);
         auto dev = WirelessDevice::get_by_ap(ap, true);
         this->connect_ap(dev, ap, data);
     }
 
-    void Manager::connect_ap(const SSID& ssid,
-                             const ConnectionData& data)
+    void Manager::connect_ap(const SSID &ssid,
+                             const ConnectionData &data)
     {
         auto ap = AccessPoint::get_by_ssid(ssid, true);
         auto dev = WirelessDevice::get_by_ap(ap, true);
@@ -245,7 +245,7 @@ namespace cc::platform::netconfig::dbus
 
     void Manager::connect_ap(std::shared_ptr<WirelessDevice> wifidev,
                              std::shared_ptr<AccessPoint> ap,
-                             const ConnectionData& data)
+                             const ConnectionData &data)
     {
         if (auto dev = this->container->get<Device>(wifidev->objectpath))
         {

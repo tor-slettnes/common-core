@@ -32,7 +32,7 @@ namespace cc::platform::switchboard::grpc
     }
 
     bool RemoteSwitch::add_dependency(
-        const DependencyRef& dependency,
+        const DependencyRef &dependency,
         bool allow_update,
         bool reevaluate)
     {
@@ -59,7 +59,7 @@ namespace cc::platform::switchboard::grpc
     }
 
     bool RemoteSwitch::add_interceptor(
-        const InterceptorRef& interceptor,
+        const InterceptorRef &interceptor,
         bool immediate)
     {
         return this->provider()->add_interceptor(
@@ -70,7 +70,7 @@ namespace cc::platform::switchboard::grpc
     }
 
     bool RemoteSwitch::remove_interceptor(
-        const InterceptorName& name)
+        const InterceptorName &name)
     {
         return this->provider()->remove_interceptor(
             name,           // name
@@ -78,21 +78,21 @@ namespace cc::platform::switchboard::grpc
     }
 
     void RemoteSwitch::update_spec(
-        const std::optional<bool>& primary,
-        const SwitchAliases& aliases,
+        const std::optional<bool> &primary,
+        const SwitchAliases &aliases,
         bool replace_aliases,
-        const LocalizationMap& localizations,
+        const LocalizationMap &localizations,
         bool replace_localizations,
-        const DependencyMap& dependencies,
+        const DependencyMap &dependencies,
         bool replace_dependencies,
-        const InterceptorMap& interceptors,
+        const InterceptorMap &interceptors,
         bool replace_interceptors,
         bool update_state)
     {
         platform::switchboard::protobuf::SetSpecificationRequest req;
         req.set_switch_name(this->name());
 
-        platform::switchboard::protobuf::Specification* spec = req.mutable_spec();
+        platform::switchboard::protobuf::Specification *spec = req.mutable_spec();
         if (primary)
         {
             spec->set_is_primary(primary.value());
@@ -114,8 +114,8 @@ namespace cc::platform::switchboard::grpc
 
     bool RemoteSwitch::set_target(
         State target_state,
-        const core::status::Error::ptr& error,
-        const core::types::KeyValueMap& attributes,
+        const core::status::Error::ptr &error,
+        const core::types::KeyValueMap &attributes,
         bool clear_existing,
         InvocationStyle invoke_interceptors,
         CascadeStyle cascade_descendants,
@@ -173,7 +173,7 @@ namespace cc::platform::switchboard::grpc
     }
 
     bool RemoteSwitch::set_attributes(
-        const core::types::KeyValueMap& attributes,
+        const core::types::KeyValueMap &attributes,
         bool clear_existing)
     {
         platform::switchboard::protobuf::SetAttributesRequest req;

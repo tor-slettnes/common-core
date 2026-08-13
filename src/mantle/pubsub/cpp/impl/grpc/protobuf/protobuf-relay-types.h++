@@ -13,27 +13,27 @@ namespace cc::protobuf
 {
     //--------------------------------------------------------------------------
     // KeyPath
-    void encode(const cc::platform::pubsub::KeyPath& native,
-                cc::platform::pubsub::protobuf::KeyPath* proto);
+    void encode(const cc::platform::pubsub::KeyPath &native,
+                cc::platform::pubsub::protobuf::KeyPath *proto);
 
-    void decode(const cc::platform::pubsub::protobuf::KeyPath& proto,
-                cc::platform::pubsub::KeyPath* native);
+    void decode(const cc::platform::pubsub::protobuf::KeyPath &proto,
+                cc::platform::pubsub::KeyPath *native);
 
     //--------------------------------------------------------------------------
     // ReplayPolicy
-    void encode(const cc::platform::pubsub::ReplayPolicy& native,
-                cc::platform::pubsub::protobuf::ReplayPolicy* proto);
+    void encode(const cc::platform::pubsub::ReplayPolicy &native,
+                cc::platform::pubsub::protobuf::ReplayPolicy *proto);
 
-    void decode(const cc::platform::pubsub::protobuf::ReplayPolicy& proto,
-                cc::platform::pubsub::ReplayPolicy* native);
+    void decode(const cc::platform::pubsub::protobuf::ReplayPolicy &proto,
+                cc::platform::pubsub::ReplayPolicy *native);
 
     //--------------------------------------------------------------------------
     // ReplayPolicyMap
 
-    void encode(const cc::platform::pubsub::ReplayPolicyMap& native,
-                cc::platform::pubsub::protobuf::ReplayPolicyMap* proto);
+    void encode(const cc::platform::pubsub::ReplayPolicyMap &native,
+                cc::platform::pubsub::protobuf::ReplayPolicyMap *proto);
 
-    void decode(const cc::platform::pubsub::protobuf::ReplayPolicyMap& proto,
-                cc::platform::pubsub::ReplayPolicyMap* native);
+    void decode(const cc::platform::pubsub::protobuf::ReplayPolicyMap &proto,
+                cc::platform::pubsub::ReplayPolicyMap *native);
 
 }  // namespace cc::protobuf

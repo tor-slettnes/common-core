@@ -27,10 +27,10 @@ namespace cc::core::types
         /// @returns
         ///    A `shared_ptr<>` reference to the existing or newvalue.
         template <class... Args>
-        inline std::shared_ptr<V>&
-        emplace_shared(const K& key, Args&&... args)
+        inline std::shared_ptr<V> &
+        emplace_shared(const K &key, Args &&...args)
         {
-            std::shared_ptr<V>& item = (*this)[key];
+            std::shared_ptr<V> &item = (*this)[key];
             if (!item)
             {
                 item = std::make_shared<V>(args...);
@@ -47,8 +47,8 @@ namespace cc::core::types
         /// @returns
         ///    A `shared_ptr<>` reference to the newly inserted value.
         template <class... Args>
-        inline std::shared_ptr<V>&
-        replace_shared(const K& key, Args&&... args)
+        inline std::shared_ptr<V> &
+        replace_shared(const K &key, Args &&...args)
         {
             auto [it, inserted] = this->insert_or_assign(
                 key,
@@ -58,13 +58,13 @@ namespace cc::core::types
         }
 
         inline std::shared_ptr<V>
-        get(const K& key, const std::shared_ptr<V>& fallback = {}) const noexcept
+        get(const K &key, const std::shared_ptr<V> &fallback = {}) const noexcept
         {
             try
             {
                 return this->at(key);
             }
-            catch (const std::out_of_range&)
+            catch (const std::out_of_range &)
             {
                 return fallback;
             }

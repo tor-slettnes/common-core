@@ -13,8 +13,8 @@ namespace cc::idl
 {
     //==========================================================================
     // Greeting
-    void encode(const demo::Greeting& native,
-                CC::Demo::Greeting* idl)
+    void encode(const demo::Greeting &native,
+                CC::Demo::Greeting *idl)
     {
         idl->text(native.text);
         idl->identity(native.identity);
@@ -23,8 +23,8 @@ namespace cc::idl
         encode(native.data, &idl->data());
     }
 
-    void decode(const CC::Demo::Greeting& idl,
-                demo::Greeting* native)
+    void decode(const CC::Demo::Greeting &idl,
+                demo::Greeting *native)
     {
         native->text = idl.text();
         native->identity = idl.identity();
@@ -36,16 +36,16 @@ namespace cc::idl
     //==========================================================================
     // TimeData
 
-    void encode(const demo::TimeData& native,
-                CC::Demo::TimeData* idl)
+    void encode(const demo::TimeData &native,
+                CC::Demo::TimeData *idl)
     {
         encode(native.timepoint, &idl->timestamp());
         encode(native.localtime, &idl->local_time());
         encode(native.utctime, &idl->utc_time());
     }
 
-    void decode(const CC::Demo::TimeData& idl,
-                demo::TimeData* native)
+    void decode(const CC::Demo::TimeData &idl,
+                demo::TimeData *native)
     {
         decode(idl.timestamp(), &native->timepoint);
         decode(idl.local_time(), &native->localtime);
@@ -55,8 +55,8 @@ namespace cc::idl
     //==========================================================================
     // TimeStruct
 
-    void encode(const std::tm& native,
-                CC::Demo::TimeStruct* idl)
+    void encode(const std::tm &native,
+                CC::Demo::TimeStruct *idl)
     {
         idl->year(native.tm_year + core::dt::TM_YEAR_OFFSET);
         idl->month(native.tm_mon + core::dt::TM_MONTH_OFFSET);
@@ -73,8 +73,8 @@ namespace cc::idl
         }
     }
 
-    void decode(const CC::Demo::TimeStruct& idl,
-                std::tm* native)
+    void decode(const CC::Demo::TimeStruct &idl,
+                std::tm *native)
     {
         native->tm_sec = static_cast<int>(idl.second());
         native->tm_min = static_cast<int>(idl.minute());

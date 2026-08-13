@@ -19,10 +19,10 @@ namespace cc::platform::multilogger::native
         using Super = API;
 
     public:
-        void submit(const core::types::Loggable::ptr& item) override;
-        bool add_sink(const SinkSpec& spec) override;
-        bool remove_sink(const SinkID& id) override;
-        SinkSpec get_sink_spec(const SinkID& id) const override;
+        void submit(const core::types::Loggable::ptr &item) override;
+        bool add_sink(const SinkSpec &spec) override;
+        bool remove_sink(const SinkID &id) override;
+        SinkSpec get_sink_spec(const SinkID &id) const override;
         SinkSpecs get_all_sink_specs() const override;
         SinkIDs list_sinks() const override;
         SinkTypes list_sink_types() const override;
@@ -30,14 +30,14 @@ namespace cc::platform::multilogger::native
         FieldNames list_error_fields() const override;
 
         std::shared_ptr<LogSource> listen(
-            const ListenerSpec& spec) override;
+            const ListenerSpec &spec) override;
 
     protected:
-        core::logging::Sink::ptr new_sink(const SinkSpec& spec) const;
-        core::logging::Sink::ptr create_sink(core::logging::SinkFactory* factory,
-                                             const SinkSpec& spec) const;
+        core::logging::Sink::ptr new_sink(const SinkSpec &spec) const;
+        core::logging::Sink::ptr create_sink(core::logging::SinkFactory *factory,
+                                             const SinkSpec &spec) const;
 
-        SinkSpec sink_spec(const core::logging::Sink::ptr& sink) const;
+        SinkSpec sink_spec(const core::logging::Sink::ptr &sink) const;
 
     private:
         std::thread listener_thread_;

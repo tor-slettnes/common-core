@@ -11,10 +11,10 @@
 namespace cc::platform::netconfig::dbus
 {
     WiredDevice::WiredDevice(
-        cc::dbus::ProxyContainer* container,
-        const cc::dbus::ConnectionPtr& connection,
-        const cc::dbus::ServiceName& servicename,
-        const cc::dbus::ObjectPath& objectpath)
+        cc::dbus::ProxyContainer *container,
+        const cc::dbus::ConnectionPtr &connection,
+        const cc::dbus::ServiceName &servicename,
+        const cc::dbus::ObjectPath &objectpath)
         : DataWrapper<WiredDeviceData>(
               container,
               connection,
@@ -40,7 +40,7 @@ namespace cc::platform::netconfig::dbus
 
     std::shared_ptr<WiredDevice> WiredDevice::first()
     {
-        for (const auto& [path, ref] : dbus::container.instances<WiredDevice>())
+        for (const auto &[path, ref] : dbus::container.instances<WiredDevice>())
         {
             if (auto dev = dbus::container.get<Device>(path))
             {
@@ -54,7 +54,7 @@ namespace cc::platform::netconfig::dbus
     }
 
     void WiredDevice::on_property_hwaddress(
-        const Glib::VariantBase& change)
+        const Glib::VariantBase &change)
     {
         // In NetworkManager v1.24 and newer,'HwAddress' is a property of
         // Device, not WiredDevice. We emulate the newer behavior by
@@ -66,7 +66,7 @@ namespace cc::platform::netconfig::dbus
     }
 
     void WiredDevice::on_property_active_connection(
-        const Glib::VariantBase& change)
+        const Glib::VariantBase &change)
     {
         // Per NetworkManager DBus documentation, 'ActiveConnection' is a
         // property on ...Device, not ...Device.Wired, but in practice

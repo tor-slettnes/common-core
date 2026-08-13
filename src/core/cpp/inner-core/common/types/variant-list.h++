@@ -32,10 +32,10 @@ namespace cc::core::types
         // void shrink_to_fit() {}
 
     public:
-        Value front(const Value& fallback = {}) const noexcept;
-        Value back(const Value& fallback = {}) const noexcept;
-        Value get(uint index, const Value& fallback = {}) const noexcept;
-        Value get(int index, const Value& fallback = {}) const noexcept;
+        Value front(const Value &fallback = {}) const noexcept;
+        Value back(const Value &fallback = {}) const noexcept;
+        Value get(uint index, const Value &fallback = {}) const noexcept;
+        Value get(int index, const Value &fallback = {}) const noexcept;
         std::optional<Value> try_get(uint index) const noexcept;
         std::optional<Value> try_get(int index) const noexcept;
 
@@ -54,20 +54,20 @@ namespace cc::core::types
         ///    ValueList instance from which to import
         /// @return
         ///     A reference to this updated instance.
-        ValueList& extend(const ValueList& other);
-        ValueList& extend(ValueList&& other);
+        ValueList &extend(const ValueList &other);
+        ValueList &extend(ValueList &&other);
 
-        iterator append(const Value& value);
-        iterator append(Value&& value);
+        iterator append(const Value &value);
+        iterator append(Value &&value);
 
-        AppendResult append_if(bool condition, const Value& value);
-        AppendResult append_if(bool condition, Value&& value);
+        AppendResult append_if(bool condition, const Value &value);
+        AppendResult append_if(bool condition, Value &&value);
 
-        AppendResult append_if_value(const Value& value);
-        AppendResult append_if_value(Value&& value);
+        AppendResult append_if_value(const Value &value);
+        AppendResult append_if_value(Value &&value);
 
     public:
-        void to_stream(std::ostream& stream) const override;
+        void to_stream(std::ostream &stream) const override;
 
     public:
         template <class T>
@@ -77,10 +77,10 @@ namespace cc::core::types
         }
 
         template <class T>
-        void filter_into(std::vector<T>* vector) const
+        void filter_into(std::vector<T> *vector) const
         {
             vector->reserve(vector->size() + this->size());
-            for (const types::Value& value : *this)
+            for (const types::Value &value : *this)
             {
                 if (const auto *ptr = value.get_if<T>())
                 {
@@ -98,17 +98,17 @@ namespace cc::core::types
         }
 
         template <class ContainerT>
-        void populate_from(const ContainerT& container)
+        void populate_from(const ContainerT &container)
         {
             this->reserve(this->size() + container.size());
-            for (const auto& item : container)
+            for (const auto &item : container)
             {
                 this->emplace_back(item);
             }
         }
 
         template <class ContainerT>
-        static std::shared_ptr<ValueList> create_shared_from(const ContainerT& container)
+        static std::shared_ptr<ValueList> create_shared_from(const ContainerT &container)
         {
             auto list = std::make_shared<ValueList>();
             (*list) << container;
@@ -116,7 +116,7 @@ namespace cc::core::types
         }
 
         template <class ContainerT>
-        static ValueList create_from(const ContainerT& container)
+        static ValueList create_from(const ContainerT &container)
         {
             ValueList list;
             list << container;
@@ -128,10 +128,10 @@ namespace cc::core::types
     // Non-member functions
 
     template <class T>
-    ValueList& operator<<(ValueList& vlist, const T& inputs)
+    ValueList &operator<<(ValueList &vlist, const T &inputs)
     {
         vlist.reserve(vlist.size() + inputs.size());
-        for (const auto& input : inputs)
+        for (const auto &input : inputs)
         {
             vlist.emplace_back() << input;
         }

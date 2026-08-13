@@ -12,8 +12,8 @@ namespace cc::core::platform
     ProviderProxy<SystemServiceProvider> system_service("system service");
 
     SystemServiceProvider::SystemServiceProvider(
-        const std::string& provider_name,
-        const std::string& service_name)
+        const std::string &provider_name,
+        const std::string &service_name)
         : Super(provider_name),
           service_name_(service_name)
     {

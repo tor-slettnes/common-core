@@ -29,15 +29,15 @@ namespace cc::protobuf
                            std::uint64_t build_number = 0,
                            const std::string printable_version = "");
 
-    std::string to_string(const Version& version);
+    std::string to_string(const Version &version);
 
-    bool is_compatible(const Version& client,
-                       const Version& server,
+    bool is_compatible(const Version &client,
+                       const Version &server,
                        bool strict = true);
 
     namespace version
     {
-        std::ostream& operator<<(std::ostream& stream, const Version& version);
+        std::ostream &operator<<(std::ostream &stream, const Version &version);
     }  // namespace version
 
 }  // namespace cc::protobuf

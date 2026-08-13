@@ -15,9 +15,9 @@
 namespace cc::platform::switchboard::grpc
 {
     Proxy::Proxy(
-        const std::string& host,
+        const std::string &host,
         bool wait_for_ready,
-        const core::dt::Duration& ready_timeout)
+        const core::dt::Duration &ready_timeout)
         : Provider(TYPE_NAME_FULL(This)),
           SignalClient(host, wait_for_ready),
           ready_timeout(ready_timeout)
@@ -74,7 +74,7 @@ namespace cc::platform::switchboard::grpc
     // }
 
     std::pair<SwitchRef, bool> Proxy::add_switch(
-        const SwitchName& switch_name,
+        const SwitchName &switch_name,
         bool active)
     {
         auto [sw, inserted] = this->find_or_insert<RemoteSwitch>(
@@ -95,7 +95,7 @@ namespace cc::platform::switchboard::grpc
     }
 
     bool Proxy::remove_switch(
-        const SwitchName& switch_name,
+        const SwitchName &switch_name,
         bool propagate)
     {
         cc::platform::switchboard::protobuf::RemoveSwitchRequest req;
@@ -113,7 +113,7 @@ namespace cc::platform::switchboard::grpc
     }
 
     uint Proxy::import_switches(
-        const core::types::KeyValueMap& declarations,
+        const core::types::KeyValueMap &declarations,
         bool replace_specifications,
         bool replace_statuses,
         InvocationStyle invoke_interceptors)
@@ -129,7 +129,7 @@ namespace cc::platform::switchboard::grpc
     }
 
     core::types::KeyValueMap Proxy::export_switches(
-        const std::optional<SwitchSelection>& selection,
+        const std::optional<SwitchSelection> &selection,
         bool include_specifications,
         bool include_statuses) const
     {
@@ -145,8 +145,8 @@ namespace cc::platform::switchboard::grpc
     }
 
     bool Proxy::add_interceptor(
-        const InterceptorRef& interceptor,
-        const SwitchSelection& switch_selection,
+        const InterceptorRef &interceptor,
+        const SwitchSelection &switch_selection,
         bool immediate,
         bool future)
     {
@@ -159,8 +159,8 @@ namespace cc::platform::switchboard::grpc
     }
 
     bool Proxy::remove_interceptor(
-        const InterceptorName& name,
-        const std::optional<SwitchSelection>& switch_selection)
+        const InterceptorName &name,
+        const std::optional<SwitchSelection> &switch_selection)
     {
         cc::platform::switchboard::protobuf::RemoveInterceptorRequest req;
         req.set_interceptor_name(name);
@@ -173,8 +173,8 @@ namespace cc::platform::switchboard::grpc
 
     void Proxy::on_spec_update(
         core::signal::MappingAction action,
-        const std::string& switch_name,
-        const cc::platform::switchboard::protobuf::Signal& signal)
+        const std::string &switch_name,
+        const cc::platform::switchboard::protobuf::Signal &signal)
     {
         if (!switch_name.empty())
         {
@@ -195,8 +195,8 @@ namespace cc::platform::switchboard::grpc
 
     void Proxy::on_status_update(
         core::signal::MappingAction action,
-        const std::string& switch_name,
-        const cc::platform::switchboard::protobuf::Signal& signal)
+        const std::string &switch_name,
+        const cc::platform::switchboard::protobuf::Signal &signal)
     {
         if (!switch_name.empty())
         {

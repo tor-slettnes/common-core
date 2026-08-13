@@ -17,7 +17,7 @@ namespace cc::platform::vfs::local
     class FileReader : public std::ifstream
     {
     public:
-        FileReader(const Location& loc,
+        FileReader(const Location &loc,
                    const std::ios::openmode mode = std::ios::in | std::ios::binary);
 
     private:
@@ -30,7 +30,7 @@ namespace cc::platform::vfs::local
     class FileWriter : public std::ofstream
     {
     public:
-        FileWriter(const Location& loc,
+        FileWriter(const Location &loc,
                    const std::ios::openmode mode = std::ios::out | std::ios::binary);
 
     private:

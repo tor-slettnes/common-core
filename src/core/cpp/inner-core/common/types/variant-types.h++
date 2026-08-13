@@ -95,8 +95,8 @@ namespace cc::core::types
     using TypeNameMap = SymbolMap<ValueType, std::multimap<ValueType, std::string>>;
     extern const TypeNameMap TypeNames;
 
-    std::ostream& operator<<(std::ostream& stream, ValueType type);
-    std::istream& operator>>(std::istream& stream, ValueType& type);
+    std::ostream &operator<<(std::ostream &stream, ValueType type);
+    std::istream &operator>>(std::istream &stream, ValueType &type);
 
     extern bool is_simple(ValueType vt);
     extern bool is_composite(ValueType vt);
@@ -107,9 +107,9 @@ namespace cc::core::types
     extern bool is_text(ValueType vt);
     extern bool is_bytesequence(ValueType vt);
 
-    extern std::string typetree(const Value& value);
-    extern std::string typetree(const ValueListPtr& list);
-    extern std::string typetree(const KeyValueMapPtr& kvmap);
-    extern std::string typetree(const TaggedValueListPtr& tvlist);
+    extern std::string typetree(const Value &value);
+    extern std::string typetree(const ValueListPtr &list);
+    extern std::string typetree(const KeyValueMapPtr &kvmap);
+    extern std::string typetree(const TaggedValueListPtr &tvlist);
 
 }  // namespace cc::core::types

@@ -22,32 +22,32 @@ namespace cc::platform::netconfig::dbus
 
     public:
         Connection(
-            cc::dbus::ProxyContainer* container,
-            const cc::dbus::ConnectionPtr& connection,
-            const cc::dbus::ServiceName& servicename,
-            const cc::dbus::ObjectPath& objectpath);
+            cc::dbus::ProxyContainer *container,
+            const cc::dbus::ConnectionPtr &connection,
+            const cc::dbus::ServiceName &servicename,
+            const cc::dbus::ObjectPath &objectpath);
 
     public:
         const core::types::ByteVector ssid() const;
 
         static std::shared_ptr<Connection> get_by_key(
-            const Key& key,
+            const Key &key,
             bool required);
 
         static std::shared_ptr<Connection> get_by_id(
-            const std::string& id,
+            const std::string &id,
             bool required);
 
     protected:
         void initialize() override;
         void set_ready() override;
         void get_settings();
-        void on_signal_updated(const Glib::VariantContainerBase& parameters);
+        void on_signal_updated(const Glib::VariantContainerBase &parameters);
         void emit_change(core::signal::MappingAction action) override;
 
     public:
         cc::dbus::ObjectPath find_suitable_device();
-        void replace(const ConnectionData& connection);
+        void replace(const ConnectionData &connection);
         void remove();
         void remove_duplicates();
 

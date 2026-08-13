@@ -53,40 +53,40 @@ namespace cc::platform::switchboard
         bool wait_ready() const override;
 
         std::pair<SwitchRef, bool> add_switch(
-            const SwitchName& switch_name,
+            const SwitchName &switch_name,
             bool active = false) override;
 
         bool remove_switch(
-            const SwitchName& switch_name,
+            const SwitchName &switch_name,
             bool propagate = true) override;
 
         bool clear_switches(
             bool reload = false) override;
 
         uint import_switches(
-            const core::types::KeyValueMap& switches,
+            const core::types::KeyValueMap &switches,
             bool replace_specifications,
             bool replace_statuses,
             InvocationStyle invoke_interceptors) override;
 
         core::types::KeyValueMap export_switches(
-            const std::optional<SwitchSelection>& selection,
+            const std::optional<SwitchSelection> &selection,
             bool include_specifications,
             bool include_statuses) const override;
 
         bool add_interceptor(
-            const InterceptorRef& interceptor,
-            const SwitchSelection& switch_selection,
+            const InterceptorRef &interceptor,
+            const SwitchSelection &switch_selection,
             bool immediate = false,
             bool future = true) override;
 
         bool remove_interceptor(
-            const InterceptorName& name,
-            const std::optional<SwitchSelection>& switch_selection = {}) override;
+            const InterceptorName &name,
+            const std::optional<SwitchSelection> &switch_selection = {}) override;
 
     private:
         std::pair<CentralSwitchRef, bool> insert_switch(
-            const SwitchName& switch_name);
+            const SwitchName &switch_name);
 
         void load_default_switches(
             bool replace_specifications = false,
@@ -94,14 +94,14 @@ namespace cc::platform::switchboard
             InvocationStyle invoke_interceptors = InvocationStyle::INDIRECT);
 
         bool import_switch(
-            const std::string& name,
-            const core::types::KeyValueMap& declaration,
+            const std::string &name,
+            const core::types::KeyValueMap &declaration,
             bool replace_specification,
             bool replace_status,
             InvocationStyle invoke_interceptors);
 
         core::types::KeyValueMap export_switch(
-            const SwitchRef& sw,
+            const SwitchRef &sw,
             bool include_specification,
             bool include_status) const;
 

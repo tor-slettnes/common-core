@@ -27,7 +27,7 @@ namespace cc::grpc
     {
     }
 
-    Status::Status(const ::grpc::Status& status)
+    Status::Status(const ::grpc::Status &status)
         : ::grpc::Status(status.error_code(),
                          status.error_message(),
                          status.error_details())
@@ -35,17 +35,17 @@ namespace cc::grpc
         cc::protobuf::decode(this->details(), this);
     }
 
-    Status::Status(const Status& status)
+    Status::Status(const Status &status)
         : Status(status.status_code(), status)
     {
     }
 
-    Status::Status(const Error& error)
+    Status::Status(const Error &error)
         : Status(This::code_from_error(error), error)
     {
     }
 
-    Status::Status(const cc::protobuf::status::Error& details)
+    Status::Status(const cc::protobuf::status::Error &details)
         : Error(
               details.text(),
               cc::protobuf::decoded<core::status::Domain>(details.domain()),
@@ -63,8 +63,8 @@ namespace cc::grpc
     }
 
     Status::Status(::grpc::StatusCode status_code,
-                   const std::string& text,
-                   const cc::protobuf::status::Error& details)
+                   const std::string &text,
+                   const cc::protobuf::status::Error &details)
         : Error(
               text,
               cc::protobuf::decoded<core::status::Domain>(details.domain()),
@@ -82,7 +82,7 @@ namespace cc::grpc
     }
 
     Status::Status(::grpc::StatusCode status_code,
-                   const Error& error)
+                   const Error &error)
         : Status(status_code,
                  error.text(),
                  error.domain(),
@@ -96,27 +96,27 @@ namespace cc::grpc
     }
 
     Status::Status(::grpc::StatusCode status_code,
-                   const std::string& text,
+                   const std::string &text,
                    core::status::Domain domain,
-                   const std::string& origin,
+                   const std::string &origin,
                    Code code,
-                   const Symbol& symbol,
+                   const Symbol &symbol,
                    core::status::Level level,
-                   const core::dt::TimePoint& timepoint,
-                   const core::types::KeyValueMap& attributes)
+                   const core::dt::TimePoint &timepoint,
+                   const core::types::KeyValueMap &attributes)
         : Error({}, domain, origin, code, symbol, level, timepoint, attributes),
           ::grpc::Status(
               status_code,
               text,
               cc::protobuf::encoded<cc::protobuf::status::Error>(
-                  *static_cast<Error*>(this))
+                  *static_cast<Error *>(this))
                   .SerializeAsString())
     {
     }
 
-    bool Status::equivalent(const Event& other) const noexcept
+    bool Status::equivalent(const Event &other) const noexcept
     {
-        if (auto* that = dynamic_cast<const Status*>(&other))
+        if (auto *that = dynamic_cast<const Status *>(&other))
         {
             return Super::equivalent(other) &&
                    (this->status_code() == that->status_code());
@@ -143,7 +143,7 @@ namespace cc::grpc
         {
             return grpc_status_names.at(status_code);
         }
-        catch (const std::out_of_range& e)
+        catch (const std::out_of_range &e)
         {
             return std::to_string(status_code);
         }
@@ -179,7 +179,7 @@ namespace cc::grpc
     }
 
     core::types::Value Status::get_field_as_value(
-        const std::string& field_name) const
+        const std::string &field_name) const
     {
         if (field_name == STATUS_FIELD_CODE)
         {
@@ -191,7 +191,7 @@ namespace cc::grpc
         }
     }
 
-    ::grpc::StatusCode Status::code_from_error(const core::status::Error& error) noexcept
+    ::grpc::StatusCode Status::code_from_error(const core::status::Error &error) noexcept
     {
         switch (error.domain())
         {

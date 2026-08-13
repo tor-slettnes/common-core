@@ -19,47 +19,47 @@ namespace cc::grpc
     class RequestHandlerBase : public Base
     {
     protected:
-        RequestHandlerBase(const std::string& full_service_name);
+        RequestHandlerBase(const std::string &full_service_name);
 
     public:
         std::string address_setting() const;
 
     protected:
-        Status failure(const std::exception& exception,
-                       const std::string& operation,
-                       const fs::path& path = __builtin_FILE(),
-                       const int& line = __builtin_LINE(),
-                       const std::string& function = __builtin_FUNCTION());
+        Status failure(const std::exception &exception,
+                       const std::string &operation,
+                       const fs::path &path = __builtin_FILE(),
+                       const int &line = __builtin_LINE(),
+                       const std::string &function = __builtin_FUNCTION());
 
         Status failure(std::exception_ptr eptr,
-                       const std::string& operation,
-                       const fs::path& path = __builtin_FILE(),
-                       const int& line = __builtin_LINE(),
-                       const std::string& function = __builtin_FUNCTION());
+                       const std::string &operation,
+                       const fs::path &path = __builtin_FILE(),
+                       const int &line = __builtin_LINE(),
+                       const std::string &function = __builtin_FUNCTION());
 
-        Status failure(const std::exception& exception,
-                       const ::google::protobuf::Message& request,
-                       const std::string& peer = {},
-                       const fs::path& path = __builtin_FILE(),
-                       const int& line = __builtin_LINE(),
-                       const std::string& function = __builtin_FUNCTION());
+        Status failure(const std::exception &exception,
+                       const ::google::protobuf::Message &request,
+                       const std::string &peer = {},
+                       const fs::path &path = __builtin_FILE(),
+                       const int &line = __builtin_LINE(),
+                       const std::string &function = __builtin_FUNCTION());
 
         Status failure(std::exception_ptr eptr,
-                       const ::google::protobuf::Message& request,
-                       const std::string& peer = {},
-                       const fs::path& path = __builtin_FILE(),
-                       const int& line = __builtin_LINE(),
-                       const std::string& function = __builtin_FUNCTION());
+                       const ::google::protobuf::Message &request,
+                       const std::string &peer = {},
+                       const fs::path &path = __builtin_FILE(),
+                       const int &line = __builtin_LINE(),
+                       const std::string &function = __builtin_FUNCTION());
 
-        void log_status(const Status& status,
-                        const std::string& operation,
-                        const fs::path& path = __builtin_FILE(),
-                        const int& line = __builtin_LINE(),
-                        const std::string& function = __builtin_FUNCTION());
+        void log_status(const Status &status,
+                        const std::string &operation,
+                        const fs::path &path = __builtin_FILE(),
+                        const int &line = __builtin_LINE(),
+                        const std::string &function = __builtin_FUNCTION());
 
-        std::string request_description(const ::google::protobuf::Message& request,
-                                        const std::string& peer,
-                                        const std::string& function);
+        std::string request_description(const ::google::protobuf::Message &request,
+                                        const std::string &peer,
+                                        const std::string &function);
     };
 
     //==========================================================================
@@ -124,13 +124,13 @@ namespace cc::grpc
 
         template <class ResponseType = ::google::protobuf::Empty,
                   class RequestType = ::google::protobuf::Empty>
-        ::grpc::Status wrap(::grpc::ServerContext* context,
-                            const RequestType* request,
-                            ResponseType* response,
-                            const std::function<ResponseType(const RequestType&)>& function,
-                            const fs::path& src_path = __builtin_FILE(),
-                            const int& src_line = __builtin_LINE(),
-                            const std::string& src_function = __builtin_FUNCTION())
+        ::grpc::Status wrap(::grpc::ServerContext *context,
+                            const RequestType *request,
+                            ResponseType *response,
+                            const std::function<ResponseType(const RequestType &)> &function,
+                            const fs::path &src_path = __builtin_FILE(),
+                            const int &src_line = __builtin_LINE(),
+                            const std::string &src_function = __builtin_FUNCTION())
         {
             try
             {

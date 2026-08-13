@@ -47,7 +47,7 @@ namespace cc::avro
         checkstatus(avro_generic_double_new(&this->value, input));
     }
 
-    SimpleValue::SimpleValue(const char* input)
+    SimpleValue::SimpleValue(const char *input)
         : BaseValue()
     {
         checkstatus(avro_generic_string_new(
@@ -55,7 +55,7 @@ namespace cc::avro
             input));
     }
 
-    SimpleValue::SimpleValue(const std::string& input)
+    SimpleValue::SimpleValue(const std::string &input)
         : BaseValue()
     {
         checkstatus(avro_generic_string_new_length(
@@ -64,7 +64,7 @@ namespace cc::avro
             input.size() + 1));
     }
 
-    SimpleValue::SimpleValue(const std::string_view& input)
+    SimpleValue::SimpleValue(const std::string_view &input)
         : BaseValue()
     {
         checkstatus(avro_generic_string_new_length(
@@ -73,12 +73,12 @@ namespace cc::avro
             input.size() + 1));
     }
 
-    SimpleValue::SimpleValue(const core::types::Bytes& bytes)
+    SimpleValue::SimpleValue(const core::types::Bytes &bytes)
         : BaseValue()
     {
         checkstatus(avro_generic_bytes_new(
             &this->value,
-            (void*)bytes.data(),
+            (void *)bytes.data(),
             bytes.size()));
     }
 

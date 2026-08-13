@@ -16,7 +16,7 @@
 #include "status/exceptions.h++"
 #include "thread/supervised-thread.h++"
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     try
     {
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
                 cc::platform::run_grpc_service,
                 options->bind_address));
 
-        for (std::thread& t : server_threads)
+        for (std::thread &t : server_threads)
         {
             t.join();
         }

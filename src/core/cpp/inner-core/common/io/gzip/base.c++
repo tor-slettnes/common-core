@@ -13,8 +13,8 @@ namespace cc::core::io
     //--------------------------------------------------------------------------
     // GZipBuffer
 
-    GZipBuffer::GZipBuffer(const fs::path& file_path,
-                           const std::string& open_mode)
+    GZipBuffer::GZipBuffer(const fs::path &file_path,
+                           const std::string &open_mode)
         : file_path(file_path),
           gzfile(checkstatus(::gzopen(file_path.c_str(), open_mode.c_str())))
     {

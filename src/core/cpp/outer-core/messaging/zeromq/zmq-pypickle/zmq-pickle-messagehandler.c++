@@ -12,18 +12,18 @@
 namespace cc::zmq
 {
     PyPickleMessageHandler::PyPickleMessageHandler(
-        const std::weak_ptr<Subscriber>& subscriber,
-        const std::optional<Filter>& filter)
+        const std::weak_ptr<Subscriber> &subscriber,
+        const std::optional<Filter> &filter)
         : MessageHandler(TYPE_NAME_BASE(This), filter, subscriber)
     {
     }
 
-    void PyPickleMessageHandler::handle(const core::types::ByteVector& bytes)
+    void PyPickleMessageHandler::handle(const core::types::ByteVector &bytes)
     {
         this->handle_message(python::unpickle(bytes));
     }
 
-    void PyPickleMessageHandler::handle_message(const python::ContainerObject& object)
+    void PyPickleMessageHandler::handle_message(const python::ContainerObject &object)
     {
         this->handle_message(object.as_value());
     }

@@ -67,67 +67,67 @@ namespace cc::core::types
     {
     }
 
-    Value::Value(const char* cstring)
+    Value::Value(const char *cstring)
         : ValueBase(std::string(cstring))
     {
     }
 
-    Value::Value(const std::string_view& view)
+    Value::Value(const std::string_view &view)
         : ValueBase(std::string(view.begin(), view.end()))
     {
     }
 
-    Value::Value(const Bytes& bytes)
+    Value::Value(const Bytes &bytes)
         : ValueBase(ByteVector(bytes.begin(), bytes.end()))
     {
     }
 
-    Value::Value(const ValueListPtr& list)
+    Value::Value(const ValueListPtr &list)
         : ValueBase(list ? list : std::make_shared<ValueList>())
     {
     }
 
-    Value::Value(const ValueList& list)
+    Value::Value(const ValueList &list)
         : ValueBase(std::make_shared<ValueList>(list))
     {
     }
 
-    Value::Value(ValueList&& list)
+    Value::Value(ValueList &&list)
         : ValueBase(std::make_shared<ValueList>(std::move(list)))
     {
     }
 
-    Value::Value(const TaggedValueListPtr& tvlist)
+    Value::Value(const TaggedValueListPtr &tvlist)
         : ValueBase(tvlist ? tvlist : std::make_shared<TaggedValueList>())
     {
     }
 
-    Value::Value(const TaggedValueList& tvlist)
+    Value::Value(const TaggedValueList &tvlist)
         : ValueBase(std::make_shared<TaggedValueList>(tvlist))
     {
     }
 
-    Value::Value(TaggedValueList&& tvlist)
+    Value::Value(TaggedValueList &&tvlist)
         : ValueBase(std::make_shared<TaggedValueList>(std::move(tvlist)))
     {
     }
 
-    Value::Value(const KeyValueMapPtr& kvmap)
+    Value::Value(const KeyValueMapPtr &kvmap)
         : ValueBase(kvmap ? kvmap : std::make_shared<KeyValueMap>())
     {
     }
 
-    Value::Value(const KeyValueMap& kvmap)
+    Value::Value(const KeyValueMap &kvmap)
         : ValueBase(std::make_shared<KeyValueMap>(kvmap))
     {
     }
 
-    Value::Value(KeyValueMap&& kvmap)
+    Value::Value(KeyValueMap &&kvmap)
         : ValueBase(std::make_shared<KeyValueMap>(std::move(kvmap)))
     {
     }
 
-    bool Value::operator==(const Value& other) const
+    bool Value::operator==(const Value &other) const
     {
         if (this->type() == other.type())
         {
@@ -488,7 +488,7 @@ namespace cc::core::types
         return this->numeric_cast<double>(fallback);
     }
 
-    complex Value::as_complex(const complex& fallback) const noexcept
+    complex Value::as_complex(const complex &fallback) const noexcept
     {
         return this->try_as_complex().value_or(fallback);
     }
@@ -505,39 +505,39 @@ namespace cc::core::types
         }
     }
 
-    ByteVector Value::as_bytevector(const ByteVector& fallback) const noexcept
+    ByteVector Value::as_bytevector(const ByteVector &fallback) const noexcept
     {
         return this->try_as_bytevector().value_or(fallback);
     }
 
     dt::TimePoint Value::as_timepoint(
         bool assume_local,
-        const dt::TimePoint& fallback) const noexcept
+        const dt::TimePoint &fallback) const noexcept
     {
         return this->try_as_timepoint(assume_local).value_or(fallback);
     }
 
     dt::TimePoint Value::as_timepoint(
-        const std::optional<int>& decimal_exponent,
+        const std::optional<int> &decimal_exponent,
         bool assume_local,
-        const dt::TimePoint& fallback) const noexcept
+        const dt::TimePoint &fallback) const noexcept
     {
         return this->try_as_timepoint(decimal_exponent, assume_local).value_or(fallback);
     }
 
-    dt::Duration Value::as_duration(const dt::Duration& fallback) const noexcept
+    dt::Duration Value::as_duration(const dt::Duration &fallback) const noexcept
     {
         return this->try_as_duration().value_or(fallback);
     }
 
     dt::Duration Value::as_duration(double multiplier,
-                                    const dt::Duration& fallback) const noexcept
+                                    const dt::Duration &fallback) const noexcept
     {
         return this->try_as_duration(multiplier).value_or(fallback);
     }
 
     dt::Duration Value::as_duration(int decimal_exponent,
-                                    const dt::Duration& fallback) const noexcept
+                                    const dt::Duration &fallback) const noexcept
     {
         return this->try_as_duration(decimal_exponent).value_or(fallback);
     }
@@ -547,7 +547,7 @@ namespace cc::core::types
         return this->as_valuelist({});
     }
 
-    ValueList Value::as_valuelist(const ValueList& fallback) const noexcept
+    ValueList Value::as_valuelist(const ValueList &fallback) const noexcept
     {
         if (auto vlist = this->as_valuelist_ptr())
         {
@@ -585,7 +585,7 @@ namespace cc::core::types
         return this->as_tvlist({});
     }
 
-    TaggedValueList Value::as_tvlist(const TaggedValueList& fallback) const noexcept
+    TaggedValueList Value::as_tvlist(const TaggedValueList &fallback) const noexcept
     {
         if (auto tvlist = this->as_tvlist_ptr())
         {
@@ -626,7 +626,7 @@ namespace cc::core::types
         return this->as_kvmap({});
     }
 
-    KeyValueMap Value::as_kvmap(const KeyValueMap& fallback) const noexcept
+    KeyValueMap Value::as_kvmap(const KeyValueMap &fallback) const noexcept
     {
         if (auto kvmap = this->as_kvmap_ptr())
         {
@@ -712,7 +712,7 @@ namespace cc::core::types
             return str::try_convert_to<bool>(this->get<std::string>());
 
         case ValueType::BYTEVECTOR:
-            for (auto& byte : this->get<ByteVector>())
+            for (auto &byte : this->get<ByteVector>())
             {
                 if (byte > 0)
                 {
@@ -998,7 +998,7 @@ namespace cc::core::types
     }
 
     std::optional<dt::TimePoint> Value::try_as_timepoint(
-        const std::optional<int>& decimal_exponent,
+        const std::optional<int> &decimal_exponent,
         bool assume_local) const noexcept
     {
         switch (this->type())
@@ -1031,7 +1031,7 @@ namespace cc::core::types
             {
                 return this->get<ByteVector>().unpack<dt::TimePoint>();
             }
-            catch (const std::out_of_range&)
+            catch (const std::out_of_range &)
             {
                 return {};
             }
@@ -1059,7 +1059,7 @@ namespace cc::core::types
             {
                 return this->get<ByteVector>().unpack<dt::Duration>();
             }
-            catch (const std::out_of_range&)
+            catch (const std::out_of_range &)
             {
                 return {};
             }
@@ -1120,9 +1120,9 @@ namespace cc::core::types
     //--------------------------------------------------------------------------
     // Non-converting getters
 
-    const std::string& Value::get_string() const
+    const std::string &Value::get_string() const
     {
-        if (auto* string = this->get_if<std::string>())
+        if (auto *string = this->get_if<std::string>())
         {
             return *string;
         }
@@ -1133,9 +1133,9 @@ namespace cc::core::types
         }
     }
 
-    const ByteVector& Value::get_bytevector() const
+    const ByteVector &Value::get_bytevector() const
     {
-        if (auto* bv = this->get_if<ByteVector>())
+        if (auto *bv = this->get_if<ByteVector>())
         {
             return *bv;
         }
@@ -1146,9 +1146,9 @@ namespace cc::core::types
         }
     }
 
-    const ValueList& Value::get_valuelist() const
+    const ValueList &Value::get_valuelist() const
     {
-        if (auto* ptr = this->get_if<ValueListPtr>())
+        if (auto *ptr = this->get_if<ValueListPtr>())
         {
             return **ptr;
         }
@@ -1159,9 +1159,9 @@ namespace cc::core::types
         }
     }
 
-    const TaggedValueList& Value::get_tvlist() const
+    const TaggedValueList &Value::get_tvlist() const
     {
-        if (auto* ptr = this->get_if<TaggedValueListPtr>())
+        if (auto *ptr = this->get_if<TaggedValueListPtr>())
         {
             return **ptr;
         }
@@ -1172,9 +1172,9 @@ namespace cc::core::types
         }
     }
 
-    const KeyValueMap& Value::get_kvmap() const
+    const KeyValueMap &Value::get_kvmap() const
     {
-        if (auto* ptr = this->get_if<KeyValueMapPtr>())
+        if (auto *ptr = this->get_if<KeyValueMapPtr>())
         {
             return **ptr;
         }
@@ -1187,7 +1187,7 @@ namespace cc::core::types
 
     ValueListPtr Value::get_valuelist_ptr() const noexcept
     {
-        if (auto* ptr = this->get_if<ValueListPtr>())
+        if (auto *ptr = this->get_if<ValueListPtr>())
         {
             return *ptr;
         }
@@ -1199,7 +1199,7 @@ namespace cc::core::types
 
     TaggedValueListPtr Value::get_tvlist_ptr() const noexcept
     {
-        if (auto* ptr = this->get_if<TaggedValueListPtr>())
+        if (auto *ptr = this->get_if<TaggedValueListPtr>())
         {
             return *ptr;
         }
@@ -1211,7 +1211,7 @@ namespace cc::core::types
 
     KeyValueMapPtr Value::get_kvmap_ptr() const noexcept
     {
-        if (auto* ptr = this->get_if<KeyValueMapPtr>())
+        if (auto *ptr = this->get_if<KeyValueMapPtr>())
         {
             return *ptr;
         }
@@ -1239,12 +1239,12 @@ namespace cc::core::types
         }
     }
 
-    Value& Value::operator[](const char* key)
+    Value &Value::operator[](const char *key)
     {
         return this->operator[](std::string(key));
     }
 
-    Value& Value::operator[](const std::string& key)
+    Value &Value::operator[](const std::string &key)
     {
         switch (this->type())
         {
@@ -1260,7 +1260,7 @@ namespace cc::core::types
         }
     }
 
-    Value& Value::operator[](const uint index)
+    Value &Value::operator[](const uint index)
     {
         switch (this->type())
         {
@@ -1275,7 +1275,7 @@ namespace cc::core::types
         }
     }
 
-    Value& Value::operator[](const int index)
+    Value &Value::operator[](const int index)
     {
         switch (this->type())
         {
@@ -1290,7 +1290,7 @@ namespace cc::core::types
         }
     }
 
-    Value Value::front(const Value& fallback) const noexcept
+    Value Value::front(const Value &fallback) const noexcept
     {
         switch (this->type())
         {
@@ -1305,7 +1305,7 @@ namespace cc::core::types
         }
     }
 
-    Value Value::back(const Value& fallback) const noexcept
+    Value Value::back(const Value &fallback) const noexcept
     {
         switch (this->type())
         {
@@ -1321,16 +1321,16 @@ namespace cc::core::types
     }
 
     Value Value::get(
-        const std::string& key,
-        const Value& fallback,
+        const std::string &key,
+        const Value &fallback,
         bool ignoreCase) const noexcept
     {
         return this->try_get(key, ignoreCase).value_or(fallback);
     }
 
     Value Value::get(
-        const char* key,
-        const Value& fallback,
+        const char *key,
+        const Value &fallback,
         bool ignoreCase) const noexcept
     {
         return this->try_get(std::string(key), ignoreCase).value_or(fallback);
@@ -1338,44 +1338,44 @@ namespace cc::core::types
 
     Value Value::get(
         const int index,
-        const Value& fallback) const noexcept
+        const Value &fallback) const noexcept
     {
         return this->try_get(index).value_or(fallback);
     }
 
     Value Value::get(
         const uint index,
-        const Value& fallback) const noexcept
+        const Value &fallback) const noexcept
     {
         return this->try_get(index).value_or(fallback);
     }
 
     Value Value::get_nonempty(
-        const std::string& key,
-        const Value& fallback,
+        const std::string &key,
+        const Value &fallback,
         bool ignoreCase) const noexcept
     {
         return this->try_get_nonempty(key, ignoreCase).value_or(fallback);
     }
 
     Value Value::get_any_of(
-        const std::vector<std::string>& candidates,
-        const Value& fallback,
+        const std::vector<std::string> &candidates,
+        const Value &fallback,
         bool ignoreCase) const noexcept
     {
         return this->try_get_any_of(candidates, ignoreCase).value_or(fallback);
     }
 
     Value Value::get_nested(
-        const std::vector<std::string>& path,
-        const Value& fallback,
+        const std::vector<std::string> &path,
+        const Value &fallback,
         bool ignoreCase) const noexcept
     {
         return this->try_get_nested(path, ignoreCase).value_or(fallback);
     }
 
     std::optional<Value> Value::try_get(
-        const std::string& key,
+        const std::string &key,
         bool ignoreCase) const noexcept
     {
         switch (this->type())
@@ -1392,7 +1392,7 @@ namespace cc::core::types
     }
 
     std::optional<Value> Value::try_get(
-        const char* key,
+        const char *key,
         bool ignoreCase) const noexcept
     {
         return this->try_get(std::string(key), ignoreCase);
@@ -1431,7 +1431,7 @@ namespace cc::core::types
     }
 
     std::optional<Value> Value::try_get_nonempty(
-        const std::string& key,
+        const std::string &key,
         bool ignoreCase) const noexcept
     {
         switch (this->type())
@@ -1448,7 +1448,7 @@ namespace cc::core::types
     }
 
     std::optional<Value> Value::try_get_any_of(
-        const std::vector<std::string>& candidates,
+        const std::vector<std::string> &candidates,
         bool ignoreCase) const noexcept
     {
         switch (this->type())
@@ -1465,13 +1465,13 @@ namespace cc::core::types
     }
 
     std::optional<Value> Value::try_get_nested(
-        const std::vector<std::string>& path,
+        const std::vector<std::string> &path,
         bool ignoreCase) const noexcept
     {
         Value value = *this;
-        for (const std::string& element : path)
+        for (const std::string &element : path)
         {
-            if (const auto& next = value.try_get(element))
+            if (const auto &next = value.try_get(element))
             {
                 value = next.value();
             }
@@ -1483,7 +1483,7 @@ namespace cc::core::types
         return value;
     }
 
-    void Value::to_stream(std::ostream& stream) const
+    void Value::to_stream(std::ostream &stream) const
     {
         auto saved_state = stream::get_stream_state(stream);
         switch (this->type())
@@ -1554,7 +1554,7 @@ namespace cc::core::types
         stream::set_stream_state(stream, saved_state);
     }
 
-    void Value::to_literal_stream(std::ostream& stream) const
+    void Value::to_literal_stream(std::ostream &stream) const
     {
         switch (this->type())
         {
@@ -1596,7 +1596,7 @@ namespace cc::core::types
         }
     }
 
-    Value Value::from_literal(const std::string_view& literal)
+    Value Value::from_literal(const std::string_view &literal)
     {
         static const std::regex rx_null("^(null|NULL|None)?$");
         static const std::regex rx_bytevector("^(['\"]?)%[[:alnum:]\\+/]+={0,2}%?\\1$");

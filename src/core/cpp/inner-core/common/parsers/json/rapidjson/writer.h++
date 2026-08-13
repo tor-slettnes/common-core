@@ -18,13 +18,13 @@ namespace cc::core::json
 
     public:
         RapidWriter();
-        RapidWriter(const fs::path& path);
+        RapidWriter(const fs::path &path);
 
-        void write_stream(std::ostream& stream,
-                          const types::Value& value,
+        void write_stream(std::ostream &stream,
+                          const types::Value &value,
                           bool pretty = false) const override;
 
-        std::string encoded(const types::Value& value,
+        std::string encoded(const types::Value &value,
                             bool pretty = false) const override;
     };
 

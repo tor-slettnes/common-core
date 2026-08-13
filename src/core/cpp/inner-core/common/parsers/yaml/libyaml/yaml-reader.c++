@@ -15,17 +15,17 @@ namespace cc::core::yaml
     {
     }
 
-    types::Value YamlReader::decoded(const std::string_view& text) const
+    types::Value YamlReader::decoded(const std::string_view &text) const
     {
         return YamlParser().parse_text(text);
     }
 
-    types::Value YamlReader::read_file(const fs::path& path) const
+    types::Value YamlReader::read_file(const fs::path &path) const
     {
         return YamlParser().parse_file(path);
     }
 
-    types::Value YamlReader::read_stream(std::istream& stream) const
+    types::Value YamlReader::read_stream(std::istream &stream) const
     {
         return YamlParser().parse_stream(stream);
     }

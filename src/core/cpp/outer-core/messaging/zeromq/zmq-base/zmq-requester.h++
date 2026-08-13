@@ -20,13 +20,13 @@ namespace cc::zmq
         using Super = Endpoint;
 
     protected:
-        Requester(const std::string& address,
-                  const std::string& channel_name,
+        Requester(const std::string &address,
+                  const std::string &channel_name,
                   Role role = Role::SATELLITE);
 
     public:
         std::shared_ptr<core::types::ByteVector> send_receive(
-            const core::types::ByteVector& request,
+            const core::types::ByteVector &request,
             SendFlags send_flags = 0,
             RecvFlags recv_flags = 0);
     };

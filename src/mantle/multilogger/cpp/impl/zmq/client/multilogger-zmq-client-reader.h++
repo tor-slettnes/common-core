@@ -28,12 +28,12 @@ namespace cc::platform::multilogger::zmq
         using QueueBase = core::types::BlockingQueue<core::types::Loggable::ptr>;
 
     protected:
-        ClientReader(const std::weak_ptr<cc::zmq::Subscriber>& subscriber);
+        ClientReader(const std::weak_ptr<cc::zmq::Subscriber> &subscriber);
 
     public:
         void deinitialize() override;
 
     public:
-        void handle_message(const cc::platform::multilogger::protobuf::Loggable& msg) override;
+        void handle_message(const cc::platform::multilogger::protobuf::Loggable &msg) override;
     };
 }  // namespace cc::platform::multilogger::zmq

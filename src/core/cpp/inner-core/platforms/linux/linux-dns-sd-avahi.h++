@@ -42,15 +42,15 @@ namespace cc::core::platform
         void deinitialize() override;
 
         void add_service(
-            const std::string& name,
-            const std::string& type,
+            const std::string &name,
+            const std::string &type,
             uint port,
-            const AttributeMap& attributes) override;
+            const AttributeMap &attributes) override;
 
         void add_service_subtype(
-            const std::string& name,
-            const std::string& type,
-            const std::string& subtype) override;
+            const std::string &name,
+            const std::string &type,
+            const std::string &subtype) override;
 
         void commit() override;
 
@@ -59,25 +59,25 @@ namespace cc::core::platform
     private:
         void create_entry_group();
 
-        void add_service_info(const ServiceInfo& service_info);
+        void add_service_info(const ServiceInfo &service_info);
 
-        static AvahiStringList* avahi_string_list(
-            const AttributeMap& attributes);
+        static AvahiStringList *avahi_string_list(
+            const AttributeMap &attributes);
 
         static void client_callback(
-            AvahiClient* client,
+            AvahiClient *client,
             AvahiClientState state,
-            void* userdata);
+            void *userdata);
 
         static void entry_group_callback(
-            AvahiEntryGroup* group,
+            AvahiEntryGroup *group,
             AvahiEntryGroupState state,
-            void* userdata);
+            void *userdata);
 
     private:
-        AvahiEntryGroup* group;
-        AvahiSimplePoll* simple_poll;
+        AvahiEntryGroup *group;
+        AvahiSimplePoll *simple_poll;
         int client_error;
-        AvahiClient* client;
+        AvahiClient *client;
     };
 }  // namespace cc::core::platform

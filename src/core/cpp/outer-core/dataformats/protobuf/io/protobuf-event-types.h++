@@ -24,10 +24,10 @@ namespace cc::protobuf
     core::status::Domain decoded(protobuf::status::Domain domain) noexcept;
 
     void encode(core::status::Domain native,
-                protobuf::status::Domain* proto) noexcept;
+                protobuf::status::Domain *proto) noexcept;
 
     void decode(protobuf::status::Domain proto,
-                core::status::Domain* native) noexcept;
+                core::status::Domain *native) noexcept;
 
     //==========================================================================
     // core::status::Level encoding to/decoding from protobuf::status::Level
@@ -36,18 +36,18 @@ namespace cc::protobuf
     core::status::Level decoded(protobuf::status::Level level) noexcept;
 
     void encode(core::status::Level native,
-                protobuf::status::Level* proto) noexcept;
+                protobuf::status::Level *proto) noexcept;
 
     void decode(protobuf::status::Level proto,
-                core::status::Level* native) noexcept;
+                core::status::Level *native) noexcept;
 
     //==========================================================================
     // core::status::Error encoding to/decoding from protobuf::status::Error
 
-    void encode(const core::status::Error& native,
-                protobuf::status::Error* proto) noexcept;
+    void encode(const core::status::Error &native,
+                protobuf::status::Error *proto) noexcept;
 
-    void decode(const protobuf::status::Error& proto,
-                core::status::Error* native) noexcept;
+    void decode(const protobuf::status::Error &proto,
+                core::status::Error *native) noexcept;
 
 }  // namespace cc::protobuf

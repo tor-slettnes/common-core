@@ -54,8 +54,8 @@ namespace cc::platform::switchboard
     };
 
     extern const core::types::SymbolMap<State> state_names;
-    std::ostream& operator<<(std::ostream& stream, State state);
-    std::istream& operator>>(std::istream& stream, State& state);
+    std::ostream &operator<<(std::ostream &stream, State state);
+    std::istream &operator>>(std::istream &stream, State &state);
 
     using StateMask = std::uint32_t;
     class StateSet : public std::set<State>,
@@ -71,7 +71,7 @@ namespace cc::platform::switchboard
         std::uint32_t to_mask() const;
 
     protected:
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     const StateSet SETTLED_STATES = {STATE_ACTIVE, STATE_INACTIVE, STATE_FAILED};
@@ -97,8 +97,8 @@ namespace cc::platform::switchboard
     };
 
     extern const core::types::SymbolMap<ExceptionHandling> exceptionhandling_names;
-    std::ostream& operator<<(std::ostream& stream, ExceptionHandling eh);
-    std::istream& operator>>(std::istream& stream, ExceptionHandling& eh);
+    std::ostream &operator<<(std::ostream &stream, ExceptionHandling eh);
+    std::istream &operator>>(std::istream &stream, ExceptionHandling &eh);
 
     //==========================================================================
     // DependencyPolarity
@@ -111,8 +111,8 @@ namespace cc::platform::switchboard
     };
 
     extern const core::types::SymbolMap<DependencyPolarity> depdir_names;
-    std::ostream& operator<<(std::ostream& stream, DependencyPolarity eh);
-    std::istream& operator>>(std::istream& stream, DependencyPolarity& eh);
+    std::ostream &operator<<(std::ostream &stream, DependencyPolarity eh);
+    std::istream &operator>>(std::istream &stream, DependencyPolarity &eh);
 
     //==========================================================================
     // InvocationStyle: Control interceptor invocation in response to state changes
@@ -127,8 +127,8 @@ namespace cc::platform::switchboard
     };
 
     extern const core::types::SymbolMap<InvocationStyle> invocationstyle_names;
-    std::ostream& operator<<(std::ostream& stream, InvocationStyle style);
-    std::istream& operator>>(std::istream& stream, InvocationStyle& style);
+    std::ostream &operator<<(std::ostream &stream, InvocationStyle style);
+    std::istream &operator>>(std::istream &stream, InvocationStyle &style);
 
     //==========================================================================
     // Cascading: How to propagate state change to descendants.
@@ -144,8 +144,8 @@ namespace cc::platform::switchboard
     };
 
     extern const core::types::SymbolMap<CascadeStyle> cascadestyle_names;
-    std::ostream& operator<<(std::ostream& stream, CascadeStyle style);
-    std::istream& operator>>(std::istream& stream, CascadeStyle& style);
+    std::ostream &operator<<(std::ostream &stream, CascadeStyle style);
+    std::istream &operator>>(std::istream &stream, CascadeStyle &style);
 
     //==========================================================================
     // Type aliases
@@ -185,14 +185,14 @@ namespace cc::platform::switchboard
     {
     public:
         SwitchSelection();
-        SwitchSelection(const std::string& switch_name,
+        SwitchSelection(const std::string &switch_name,
                         bool with_ancestors = false);
-        SwitchSelection(const std::vector<std::string>& patterns,
+        SwitchSelection(const std::vector<std::string> &patterns,
                         bool is_regex = false,
                         bool with_ancestors = false);
 
-        bool matches(const SwitchName& switch_name) const;
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        bool matches(const SwitchName &switch_name) const;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     public:
         std::vector<std::string> patterns;
@@ -211,10 +211,10 @@ namespace cc::platform::switchboard
         std::string deactivate_text;
         core::types::SymbolMap<State> state_texts;
 
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
-        friend bool operator==(const Localization& lhs, const Localization& rhs);
-        friend bool operator!=(const Localization& lhs, const Localization& rhs);
+        friend bool operator==(const Localization &lhs, const Localization &rhs);
+        friend bool operator!=(const Localization &lhs, const Localization &rhs);
     };
 
     //==========================================================================
@@ -228,10 +228,10 @@ namespace cc::platform::switchboard
         DependencyMap dependencies;
         InterceptorMap interceptors;
 
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
-        friend bool operator==(const Specification& lhs, const Specification& rhs);
-        friend bool operator!=(const Specification& lhs, const Specification& rhs);
+        friend bool operator==(const Specification &lhs, const Specification &rhs);
+        friend bool operator!=(const Specification &lhs, const Specification &rhs);
     };
 
     //==========================================================================
@@ -246,10 +246,10 @@ namespace cc::platform::switchboard
         core::status::Error::ptr error;
         core::types::KeyValueMap attributes;
 
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
-        friend bool operator==(const Status& lhs, const Status& rhs);
-        friend bool operator!=(const Status& lhs, const Status& rhs);
+        friend bool operator==(const Status &lhs, const Status &rhs);
+        friend bool operator!=(const Status &lhs, const Status &rhs);
     };
 
     //==========================================================================
@@ -262,7 +262,7 @@ namespace cc::platform::switchboard
         std::optional<bool> satisfied;
         DependencyStatusMap dependency_statuses;
 
-        void to_tvlist(core::types::TaggedValueList* tvlist) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
 }  // namespace cc::platform::switchboard

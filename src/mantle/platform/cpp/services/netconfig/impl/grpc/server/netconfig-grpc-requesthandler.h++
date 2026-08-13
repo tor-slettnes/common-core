@@ -24,97 +24,97 @@ namespace cc::platform::netconfig::grpc
 
     protected:
         RequestHandler();
-        RequestHandler(const std::shared_ptr<netconfig::ProviderInterface>& provider);
+        RequestHandler(const std::shared_ptr<netconfig::ProviderInterface> &provider);
 
         ::grpc::Status ServiceCheck(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
             ServiceCheckResponse *response) override;
 
         ::grpc::Status GetHostName(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            ::google::protobuf::StringValue* response) override;
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
+            ::google::protobuf::StringValue *response) override;
 
         ::grpc::Status SetHostName(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::StringValue* request,
-            ::google::protobuf::Empty* response) override;
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::StringValue *request,
+            ::google::protobuf::Empty *response) override;
 
         ::grpc::Status GetConnections(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            platform::netconfig::protobuf::ConnectionMap* response) override;
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
+            platform::netconfig::protobuf::ConnectionMap *response) override;
 
         ::grpc::Status DefineConnection(
-            ::grpc::ServerContext* context,
-            const platform::netconfig::protobuf::ConnectionRequest* request,
-            ::google::protobuf::Empty* response) override;
+            ::grpc::ServerContext *context,
+            const platform::netconfig::protobuf::ConnectionRequest *request,
+            ::google::protobuf::Empty *response) override;
 
         ::grpc::Status RemoveConnection(
-            ::grpc::ServerContext* context,
-            const platform::netconfig::protobuf::MappingKey* request,
-            ::google::protobuf::BoolValue* response) override;
+            ::grpc::ServerContext *context,
+            const platform::netconfig::protobuf::MappingKey *request,
+            ::google::protobuf::BoolValue *response) override;
 
         ::grpc::Status ActivateConnection(
-            ::grpc::ServerContext* context,
-            const platform::netconfig::protobuf::MappingKey* request,
-            ::google::protobuf::Empty* response) override;
+            ::grpc::ServerContext *context,
+            const platform::netconfig::protobuf::MappingKey *request,
+            ::google::protobuf::Empty *response) override;
 
         ::grpc::Status DeactivateConnection(
-            ::grpc::ServerContext* context,
-            const platform::netconfig::protobuf::MappingKey* request,
-            ::google::protobuf::Empty* response) override;
+            ::grpc::ServerContext *context,
+            const platform::netconfig::protobuf::MappingKey *request,
+            ::google::protobuf::Empty *response) override;
 
         ::grpc::Status GetActiveConnections(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            platform::netconfig::protobuf::ActiveConnectionMap* response) override;
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
+            platform::netconfig::protobuf::ActiveConnectionMap *response) override;
 
         ::grpc::Status RequestScan(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            ::google::protobuf::Empty* response) override;
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
+            ::google::protobuf::Empty *response) override;
 
         ::grpc::Status GetAccessPoints(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            platform::netconfig::protobuf::AccessPointMap* response) override;
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
+            platform::netconfig::protobuf::AccessPointMap *response) override;
 
         ::grpc::Status ConnectAccessPoint(
-            ::grpc::ServerContext* context,
-            const platform::netconfig::protobuf::WirelessConnectionRequest* request,
-            ::google::protobuf::Empty* response) override;
+            ::grpc::ServerContext *context,
+            const platform::netconfig::protobuf::WirelessConnectionRequest *request,
+            ::google::protobuf::Empty *response) override;
 
         ::grpc::Status GetDevices(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            platform::netconfig::protobuf::DeviceMap* response) override;
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
+            platform::netconfig::protobuf::DeviceMap *response) override;
 
         ::grpc::Status GetGlobalData(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            platform::netconfig::protobuf::GlobalData* response) override;
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
+            platform::netconfig::protobuf::GlobalData *response) override;
 
         ::grpc::Status SetWirelessEnabled(
-            ::grpc::ServerContext* context,
-            const platform::netconfig::protobuf::RadioState* request,
-            ::google::protobuf::Empty* response) override;
+            ::grpc::ServerContext *context,
+            const platform::netconfig::protobuf::RadioState *request,
+            ::google::protobuf::Empty *response) override;
 
         ::grpc::Status SetWirelessAllowed(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::BoolValue* request,
-            ::google::protobuf::Empty* response) override;
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::BoolValue *request,
+            ::google::protobuf::Empty *response) override;
 
         ::grpc::Status SelectWirelessBand(
-            ::grpc::ServerContext* context,
-            const platform::netconfig::protobuf::WirelessBandSetting* request,
-            ::google::protobuf::Empty* response) override;
+            ::grpc::ServerContext *context,
+            const platform::netconfig::protobuf::WirelessBandSetting *request,
+            ::google::protobuf::Empty *response) override;
 
         ::grpc::Status Watch(
-            ::grpc::ServerContext* context,
-            const cc::protobuf::signal::Filter* filter,
-            ::grpc::ServerWriter<platform::netconfig::protobuf::Signal>* writer) override;
+            ::grpc::ServerContext *context,
+            const cc::protobuf::signal::Filter *filter,
+            ::grpc::ServerWriter<platform::netconfig::protobuf::Signal> *writer) override;
 
     private:
         std::shared_ptr<netconfig::ProviderInterface> provider;

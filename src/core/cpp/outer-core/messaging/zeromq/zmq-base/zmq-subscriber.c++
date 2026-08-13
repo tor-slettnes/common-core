@@ -13,8 +13,8 @@
 
 namespace cc::zmq
 {
-    Subscriber::Subscriber(const std::string& address,
-                           const std::string& channel_name,
+    Subscriber::Subscriber(const std::string &address,
+                           const std::string &channel_name,
                            Role role)
         : Super(address, "subscriber", channel_name, ZMQ_SUB, role),
           keep_receiving(false)
@@ -30,7 +30,7 @@ namespace cc::zmq
         }
     }
 
-    void Subscriber::add_handler(const std::shared_ptr<MessageHandler>& handler,
+    void Subscriber::add_handler(const std::shared_ptr<MessageHandler> &handler,
                                  bool initialize)
     {
         if (initialize)
@@ -47,7 +47,7 @@ namespace cc::zmq
         }
     }
 
-    void Subscriber::remove_handler(const std::shared_ptr<MessageHandler>& handler,
+    void Subscriber::remove_handler(const std::shared_ptr<MessageHandler> &handler,
                                     bool deinitialize)
     {
         {
@@ -123,22 +123,22 @@ namespace cc::zmq
 
             this->setsockopt(ZMQ_UNSUBSCRIBE, "", 0);
         }
-        catch (const Error& e)
+        catch (const Error &e)
         {
             this->log_zmq_error("could not continue receiving publications", e);
             this->keep_receiving = false;
         }
     }
 
-    void Subscriber::process_message(const MessageParts& parts)
+    void Subscriber::process_message(const MessageParts &parts)
     {
         if (!parts.empty())
         {
-            const core::types::ByteVector& header = parts.front();
+            const core::types::ByteVector &header = parts.front();
 
             std::scoped_lock lock(this->mtx_);
 
-            for (const std::shared_ptr<MessageHandler>& handler : this->handlers_)
+            for (const std::shared_ptr<MessageHandler> &handler : this->handlers_)
             {
                 if (!handler->filter() || (handler->filter().value() == header))
                 {
@@ -148,9 +148,9 @@ namespace cc::zmq
         }
     }
 
-    void Subscriber::add_handler_filter(const std::shared_ptr<MessageHandler>& handler)
+    void Subscriber::add_handler_filter(const std::shared_ptr<MessageHandler> &handler)
     {
-        if (const std::optional<Filter>& filter = handler->filter())
+        if (const std::optional<Filter> &filter = handler->filter())
         {
             logf_debug("%s adding subscription for %r with filter %r",
                        *this,
@@ -161,9 +161,9 @@ namespace cc::zmq
         // this->setsockopt(ZMQ_SUBSCRIBE, "", 0);
     }
 
-    void Subscriber::remove_handler_filter(const std::shared_ptr<MessageHandler>& handler)
+    void Subscriber::remove_handler_filter(const std::shared_ptr<MessageHandler> &handler)
     {
-        if (const std::optional<Filter>& filter = handler->filter())
+        if (const std::optional<Filter> &filter = handler->filter())
         {
             logf_debug("%s removing subscription for %r with filter %r",
                        *this,
@@ -177,15 +177,15 @@ namespace cc::zmq
                     filter->data(),
                     filter->size()));
             }
-            catch (const Error& e)
+            catch (const Error &e)
             {
                 this->log_zmq_error("could not unsubscribe", e);
             }
         }
     }
 
-    void Subscriber::invoke_handler(const std::shared_ptr<MessageHandler>& handler,
-                                    const MessageParts& parts)
+    void Subscriber::invoke_handler(const std::shared_ptr<MessageHandler> &handler,
+                                    const MessageParts &parts)
     {
         logf_trace("%s invoking handler %r, parts=%r",
                    *this,

@@ -24,12 +24,12 @@ namespace cc::platform::pubsub
             {Transport::ZMQ, "ZMQ"},
     };
 
-    std::ostream& operator<<(std::ostream& stream, Transport transport)
+    std::ostream &operator<<(std::ostream &stream, Transport transport)
     {
         return transport_map.to_stream(stream, transport);
     }
 
-    std::istream& operator>>(std::istream& stream, Transport& transport)
+    std::istream &operator>>(std::istream &stream, Transport &transport)
     {
         return transport_map.from_stream(stream, &transport);
     }
@@ -166,7 +166,7 @@ namespace cc::platform::pubsub
 
     void Options::get_replay_policies()
     {
-        for (const auto& [topic, policy] : this->relay_control()->get_replay_policies())
+        for (const auto &[topic, policy] : this->relay_control()->get_replay_policies())
         {
             core::str::format(std::cout, "%24s: %s\n", topic, policy);
         }
@@ -191,7 +191,7 @@ namespace cc::platform::pubsub
         std::size_t nkeys = std::distance(this->current_arg, this->args.end());
         policy.key_paths.reserve(nkeys);
 
-        for (const std::string& arg : this->remaining_args())
+        for (const std::string &arg : this->remaining_args())
         {
             policy.key_paths.push_back(core::str::split(arg, KEY_PATH_DELIMITER));
         }
@@ -225,9 +225,9 @@ namespace cc::platform::pubsub
             snapshot = this->relay_control()->replay_all();
         }
 
-        for (const auto& [topic, payloads] : snapshot)
+        for (const auto &[topic, payloads] : snapshot)
         {
-            for (const core::types::Value& payload : payloads)
+            for (const core::types::Value &payload : payloads)
             {
                 this->on_message(topic, payload);
             }
@@ -302,7 +302,7 @@ namespace cc::platform::pubsub
         this->subscriber()->subscribe(
             this->signal_handle,
             topics,
-            [&](const Topic& topic, const core::types::Value& message) {
+            [&](const Topic &topic, const core::types::Value &message) {
                 this->on_message(topic, message);
             });
     }
@@ -314,8 +314,8 @@ namespace cc::platform::pubsub
     }
 
     void Options::on_message(
-        const Topic& topic,
-        const core::types::Value& payload) const
+        const Topic &topic,
+        const core::types::Value &payload) const
     {
         std::cout << "["
                   << topic
@@ -360,7 +360,7 @@ namespace cc::platform::pubsub
         this->subscriber()->subscribe(
             this->signal_handle,
             {},
-            [&](const Topic& topic, const core::types::Value& message) {
+            [&](const Topic &topic, const core::types::Value &message) {
                 this->on_message_topic(topic, message);
             });
     }
@@ -371,8 +371,8 @@ namespace cc::platform::pubsub
         this->subscriber()->deinitialize();
     }
 
-    void Options::on_message_topic(const std::string& topic,
-                                   const core::types::Value& message)
+    void Options::on_message_topic(const std::string &topic,
+                                   const core::types::Value &message)
     {
         if (!this->seen_topics_.count(topic))
         {

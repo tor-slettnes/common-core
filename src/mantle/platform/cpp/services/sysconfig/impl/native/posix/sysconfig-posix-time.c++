@@ -19,7 +19,7 @@ namespace cc::platform::sysconfig::native
         };
     }
 
-    void PosixTimeConfigProvider::set_time_config(const TimeConfig& config)
+    void PosixTimeConfigProvider::set_time_config(const TimeConfig &config)
     {
         this->set_ntp(config.synchronization == TSYNC_NTP);
         if (!config.servers.empty())
@@ -28,7 +28,7 @@ namespace cc::platform::sysconfig::native
         }
     }
 
-    void PosixTimeConfigProvider::set_current_time(const core::dt::TimePoint& tp)
+    void PosixTimeConfigProvider::set_current_time(const core::dt::TimePoint &tp)
     {
         std::string datestring = core::dt::to_string(
             tp,                // tp
@@ -52,7 +52,7 @@ namespace cc::platform::sysconfig::native
             "get_ntp() is not implemented on this platform");
     }
 
-    void PosixTimeConfigProvider::set_ntp_servers(const std::vector<std::string>& servers)
+    void PosixTimeConfigProvider::set_ntp_servers(const std::vector<std::string> &servers)
     {
         throw core::exception::UnsupportedError(
             "set_ntp_servers() is not implemented on this platform");

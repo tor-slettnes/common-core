@@ -13,9 +13,9 @@
 
 namespace cc::zmq
 {
-    Endpoint::Endpoint(const std::string& address,
-                       const std::string& endpoint_type,
-                       const std::string& channel_name,
+    Endpoint::Endpoint(const std::string &address,
+                       const std::string &endpoint_type,
+                       const std::string &channel_name,
                        SocketType socket_type,
                        Role role)
         : Super("ZMQ", endpoint_type, channel_name),
@@ -32,7 +32,7 @@ namespace cc::zmq
         this->close_socket();
     }
 
-    Context* Endpoint::context()
+    Context *Endpoint::context()
     {
         if (!This::context_)
         {
@@ -69,7 +69,7 @@ namespace cc::zmq
         return this->address_;
     }
 
-    Socket* Endpoint::socket() const
+    Socket *Endpoint::socket() const
     {
         if (!this->socket_)
         {
@@ -106,7 +106,7 @@ namespace cc::zmq
         }
     }
 
-    std::string Endpoint::bind_address(const std::optional<std::string>& provided) const
+    std::string Endpoint::bind_address(const std::optional<std::string> &provided) const
     {
         return this->realaddress(provided.value_or(this->address_),
                                  SCHEME_OPTION,
@@ -116,7 +116,7 @@ namespace cc::zmq
                                  "*");
     }
 
-    void Endpoint::bind(const std::optional<std::string>& address)
+    void Endpoint::bind(const std::optional<std::string> &address)
     {
         std::scoped_lock lck(this->socket_mtx_);
         std::string bind_address = this->bind_address(address);
@@ -141,7 +141,7 @@ namespace cc::zmq
         }
     }
 
-    std::string Endpoint::host_address(const std::optional<std::string>& provided) const
+    std::string Endpoint::host_address(const std::optional<std::string> &provided) const
     {
         return this->realaddress(provided.value_or(this->address_),
                                  SCHEME_OPTION,
@@ -151,8 +151,8 @@ namespace cc::zmq
                                  "localhost");
     }
 
-    void Endpoint::connect(const std::optional<std::string>& address,
-                           const std::optional<core::dt::Duration>& timeout)
+    void Endpoint::connect(const std::optional<std::string> &address,
+                           const std::optional<core::dt::Duration> &timeout)
     {
         std::string host_address = this->host_address(address);
         logf_debug("%s connecting to %s", *this, host_address);
@@ -236,7 +236,7 @@ namespace cc::zmq
         Super::deinitialize();
     }
 
-    void* Endpoint::check_error(void* ptr)
+    void *Endpoint::check_error(void *ptr)
     {
         if (ptr == nullptr)
         {
@@ -269,19 +269,19 @@ namespace cc::zmq
         }
     }
 
-    void Endpoint::try_or_log(int rc, const std::string& preamble) const
+    void Endpoint::try_or_log(int rc, const std::string &preamble) const
     {
         try
         {
             this->check_error(rc);
         }
-        catch (const Error& e)
+        catch (const Error &e)
         {
             this->log_zmq_error(preamble, e);
         }
     }
 
-    void Endpoint::log_zmq_error(const std::string& action, const Error& e) const
+    void Endpoint::log_zmq_error(const std::string &action, const Error &e) const
     {
         switch (e.code().value())
         {
@@ -299,7 +299,7 @@ namespace cc::zmq
         this->setsockopt(option, &value, sizeof(value));
     }
 
-    void Endpoint::setsockopt(int option, const void* data, std::size_t data_size)
+    void Endpoint::setsockopt(int option, const void *data, std::size_t data_size)
     {
         std::scoped_lock lck(this->socket_mtx_);
         if (this->socket_)
@@ -315,7 +315,7 @@ namespace cc::zmq
         }
     }
 
-    void Endpoint::send(const core::types::ByteVector& bytes, SendFlags flags) const
+    void Endpoint::send(const core::types::ByteVector &bytes, SendFlags flags) const
     {
         // using SendFunction = int (*)(void *socket, const void *buf, size_t len, int flags);
         // SendFunction send = (flags & ZMQ_DONTWAIT) ? ::zmq_send : ::zmq_send_const;
@@ -336,7 +336,7 @@ namespace cc::zmq
             auto bytes = std::make_shared<core::types::ByteVector>();
             bytes->reserve(size);
 
-            for (const core::types::ByteVector& part : parts)
+            for (const core::types::ByteVector &part : parts)
             {
                 bytes->insert(bytes->end(), part.begin(), part.end());
             }
@@ -355,7 +355,7 @@ namespace cc::zmq
         return parts;
     }
 
-    std::size_t Endpoint::receive(std::vector<core::types::ByteVector>* parts, RecvFlags flags) const
+    std::size_t Endpoint::receive(std::vector<core::types::ByteVector> *parts, RecvFlags flags) const
     {
         zmq_msg_t msg;
         std::vector<std::string> counts;
@@ -366,7 +366,7 @@ namespace cc::zmq
             this->check_error(::zmq_msg_init(&msg));
             this->check_error(::zmq_msg_recv(&msg, this->socket(), flags));
 
-            const std::uint8_t* data = static_cast<const std::uint8_t*>(::zmq_msg_data(&msg));
+            const std::uint8_t *data = static_cast<const std::uint8_t *>(::zmq_msg_data(&msg));
             size_t size = ::zmq_msg_size(&msg);
             total += size;
 
@@ -385,10 +385,10 @@ namespace cc::zmq
         return total;
     }
 
-    std::string Endpoint::realaddress(const std::string& address,
-                                      const std::string& schemeOption,
-                                      const std::string& hostOption,
-                                      const std::string& portOption,
+    std::string Endpoint::realaddress(const std::string &address,
+                                      const std::string &schemeOption,
+                                      const std::string &hostOption,
+                                      const std::string &portOption,
                                       std::string defaultScheme,
                                       std::string defaultHost,
                                       uint defaultPort) const
@@ -423,10 +423,10 @@ namespace cc::zmq
         return this->joinaddress(scheme, host, port);
     }
 
-    void Endpoint::splitaddress(const std::string& address,
-                                std::string* scheme,
-                                std::string* host,
-                                uint* port) const
+    void Endpoint::splitaddress(const std::string &address,
+                                std::string *scheme,
+                                std::string *host,
+                                uint *port) const
     {
         static const std::regex rx(
             "(?:(\\w*)://)?"                       // scheme
@@ -449,8 +449,8 @@ namespace cc::zmq
         }
     }
 
-    std::string Endpoint::joinaddress(const std::string& scheme,
-                                      const std::string& name,
+    std::string Endpoint::joinaddress(const std::string &scheme,
+                                      const std::string &name,
                                       uint port) const
     {
         std::string uri = scheme + "://" + name;
@@ -461,6 +461,6 @@ namespace cc::zmq
         return uri;
     }
 
-    Context* Endpoint::context_ = nullptr;
+    Context *Endpoint::context_ = nullptr;
 
 }  // namespace cc::zmq

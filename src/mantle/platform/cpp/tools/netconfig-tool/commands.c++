@@ -89,7 +89,7 @@ namespace cc::platform::netconfig
 
     void Options::get_devices()
     {
-        for (const auto& kv : netconfig::network->get_devices())
+        for (const auto &kv : netconfig::network->get_devices())
         {
             core::str::format(std::cout, "%10s: %s\n", kv.first, kv.second);
         }
@@ -97,7 +97,7 @@ namespace cc::platform::netconfig
 
     void Options::get_connections()
     {
-        for (const auto& kv : netconfig::network->get_connections())
+        for (const auto &kv : netconfig::network->get_connections())
         {
             core::str::format(std::cout, "%10s: %s\n", kv.first, kv.second);
         }
@@ -124,7 +124,7 @@ namespace cc::platform::netconfig
 
     void Options::get_active_connections()
     {
-        for (const auto& [name, conn] : netconfig::network->get_active_connections())
+        for (const auto &[name, conn] : netconfig::network->get_active_connections())
         {
             core::str::format(std::cout, "%20s: %s\n", name, conn);
         }
@@ -137,7 +137,7 @@ namespace cc::platform::netconfig
 
     void Options::get_aps()
     {
-        for (const auto& [name, ap] : netconfig::network->get_aps())
+        for (const auto &[name, ap] : netconfig::network->get_aps())
         {
             core::str::format(std::cout, "%16s: %s\n", name, ap);
         }

@@ -9,15 +9,15 @@
 
 namespace cc::zmq
 {
-    Requester::Requester(const std::string& address,
-                         const std::string& channel_name,
+    Requester::Requester(const std::string &address,
+                         const std::string &channel_name,
                          Role role)
         : Super(address, "requester", channel_name, ZMQ_REQ, role)
     {
     }
 
     std::shared_ptr<core::types::ByteVector> Requester::send_receive(
-        const core::types::ByteVector& request,
+        const core::types::ByteVector &request,
         SendFlags send_flags,
         RecvFlags recv_flags)
     {

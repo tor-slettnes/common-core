@@ -14,19 +14,19 @@ namespace cc::protobuf
     //==========================================================================
     // TimeUnit
 
-    void encode(core::dt::TimeUnit native, datetime::TimeUnit* proto);
-    void decode(datetime::TimeUnit proto, core::dt::TimeUnit* native);
+    void encode(core::dt::TimeUnit native, datetime::TimeUnit *proto);
+    void decode(datetime::TimeUnit proto, core::dt::TimeUnit *native);
 
     //==========================================================================
     // DateTimeInterval
 
-    void encode(const core::dt::DateTimeInterval& native, datetime::Interval* proto);
-    void decode(const datetime::Interval& proto, core::dt::DateTimeInterval* native);
+    void encode(const core::dt::DateTimeInterval &native, datetime::Interval *proto);
+    void decode(const datetime::Interval &proto, core::dt::DateTimeInterval *native);
 
     //==========================================================================
     // TimeStruct
 
-    void encode(const std::tm& tm, datetime::TimeStruct* msg);
-    void decode(const datetime::TimeStruct& msg, std::tm* tm);
+    void encode(const std::tm &tm, datetime::TimeStruct *msg);
+    void decode(const datetime::TimeStruct &msg, std::tm *tm);
 
 }  // namespace cc::protobuf

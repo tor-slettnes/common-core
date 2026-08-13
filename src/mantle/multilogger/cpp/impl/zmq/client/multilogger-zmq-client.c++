@@ -12,7 +12,7 @@
 
 namespace cc::platform::multilogger::zmq
 {
-    ClientImpl::ClientImpl(const std::string& host)
+    ClientImpl::ClientImpl(const std::string &host)
         : ProtoBufClient(
               host,
               SERVICE_CHANNEL,
@@ -49,12 +49,12 @@ namespace cc::platform::multilogger::zmq
         API::deinitialize();
     }
 
-    void ClientImpl::submit(const core::types::Loggable::ptr& item)
+    void ClientImpl::submit(const core::types::Loggable::ptr &item)
     {
         this->writer()->write(item);
     }
 
-    bool ClientImpl::add_sink(const SinkSpec& spec)
+    bool ClientImpl::add_sink(const SinkSpec &spec)
     {
         auto result = this->call<cc::platform::multilogger::protobuf::AddSinkResult>(
             METHOD_ADD_SINK,
@@ -63,7 +63,7 @@ namespace cc::platform::multilogger::zmq
         return result.added();
     }
 
-    bool ClientImpl::remove_sink(const SinkID& id)
+    bool ClientImpl::remove_sink(const SinkID &id)
     {
         auto result = this->call<cc::platform::multilogger::protobuf::RemoveSinkResult>(
             METHOD_REMOVE_SINK,
@@ -72,7 +72,7 @@ namespace cc::platform::multilogger::zmq
         return result.removed();
     }
 
-    SinkSpec ClientImpl::get_sink_spec(const SinkID& id) const
+    SinkSpec ClientImpl::get_sink_spec(const SinkID &id) const
     {
         auto result = this->call<cc::platform::multilogger::protobuf::SinkSpec>(
             METHOD_GET_SINK,
@@ -120,7 +120,7 @@ namespace cc::platform::multilogger::zmq
     }
 
     std::shared_ptr<LogSource> ClientImpl::listen(
-        const ListenerSpec& spec)
+        const ListenerSpec &spec)
     {
         auto reader = ClientReader::create_shared(this->subscriber());
         reader->initialize();

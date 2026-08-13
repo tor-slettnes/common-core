@@ -339,7 +339,7 @@ namespace cc::platform::switchboard
     void Options::list_switches()
     {
         FlagMap flags;
-        bool& with_state = flags["states"];
+        bool &with_state = flags["states"];
         this->get_flags(&flags, true);
 
         std::unordered_set<std::string> fields(
@@ -355,7 +355,7 @@ namespace cc::platform::switchboard
         }
 
         bool print_delimiter = false;
-        for (const auto& [name, sw] : this->provider->get_switches())
+        for (const auto &[name, sw] : this->provider->get_switches())
         {
             if (with_details)
             {
@@ -406,13 +406,13 @@ namespace cc::platform::switchboard
     {
         switchboard::SwitchRef sw = this->get_switch(true);
         FlagMap flags;
-        bool& active_flag = flags["active"];
-        bool& inactive_flag = flags["inactive"];
+        bool &active_flag = flags["active"];
+        bool &inactive_flag = flags["inactive"];
         this->get_flags(&flags, false);
 
         bool active = active_flag || !inactive_flag;
 
-        for (const auto& [switch_name, state] : sw->culprits(active))
+        for (const auto &[switch_name, state] : sw->culprits(active))
         {
             if (!this->verbose)
             {
@@ -442,7 +442,7 @@ namespace cc::platform::switchboard
 
     void Options::get_errors()
     {
-        for (const auto& [switch_name, error] : this->get_switch(true)->errors())
+        for (const auto &[switch_name, error] : this->get_switch(true)->errors())
         {
             core::str::format(std::cout, "%20s : %s\n", switch_name, *error);
         }
@@ -450,7 +450,7 @@ namespace cc::platform::switchboard
 
     void Options::get_status()
     {
-        for (const auto& sw : this->get_switches_or_all())
+        for (const auto &sw : this->get_switches_or_all())
         {
             std::cout << "["
                       << sw->name()
@@ -489,14 +489,14 @@ namespace cc::platform::switchboard
 
     void Options::get_dependencies()
     {
-        for (const auto& sw : this->get_switches_or_all())
+        for (const auto &sw : this->get_switches_or_all())
         {
             std::cout << "["
                       << sw->name()
                       << "]"
                       << std::endl;
 
-            for (const auto& [pred, dep] : sw->dependencies())
+            for (const auto &[pred, dep] : sw->dependencies())
             {
                 if (this->verbose)
                 {
@@ -514,14 +514,14 @@ namespace cc::platform::switchboard
 
     void Options::get_interceptors()
     {
-        for (const auto& sw : this->get_switches_or_all())
+        for (const auto &sw : this->get_switches_or_all())
         {
             std::cout << "["
                       << sw->name()
                       << "]"
                       << std::endl;
 
-            for (const auto& [name, icept] : sw->interceptors())
+            for (const auto &[name, icept] : sw->interceptors())
             {
                 if (this->verbose)
                 {
@@ -539,7 +539,7 @@ namespace cc::platform::switchboard
 
     void Options::get_specs()
     {
-        for (const auto& sw : this->get_switches_or_all())
+        for (const auto &sw : this->get_switches_or_all())
         {
             std::cout << "["
                       << sw->name()
@@ -568,7 +568,7 @@ namespace cc::platform::switchboard
     {
         std::string name = this->get_arg("SWITCH");
         FlagMap flags;
-        bool& active = flags["active"];
+        bool &active = flags["active"];
         this->get_flags(&flags, false);
 
         auto [sw, added] = this->provider->add_switch(name, active);
@@ -585,7 +585,7 @@ namespace cc::platform::switchboard
     void Options::clear_switches()
     {
         FlagMap flags;
-        bool& reload = flags["reload"];
+        bool &reload = flags["reload"];
         this->get_flags(&flags, false);
 
         bool cleared = this->provider->clear_switches(reload);
@@ -624,7 +624,7 @@ namespace cc::platform::switchboard
         std::string language = this->get_arg("language");
         switchboard::Localization localization;
 
-        for (const auto& [key, value] : this->get_attributes(false))
+        for (const auto &[key, value] : this->get_attributes(false))
         {
             std::string lowerkey = core::str::tolower(key);
 
@@ -662,12 +662,12 @@ namespace cc::platform::switchboard
 
         std::vector<std::string> remaining;
         FlagMap flags;
-        bool& positive = flags["positive"];
-        bool& negative = flags["negative"];
-        bool& toggle = flags["toggle"];
-        bool& hard = flags["hard"];
-        bool& sufficient = flags["sufficient"];
-        bool& manual = flags["manual"];
+        bool &positive = flags["positive"];
+        bool &negative = flags["negative"];
+        bool &toggle = flags["toggle"];
+        bool &hard = flags["hard"];
+        bool &sufficient = flags["sufficient"];
+        bool &manual = flags["manual"];
         this->get_flags(&flags, true);
 
         switchboard::StateSet trigger_states =
@@ -808,9 +808,9 @@ namespace cc::platform::switchboard
     void Options::on_monitor_start()
     {
         FlagMap flags;
-        bool& except = flags["except"];
-        bool& show_spec = flags["spec"];
-        bool& show_status = flags["status"];
+        bool &except = flags["except"];
+        bool &show_spec = flags["spec"];
+        bool &show_status = flags["status"];
         this->get_flags(&flags, false);
 
         except |= std::none_of(
@@ -840,8 +840,8 @@ namespace cc::platform::switchboard
     }
 
     void Options::on_signal_spec(core::signal::MappingAction action,
-                                 const switchboard::SwitchName& name,
-                                 const switchboard::Specification& spec)
+                                 const switchboard::SwitchName &name,
+                                 const switchboard::Specification &spec)
     {
         core::str::format(std::cout,
                           "[%s] spec:   %-12s %-32r %s\n",
@@ -852,8 +852,8 @@ namespace cc::platform::switchboard
     }
 
     void Options::on_signal_status(core::signal::MappingAction action,
-                                   const switchboard::SwitchName& name,
-                                   const switchboard::Status& status)
+                                   const switchboard::SwitchName &name,
+                                   const switchboard::Status &status)
     {
         core::str::format(std::cout,
                           "[%s] status: %-12s %-32r %s\n",
@@ -876,7 +876,7 @@ namespace cc::platform::switchboard
             switchboard::SwitchSelection selection(patterns);
             std::vector<switchboard::SwitchRef> switches;
 
-            for (const auto& [name, sw] : this->provider->get_switches())
+            for (const auto &[name, sw] : this->provider->get_switches())
             {
                 if (selection.matches(name))
                 {
@@ -912,10 +912,10 @@ namespace cc::platform::switchboard
     Options::SwitchControlFlags Options::get_switch_control_flags()
     {
         FlagMap flags;
-        bool& no_intercept = flags["no_intercept"];
-        bool& no_cascade = flags["no_cascaade"];
-        bool& clear = flags["clear"];
-        bool& reenter = flags["reenter"];
+        bool &no_intercept = flags["no_intercept"];
+        bool &no_cascade = flags["no_cascaade"];
+        bool &clear = flags["clear"];
+        bool &reenter = flags["reenter"];
         this->get_flags(&flags, true);
 
         return {
@@ -934,7 +934,7 @@ namespace cc::platform::switchboard
     {
         std::string arg = this->get_arg("LIST_OF_STATES");
         switchboard::StateSet states;
-        for (const std::string& state_name : core::str::split(arg, ","))
+        for (const std::string &state_name : core::str::split(arg, ","))
         {
             states.insert(core::str::convert_to<switchboard::State>(state_name));
         }
@@ -943,18 +943,18 @@ namespace cc::platform::switchboard
 
     void Options::print_states() const
     {
-        for (const auto& [state, name] : switchboard::state_names)
+        for (const auto &[state, name] : switchboard::state_names)
         {
             std::cout << name << std::endl;
         }
     }
 
     void Options::print_tvlist(
-        const core::types::TaggedValueList& tvlist,
-        const std::unordered_set<std::string>& selection,
+        const core::types::TaggedValueList &tvlist,
+        const std::unordered_set<std::string> &selection,
         std::size_t alignment_column) const
     {
-        for (const auto& [tag, value] : tvlist)
+        for (const auto &[tag, value] : tvlist)
         {
             std::string key = tag.value_or("");
             if (selection.empty() || selection.count(key))

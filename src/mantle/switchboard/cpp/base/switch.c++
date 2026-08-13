@@ -12,14 +12,14 @@
 
 namespace cc::platform::switchboard
 {
-    bool operator==(const Switch& lhs, const Switch& rhs)
+    bool operator==(const Switch &lhs, const Switch &rhs)
     {
         return ((lhs.name() == rhs.name()) &&
                 (lhs.spec() == rhs.spec()) &&
                 (lhs.status() == rhs.status()));
     }
 
-    bool operator!=(const Switch& lhs, const Switch& rhs)
+    bool operator!=(const Switch &lhs, const Switch &rhs)
     {
         return !(lhs == rhs);
     }
@@ -27,8 +27,8 @@ namespace cc::platform::switchboard
     //==========================================================================
     /// @class Switch
 
-    Switch::Switch(const SwitchName& name,
-                   const std::shared_ptr<switchboard::Provider>& provider)
+    Switch::Switch(const SwitchName &name,
+                   const std::shared_ptr<switchboard::Provider> &provider)
         : name_(name),
           provider_(provider),
           spec_ref(std::make_shared<Specification>()),
@@ -36,14 +36,14 @@ namespace cc::platform::switchboard
     {
     }
 
-    void Switch::to_tvlist(core::types::TaggedValueList* tvlist) const
+    void Switch::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
         tvlist->emplace_back("name", this->name());
         this->spec()->to_tvlist(tvlist);
         this->status()->to_tvlist(tvlist);
     }
 
-    void Switch::to_stream(std::ostream& ostream) const
+    void Switch::to_stream(std::ostream &ostream) const
     {
         ostream << "Switch("
                 << std::quoted(this->name())
@@ -60,18 +60,18 @@ namespace cc::platform::switchboard
         return aliases;
     }
 
-    const SwitchName& Switch::name() const noexcept
+    const SwitchName &Switch::name() const noexcept
     {
         return this->name_;
     }
 
-    const SwitchAliases& Switch::aliases() const noexcept
+    const SwitchAliases &Switch::aliases() const noexcept
     {
         return this->spec()->aliases;
     }
 
     // Add new aliases for this witch
-    void Switch::set_aliases(const SwitchAliases& aliases)
+    void Switch::set_aliases(const SwitchAliases &aliases)
     {
         this->update_spec(
             {},       // primary
@@ -87,7 +87,7 @@ namespace cc::platform::switchboard
     }
 
     // Add new aliases for this witch
-    void Switch::add_aliases(const SwitchAliases& aliases)
+    void Switch::add_aliases(const SwitchAliases &aliases)
     {
         this->update_spec(
             {},       // primary
@@ -103,11 +103,11 @@ namespace cc::platform::switchboard
     }
 
     // Remove one or more aliases for this switch
-    void Switch::remove_aliases(const SwitchAliases& aliases)
+    void Switch::remove_aliases(const SwitchAliases &aliases)
     {
         SwitchAliases updated_set = this->aliases();
 
-        for (const SwitchName& removal : aliases)
+        for (const SwitchName &removal : aliases)
         {
             updated_set.erase(removal);
         }
@@ -142,18 +142,18 @@ namespace cc::platform::switchboard
         return this->dependencies().empty();
     }
 
-    const DependencyMap& Switch::dependencies() const noexcept
+    const DependencyMap &Switch::dependencies() const noexcept
     {
         return this->spec()->dependencies;
     }
 
-    DependencyRef Switch::get_dependency(const SwitchName& switch_name) const noexcept
+    DependencyRef Switch::get_dependency(const SwitchName &switch_name) const noexcept
     {
         try
         {
             return this->dependencies().at(switch_name);
         }
-        catch (const std::out_of_range&)
+        catch (const std::out_of_range &)
         {
             return {};
         }
@@ -162,9 +162,9 @@ namespace cc::platform::switchboard
     SwitchSet Switch::get_predecessors() const noexcept
     {
         SwitchSet set;
-        for (const auto& [name, dep] : this->dependencies())
+        for (const auto &[name, dep] : this->dependencies())
         {
-            if (const SwitchRef& predecessor = dep->predecessor())
+            if (const SwitchRef &predecessor = dep->predecessor())
             {
                 set.insert(predecessor);
             }
@@ -175,7 +175,7 @@ namespace cc::platform::switchboard
     SwitchSet Switch::get_successors() const noexcept
     {
         SwitchSet set;
-        for (const auto& [name, sw] : this->provider()->get_switches())
+        for (const auto &[name, sw] : this->provider()->get_switches())
         {
             if (sw->dependencies().count(this->name()))
             {
@@ -188,7 +188,7 @@ namespace cc::platform::switchboard
     SwitchSet Switch::get_ancestors() const noexcept
     {
         SwitchSet set;
-        for (const SwitchRef& sw : this->get_predecessors())
+        for (const SwitchRef &sw : this->get_predecessors())
         {
             if (set.count(sw) == 0)
             {
@@ -202,7 +202,7 @@ namespace cc::platform::switchboard
     SwitchSet Switch::get_descendants() const noexcept
     {
         SwitchSet set;
-        for (const SwitchRef& sw : this->get_successors())
+        for (const SwitchRef &sw : this->get_successors())
         {
             if (set.count(sw) == 0)
             {
@@ -213,20 +213,20 @@ namespace cc::platform::switchboard
         return set;
     }
 
-    const InterceptorMap& Switch::interceptors() const noexcept
+    const InterceptorMap &Switch::interceptors() const noexcept
     {
         return this->spec()->interceptors;
     }
 
     InterceptorRef Switch::get_interceptor(
-        const InterceptorName& name,
+        const InterceptorName &name,
         bool required) const
     {
         try
         {
             return this->spec()->interceptors.at(name);
         }
-        catch (const std::out_of_range&)
+        catch (const std::out_of_range &)
         {
             if (required)
             {
@@ -245,7 +245,7 @@ namespace cc::platform::switchboard
     }
 
     void Switch::set_spec(
-        const Specification& spec)
+        const Specification &spec)
     {
         *this->spec_ref = spec;
     }
@@ -270,7 +270,7 @@ namespace cc::platform::switchboard
         return this->spec()->primary;
     }
 
-    void Switch::set_localizations(const LocalizationMap& localizations)
+    void Switch::set_localizations(const LocalizationMap &localizations)
     {
         this->update_spec(
             {},             // primary
@@ -291,14 +291,14 @@ namespace cc::platform::switchboard
     }
 
     std::optional<Localization> Switch::localization(
-        const LanguageCode& language) const noexcept
+        const LanguageCode &language) const noexcept
     {
         return this->spec()->localizations.get_opt(language);
     }
 
-    std::optional<std::string> Switch::description(const LanguageCode& language) const noexcept
+    std::optional<std::string> Switch::description(const LanguageCode &language) const noexcept
     {
-        if (const auto& localized = this->localization(language))
+        if (const auto &localized = this->localization(language))
         {
             return localized->description;
         }
@@ -309,9 +309,9 @@ namespace cc::platform::switchboard
     }
 
     std::optional<std::string> Switch::activate_text(
-        const std::string& lang) const noexcept
+        const std::string &lang) const noexcept
     {
-        if (const auto& localized = this->localization(lang))
+        if (const auto &localized = this->localization(lang))
         {
             return localized->activate_text;
         }
@@ -322,9 +322,9 @@ namespace cc::platform::switchboard
     }
 
     std::optional<std::string> Switch::deactivate_text(
-        const std::string& lang) const noexcept
+        const std::string &lang) const noexcept
     {
-        if (const auto& localized = this->localization(lang))
+        if (const auto &localized = this->localization(lang))
         {
             return localized->deactivate_text;
         }
@@ -335,9 +335,9 @@ namespace cc::platform::switchboard
     }
 
     std::optional<std::string> Switch::state_text(
-        const std::string& lang) const noexcept
+        const std::string &lang) const noexcept
     {
-        if (const auto& localized = this->localization(lang))
+        if (const auto &localized = this->localization(lang))
         {
             return localized->state_texts.try_to_string(this->state());
         }
@@ -349,9 +349,9 @@ namespace cc::platform::switchboard
 
     std::optional<std::string> Switch::state_text(
         State state,
-        const std::string& lang) const noexcept
+        const std::string &lang) const noexcept
     {
-        if (const auto& localized = this->localization(lang))
+        if (const auto &localized = this->localization(lang))
         {
             return localized->state_texts.try_to_string(state);
         }
@@ -456,7 +456,7 @@ namespace cc::platform::switchboard
 
         State current_state = this->state();
 
-        for (const auto& [name, dep] : this->dependencies())
+        for (const auto &[name, dep] : this->dependencies())
         {
             std::string vote;
 
@@ -538,7 +538,7 @@ namespace cc::platform::switchboard
 
     bool Switch::set_active(
         bool active,
-        const core::types::KeyValueMap& attributes,
+        const core::types::KeyValueMap &attributes,
         bool clear_existing,
         InvocationStyle invoke_interceptors,
         CascadeStyle cascade_descendants,
@@ -559,8 +559,8 @@ namespace cc::platform::switchboard
     }
 
     bool Switch::set_error(
-        const core::status::Error::ptr& error,
-        const core::types::KeyValueMap& attributes,
+        const core::status::Error::ptr &error,
+        const core::types::KeyValueMap &attributes,
         bool clear_existing,
         InvocationStyle invoke_interceptors,
         CascadeStyle cascade_descendants,
@@ -581,7 +581,7 @@ namespace cc::platform::switchboard
     }
 
     bool Switch::set_auto(
-        const core::types::KeyValueMap& attributes,
+        const core::types::KeyValueMap &attributes,
         bool clear_existing,
         InvocationStyle invoke_interceptors,
         CascadeStyle cascade_descendants,
@@ -614,7 +614,7 @@ namespace cc::platform::switchboard
             errors.insert_or_assign(this->name(), error);
         }
 
-        for (const SwitchRef& pred : this->get_predecessors())
+        for (const SwitchRef &pred : this->get_predecessors())
         {
             errors.merge(pred->errors());
         }
@@ -622,19 +622,19 @@ namespace cc::platform::switchboard
     }
 
     /// Return this switch's attributes from the local cache.
-    const core::types::KeyValueMap& Switch::attributes() const noexcept
+    const core::types::KeyValueMap &Switch::attributes() const noexcept
     {
         return this->status()->attributes;
     }
 
-    core::types::Value Switch::attribute(const std::string& key) const
+    core::types::Value Switch::attribute(const std::string &key) const
     {
         return this->attributes().get(key);
     }
 
     void Switch::set_attribute(
-        const std::string& name,
-        const core::types::Value& value)
+        const std::string &name,
+        const core::types::Value &value)
     {
         this->set_attributes({{name, value}});
     }
@@ -648,7 +648,7 @@ namespace cc::platform::switchboard
         {
             if (!this->primary())
             {
-                for (const auto& [name, dep] : this->dependencies())
+                for (const auto &[name, dep] : this->dependencies())
                 {
                     if (auto pred_expected_state = dep->expected_state())
                     {
@@ -656,7 +656,7 @@ namespace cc::platform::switchboard
                         {
                             if (auto pred_expected_value = dep->expected_predecessor_value(expected))
                             {
-                                if (const SwitchRef& pred = dep->predecessor())
+                                if (const SwitchRef &pred = dep->predecessor())
                                 {
                                     culprits.merge(pred->culprits(pred_expected_value.value()));
                                 }
@@ -690,14 +690,14 @@ namespace cc::platform::switchboard
     {
         DependencyStatusMap map;
 
-        for (const auto& [pred_name, dep] : this->dependencies())
+        for (const auto &[pred_name, dep] : this->dependencies())
         {
             auto dep_status = std::make_shared<DependencyStatus>();
             map.insert_or_assign(dep->predecessor_name(), dep_status);
 
             dep_status->dependency = dep;
 
-            if (const auto& pred = dep->predecessor())
+            if (const auto &pred = dep->predecessor())
             {
                 dep_status->status = pred->status();
 
@@ -717,13 +717,13 @@ namespace cc::platform::switchboard
         return map;
     }
 
-    bool Switch::is_in_selection(const SwitchSelection& selection) const noexcept
+    bool Switch::is_in_selection(const SwitchSelection &selection) const noexcept
     {
         if (selection.matches(this->name()))
         {
             return true;
         }
-        for (const SwitchName& alias : this->aliases())
+        for (const SwitchName &alias : this->aliases())
         {
             if (selection.matches(alias))
             {

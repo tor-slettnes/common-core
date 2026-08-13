@@ -35,13 +35,13 @@ namespace cc::platform::sysconfig
         std::string machine_uid;
     };
 
-    core::types::TaggedValueList& operator<<(
-        core::types::TaggedValueList& tvlist,
-        const HostInfo& hi);
+    core::types::TaggedValueList &operator<<(
+        core::types::TaggedValueList &tvlist,
+        const HostInfo &hi);
 
-    std::ostream& operator<<(
-        std::ostream& stream,
-        const HostInfo& hi);
+    std::ostream &operator<<(
+        std::ostream &stream,
+        const HostInfo &hi);
 
     //==========================================================================
     // HostConfig provider
@@ -59,7 +59,7 @@ namespace cc::platform::sysconfig
         // Host identification
 
         virtual HostInfo get_host_info() const = 0;
-        virtual void set_host_name(const std::string& hostname) = 0;
+        virtual void set_host_name(const std::string &hostname) = 0;
         virtual void reboot() = 0;
     };
 

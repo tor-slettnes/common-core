@@ -24,7 +24,7 @@
 #include <memory>
 #include <thread>
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     try
     {
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
         }
 #endif
 
-        for (std::thread& t : server_threads)
+        for (std::thread &t : server_threads)
         {
             t.join();
         }

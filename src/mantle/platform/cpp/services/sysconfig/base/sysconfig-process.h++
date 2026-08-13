@@ -27,8 +27,8 @@ namespace cc::platform::sysconfig
         PortableExitStatus(bool success,
                            int exit_code,
                            int exit_signal,
-                           const std::string& symbol,
-                           const std::string& text);
+                           const std::string &symbol,
+                           const std::string &text);
 
         int exit_code() const override;
         int exit_signal() const override;
@@ -60,16 +60,16 @@ namespace cc::platform::sysconfig
         // Spawn a new process, with or without capturing stdin/stdout/stderr.
 
         virtual InvocationResult invoke_sync(
-            const Invocation& invocation,
-            const std::string& input) = 0;
+            const Invocation &invocation,
+            const std::string &input) = 0;
 
         virtual PID invoke_async(
-            const Invocation& invocation,
-            const std::string& input) = 0;
+            const Invocation &invocation,
+            const std::string &input) = 0;
 
         virtual InvocationResult invoke_finish(
             PID pid,
-            const std::string& input) = 0;
+            const std::string &input) = 0;
     };
 
     //==========================================================================

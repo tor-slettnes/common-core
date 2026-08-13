@@ -38,7 +38,7 @@ namespace cc::platform::pubsub
     }
 
     std::optional<ReplayPolicy> RelayControl::get_replay_policy(
-        const Topic& topic) const
+        const Topic &topic) const
     {
         return this->policy_map.get_opt(topic);
     }
@@ -49,14 +49,14 @@ namespace cc::platform::pubsub
     }
 
     void RelayControl::assign_replay_policy(
-        const std::string& topic,
-        const ReplayPolicy& policy)
+        const std::string &topic,
+        const ReplayPolicy &policy)
     {
         this->policy_map.insert_or_assign(topic, policy);
     }
 
     void RelayControl::unassign_replay_policy(
-        const std::string& topic)
+        const std::string &topic)
     {
         this->policy_map.erase(topic);
     }
@@ -65,7 +65,7 @@ namespace cc::platform::pubsub
     {
         std::scoped_lock lck(this->replay_map_mtx);
         Snapshot snapshot;
-        for (const auto& [topic, replay_map] : this->replay_maps)
+        for (const auto &[topic, replay_map] : this->replay_maps)
         {
             snapshot.insert_or_assign(topic, replay_map.values());
         }
@@ -73,10 +73,10 @@ namespace cc::platform::pubsub
     }
 
     std::optional<Payloads> RelayControl::replay_topic(
-        const Topic& topic)
+        const Topic &topic)
     {
         std::scoped_lock lck(this->replay_map_mtx);
-        if (auto* replay_map = this->replay_maps.get_ptr(topic))
+        if (auto *replay_map = this->replay_maps.get_ptr(topic))
         {
             return replay_map->values();
         }
@@ -87,16 +87,16 @@ namespace cc::platform::pubsub
     }
 
     std::optional<RelayControl::MappingKey> RelayControl::mapping_key(
-        const std::string& topic,
-        const core::types::Value& payload)
+        const std::string &topic,
+        const core::types::Value &payload)
     {
-        if (auto* policy = this->policy_map.get_ptr(topic))
+        if (auto *policy = this->policy_map.get_ptr(topic))
         {
             if (policy->replay_latest)
             {
                 MappingKey mapping_key;
                 mapping_key.reserve(policy->key_paths.size());
-                for (const std::vector<std::string>& key_path : policy->key_paths)
+                for (const std::vector<std::string> &key_path : policy->key_paths)
                 {
                     mapping_key.push_back(payload.get_nested(key_path).as_string());
                 }
@@ -106,8 +106,8 @@ namespace cc::platform::pubsub
         return {};
     }
 
-    void RelayControl::on_message(const std::string& topic,
-                                  const core::types::Value& payload)
+    void RelayControl::on_message(const std::string &topic,
+                                  const core::types::Value &payload)
     {
         if (auto mapping_key = this->mapping_key(topic, payload))
         {

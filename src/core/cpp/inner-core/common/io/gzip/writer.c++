@@ -15,7 +15,7 @@ namespace cc::core::io
     //--------------------------------------------------------------------------
     // GZipOutputBuffer
 
-    GZipOutputBuffer::GZipOutputBuffer(const fs::path& file_path,
+    GZipOutputBuffer::GZipOutputBuffer(const fs::path &file_path,
                                        uint compression_level)
         : GZipBuffer(file_path, str::format("wb%d", compression_level).c_str())
     {
@@ -26,7 +26,7 @@ namespace cc::core::io
         checkstatus(::gzclose_w(this->gzfile));
     }
 
-    bool GZipOutputBuffer::write_some(const BufferType& buffer)
+    bool GZipOutputBuffer::write_some(const BufferType &buffer)
     {
         if (buffer.size())
         {
@@ -54,7 +54,7 @@ namespace cc::core::io
     //--------------------------------------------------------------------------
     // GZipOutputStream
 
-    GZipOutputStream::GZipOutputStream(const fs::path& file_path)
+    GZipOutputStream::GZipOutputStream(const fs::path &file_path)
         : output_buffer(file_path)
     {
         this->rdbuf(&this->output_buffer);

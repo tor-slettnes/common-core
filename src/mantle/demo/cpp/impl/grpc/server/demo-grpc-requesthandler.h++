@@ -27,38 +27,38 @@ namespace cc::demo::grpc
         using Super = cc::grpc::SignalRequestHandler<cc::demo::grpc::Demo>;
 
     protected:
-        RequestHandler(const std::shared_ptr<API>& api_provider);
+        RequestHandler(const std::shared_ptr<API> &api_provider);
 
     public:
         ::grpc::Status ServiceCheck(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
             ServiceCheckResponse *response) override;
 
         ::grpc::Status SayHello(
-            ::grpc::ServerContext* context,
-            const demo::protobuf::Greeting* request,
-            ::google::protobuf::Empty* response) override;
+            ::grpc::ServerContext *context,
+            const demo::protobuf::Greeting *request,
+            ::google::protobuf::Empty *response) override;
 
         ::grpc::Status GetCurrentTime(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            demo::protobuf::TimeData* response) override;
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
+            demo::protobuf::TimeData *response) override;
 
         ::grpc::Status StartTicking(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            ::google::protobuf::Empty* response) override;
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
+            ::google::protobuf::Empty *response) override;
 
         ::grpc::Status StopTicking(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            ::google::protobuf::Empty* response) override;
+            ::grpc::ServerContext *context,
+            const ::google::protobuf::Empty *request,
+            ::google::protobuf::Empty *response) override;
 
         ::grpc::Status Watch(
-            ::grpc::ServerContext* context,
-            const cc::protobuf::signal::Filter* request,
-            ::grpc::ServerWriter<cc::demo::protobuf::Signal>* writer) override;
+            ::grpc::ServerContext *context,
+            const cc::protobuf::signal::Filter *request,
+            ::grpc::ServerWriter<cc::demo::protobuf::Signal> *writer) override;
 
     private:
         std::shared_ptr<API> provider;

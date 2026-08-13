@@ -19,20 +19,20 @@ namespace cc::core::status
         {Domain::SERVICE, "SERVICE"},
     };
 
-    std::ostream& operator<<(std::ostream& stream, Domain domain)
+    std::ostream &operator<<(std::ostream &stream, Domain domain)
     {
         try
         {
             stream << domain_names.at(domain);
         }
-        catch (const std::out_of_range&)
+        catch (const std::out_of_range &)
         {
             stream << "UNKNOWN_" << static_cast<uint>(domain);
         }
         return stream;
     }
 
-    std::istream& operator>>(std::istream& stream, Domain& domain)
+    std::istream &operator>>(std::istream &stream, Domain &domain)
     {
         return domain_names.from_stream(stream, &domain, Domain::NONE, false);
     }

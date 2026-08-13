@@ -11,7 +11,7 @@
 
 namespace cc::dds
 {
-    Subscriber::Subscriber(const std::string& channel_name, int domain_id)
+    Subscriber::Subscriber(const std::string &channel_name, int domain_id)
         : Super("subscriber", channel_name, domain_id),
           ::dds::sub::Subscriber(this->get_participant()),
           keep_listening(false)

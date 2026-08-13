@@ -15,8 +15,8 @@ namespace cc::kafka
     const auto SETTING_SHUTDOWN_TIMEOUT = "shutdown timeout";
     const auto DEFAULT_SHUTDOWN_TIMEOUT = 2.0;
 
-    Consumer::Consumer(const std::string& profile_name,
-                       const core::types::KeyValueMap& settings)
+    Consumer::Consumer(const std::string &profile_name,
+                       const core::types::KeyValueMap &settings)
         : Super("Consumer", profile_name, settings),
           consumer_handle_(nullptr),
           shutdown_timeout_(
@@ -47,7 +47,7 @@ namespace cc::kafka
     void Consumer::init_handle()
     {
         std::string error_string;
-        if (RdKafka::KafkaConsumer* consumer = RdKafka::KafkaConsumer::create(
+        if (RdKafka::KafkaConsumer *consumer = RdKafka::KafkaConsumer::create(
                 this->conf(),
                 error_string))
         {
@@ -60,7 +60,7 @@ namespace cc::kafka
         }
     }
 
-    RdKafka::KafkaConsumer* Consumer::handle()
+    RdKafka::KafkaConsumer *Consumer::handle()
     {
         if (!this->consumer_handle_)
         {
@@ -71,7 +71,7 @@ namespace cc::kafka
     }
 
     void Consumer::subscribe(
-        const std::vector<std::string>& topics)
+        const std::vector<std::string> &topics)
     {
         RdKafka::ErrorCode error_code = this->handle()->subscribe(topics);
 
@@ -115,7 +115,7 @@ namespace cc::kafka
     {
         while (this->keep_consuming_)
         {
-            if (RdKafka::Message* message = this->handle()->consume(1000))
+            if (RdKafka::Message *message = this->handle()->consume(1000))
             {
                 switch (message->err())
                 {
@@ -141,7 +141,7 @@ namespace cc::kafka
         }
     }
 
-    void Consumer::handle_message(RdKafka::Message* message)
+    void Consumer::handle_message(RdKafka::Message *message)
     {
         this->handle_message(
             core::dt::ms_to_timepoint(message->timestamp().timestamp),
@@ -154,11 +154,11 @@ namespace cc::kafka
     }
 
     void Consumer::handle_message(
-        const core::dt::TimePoint& tp,
-        const std::string& topic,
-        const std::string& key,
-        const core::types::KeyValueMap& header,
-        const core::types::ByteVector& payload)
+        const core::dt::TimePoint &tp,
+        const std::string &topic,
+        const std::string &key,
+        const core::types::KeyValueMap &header,
+        const core::types::ByteVector &payload)
     {
         logf_info("Received Kafka message, topic=%r, key=%r, header=%s: %s",
                   tp,
@@ -168,23 +168,23 @@ namespace cc::kafka
                   payload.to_hex());
     }
 
-    void Consumer::set_consumer_key(const std::optional<std::string>& key)
+    void Consumer::set_consumer_key(const std::optional<std::string> &key)
     {
         this->consumer_key_ = key;
     }
 
-    const std::optional<std::string>& Consumer::consumer_key() const
+    const std::optional<std::string> &Consumer::consumer_key() const
     {
         return this->consumer_key_;
     }
 
     core::types::KeyValueMap Consumer::extract_headers(
-        const RdKafka::Headers* headers) const
+        const RdKafka::Headers *headers) const
     {
         core::types::KeyValueMap kvmap;
         if (headers)
         {
-            for (const RdKafka::Headers::Header& header : headers->get_all())
+            for (const RdKafka::Headers::Header &header : headers->get_all())
             {
                 kvmap.insert_or_assign(
                     header.key(),

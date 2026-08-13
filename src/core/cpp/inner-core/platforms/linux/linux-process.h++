@@ -17,7 +17,7 @@ namespace cc::core::platform
         using Super = PosixProcessProvider;
 
     protected:
-        LinuxProcessProvider(const std::string& name = "LinuxProcessProvider");
+        LinuxProcessProvider(const std::string &name = "LinuxProcessProvider");
 
     public:
         std::string get_process_name_by_pid(PID pid) const override;

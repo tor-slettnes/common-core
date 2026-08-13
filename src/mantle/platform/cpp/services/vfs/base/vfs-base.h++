@@ -26,38 +26,38 @@ namespace cc::platform::vfs
 
     public:
         ContextProxy context_proxy(
-            const std::string& name,
+            const std::string &name,
             bool modify) const;
 
         ContextProxy context_proxy(
-            const Context::ptr& context,
+            const Context::ptr &context,
             bool modify) const;
 
         Location location(
-            const Path& path,
+            const Path &path,
             bool modify) const;
 
         Location location(
-            const ContextName& context,
-            const fs::path& relpath,
+            const ContextName &context,
+            const fs::path &relpath,
             bool modify) const;
 
         Location location(
-            const Context::ptr& context,
-            const fs::path& relpath,
+            const Context::ptr &context,
+            const fs::path &relpath,
             bool modify) const;
 
         LocationList locations(
-            const Paths& vpaths,
+            const Paths &vpaths,
             bool modify) const;
 
     public:
         std::optional<std::string> read_chunk(
-            std::istream& stream);
+            std::istream &stream);
 
         std::streamsize write_chunk(
-            std::ostream& stream,
-            const std::string& chunk);
+            std::ostream &stream,
+            const std::string &chunk);
 
     public:
         virtual ContextMap get_contexts(
@@ -65,71 +65,71 @@ namespace cc::platform::vfs
             bool open_only = false) const = 0;
 
         virtual Context::ptr get_context(
-            const std::string& name,
+            const std::string &name,
             bool required = true) const = 0;
 
         virtual Context::ptr open_context(
-            const std::string& name,
+            const std::string &name,
             bool required = true) = 0;
 
         virtual void close_context(
-            const std::string& name,
+            const std::string &name,
             bool required = false) = 0;
 
         virtual void close_context(
-            const Context::ptr& cxt) = 0;
+            const Context::ptr &cxt) = 0;
 
         virtual VolumeInfo get_volume_info(
-            const Path& vpath,
-            const OperationFlags& flags) const = 0;
+            const Path &vpath,
+            const OperationFlags &flags) const = 0;
 
         virtual FileInfo get_file_info(
-            const Path& vpath,
-            const OperationFlags& flags) const = 0;
+            const Path &vpath,
+            const OperationFlags &flags) const = 0;
 
         virtual Directory get_directory(
-            const Path& vpath,
-            const OperationFlags& flags) const = 0;
+            const Path &vpath,
+            const OperationFlags &flags) const = 0;
 
         virtual Directory locate(
-            const Path& vpath,
-            const core::types::PathList& filename_masks,
-            const core::types::TaggedValueList& attribute_filters,
-            const OperationFlags& flags) const = 0;
+            const Path &vpath,
+            const core::types::PathList &filename_masks,
+            const core::types::TaggedValueList &attribute_filters,
+            const OperationFlags &flags) const = 0;
 
         virtual void copy(
-            const Paths& sources,
-            const Path& target,
-            const OperationFlags& flags) const = 0;
+            const Paths &sources,
+            const Path &target,
+            const OperationFlags &flags) const = 0;
 
         virtual void move(
-            const Paths& sources,
-            const Path& target,
-            const OperationFlags& flags) const = 0;
+            const Paths &sources,
+            const Path &target,
+            const OperationFlags &flags) const = 0;
 
         virtual void remove(
-            const Paths& vpaths,
-            const OperationFlags& flags) const = 0;
+            const Paths &vpaths,
+            const OperationFlags &flags) const = 0;
 
         virtual void create_folder(
-            const Path& vpath,
-            const OperationFlags& flags) const = 0;
+            const Path &vpath,
+            const OperationFlags &flags) const = 0;
 
         virtual UniqueReader read_file(
-            const Path& vpath) const = 0;
+            const Path &vpath) const = 0;
 
         virtual UniqueWriter write_file(
-            const Path& vpath) const = 0;
+            const Path &vpath) const = 0;
 
         virtual core::types::KeyValueMap get_attributes(
-            const Path& vpath) const = 0;
+            const Path &vpath) const = 0;
 
         virtual void set_attributes(
-            const Path& vpath,
-            const core::types::KeyValueMap& attributes) const = 0;
+            const Path &vpath,
+            const core::types::KeyValueMap &attributes) const = 0;
 
         virtual void clear_attributes(
-            const Path& vpath) const = 0;
+            const Path &vpath) const = 0;
     };
 
     //==========================================================================

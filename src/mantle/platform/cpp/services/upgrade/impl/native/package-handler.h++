@@ -22,37 +22,37 @@ namespace cc::platform::upgrade::native
         using ptr = std::shared_ptr<This>;
 
     protected:
-        PackageHandler(const core::SettingsStore::ptr& settings);
+        PackageHandler(const core::SettingsStore::ptr &settings);
 
     public:
-        virtual NativePackageInfo::ptr install(const PackageSource& source);
-        virtual void finalize(const NativePackageInfo::ptr& package_info);
+        virtual NativePackageInfo::ptr install(const PackageSource &source);
+        virtual void finalize(const NativePackageInfo::ptr &package_info);
 
     protected:
         virtual void unpack(
-            const PackageSource& source,
-            const fs::path& staging_folder) = 0;
+            const PackageSource &source,
+            const fs::path &staging_folder) = 0;
 
     protected:
         NativePackageInfo::ptr install_unpacked(
-            const PackageSource& source,
-            const fs::path& staging_folder);
+            const PackageSource &source,
+            const fs::path &staging_folder);
 
         fs::path create_staging_folder() const;
         fs::path package_info_file() const;
 
         void unpack_from_fd(
             core::platform::FileDescriptor fd,
-            const fs::path& staging_folder) const;
+            const fs::path &staging_folder) const;
 
     private:
         void check_gpg_verify_result(
-            const core::platform::Invocation& invocation,
-            const core::platform::InvocationResult& result) const;
+            const core::platform::Invocation &invocation,
+            const core::platform::InvocationResult &result) const;
 
         void check_tar_unpack_result(
-            const core::platform::Invocation& invocation,
-            const core::platform::InvocationResult& result) const;
+            const core::platform::Invocation &invocation,
+            const core::platform::InvocationResult &result) const;
 
         void capture_install_progress(
             core::platform::FileDescriptor fd,
@@ -64,10 +64,10 @@ namespace cc::platform::upgrade::native
 
     protected:
         void emit_upgrade_progress(
-            const std::optional<UpgradeProgress::State>& state = {},
-            const std::optional<std::string>& task_description = {},
-            const std::optional<UpgradeProgress::Fraction>& task_progress = {},
-            const std::optional<UpgradeProgress::Fraction>& total_progress = {},
+            const std::optional<UpgradeProgress::State> &state = {},
+            const std::optional<std::string> &task_description = {},
+            const std::optional<UpgradeProgress::Fraction> &task_progress = {},
+            const std::optional<UpgradeProgress::Fraction> &total_progress = {},
             const std::optional<core::status::Error::ptr> error = {}) const;
 
     protected:

@@ -46,14 +46,14 @@ namespace cc::platform::sysconfig::native
         return pi;
     }
 
-    void ProductProvider::set_serial_number(const std::string& serial)
+    void ProductProvider::set_serial_number(const std::string &serial)
     {
         this->product_settings->insert_or_assign(PRODUCT_SETTING_SERIAL, serial);
         this->product_settings->save();
         this->emit();
     }
 
-    void ProductProvider::set_model_name(const std::string& model)
+    void ProductProvider::set_model_name(const std::string &model)
     {
         this->product_settings->insert_or_assign(PRODUCT_SETTING_MODEL, model);
         this->product_settings->save();

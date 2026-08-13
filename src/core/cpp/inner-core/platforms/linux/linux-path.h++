@@ -16,7 +16,7 @@ namespace cc::core::platform
         using Super = PosixPathProvider;
 
     protected:
-        LinuxPathProvider(const std::string& exec_name);
+        LinuxPathProvider(const std::string &exec_name);
 
     public:
         fs::path exec_path() const noexcept override;

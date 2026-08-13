@@ -19,7 +19,7 @@ namespace cc::core::json
     {
     }
 
-    types::Value RapidReader::decoded(const std::string_view& text) const
+    types::Value RapidReader::decoded(const std::string_view &text) const
     {
         ::rapidjson::Document doc;
         doc.Parse(text.data(), text.size());
@@ -32,14 +32,14 @@ namespace cc::core::json
         return This::decode_value(doc);
     }
 
-    types::Value RapidReader::read_file(const fs::path& path) const
+    types::Value RapidReader::read_file(const fs::path &path) const
     {
         return this->decoded(This::read_text_from_file(path));
     }
 
-    types::Value RapidReader::read_stream(std::istream& stream) const
+    types::Value RapidReader::read_stream(std::istream &stream) const
     {
-        if (auto* ss = dynamic_cast<std::stringstream*>(&stream))
+        if (auto *ss = dynamic_cast<std::stringstream *>(&stream))
         {
             return this->decoded(ss->str());
         }
@@ -54,7 +54,7 @@ namespace cc::core::json
         }
     }
 
-    std::string RapidReader::read_text_from_file(const fs::path& path)
+    std::string RapidReader::read_text_from_file(const fs::path &path)
     {
         std::size_t size = fs::file_size(path);
 
@@ -99,7 +99,7 @@ namespace cc::core::json
     //     return str::join(parts, "");
     // }
 
-    types::Value RapidReader::decode_value(const ::rapidjson::Value& jv)
+    types::Value RapidReader::decode_value(const ::rapidjson::Value &jv)
     {
         switch (jv.GetType())
         {
@@ -149,7 +149,7 @@ namespace cc::core::json
         }
     }
 
-    types::ValueListPtr RapidReader::decode_array(const ::rapidjson::Value& jarray)
+    types::ValueListPtr RapidReader::decode_array(const ::rapidjson::Value &jarray)
     {
         auto list = types::ValueList::create_shared();
         list->reserve(jarray.Size());
@@ -160,10 +160,10 @@ namespace cc::core::json
         return list;
     }
 
-    types::KeyValueMapPtr RapidReader::decode_object(const ::rapidjson::Value& jobject)
+    types::KeyValueMapPtr RapidReader::decode_object(const ::rapidjson::Value &jobject)
     {
         auto kvmap = types::KeyValueMap::create_shared();
-        for (auto&& item : jobject.GetObject())
+        for (auto &&item : jobject.GetObject())
         {
             kvmap->insert_or_assign(item.name.GetString(),
                                     This::decode_value(item.value));

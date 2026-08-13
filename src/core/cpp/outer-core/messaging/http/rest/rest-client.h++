@@ -29,10 +29,10 @@ namespace cc::http
         /// @param[in] content_type
         ///     MIME content type that we expect to receive back from the server.
 
-        RESTClient(const std::string& base_url,
-                   const std::string& service_name,
-                   const std::string& messaging_flavor = "REST",
-                   const std::string& content_type = "application/json");
+        RESTClient(const std::string &base_url,
+                   const std::string &service_name,
+                   const std::string &messaging_flavor = "REST",
+                   const std::string &content_type = "application/json");
 
         /// @brief
         ///     Try multiple times to send a HTTP GET query until successful, then decode the JSON response
@@ -58,12 +58,12 @@ namespace cc::http
         ///     HTTP status code.  The latter is supressed if
         ///    `fail_on_error` is `false`.
 
-        core::types::Value get_json(const std::string& path,
-                                    const core::types::TaggedValueList& query,
+        core::types::Value get_json(const std::string &path,
+                                    const core::types::TaggedValueList &query,
                                     bool fail_on_error,
                                     uint max_attempts,
-                                    const core::dt::Duration& retry_interval = 5s,
-                                    ResponseCode* response_code = nullptr) const;
+                                    const core::dt::Duration &retry_interval = 5s,
+                                    ResponseCode *response_code = nullptr) const;
 
         /// @brief
         ///     Send a HTTP GET query and decode the JSON response
@@ -85,10 +85,10 @@ namespace cc::http
         ///     HTTP status code.  The latter is supressed if
         ///    `fail_on_error` is `false`.
 
-        core::types::Value get_json(const std::string& path,
-                                    const core::types::TaggedValueList& query = {},
+        core::types::Value get_json(const std::string &path,
+                                    const core::types::TaggedValueList &query = {},
                                     bool fail_on_error = true,
-                                    ResponseCode* response_code = nullptr) const;
+                                    ResponseCode *response_code = nullptr) const;
 
         /// @brief
         ///     Send a HTTP PUT request with JSON payload and decode the JSON response
@@ -112,11 +112,11 @@ namespace cc::http
         ///     HTTP status code.  The latter is supressed if
         ///    `fail_on_error` is `false`.
 
-        core::types::Value put_json(const std::string& path,
-                                    const core::types::TaggedValueList& query,
-                                    const core::types::KeyValueMap& data,
+        core::types::Value put_json(const std::string &path,
+                                    const core::types::TaggedValueList &query,
+                                    const core::types::KeyValueMap &data,
                                     bool fail_on_error = true,
-                                    ResponseCode* response_code = nullptr) const;
+                                    ResponseCode *response_code = nullptr) const;
 
         /// @brief
         ///     Send a HTTP PUT request with JSON payload and decode the JSON response
@@ -138,25 +138,25 @@ namespace cc::http
         ///     HTTP status code.  The latter is supressed if
         ///    `fail_on_error` is `false`.
 
-        core::types::Value put_json(const std::string& path,
-                                    const core::types::KeyValueMap& data,
+        core::types::Value put_json(const std::string &path,
+                                    const core::types::KeyValueMap &data,
                                     bool fail_on_error = true,
-                                    ResponseCode* response_code = nullptr) const;
+                                    ResponseCode *response_code = nullptr) const;
 
-        core::types::Value post_json(const std::string& path,
-                                     const std::string& json,
+        core::types::Value post_json(const std::string &path,
+                                     const std::string &json,
                                      bool fail_on_error = true,
-                                     ResponseCode* response_code = nullptr) const;
+                                     ResponseCode *response_code = nullptr) const;
 
-        core::types::Value post_json(const std::string& path,
-                                     const core::types::Value& data,
+        core::types::Value post_json(const std::string &path,
+                                     const core::types::Value &data,
                                      bool fail_on_error = true,
-                                     ResponseCode* response_code = nullptr) const;
+                                     ResponseCode *response_code = nullptr) const;
 
-        core::types::Value del_json(const std::string& path,
-                                    const core::types::TaggedValueList& query = {},
+        core::types::Value del_json(const std::string &path,
+                                    const core::types::TaggedValueList &query = {},
                                     bool fail_on_error = true,
-                                    ResponseCode* response_code = nullptr) const;
+                                    ResponseCode *response_code = nullptr) const;
 
     private:
         const std::string content_type;

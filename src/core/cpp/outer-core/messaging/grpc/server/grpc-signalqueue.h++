@@ -57,15 +57,15 @@ namespace cc::grpc
         using SignalFilter = cc::protobuf::signal::Filter;
 
         template <class T>
-        using Encoder = std::function<void(T, ProtoT*)>;
+        using Encoder = std::function<void(T, ProtoT *)>;
 
         template <class T, class K = std::string>
         using MappingEncoder = std::function<
-            void(core::signal::MappingAction, K, T, ProtoT*)>;
+            void(core::signal::MappingAction, K, T, ProtoT *)>;
 
     public:
-        SignalQueue(const std::string& id,
-                    const SignalFilter& filter,
+        SignalQueue(const std::string &id,
+                    const SignalFilter &filter,
                     uint maxsize = 0)
             : cc::protobuf::SignalForwarder<ProtoT>(),
               core::types::BlockingQueue<ProtoT>(maxsize),
@@ -93,13 +93,13 @@ namespace cc::grpc
 
         template <class SignalT>
         void connect(uint signal_index,
-                     core::signal::DataSignal<SignalT>& signal,
-                     const Encoder<SignalT>& encoder)
+                     core::signal::DataSignal<SignalT> &signal,
+                     const Encoder<SignalT> &encoder)
         {
             if (this->is_included(signal_index))
             {
                 signal.connect(this->id,                  // handle
-                               [=](const SignalT& value)  // slot
+                               [=](const SignalT &value)  // slot
                                {
                                    ProtoT msg;
                                    encoder(value, &msg);
@@ -120,14 +120,14 @@ namespace cc::grpc
 
         template <class SignalT>
         void connect(uint signal_index,
-                     core::signal::SharedDataSignal<SignalT>& signal,
-                     const Encoder<SignalT>& encoder)
+                     core::signal::SharedDataSignal<SignalT> &signal,
+                     const Encoder<SignalT> &encoder)
         {
             if (this->is_included(signal_index))
             {
                 signal.connect(
                     this->id,                                   // handle
-                    [=](const std::shared_ptr<SignalT>& value)  // slot
+                    [=](const std::shared_ptr<SignalT> &value)  // slot
                     {
                         ProtoT msg;
                         if (value)
@@ -153,16 +153,16 @@ namespace cc::grpc
 
         template <class SignalT>
         void connect(uint signal_index,
-                     core::signal::MappingSignal<SignalT>& signal,
-                     const MappingEncoder<SignalT>& encoder)
+                     core::signal::MappingSignal<SignalT> &signal,
+                     const MappingEncoder<SignalT> &encoder)
         {
             if (this->is_included(signal_index))
             {
                 signal.connect(
                     this->id,                                // handle
                     [=](core::signal::MappingAction action,  // |
-                        const std::string& key,              // | slot
-                        const SignalT& value)                // |
+                        const std::string &key,              // | slot
+                        const SignalT &value)                // |
                     {
                         ProtoT msg;
                         encoder(action, key, value, &msg);
@@ -185,16 +185,16 @@ namespace cc::grpc
 
         template <class SignalT>
         void connect(uint signal_index,
-                     core::signal::MappingSignal<SignalT>& signal,
-                     const Encoder<SignalT>& encoder)
+                     core::signal::MappingSignal<SignalT> &signal,
+                     const Encoder<SignalT> &encoder)
         {
             if (this->is_included(signal_index))
             {
                 signal.connect(
                     this->id,                                // handle
                     [=](core::signal::MappingAction action,  // |
-                        const std::string& key,              // | slot
-                        const SignalT& value)                // |
+                        const std::string &key,              // | slot
+                        const SignalT &value)                // |
                     {
                         ProtoT msg = this->create_signal_message(action, key);
                         encoder(value, &msg);
@@ -210,7 +210,7 @@ namespace cc::grpc
         ///    Signal from which to disconnect
 
         template <class SignalT>
-        void disconnect(SignalT& signal)
+        void disconnect(SignalT &signal)
         {
             signal.disconnect(this->id);
         }
@@ -220,7 +220,7 @@ namespace cc::grpc
         /// @param[in] message
         ////    ProtoBuf `Signal()` message
 
-        void forward(ProtoT&& message) override
+        void forward(ProtoT &&message) override
         {
             this->put(std::move(message));
         }

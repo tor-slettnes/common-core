@@ -23,11 +23,11 @@ namespace cc::platform::vfs
     public:
         ContextProxy();
         ContextProxy(Context::ptr context, bool modify);
-        ContextProxy(const ContextProxy& other);
+        ContextProxy(const ContextProxy &other);
         ~ContextProxy();
 
         operator bool() const noexcept;
-        Context* operator->() const;
+        Context *operator->() const;
 
     private:
         void add_ref();
@@ -36,11 +36,11 @@ namespace cc::platform::vfs
         void check_modify_access() const;
 
     protected:
-        void to_stream(std::ostream& stream) const override;
+        void to_stream(std::ostream &stream) const override;
 
     public:
-        virtual fs::path localPath(const fs::path& relpath = {}) const;
-        virtual Path virtualPath(const fs::path& relpath = {}) const;
+        virtual fs::path localPath(const fs::path &relpath = {}) const;
+        virtual Path virtualPath(const fs::path &relpath = {}) const;
         fs::path localRoot() const;
 
     public:
@@ -61,22 +61,22 @@ namespace cc::platform::vfs
         Location();
 
         Location(Context::ptr context,
-                 const fs::path& relpath,
+                 const fs::path &relpath,
                  bool modify);
 
         Location(Context::ptr context,
                  bool modify);
 
-        Location(const Location& other);
+        Location(const Location &other);
 
         virtual fs::path localPath() const;
-        fs::path localPath(const fs::path& relpath) const override;
+        fs::path localPath(const fs::path &relpath) const override;
 
         virtual Path virtualPath() const;
-        Path virtualPath(const fs::path& relpath) const override;
+        Path virtualPath(const fs::path &relpath) const override;
 
     protected:
-        void to_stream(std::ostream& stream) const override;
+        void to_stream(std::ostream &stream) const override;
 
     public:
         // virtual VolumeInfo get_volume_info(

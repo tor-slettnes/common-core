@@ -18,9 +18,9 @@ namespace cc::core::yaml
     public:
         YamlReader();
 
-        types::Value decoded(const std::string_view& text) const override;
-        types::Value read_file(const fs::path& path) const override;
-        types::Value read_stream(std::istream& stream) const override;
+        types::Value decoded(const std::string_view &text) const override;
+        types::Value read_file(const fs::path &path) const override;
+        types::Value read_stream(std::istream &stream) const override;
         using Super::read_stream;
     };
 }  // namespace cc::core::yaml

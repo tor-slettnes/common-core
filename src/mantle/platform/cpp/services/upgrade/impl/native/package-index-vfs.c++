@@ -13,14 +13,14 @@
 namespace cc::platform::upgrade::native
 {
     VFSPackageIndex::VFSPackageIndex(
-        const core::SettingsStore::ptr& settings,
-        const vfs::Path& vfs_path)
+        const core::SettingsStore::ptr &settings,
+        const vfs::Path &vfs_path)
         : VFSPackageHandler(settings),
           vfs_path(vfs_path)
     {
     }
 
-    PackageSource VFSPackageIndex::package_source(const std::string& package_name) const
+    PackageSource VFSPackageIndex::package_source(const std::string &package_name) const
     {
         return {this->vfs_path / package_name};
     }
@@ -34,7 +34,7 @@ namespace cc::platform::upgrade::native
 
         PackageCatalogue packages;
 
-        for (const auto& pi : fs::directory_iterator(loc.localPath()))
+        for (const auto &pi : fs::directory_iterator(loc.localPath()))
         {
             fs::path filepath = pi.path();
             if (filepath.extension() == required_extension)
@@ -51,8 +51,8 @@ namespace cc::platform::upgrade::native
     }
 
     PackageInfo::ptr VFSPackageIndex::scan_file(
-        const vfs::Location& location,
-        const fs::path& package_file)
+        const vfs::Location &location,
+        const fs::path &package_file)
     {
         fs::path staging_folder = this->create_staging_folder();
         PackageInfo::ptr package_info;

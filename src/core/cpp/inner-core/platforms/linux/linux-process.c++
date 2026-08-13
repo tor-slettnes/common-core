@@ -11,7 +11,7 @@
 
 namespace cc::core::platform
 {
-    LinuxProcessProvider::LinuxProcessProvider(const std::string& name)
+    LinuxProcessProvider::LinuxProcessProvider(const std::string &name)
         : PosixProcessProvider(name)
     {
     }

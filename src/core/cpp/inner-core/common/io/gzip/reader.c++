@@ -13,7 +13,7 @@ namespace cc::core::io
     //--------------------------------------------------------------------------
     // GZipOutputBuffer
 
-    GZipInputBuffer::GZipInputBuffer(const fs::path& file_path,
+    GZipInputBuffer::GZipInputBuffer(const fs::path &file_path,
                                      std::size_t buffer_size)
         : GZipBuffer(file_path, "rb"),
           buffer_size(buffer_size)
@@ -25,7 +25,7 @@ namespace cc::core::io
         checkstatus(::gzclose_r(this->gzfile));
     }
 
-    bool GZipInputBuffer::read_some(BufferType* buffer)
+    bool GZipInputBuffer::read_some(BufferType *buffer)
     {
         buffer->resize(this->buffer_size);
         int nchars = ::gzread(this->gzfile, buffer, buffer->size());
@@ -44,7 +44,7 @@ namespace cc::core::io
     //--------------------------------------------------------------------------
     // GZipInputStream
 
-    GZipInputStream::GZipInputStream(const fs::path& file_path)
+    GZipInputStream::GZipInputStream(const fs::path &file_path)
         : input_buffer(file_path)
     {
         this->rdbuf(&this->input_buffer);

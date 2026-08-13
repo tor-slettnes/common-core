@@ -13,42 +13,42 @@
 namespace cc::core::types
 {
     Value KeyValueMap::get(
-        const std::string& key,
-        const Value& fallback,
+        const std::string &key,
+        const Value &fallback,
         bool ignoreCase) const noexcept
     {
         return this->try_get(key, ignoreCase).value_or(fallback);
     }
 
     Value KeyValueMap::get_nonempty(
-        const std::string& key,
-        const Value& fallback,
+        const std::string &key,
+        const Value &fallback,
         bool ignoreCase) const noexcept
     {
         return this->try_get_nonempty(key, ignoreCase).value_or(fallback);
     }
 
     Value KeyValueMap::get_any_of(
-        const std::vector<std::string>& candidates,
-        const Value& fallback,
+        const std::vector<std::string> &candidates,
+        const Value &fallback,
         bool ignoreCase) const noexcept
     {
         return this->try_get_any_of(candidates, ignoreCase).value_or(fallback);
     }
 
     Value KeyValueMap::get_nested(
-        const std::vector<std::string>& path,
-        const Value& fallback,
+        const std::vector<std::string> &path,
+        const Value &fallback,
         bool ignoreCase) const noexcept
     {
         return this->try_get_nested(path, ignoreCase).value_or(fallback);
     }
 
     ValueListPtr KeyValueMap::get_valuelist_ptr(
-        const std::string& key,
+        const std::string &key,
         bool ignoreCase) const noexcept
     {
-        if (const auto& value = this->try_get(key, ignoreCase))
+        if (const auto &value = this->try_get(key, ignoreCase))
         {
             return value->get_valuelist_ptr();
         }
@@ -59,10 +59,10 @@ namespace cc::core::types
     }
 
     TaggedValueListPtr KeyValueMap::get_tvlist_ptr(
-        const std::string& key,
+        const std::string &key,
         bool ignoreCase) const noexcept
     {
-        if (const auto& value = this->try_get(key, ignoreCase))
+        if (const auto &value = this->try_get(key, ignoreCase))
         {
             return value->get_tvlist_ptr();
         }
@@ -73,10 +73,10 @@ namespace cc::core::types
     }
 
     KeyValueMapPtr KeyValueMap::get_kvmap_ptr(
-        const std::string& key,
+        const std::string &key,
         bool ignoreCase) const noexcept
     {
-        if (const auto& value = this->try_get(key, ignoreCase))
+        if (const auto &value = this->try_get(key, ignoreCase))
         {
             return value->get_kvmap_ptr();
         }
@@ -87,20 +87,20 @@ namespace cc::core::types
     }
 
     std::optional<Value> KeyValueMap::try_get(
-        const std::string& key,
+        const std::string &key,
         bool ignoreCase) const noexcept
     {
         try
         {
             return this->at(key);
         }
-        catch (const std::out_of_range&)
+        catch (const std::out_of_range &)
         {
             // Then, try a case insensitive search (if selected)
             if (ignoreCase)
             {
                 std::string lowerkey = str::tolower(key);
-                for (const auto& [c_key, c_value] : *this)
+                for (const auto &[c_key, c_value] : *this)
                 {
                     if (str::tolower(c_key) == lowerkey)
                     {
@@ -114,13 +114,13 @@ namespace cc::core::types
     }
 
     std::optional<Value> KeyValueMap::try_get_nested(
-        const std::vector<std::string>& path,
+        const std::vector<std::string> &path,
         bool ignoreCase) const noexcept
     {
         Value value = KeyValueMap::create_shared(*this);
-        for (const std::string& element : path)
+        for (const std::string &element : path)
         {
-            if (const auto& next = value.try_get(element))
+            if (const auto &next = value.try_get(element))
             {
                 value = next.value();
             }
@@ -133,10 +133,10 @@ namespace cc::core::types
     }
 
     std::optional<Value> KeyValueMap::try_get_nonempty(
-        const std::string& key,
+        const std::string &key,
         bool ignoreCase) const noexcept
     {
-        if (const auto& value = this->try_get(key, ignoreCase))
+        if (const auto &value = this->try_get(key, ignoreCase))
         {
             if (value->has_nonempty_value())
             {
@@ -147,12 +147,12 @@ namespace cc::core::types
     }
 
     std::optional<Value> KeyValueMap::try_get_any_of(
-        const std::vector<std::string>& candidates,
+        const std::vector<std::string> &candidates,
         bool ignoreCase) const noexcept
     {
-        for (const std::string& candidate : candidates)
+        for (const std::string &candidate : candidates)
         {
-            if (const auto& value = this->try_get(candidate, ignoreCase))
+            if (const auto &value = this->try_get(candidate, ignoreCase))
             {
                 return value;
             }
@@ -160,8 +160,8 @@ namespace cc::core::types
         return {};
     }
 
-    Value KeyValueMap::extract_value(const std::string& key,
-                                     const Value& fallback) noexcept
+    Value KeyValueMap::extract_value(const std::string &key,
+                                     const Value &fallback) noexcept
     {
         if (auto nh = this->extract(key))
         {
@@ -187,7 +187,7 @@ namespace cc::core::types
     {
         std::vector<std::string> keys;
         keys.reserve(this->size());
-        for (const auto& [k, v] : *this)
+        for (const auto &[k, v] : *this)
         {
             keys.push_back(k);
         }
@@ -203,7 +203,7 @@ namespace cc::core::types
     {
         auto values = std::make_shared<ValueList>();
         values->reserve(this->size());
-        for (const auto& [k, v] : *this)
+        for (const auto &[k, v] : *this)
         {
             values->push_back(v);
         }
@@ -215,7 +215,7 @@ namespace cc::core::types
     {
         KeyValueMap filtered;
 
-        for (const auto& kv : *this)
+        for (const auto &kv : *this)
         {
             if (kv.second.has_nonempty_value())
             {
@@ -228,7 +228,7 @@ namespace cc::core::types
     KeyValueMap KeyValueMap::flattened() const noexcept
     {
         KeyValueMap flattened;
-        for (const auto& [key, value] : *this)
+        for (const auto &[key, value] : *this)
         {
             switch (value.type())
             {
@@ -257,32 +257,32 @@ namespace cc::core::types
     KeyValueMap KeyValueMap::deepcopy() const noexcept
     {
         KeyValueMap copy;
-        for (const auto& [key, value] : *this)
+        for (const auto &[key, value] : *this)
         {
             copy.insert_or_assign(key, value.deepcopy());
         }
         return copy;
     }
 
-    KeyValueMap& KeyValueMap::update(const KeyValueMap& other) noexcept
+    KeyValueMap &KeyValueMap::update(const KeyValueMap &other) noexcept
     {
-        for (const auto& [key, value] : other)
+        for (const auto &[key, value] : other)
         {
             this->insert_or_assign(key, value);
         }
         return *this;
     }
 
-    KeyValueMap& KeyValueMap::update(KeyValueMap&& other) noexcept
+    KeyValueMap &KeyValueMap::update(KeyValueMap &&other) noexcept
     {
         this->swap(other);
         this->merge(other);
         return *this;
     }
 
-    KeyValueMap& KeyValueMap::recursive_merge(const KeyValueMap& other) noexcept
+    KeyValueMap &KeyValueMap::recursive_merge(const KeyValueMap &other) noexcept
     {
-        for (const auto& [key, value] : other)
+        for (const auto &[key, value] : other)
         {
             if (auto this_map = this->get_kvmap_ptr(key))
             {
@@ -296,7 +296,7 @@ namespace cc::core::types
         return *this;
     }
 
-    KeyValueMap& KeyValueMap::recursive_merge(KeyValueMap&& other) noexcept
+    KeyValueMap &KeyValueMap::recursive_merge(KeyValueMap &&other) noexcept
     {
         while (!other.empty())
         {
@@ -316,14 +316,14 @@ namespace cc::core::types
         return *this;
     }
 
-    KeyValueMap& KeyValueMap::recursive_unmerge(const KeyValueMap& basemap) noexcept
+    KeyValueMap &KeyValueMap::recursive_unmerge(const KeyValueMap &basemap) noexcept
     {
         for (auto base_it = basemap.begin(); base_it != basemap.end(); base_it++)
         {
             if (auto this_it = this->find(base_it->first); this_it != this->end())
             {
-                KeyValueMapPtr* this_ptr = std::get_if<KeyValueMapPtr>(&this_it->second);
-                const KeyValueMapPtr* base_ptr = std::get_if<KeyValueMapPtr>(&base_it->second);
+                KeyValueMapPtr *this_ptr = std::get_if<KeyValueMapPtr>(&this_it->second);
+                const KeyValueMapPtr *base_ptr = std::get_if<KeyValueMapPtr>(&base_it->second);
                 if (this_ptr && base_ptr)
                 {
                     (*this_ptr)->recursive_unmerge(**base_ptr);
@@ -337,18 +337,18 @@ namespace cc::core::types
         return *this;
     }
 
-    KeyValueMap KeyValueMap::recursive_delta(const KeyValueMap& basemap) const noexcept
+    KeyValueMap KeyValueMap::recursive_delta(const KeyValueMap &basemap) const noexcept
     {
         KeyValueMap delta;
         for (auto this_it = this->begin(); this_it != this->end(); this_it++)
         {
-            const std::string& key = this_it->first;
+            const std::string &key = this_it->first;
             Value value;
 
             if (auto base_it = basemap.find(key); base_it != basemap.end())
             {
-                const KeyValueMapPtr* this_ptr = std::get_if<KeyValueMapPtr>(&this_it->second);
-                const KeyValueMapPtr* base_ptr = std::get_if<KeyValueMapPtr>(&base_it->second);
+                const KeyValueMapPtr *this_ptr = std::get_if<KeyValueMapPtr>(&this_it->second);
+                const KeyValueMapPtr *base_ptr = std::get_if<KeyValueMapPtr>(&base_it->second);
                 if (this_ptr && base_ptr)
                 {
                     auto submap = KeyValueMap::create_shared((*this_ptr)->recursive_delta(**base_ptr));
@@ -378,15 +378,15 @@ namespace cc::core::types
 
     std::pair<KeyValueMap::iterator, bool> KeyValueMap::insert_if(
         bool condition,
-        const KeyValuePair& kv)
+        const KeyValuePair &kv)
     {
         return this->insert_if(condition, kv.first, kv.second);
     }
 
     std::pair<KeyValueMap::iterator, bool> KeyValueMap::insert_if(
         bool condition,
-        const std::string& key,
-        const Value& value)
+        const std::string &key,
+        const Value &value)
     {
         if (condition)
         {
@@ -399,13 +399,13 @@ namespace cc::core::types
     }
 
     std::pair<KeyValueMap::iterator, bool>
-    KeyValueMap::insert_if_value(const KeyValuePair& kv)
+    KeyValueMap::insert_if_value(const KeyValuePair &kv)
     {
         return this->insert_if_value(kv.first, kv.second);
     }
 
     std::pair<KeyValueMap::iterator, bool>
-    KeyValueMap::insert_if_value(const std::string& key, const Value& value)
+    KeyValueMap::insert_if_value(const std::string &key, const Value &value)
     {
         if (value.has_nonempty_value())
         {
@@ -417,11 +417,11 @@ namespace cc::core::types
         }
     }
 
-    void KeyValueMap::to_stream(std::ostream& stream) const
+    void KeyValueMap::to_stream(std::ostream &stream) const
     {
         bool comma = false;
         stream << "{";
-        for (const auto& [key, value] : *this)
+        for (const auto &[key, value] : *this)
         {
             if (comma)
             {

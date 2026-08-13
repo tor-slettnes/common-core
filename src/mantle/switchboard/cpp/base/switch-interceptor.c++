@@ -24,12 +24,12 @@ namespace cc::platform::switchboard
         {PHASE_LATE, "LATE"},
     };
 
-    std::ostream& operator<<(std::ostream& stream, InterceptorPhase ep)
+    std::ostream &operator<<(std::ostream &stream, InterceptorPhase ep)
     {
         return interceptor_phase_names.to_stream(stream, ep);
     }
 
-    std::istream& operator>>(std::istream& stream, InterceptorPhase& ep)
+    std::istream &operator>>(std::istream &stream, InterceptorPhase &ep)
     {
         return interceptor_phase_names.from_stream(stream, &ep, PHASE_NORMAL);
     }
@@ -37,7 +37,7 @@ namespace cc::platform::switchboard
     //==========================================================================
     // Operators
 
-    bool operator==(const Interceptor& lhs, const Interceptor& rhs)
+    bool operator==(const Interceptor &lhs, const Interceptor &rhs)
     {
         return ((lhs.name() == rhs.name()) &&
                 (lhs.owner() == rhs.owner()) &&
@@ -49,17 +49,17 @@ namespace cc::platform::switchboard
                 (lhs.on_error() == rhs.on_error()));
     }
 
-    bool operator!=(const Interceptor& lhs, const Interceptor& rhs)
+    bool operator!=(const Interceptor &lhs, const Interceptor &rhs)
     {
         return !(lhs == rhs);
     }
 
-    bool operator==(const InterceptorRef& lhs, const InterceptorRef& rhs)
+    bool operator==(const InterceptorRef &lhs, const InterceptorRef &rhs)
     {
         return core::types::equivalent(lhs, rhs);
     }
 
-    bool operator!=(const InterceptorRef& lhs, const InterceptorRef& rhs)
+    bool operator!=(const InterceptorRef &lhs, const InterceptorRef &rhs)
     {
         return !(lhs == rhs);
     }
@@ -67,10 +67,10 @@ namespace cc::platform::switchboard
     //==========================================================================
     // Interceptor
 
-    Interceptor::Interceptor(const std::string& name,
-                             const std::string& owner,
-                             const Invocation& invocation,
-                             const StateSet& state_transitions,
+    Interceptor::Interceptor(const std::string &name,
+                             const std::string &owner,
+                             const Invocation &invocation,
+                             const StateSet &state_transitions,
                              InterceptorPhase phase,
                              bool asynchronous,
                              bool rerun,
@@ -136,7 +136,7 @@ namespace cc::platform::switchboard
         return this->on_error_;
     }
 
-    void Interceptor::to_tvlist(core::types::TaggedValueList* tvlist) const
+    void Interceptor::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
         tvlist->extend({
             {{}, this->name()},
@@ -155,7 +155,7 @@ namespace cc::platform::switchboard
         return this->applicable(state) && (phase == this->phase());
     }
 
-    void Interceptor::set_invocation(const Invocation& invocation)
+    void Interceptor::set_invocation(const Invocation &invocation)
     {
         this->invocation_ = invocation;
     }
