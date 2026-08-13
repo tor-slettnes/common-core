@@ -737,8 +737,9 @@ class SwitchboardBase (SwitchboardObserver):
                         interceptor_name: str,
                         switch_selection: SwitchSelectionInput,
                         state_transitions: StateSet,
-                        callback: InterceptorMethod,
+                        method: InterceptorMethod,
                         phase: InterceptorPhase = InterceptorPhase.NORMAL,
+                        decode: bool = False,
                         asynchronous: bool = False,
                         rerun: bool = False,
                         immediate: bool = False,
@@ -747,13 +748,27 @@ class SwitchboardBase (SwitchboardObserver):
                         on_error: ExceptionHandling = ExceptionHandling.FAIL,
                         ) -> bool:
         '''
-        Add a new interceptor to be executed once the switch enters the
-        specified state(s).
+        Add a new interceptor method to be executed once the switch enters
+        the specified state(s).  This will typically comprise one or more
+        _transitional_ states: `ACTIVATING`, `DEACTIVATING`, and/or `FAILING`.
+        Only after all interceptors for a given state transition have completed
+        can the switch proceed to its next state, typically a corresponding
+        _stable_ state: `ACTIVE`, `INACTIVE`, or `FAILED`.
+
+        Upon invocation, the method receives as its sole input an
+        `cc.platform.switchboard.protobuf.InterceptorInvocation` object, the
+        prototype of which is defined in `switchboard_types.proto`.
+        Alternatively, if `decode` is set to `True`, the method will instead
+        receive an instance of an equivalent, dynamically created Python
+        dataclass by the same name.  The main difference is that in the latter
+        case, nested value types have been decoded into native Python objects;
+        for example `state` will be provided as a Python `IntEnum` value, and
+        `cascaded_attributes` as a plain `dict` rather than a
+        `cc.protobuf.variant.KeyValueMap()` object.
 
         The interceptor may raise a `CancelIntercept` exception to indicate that
         the state transition should be cancelled.  In this case, the value of
         `on_cancel` determines what happens next:
-
 
           - ExceptionHandling.IGNORE:
             proceed with the state change regardless
@@ -768,6 +783,8 @@ class SwitchboardBase (SwitchboardObserver):
             re-enter the previous settled state anew, invoking any applicable
             interceptors on the way.
 
+        The the `on_error` input similarly determines the next course of action
+        in response to any other exception.
 
         **Inputs:**
 
@@ -788,6 +805,13 @@ class SwitchboardBase (SwitchboardObserver):
             Allow state to transition to the next state (normally `ACITVE`,
             `INACTIVE` or `FAILED`) even as this interceptor continues to run in
             the background.
+
+        @param decode
+            Upon invocation, rather than directly passing in the original
+            `cc.platform.switchboard.protobuf.InterceptorInvocation` message
+            that was received from the Switchboard service, decode this message
+            into aninstance of an equivalent, dynamically created Python
+            dataclass.
 
         @param phase
             Run this interceptor prior to (EARLY), concurrent with (NORMAL), or
@@ -822,7 +846,7 @@ class SwitchboardBase (SwitchboardObserver):
             True if the interceptor was added.
         '''
 
-        self.register_interceptor(interceptor_name, callback)
+        self.register_interceptor(interceptor_name, method, decode)
         self.start_intercepting()
 
 
@@ -856,6 +880,7 @@ class SwitchboardBase (SwitchboardObserver):
     def register_interceptor(self,
                              interceptor_name: str,
                              method: InterceptorMethod,
+                             decode: bool,
                              ) -> bool:
         '''
         Register an interceptor method to be invoked whenever the specified
@@ -866,7 +891,7 @@ class SwitchboardBase (SwitchboardObserver):
         '''
 
         is_new = interceptor_name not in self.interceptor_methods
-        self.interceptor_methods[interceptor_name] = method
+        self.interceptor_methods[interceptor_name] = (method, decode)
         return is_new
 
 
@@ -893,6 +918,7 @@ class SwitchboardBase (SwitchboardObserver):
                     switch_selection: SwitchSelectionInput,
                     state_transitions: StateMask|StateSet = State.PENDING,
                     phase: InterceptorPhase = InterceptorPhase.NORMAL,
+                    decode: bool = False,
                     asynchronous: bool = False,
                     immediate: bool = False,
                     rerun: bool = False,

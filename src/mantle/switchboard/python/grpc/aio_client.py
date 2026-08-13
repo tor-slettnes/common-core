@@ -281,8 +281,9 @@ class AsyncClient (AsyncMixIn, BaseClient):
                               interceptor_name: str,
                               switch_selection: SwitchSelectionInput,
                               state_transitions: StateSet,
-                              callback: InterceptorMethod,
+                              method: InterceptorMethod,
                               phase: InterceptorPhase = InterceptorPhase.NORMAL,
+                              decode: bool = False,
                               asynchronous: bool = False,
                               rerun: bool = False,
                               on_cancel: ExceptionHandling = ExceptionHandling.ABORT,
@@ -341,7 +342,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
 
 
     @override
-    async def register_decorated_interceptors(self, instance: object):
+    async def register_decorated_interceptors(self, instance: object) -> int:
         count = 0
         for (unbound_method, kwargs) in self.decorated_interceptor_map.items():
             method_name = unbound_method.__name__
@@ -350,7 +351,7 @@ class AsyncClient (AsyncMixIn, BaseClient):
                 if bound_method := getattr(instance, method_name, None):
                     await self.add_interceptor(
                         interceptor_name = method_path(bound_method),
-                        callback = bound_method,
+                        method = bound_method,
                         **kwargs)
 
         return count
@@ -370,10 +371,11 @@ class AsyncClient (AsyncMixIn, BaseClient):
                 )
 
     async def _on_interceptor_invocation(self, invocation: InterceptorInvocation):
-        if method := self.interceptor_methods.get(invocation.interceptor_name):
+        if invocation_spec := self.interceptor_methods.get(invocation.interceptor_name):
+            method, decode = invocation_spec
             result, error = await safe_await(
                 method,
-                args = (self.decode(invocation),),
+                args = (self.decode(invocation) if decode else invocation,),
                 description = 'switch %r interceptor %r' % (
                     invocation.switch_name,
                     invocation.interceptor_name,

@@ -292,7 +292,6 @@ class StandardClient (BaseClient):
         return BaseClient.call_get_errors(**locals())
 
     @override
-    @SwitchboardDissecter.decode_response
     def invoke_interceptor(self,
                            interceptor_name: str,
                            switch_name: str,
@@ -308,13 +307,13 @@ class StandardClient (BaseClient):
 
 
     @override
-    @SwitchboardDissecter.decode_response
     def add_interceptor(self,
-                        interceptor_name: str,
+                        name: str,
                         switch_selection: SwitchSelectionInput,
                         state_transitions: StateSet,
-                        callback: InterceptorMethod,
+                        method: InterceptorMethod,
                         phase: InterceptorPhase = InterceptorPhase.NORMAL,
+                        decode: bool = False,
                         asynchronous: bool = False,
                         rerun: bool = False,
                         on_cancel: ExceptionHandling = ExceptionHandling.ABORT,
@@ -322,18 +321,19 @@ class StandardClient (BaseClient):
                         immediate: bool = False,
                         future: bool = False) -> bool:
 
-        return BaseClient.call_add_interceptor(**locals())
+        response = BaseClient.call_add_interceptor(**locals())
+        return response.value
 
 
     @override
-    @SwitchboardDissecter.decode_response
     def remove_interceptor(self,
                            interceptor_name: str,
                            switch_selection: SwitchSelectionInput|None = None,
                            abandon_pending: bool = True,
                            ) -> bool:
 
-        return BaseClient.call_remove_interceptor(**locals())
+        response = BaseClient.call_remove_interceptor(**locals())
+        return response.value
 
 
     def init_intercept(self):
@@ -383,7 +383,7 @@ class StandardClient (BaseClient):
                 if bound_method := getattr(instance, method_name, None):
                     self.add_interceptor(
                         interceptor_name = method_path(bound_method),
-                        callback = bound_method,
+                        method = bound_method,
                         **kwargs)
 
         return count
@@ -399,10 +399,11 @@ class StandardClient (BaseClient):
 
 
     def _on_interceptor_invocation(self, invocation: InterceptorInvocation):
-        if method := self.interceptor_methods.get(invocation.interceptor_name):
+        if invocation_spec := self.interceptor_methods.get(invocation.interceptor_name):
+            method, decode = invocation_spec
             result, error = safe_invoke(
                 method,
-                args = (self.decode(invocation),),
+                args = (self.decode(invocation) if decode else invocation,),
                 description = 'switch %r interceptor %r' % (
                     invocation.switch_name,
                     invocation.interceptor_name,
