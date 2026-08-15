@@ -75,14 +75,14 @@ namespace cc::protobuf
         const core::types::Value &value,
         ::google::protobuf::Message *msg)
     {
-        if (auto *proto_value = dynamic_cast<google::protobuf::Duration *>(msg))
-        {
-            encode(value.as_duration(), proto_value);
-        }
-
-        else if (auto *proto_value = dynamic_cast<google::protobuf::Timestamp *>(msg))
+        if (auto *proto_value = dynamic_cast<google::protobuf::Timestamp *>(msg))
         {
             encode(value.as_timepoint(), proto_value);
+        }
+
+        else if (auto *proto_value = dynamic_cast<google::protobuf::Duration *>(msg))
+        {
+            encode(value.as_duration(), proto_value);
         }
 
         else if (auto *proto_value = dynamic_cast<google::protobuf::Timestamp *>(msg))
@@ -173,7 +173,7 @@ namespace cc::protobuf
                 bool success = This::encode_field(field_value, msg, fd);
                 if (!success)
                 {
-                    logf_notice(
+                    logf_info(
                         "%s: Cannot reconstruct ProtoBuf %s field %r of type %s from value type %s: %r",
                         TYPE_NAME_FULL(This),
                         msg->GetDescriptor()->full_name(),
@@ -186,7 +186,7 @@ namespace cc::protobuf
             }
             else if (!fd->is_optional() && !fd->containing_oneof())
             {
-                logf_notice(
+                logf_info(
                     "%s: Expected %s field %r not present in input value: %s",
                     TYPE_NAME_FULL(This),
                     msg->GetDescriptor()->full_name(),

@@ -29,7 +29,10 @@ namespace cc::kafka
     Consumer::~Consumer()
     {
         this->shutdown();
-        delete this->consumer_handle_;
+        if (this->consumer_handle_)
+        {
+            delete this->consumer_handle_;
+        }
     }
 
     void Consumer::initialize()
@@ -202,5 +205,7 @@ namespace cc::kafka
         {
             this->consumer_handle_->close();
         }
+
+        this->stop_consuming();
     }
 }  // namespace cc::kafka

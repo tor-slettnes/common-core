@@ -140,9 +140,13 @@ namespace cc::protobuf
     void decode(const variant::TaggedValue &msg,
                 core::types::TaggedValue *tv) noexcept
     {
-        if (msg.tag().length() > 0)
+        if (msg.has_tag())
         {
             tv->first = msg.tag();
+        }
+        else
+        {
+            tv->first.reset();
         }
         decode(msg.value(), &tv->second);
     }
@@ -151,7 +155,10 @@ namespace cc::protobuf
                 const core::types::Value &value,
                 variant::TaggedValue *msg) noexcept
     {
-        msg->set_tag(tag.value_or(""));
+        if (tag.has_value())
+        {
+            msg->set_tag(tag.value());
+        }
         encode(value, msg->mutable_value());
     }
 
@@ -160,6 +167,22 @@ namespace cc::protobuf
                 core::types::Value *value) noexcept
     {
         *tag = msg.tag();
+        decode(msg.value(), value);
+    }
+
+    void decode(const variant::TaggedValue &msg,
+                std::optional<std::string> *tag,
+                core::types::Value *value) noexcept
+    {
+        if (msg.has_tag())
+        {
+            *tag = msg.tag();
+        }
+        else
+        {
+            tag->reset();
+        }
+
         decode(msg.value(), value);
     }
 

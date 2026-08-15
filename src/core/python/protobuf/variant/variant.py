@@ -27,15 +27,24 @@ PyTaggedValue = tuple[str, PyValue]
 PyValueList = Sequence[PyValue]
 PyValueMap = Mapping[str, PyValue]
 PyTaggedValueList = Sequence[PyTaggedValue]
+NoneType = type(None)
 
+
+def is_tagged_value(tv: object) -> bool:
+    '''Determine if the provided input is a (tag, value) instance'''
+
+    return (isinstance(tv, (tuple, list))
+            and (len(tv) == 2)
+            and isinstance(tv[0], (NoneType, str)))
 
 def is_tagged_list(value_list: list|tuple) -> bool:
     '''Determine if the provided list is made up entirely of (tag, value) pairs'''
 
+    if not value_list:
+        return False
+
     for item in value_list:
-        if (not isinstance(item, tuple)
-            or (len(item) != 2)
-            or (not instinstance(item[0], str))):
+        if not is_tagged_value(item):
             return False
     else:
         return True
@@ -228,7 +237,9 @@ def encodeTaggedValue(input : PyTaggedValue,
         except (ValueError, TypeError):
             tag, value = None, input
 
-        output.tag = tag
+        if tag is not None:
+            output.tag = str(tag)
+
         encodeValue(value, output.value)
 
     return output
@@ -243,7 +254,7 @@ def decodeTaggedValue(input: TaggedValue) -> PyTaggedValue:
 
     if isinstance(input, TaggedValue):
         return (input.tag, decodeValue(input.value))
-    elif isinstance(input, Sequence) and not isinstance(input, str) and len(input) == 2:
+    elif is_tagged_value(input):
         return input
     else:
         raise TypeError(
