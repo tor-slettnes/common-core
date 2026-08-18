@@ -12,11 +12,13 @@ set(TARGET cc_core_messaging_kafka_avro)
 set(LIB_DEPS
   cc_core_messaging_kafka_base
   cc_core_io_avro_base
+  cc_core_schema_wrapper
 )
 
 ### Source files in this folder
 set(SOURCES
   kafka-producer-avro.c++
+  kafka-consumer-avro.c++
 )
 
 ### Recepies to build the librar

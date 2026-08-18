@@ -6,4 +6,4 @@
 #===============================================================================
 
 add_subdirectory(base)
-add_subdirectory(avro)
+#add_subdirectory(avro)

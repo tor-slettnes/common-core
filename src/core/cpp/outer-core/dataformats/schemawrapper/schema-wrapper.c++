@@ -11,6 +11,18 @@
 
 namespace cc::sr
 {
+    std::size_t SchemaWrapper::wrapped_size(
+        const core::types::ByteVector &payload) const
+    {
+        return ENVELOPE_SIZE + payload.size();
+    }
+
+    std::size_t SchemaWrapper::unwrapped_size(
+        const core::types::ByteVector &wrapped) const
+    {
+        return wrapped.size() - ENVELOPE_SIZE;
+    }
+
     core::types::ByteVector SchemaWrapper::wrap(
         const core::types::ByteVector &payload,
         SchemaID schema_id,
@@ -23,27 +35,47 @@ namespace cc::sr
         return wrapped;
     }
 
-    core::types::ByteVector SchemaWrapper::wrap(
-        const UnwrappedPayload &unwrapped) const
+    bool SchemaWrapper::unwrap(
+        const core::types::ByteVector &wrapped,
+        SchemaID *schema_id,
+        core::types::ByteVector *payload,
+        const core::types::Byte magic) const
     {
-        return this->wrap(unwrapped.payload, unwrapped.id, unwrapped.magic);
+        if ((wrapped.size() >= ENVELOPE_SIZE) &&
+            (wrapped.at(0) == magic))
+        {
+            if (schema_id)
+            {
+                *schema_id = ntohl(
+                    *reinterpret_cast<const std::uint32_t *>(
+                        wrapped.data() + 1));
+            }
+
+            if (payload)
+            {
+                std::size_t payload_size = this->unwrapped_size(wrapped);
+                payload->resize(payload_size);
+                memcpy(payload,
+                       wrapped.data() + ENVELOPE_SIZE,
+                       payload_size);
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
-    std::optional<UnwrappedPayload> SchemaWrapper::unwrap(
-        const core::types::ByteVector &wrapped) const
+    std::optional<SchemaID> SchemaWrapper::extract_schema_id(
+        const core::types::ByteVector &wrapped,
+        const core::types::Byte magic) const
     {
-        if (wrapped.size() >= ENVELOPE_SIZE)
+        SchemaID schema_id;
+        if (this->unwrap(wrapped, &schema_id, nullptr, magic))
         {
-            UnwrappedPayload unwrapped;
-            unwrapped.magic = wrapped[0];
-            unwrapped.id = ntohl(*reinterpret_cast<const std::uint32_t *>(wrapped.data() + 1));
-
-            std::size_t payload_size = wrapped.size() - ENVELOPE_SIZE;
-            memcpy(unwrapped.payload.data(),
-                   wrapped.data() + ENVELOPE_SIZE,
-                   payload_size);
-
-            return unwrapped;
+            return schema_id;
         }
         else
         {
@@ -51,14 +83,18 @@ namespace cc::sr
         }
     }
 
-    std::size_t SchemaWrapper::wrapped_size(const core::types::ByteVector &original) const
+    std::shared_ptr<core::types::ByteVector> SchemaWrapper::extract_payload(
+        const core::types::ByteVector &wrapped,
+        const core::types::Byte magic) const
     {
-        return ENVELOPE_SIZE + original.size();
+        auto payload = std::make_shared<core::types::ByteVector>();
+        if (this->unwrap(wrapped, nullptr, payload.get(), magic))
+        {
+            return payload;
+        }
+        else
+        {
+            return {};
+        }
     }
-
-    std::size_t SchemaWrapper::wrapped_size(const UnwrappedPayload &unwrapped) const
-    {
-        return ENVELOPE_SIZE + unwrapped.payload.size();
-    }
-
 }  // namespace cc::sr

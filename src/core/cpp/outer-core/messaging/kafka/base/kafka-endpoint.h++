@@ -15,6 +15,8 @@
 
 namespace cc::kafka
 {
+    using TopicName = std::string;
+
     class Endpoint : public messaging::Endpoint
     {
         using This = Endpoint;

@@ -8,6 +8,7 @@
 #include "avro-schemabuilder.h++"
 #include "avro-status.h++"
 #include "parsers/json/writer.h++"
+#include "parsers/json/reader.h++"
 #include "logging/logging.h++"
 
 namespace cc::avro
@@ -60,6 +61,20 @@ namespace cc::avro
         {
             tvlist->append(key, value);
         }
+    }
+
+    //--------------------------------------------------------------------------
+    // ImportedSchema
+
+    ImportedSchema::ImportedSchema(const std::string &json)
+        : SchemaWrapper(core::json::reader.decoded(json)),
+          json_(json)
+    {
+    }
+
+    std::string ImportedSchema::as_json() const
+    {
+        return this->json_;
     }
 
     //--------------------------------------------------------------------------

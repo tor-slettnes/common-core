@@ -7,6 +7,7 @@
 
 #pragma once
 #include "types/value.h++"
+#include "types/create-shared.h++"
 
 #include <avro.h>
 
@@ -74,13 +75,29 @@ namespace cc::avro
         //     New `avro_schema_t` reference.
         std::string schema_name() const;
         avro_schema_t as_avro_schema() const;
-        std::string as_json() const;
+        virtual std::string as_json() const;
 
     protected:
         void set(const std::string &key, const core::types::Value &value);
 
     private:
         avro_schema_t avro_schema;
+    };
+
+    //--------------------------------------------------------------------------
+    // @class ImportedSchema
+
+    class ImportedSchema : public SchemaWrapper,
+                           public core::types::enable_create_shared<ImportedSchema>
+    {
+    protected:
+        ImportedSchema(const std::string &json);
+
+    public:
+        std::string as_json() const override;
+
+    private:
+        std::string json_;
     };
 
     //--------------------------------------------------------------------------

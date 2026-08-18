@@ -51,7 +51,7 @@ namespace cc::kafka
             const core::dt::TimePoint &tp,
             const std::string &topic,
             const std::string &key,
-            const core::types::KeyValueMap &header,
+            const HeaderMap &header,
             const core::types::ByteVector &payload);
 
     protected:
@@ -59,7 +59,7 @@ namespace cc::kafka
         const std::optional<std::string> &consumer_key() const;
 
     private:
-        core::types::KeyValueMap extract_headers(
+        HeaderMap extract_headers(
             const RdKafka::Headers *headers) const;
 
         void shutdown();

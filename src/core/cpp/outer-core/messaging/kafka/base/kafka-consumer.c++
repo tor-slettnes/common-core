@@ -160,7 +160,7 @@ namespace cc::kafka
         const core::dt::TimePoint &tp,
         const std::string &topic,
         const std::string &key,
-        const core::types::KeyValueMap &header,
+        const HeaderMap &header,
         const core::types::ByteVector &payload)
     {
         logf_info("Received Kafka message, topic=%r, key=%r, header=%s: %s",
@@ -181,20 +181,21 @@ namespace cc::kafka
         return this->consumer_key_;
     }
 
-    core::types::KeyValueMap Consumer::extract_headers(
+    Endpoint::HeaderMap Consumer::extract_headers(
         const RdKafka::Headers *headers) const
     {
-        core::types::KeyValueMap kvmap;
+        HeaderMap header_map;
         if (headers)
         {
             for (const RdKafka::Headers::Header &header : headers->get_all())
             {
-                kvmap.insert_or_assign(
+                header_map.try_emplace(
                     header.key(),
-                    std::string(header.value_string(), header.value_size()));
+                    header.value_string(),
+                    header.value_size());
             }
         }
-        return kvmap;
+        return header_map;
     }
 
     void Consumer::shutdown()
