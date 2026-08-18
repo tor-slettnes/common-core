@@ -184,7 +184,7 @@ namespace cc::protobuf
                     all_succeeded = false;
                 }
             }
-            else if (!fd->is_optional() && !fd->containing_oneof())
+            else if (!fd->containing_oneof())
             {
                 logf_info(
                     "%s: Expected %s field %r not present in input value: %s",
