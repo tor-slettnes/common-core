@@ -50,7 +50,7 @@ namespace cc::avro
         /// Custom types are mapped via a new or existing `ProtoBufSchema`
         /// instance.  New instances are cached for future reuse.
 
-        static SchemaWrapper from_proto(
+        static const SchemaWrapper &from_proto(
             const google::protobuf::Descriptor *descriptor);
 
     private:

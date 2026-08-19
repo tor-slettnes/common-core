@@ -11,22 +11,22 @@
 
 namespace cc::sr
 {
-    std::size_t SchemaWrapper::wrapped_size(
-        const core::types::ByteVector &payload) const
+    std::size_t wrapped_size(
+        const core::types::ByteVector &payload)
     {
         return ENVELOPE_SIZE + payload.size();
     }
 
-    std::size_t SchemaWrapper::unwrapped_size(
-        const core::types::ByteVector &wrapped) const
+    std::size_t unwrapped_size(
+        const core::types::ByteVector &wrapped)
     {
         return wrapped.size() - ENVELOPE_SIZE;
     }
 
-    core::types::ByteVector SchemaWrapper::wrap(
+    core::types::ByteVector wrap(
         const core::types::ByteVector &payload,
         SchemaID schema_id,
-        core::types::Byte magic) const
+        core::types::Byte magic)
     {
         core::types::ByteVector wrapped(ENVELOPE_SIZE + payload.size());
         wrapped[0] = magic;
@@ -35,11 +35,11 @@ namespace cc::sr
         return wrapped;
     }
 
-    bool SchemaWrapper::unwrap(
+    bool unwrap(
         const core::types::ByteVector &wrapped,
         SchemaID *schema_id,
         core::types::ByteVector *payload,
-        const core::types::Byte magic) const
+        const core::types::Byte magic)
     {
         if ((wrapped.size() >= ENVELOPE_SIZE) &&
             (wrapped.at(0) == magic))
@@ -53,7 +53,7 @@ namespace cc::sr
 
             if (payload)
             {
-                std::size_t payload_size = this->unwrapped_size(wrapped);
+                std::size_t payload_size = unwrapped_size(wrapped);
                 payload->resize(payload_size);
                 memcpy(payload,
                        wrapped.data() + ENVELOPE_SIZE,
@@ -68,12 +68,12 @@ namespace cc::sr
         }
     }
 
-    std::optional<SchemaID> SchemaWrapper::extract_schema_id(
+    std::optional<SchemaID> extract_schema_id(
         const core::types::ByteVector &wrapped,
-        const core::types::Byte magic) const
+        const core::types::Byte magic)
     {
         SchemaID schema_id;
-        if (this->unwrap(wrapped, &schema_id, nullptr, magic))
+        if (unwrap(wrapped, &schema_id, nullptr, magic))
         {
             return schema_id;
         }
@@ -83,12 +83,12 @@ namespace cc::sr
         }
     }
 
-    std::shared_ptr<core::types::ByteVector> SchemaWrapper::extract_payload(
+    std::shared_ptr<core::types::ByteVector> extract_payload(
         const core::types::ByteVector &wrapped,
-        const core::types::Byte magic) const
+        const core::types::Byte magic)
     {
         auto payload = std::make_shared<core::types::ByteVector>();
-        if (this->unwrap(wrapped, nullptr, payload.get(), magic))
+        if (unwrap(wrapped, nullptr, payload.get(), magic))
         {
             return payload;
         }

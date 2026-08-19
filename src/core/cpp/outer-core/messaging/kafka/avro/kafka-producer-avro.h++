@@ -19,8 +19,7 @@ namespace cc::kafka
 
     protected:
         AvroProducer(const std::string &profile_name,
-                     const core::types::KeyValueMap settings = {},
-                     const std::shared_ptr<sr::SchemaWrapper> &schema_wrapper = {});
+                     const core::types::KeyValueMap settings = {});
 
     public:
         using Super::produce;
@@ -41,9 +40,5 @@ namespace cc::kafka
             const std::optional<std::string_view> &key = {},
             const HeaderMap &headers = {},
             const DeliveryReportCapture::CallbackData::ptr &cb_data = {});
-
-    private:
-        std::shared_ptr<sr::SchemaWrapper> schema_wrapper;
-
     };
 }  // namespace cc::kafka

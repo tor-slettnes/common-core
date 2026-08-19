@@ -10,10 +10,8 @@
 namespace cc::kafka
 {
     AvroConsumer::AvroConsumer(const std::string &profile_name,
-                               const core::types::KeyValueMap settings,
-                               const std::shared_ptr<sr::SchemaWrapper> &schema_wrapper)
-        : Super(profile_name, settings),
-          schema_wrapper(schema_wrapper)
+                               const core::types::KeyValueMap settings)
+        : Super(profile_name, settings)
     {
     }
 
@@ -38,13 +36,10 @@ namespace cc::kafka
         const HeaderMap &header,
         const core::types::ByteVector &payload)
     {
-        if (this->schema_wrapper)
+        if (auto schema_id = sr::extract_schema_id(payload))
         {
-            if (auto schema_id = this->schema_wrapper->extract_schema_id(payload))
+            if (auto schema = this->get_schema_by_id(schema_id.value()))
             {
-                if (auto schema = this->get_schema_by_id(schema_id.value()))
-                {
-                }
             }
         }
     }

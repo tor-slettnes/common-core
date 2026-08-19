@@ -11,10 +11,8 @@
 namespace cc::kafka
 {
     AvroProducer::AvroProducer(const std::string &profile_name,
-                               const core::types::KeyValueMap settings,
-                               const std::shared_ptr<sr::SchemaWrapper> &schema_wrapper)
-        : Producer(profile_name, settings),
-          schema_wrapper(schema_wrapper)
+                               const core::types::KeyValueMap settings)
+        : Producer(profile_name, settings)
     {
     }
 
@@ -44,25 +42,12 @@ namespace cc::kafka
         const HeaderMap &headers,
         const DeliveryReportCapture::CallbackData::ptr &cb_data)
     {
-        if (this->schema_wrapper)
-        {
-            this->produce(
-                topic,
-                schema_wrapper->wrap(avro_wrapper.serialized(), schema_id),
-                timepoint,
-                key,
-                headers,
-                cb_data);
-        }
-        else
-        {
-            throwf(
-                core::exception::FailedPrecondition,
-                "%s: cannot assign schema ID %d to topic %r publication "
-                "without SchemaWrapper instance",
-                *this,
-                schema_id,
-                topic);
-        }
+        this->produce(
+            topic,
+            sr::wrap(avro_wrapper.serialized(), schema_id),
+            timepoint,
+            key,
+            headers,
+            cb_data);
     }
 }  // namespace cc::kafka

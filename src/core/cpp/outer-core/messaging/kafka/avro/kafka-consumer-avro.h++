@@ -37,8 +37,7 @@ namespace cc::kafka
 
     protected:
         AvroConsumer(const std::string &profile_name,
-                     const core::types::KeyValueMap settings = {},
-                     const std::shared_ptr<sr::SchemaWrapper> &schema_wrapper = {});
+                     const core::types::KeyValueMap settings = {});
 
     public:
         using Super::handle_message;
@@ -66,7 +65,6 @@ namespace cc::kafka
             const std::string &topic) const;
 
     protected:
-        std::shared_ptr<sr::SchemaWrapper> schema_wrapper;
         IdToSchemaMap schemas_by_id;
         TopicToSchemaMap schemas_by_topic;
     };

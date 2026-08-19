@@ -12,6 +12,7 @@ set(TARGET cc_core_io_avro_protobuf)
 set(LIB_DEPS
   cc_core_io_avro_base
   cc_core_io_protobuf
+  cc_core_schema_wrapper
 )
 
 set(SOURCES

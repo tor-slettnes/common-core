@@ -30,13 +30,24 @@ namespace cc::avro
         this->add_fields();
     }
 
-    SchemaWrapper ProtoBufSchema::from_proto(
+    const SchemaWrapper &ProtoBufSchema::from_proto(
         const google::protobuf::Descriptor *descriptor)
     {
-        auto context = std::make_shared<BuilderContext>();
-        return ProtoBufSchema::from_descriptor(
-            context,
-            descriptor);
+        static SchemaMap cached_schemas;
+        try
+        {
+            return cached_schemas.at(descriptor);
+        }
+        catch (std::out_of_range)
+        {
+            auto context = std::make_shared<BuilderContext>();
+            auto [it, inserted] = cached_schemas.insert_or_assign(
+                descriptor,
+                ProtoBufSchema::from_descriptor(
+                    context,
+                    descriptor));
+            return it->second;
+        }
     }
 
     void ProtoBufSchema::add_fields()
