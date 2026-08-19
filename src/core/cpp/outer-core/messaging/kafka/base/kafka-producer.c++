@@ -14,8 +14,8 @@ namespace cc::kafka
     const auto SETTING_SHUTDOWN_TIMEOUT = "shutdown timeout";
     const auto DEFAULT_SHUTDOWN_TIMEOUT = 2.0;
 
-    Producer::Producer(const std::string &profile_name,
-                       const core::types::KeyValueMap &settings)
+    ProducerBase::ProducerBase(const std::string &profile_name,
+                               const core::types::KeyValueMap &settings)
         : Super("Producer", profile_name, settings),
           producer_handle_(nullptr),
           shutdown_timeout_(
@@ -25,13 +25,13 @@ namespace cc::kafka
     {
     }
 
-    Producer::~Producer()
+    ProducerBase::~ProducerBase()
     {
         this->shutdown();
         delete this->producer_handle_;
     }
 
-    void Producer::initialize()
+    void ProducerBase::initialize()
     {
         Super::initialize();
         this->init_dr_capture();
@@ -39,18 +39,18 @@ namespace cc::kafka
         // this->start_poll();
     }
 
-    void Producer::deinitialize()
+    void ProducerBase::deinitialize()
     {
         this->stop_poll();
         Super::deinitialize();
     }
 
-    void Producer::init_dr_capture()
+    void ProducerBase::init_dr_capture()
     {
         this->set_config("dr_cb", &this->dr_capture_, "DeliveryReportCapture()");
     }
 
-    void Producer::init_handle()
+    void ProducerBase::init_handle()
     {
         std::string error_string;
         if (RdKafka::Producer *producer = RdKafka::Producer::create(
@@ -66,7 +66,7 @@ namespace cc::kafka
         }
     }
 
-    RdKafka::Producer *Producer::handle()
+    RdKafka::Producer *ProducerBase::handle()
     {
         if (!this->producer_handle_)
         {
@@ -76,12 +76,12 @@ namespace cc::kafka
         return this->producer_handle_;
     }
 
-    void Producer::set_dr_callback(const DeliveryReportCapture::Callback &callback)
+    void ProducerBase::set_dr_callback(const DeliveryReportCapture::Callback &callback)
     {
         this->dr_capture_.set_callback(callback);
     }
 
-    void Producer::start_poll()
+    void ProducerBase::start_poll()
     {
         if (!this->poll_thread_.joinable())
         {
@@ -91,7 +91,7 @@ namespace cc::kafka
         }
     }
 
-    void Producer::stop_poll()
+    void ProducerBase::stop_poll()
     {
         if (this->poll_thread_.joinable())
         {
@@ -101,24 +101,24 @@ namespace cc::kafka
         }
     }
 
-    void Producer::poll_worker()
+    void ProducerBase::poll_worker()
     {
         while (this->handle()->poll(1000) || this->keep_polling_)
         {
         }
     }
 
-    void Producer::set_producer_key(const std::optional<std::string> &key)
+    void ProducerBase::set_producer_key(const std::optional<std::string> &key)
     {
         this->producer_key_ = key;
     }
 
-    const std::optional<std::string> &Producer::producer_key() const
+    const std::optional<std::string> &ProducerBase::producer_key() const
     {
         return this->producer_key_;
     }
 
-    void Producer::produce(
+    void ProducerBase::produce(
         const std::string &topic,
         const core::types::Bytes &payload,
         const std::optional<core::dt::TimePoint> &timepoint,
@@ -168,7 +168,7 @@ namespace cc::kafka
         this->start_poll();
     }
 
-    void Producer::shutdown()
+    void ProducerBase::shutdown()
     {
         if (this->handle())
         {

@@ -12,7 +12,7 @@ namespace cc::kafka
 {
     AvroProducer::AvroProducer(const std::string &profile_name,
                                const core::types::KeyValueMap settings)
-        : Producer(profile_name, settings)
+        : Super(profile_name, settings)
     {
     }
 

@@ -21,7 +21,7 @@ namespace cc::messaging
     //==========================================================================
     // @class Endpoint
 
-    class Endpoint : public core::types::Streamable
+    class Endpoint : virtual public core::types::Streamable
     {
     protected:
         // Keys to look up settings in grpc-endpoints-*.json

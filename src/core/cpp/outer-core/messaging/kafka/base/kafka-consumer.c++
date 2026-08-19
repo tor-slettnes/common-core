@@ -15,8 +15,10 @@ namespace cc::kafka
     const auto SETTING_SHUTDOWN_TIMEOUT = "shutdown timeout";
     const auto DEFAULT_SHUTDOWN_TIMEOUT = 2.0;
 
-    Consumer::Consumer(const std::string &profile_name,
-                       const core::types::KeyValueMap &settings)
+    ConsumerBase::ConsumerBase(const std::string &profile_name,
+                               const core::types::KeyValueMap &settings,
+                               const std::string &client_id,
+                               const std::optional<std::string> &group_id)
         : Super("Consumer", profile_name, settings),
           consumer_handle_(nullptr),
           shutdown_timeout_(
@@ -24,9 +26,11 @@ namespace cc::kafka
                   .as_duration()),
           keep_consuming_(false)
     {
+        this->init_consumer_properties(client_id, group_id);
+
     }
 
-    Consumer::~Consumer()
+    ConsumerBase::~ConsumerBase()
     {
         this->shutdown();
         if (this->consumer_handle_)
@@ -35,19 +39,28 @@ namespace cc::kafka
         }
     }
 
-    void Consumer::initialize()
+    void ConsumerBase::initialize()
     {
         Super::initialize();
+        this->init_handle();
         this->start_consuming();
     }
 
-    void Consumer::deinitialize()
+    void ConsumerBase::deinitialize()
     {
         this->stop_consuming();
         Super::deinitialize();
     }
 
-    void Consumer::init_handle()
+    void ConsumerBase::init_consumer_properties(
+        const std::string &client_id,
+        const std::optional<std::string> &group_id)
+    {
+        this->set_config("client.id", client_id);
+        this->set_config("group.id", group_id.value_or(client_id));
+    }
+
+    void ConsumerBase::init_handle()
     {
         std::string error_string;
         if (RdKafka::KafkaConsumer *consumer = RdKafka::KafkaConsumer::create(
@@ -63,7 +76,7 @@ namespace cc::kafka
         }
     }
 
-    RdKafka::KafkaConsumer *Consumer::handle()
+    RdKafka::KafkaConsumer *ConsumerBase::handle()
     {
         if (!this->consumer_handle_)
         {
@@ -73,7 +86,7 @@ namespace cc::kafka
         return this->consumer_handle_;
     }
 
-    void Consumer::subscribe(
+    void ConsumerBase::subscribe(
         const std::vector<std::string> &topics)
     {
         RdKafka::ErrorCode error_code = this->handle()->subscribe(topics);
@@ -88,13 +101,13 @@ namespace cc::kafka
         this->start_consuming();
     }
 
-    void Consumer::clear_subscriptions()
+    void ConsumerBase::clear_subscriptions()
     {
         this->stop_consuming();
         this->handle()->unsubscribe();
     }
 
-    void Consumer::start_consuming()
+    void ConsumerBase::start_consuming()
     {
         if (!this->consumer_thread_.joinable())
         {
@@ -104,7 +117,7 @@ namespace cc::kafka
         }
     }
 
-    void Consumer::stop_consuming()
+    void ConsumerBase::stop_consuming()
     {
         if (this->consumer_thread_.joinable())
         {
@@ -114,7 +127,7 @@ namespace cc::kafka
         }
     }
 
-    void Consumer::consume_worker()
+    void ConsumerBase::consume_worker()
     {
         while (this->keep_consuming_)
         {
@@ -144,7 +157,7 @@ namespace cc::kafka
         }
     }
 
-    void Consumer::handle_message(RdKafka::Message *message)
+    void ConsumerBase::handle_message(RdKafka::Message *message)
     {
         this->handle_message(
             core::dt::ms_to_timepoint(message->timestamp().timestamp),
@@ -156,7 +169,7 @@ namespace cc::kafka
                 message->len()));
     }
 
-    void Consumer::handle_message(
+    void ConsumerBase::handle_message(
         const core::dt::TimePoint &tp,
         const std::string &topic,
         const std::string &key,
@@ -171,17 +184,17 @@ namespace cc::kafka
                   payload.to_hex());
     }
 
-    void Consumer::set_consumer_key(const std::optional<std::string> &key)
+    void ConsumerBase::set_consumer_key(const std::optional<std::string> &key)
     {
         this->consumer_key_ = key;
     }
 
-    const std::optional<std::string> &Consumer::consumer_key() const
+    const std::optional<std::string> &ConsumerBase::consumer_key() const
     {
         return this->consumer_key_;
     }
 
-    Endpoint::HeaderMap Consumer::extract_headers(
+    Endpoint::HeaderMap ConsumerBase::extract_headers(
         const RdKafka::Headers *headers) const
     {
         HeaderMap header_map;
@@ -198,7 +211,7 @@ namespace cc::kafka
         return header_map;
     }
 
-    void Consumer::shutdown()
+    void ConsumerBase::shutdown()
     {
         this->keep_consuming_ = false;
 

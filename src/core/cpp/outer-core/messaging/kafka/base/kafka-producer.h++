@@ -12,15 +12,15 @@
 
 namespace cc::kafka
 {
-    class Producer : public Endpoint
+    class ProducerBase : public Endpoint
     {
-        using This = Producer;
+        using This = ProducerBase;
         using Super = Endpoint;
 
     protected:
-        Producer(const std::string &profile_name,
-                 const core::types::KeyValueMap &settings = {});
-        ~Producer();
+        ProducerBase(const std::string &profile_name,
+                     const core::types::KeyValueMap &settings = {});
+        ~ProducerBase();
 
     public:
         void set_dr_callback(const DeliveryReportCapture::Callback &callback);

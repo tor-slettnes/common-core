@@ -16,22 +16,27 @@
 
 namespace cc::kafka
 {
-    class Consumer : public Endpoint
+    class ConsumerBase : public Endpoint
     {
-        using This = Consumer;
+        using This = ConsumerBase;
         using Super = Endpoint;
 
     protected:
-        Consumer(const std::string &profile_name,
-                 const core::types::KeyValueMap &settings = {});
-        ~Consumer();
+        ConsumerBase(const std::string &profile_name,
+                     const core::types::KeyValueMap &settings,
+                     const std::string &client_id,
+                     const std::optional<std::string> &group_id = {});
+        ~ConsumerBase();
 
     public:
         void initialize() override;
         void deinitialize() override;
 
     protected:
-        void init_dr_capture();
+        void init_consumer_properties(
+            const std::string &client_id,
+            const std::optional<std::string> &group_id);
+
         void init_handle();
         RdKafka::KafkaConsumer *handle() override;
 

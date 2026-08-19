@@ -12,10 +12,10 @@
 
 namespace cc::kafka
 {
-    class AvroProducer : public Producer
+    class AvroProducer : public ProducerBase
     {
         using This = AvroProducer;
-        using Super = Producer;
+        using Super = ProducerBase;
 
     protected:
         AvroProducer(const std::string &profile_name,

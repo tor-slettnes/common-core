@@ -16,10 +16,10 @@ namespace cc::kafka
 {
     using sr::SchemaID;
 
-    class AvroConsumer : public Consumer
+    class AvroConsumer : public ConsumerBase
     {
         using This = AvroConsumer;
-        using Super = Consumer;
+        using Super = ConsumerBase;
 
         using IdToSchemaMap = core::types::ValueMap<
             SchemaID,
@@ -37,7 +37,9 @@ namespace cc::kafka
 
     protected:
         AvroConsumer(const std::string &profile_name,
-                     const core::types::KeyValueMap settings = {});
+                     const core::types::KeyValueMap settings,
+                     const std::string &client_id,
+                     const std::optional<std::string> &group_id = {});
 
     public:
         using Super::handle_message;
