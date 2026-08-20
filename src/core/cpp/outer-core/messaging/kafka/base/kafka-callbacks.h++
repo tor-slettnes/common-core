@@ -25,11 +25,18 @@ namespace cc::kafka
         using This = LogCapture;
         using LevelMap = core::types::ValueMap<RdKafka::Event::Severity, core::status::Level>;
 
+    public:
+        LogCapture(
+            const std::string &endpoint_type,
+            const std::string &profile_name);
+
     protected:
         void event_cb(RdKafka::Event &event) override;
 
     private:
         static const LevelMap level_map;
+        std::string endpoint_type;
+        std::string profile_name;
     };
 
     //--------------------------------------------------------------------------

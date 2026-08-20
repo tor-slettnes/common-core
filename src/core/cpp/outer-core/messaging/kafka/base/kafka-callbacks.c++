@@ -20,6 +20,14 @@ namespace cc::kafka
     //--------------------------------------------------------------------------
     // LogCapture
 
+    LogCapture::LogCapture(
+        const std::string &endpoint_type,
+        const std::string &profile_name)
+        : endpoint_type(endpoint_type),
+          profile_name(profile_name)
+    {
+    }
+
     void LogCapture::event_cb(RdKafka::Event &event)
     {
         core::status::Level level = This::level_map.get(
@@ -34,7 +42,10 @@ namespace cc::kafka
             0,                       // lineno
             "");                     // function
 
-        msg->add(event.str());
+        msg->format("%s(%r): %s",
+                    this->endpoint_type,
+                    this->profile_name,
+                    event.str());
         msg->dispatch();
     }
 
