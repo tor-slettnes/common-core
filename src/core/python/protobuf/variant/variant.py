@@ -94,7 +94,7 @@ def encodeValue(input : PyValue,
         output.value_string = str(input)
 
     elif isinstance(input, bytes):
-        ouptut.value_bytes = input
+        output.value_bytes = input
 
     elif isinstance(input, Sequence):
         if is_tagged_list(input):

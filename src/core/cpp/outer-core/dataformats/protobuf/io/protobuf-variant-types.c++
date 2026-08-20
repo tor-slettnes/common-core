@@ -95,7 +95,7 @@ namespace cc::protobuf
             break;
 
         case variant::Value::kValueBytes:
-            *value = ByteVector(msg.value_bytes().begin(), msg.value_bytes().end());
+            *value = ByteVector(msg.value_bytes());
             break;
 
         case variant::Value::kValueTimestamp:

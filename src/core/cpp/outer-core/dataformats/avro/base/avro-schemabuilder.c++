@@ -140,7 +140,7 @@ namespace cc::avro
                 field.emplace_back(SchemaField_Doc, *doc);
             }
 
-            fields->emplace_back(std::move(field));
+            fields->push_back(std::move(field));
         }
     }
 
