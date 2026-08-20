@@ -7,6 +7,7 @@
 
 ### Standard Python modules
 from typing import Sequence, Mapping, Optional
+from pathlib import Path
 
 ### Third-party modules
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -88,6 +89,9 @@ def encodeValue(input : PyValue,
 
     elif isinstance(input, str):
         output.value_string = input
+
+    elif isinstance(input, Path):
+        output.value_string = str(input)
 
     elif isinstance(input, bytes):
         ouptut.value_bytes = input

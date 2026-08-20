@@ -36,9 +36,10 @@ namespace cc::core::platform
     {
         if (std::optional<int> level = levelmap.get_opt(message->level()))
         {
-            ::syslog(level.value(),                      // priority
-                     "%s",                               // format
-                     this->formatted(message).c_str());  // args...
+            std::string text = this->formatted(message);
+            ::syslog(level.value(),  // priority
+                     "%s",           // format
+                     text.c_str());  // args...
             return true;
         }
         else
