@@ -22,8 +22,8 @@ endforeach()
 
 ### Generate language bindings
 cc_add_proto("${TARGET}"
+  SOURCES "${grpc_sources}"
   PROTOBUF_SOURCES "${pbuf_sources}"
-  GRPC_SOURCES "${grpc_sources}"
   IMPORT_DIRS "${CC_PROTOS_BASE_DIR}"
   PROTO_DEPS ${PROTO_DEPS}
   PYTHON_INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
