@@ -44,7 +44,7 @@ namespace cc::protobuf
             break;
 
         case core::types::ValueType::BYTEVECTOR:
-            msg->set_value_bytes(value.get_bytevector().to_string());
+            msg->set_value_bytes(value.get_bytevector().as_string());
             break;
 
         case core::types::ValueType::TIMEPOINT:
