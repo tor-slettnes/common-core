@@ -6,10 +6,11 @@
 //==============================================================================
 
 #pragma once
+#include "types/filesystem.h++"
 #include <string>
 
 namespace cc::core::platform
 {
-    extern void register_providers(const std::string &exec_name);
+    extern void register_providers(const fs::path &exec_path);
     extern void unregister_providers();
 }  // namespace cc::core::platform

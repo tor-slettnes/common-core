@@ -16,13 +16,13 @@ namespace cc::core::platform
         using Super = PosixPathProvider;
 
     protected:
-        LinuxPathProvider(const std::string &exec_name);
+        LinuxPathProvider(const fs::path &exec_path);
 
     public:
         fs::path exec_path() const noexcept override;
 
     private:
-        fs::path exec_path_;
+        fs::path proc_exec_path_;
     };
 
 }  // namespace cc::core::platform

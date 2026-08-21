@@ -16,7 +16,7 @@ namespace cc::core::platform
         using Super = PosixPathProvider;
 
     public:
-        QNXPathProvider(const std::string &exec_path);
+        QNXPathProvider(const fs::path &exec_path);
         fs::path exec_path() const noexcept override;
     };
 

@@ -16,10 +16,10 @@
 
 namespace cc::core::platform
 {
-    void register_linux_providers(const std::string &exec_name)
+    void register_linux_providers(const fs::path &exec_path)
     {
         symbols.registerProvider<LinuxSymbolsProvider>();
-        path.registerProvider<LinuxPathProvider>(exec_name);
+        path.registerProvider<LinuxPathProvider>(exec_path);
         host.registerProvider<LinuxHostProvider>();
         process.registerProvider<LinuxProcessProvider>();
 #ifdef BUILD_DNSSD_AVAHI
@@ -38,10 +38,10 @@ namespace cc::core::platform
         symbols.unregisterProvider<LinuxSymbolsProvider>();
     }
 
-    void register_providers(const std::string &exec_name)
+    void register_providers(const fs::path &exec_path)
     {
-        register_linux_providers(exec_name);
-        register_posix_providers(exec_name);
+        register_linux_providers(exec_path);
+        register_posix_providers(exec_path);
     }
 
     void unregister_providers()

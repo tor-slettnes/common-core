@@ -6,10 +6,11 @@
 //==============================================================================
 
 #pragma once
+#include "types/filesystem.h++"
 #include <string>
 
 namespace cc::core::platform
 {
-    void register_linux_providers(const std::string &exec_name);
+    void register_linux_providers(const fs::path &exec_path);
     void unregister_linux_providers();
 }  // namespace cc::core::platform

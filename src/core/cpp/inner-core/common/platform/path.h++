@@ -70,7 +70,7 @@ namespace cc::core::platform
         /// @param[in] exec_name
         ///    Executable path, normally obtained from argv[0].
         PathProvider(const std::string &provider_name,
-                     const std::string &exec_name);
+                     const fs::path &exec_path);
 
     public:
         std::optional<FileStats> try_get_stats(const fs::path &path,
@@ -119,8 +119,9 @@ namespace cc::core::platform
         virtual fs::path exec_folder_path() const noexcept;
 
         /// @brief Return the base name of the running executable.
-        virtual std::string exec_name(bool remove_extension = true,
-                                      const std::string &fallback = "COMMAND") const noexcept;
+        virtual std::string exec_name(
+            bool remove_extension = true,
+            const std::string &fallback = "COMMAND") const noexcept;
 
         /// @brief
         ///    Return the base name of the running executable without
@@ -352,7 +353,7 @@ namespace cc::core::platform
 
     protected:
     private:
-        fs::path exec_name_;
+        fs::path exec_path_;
         fs::path installfolder_;
     };
 

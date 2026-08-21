@@ -24,7 +24,7 @@ typedef unsigned int pid_t;
 
 namespace cc::core::platform
 {
-    WindowsPathProvider::WindowsPathProvider(const std::string &programpath)
+    WindowsPathProvider::WindowsPathProvider(const fs::path &programpath)
         : Super("WindowsPathProvider", programpath)
     {
     }

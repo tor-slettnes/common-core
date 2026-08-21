@@ -14,14 +14,14 @@
 
 namespace cc::core::platform
 {
-    void register_windows_providers(const std::string &exec_name)
+    void register_windows_providers(const fs::path &exec_path)
     {
         symbols.registerProvider<WindowsSymbolsProvider>();
-        path.registerProvider<WindowsPathProvider>(exec_name);
+        path.registerProvider<WindowsPathProvider>(exec_path);
         process.registerProvider<WindowsProcessProvider>();
         runtime.registerProvider<WindowsRunTimeProvider>();
         timezone.registerProvider<WindowsTimeZoneProvider>();
-        logsink.registerProvider<WindowsLogSinkProvider>(exec_name);
+        logsink.registerProvider<WindowsLogSinkProvider>(exec_path);
     }
 
     void unregister_windows_providers()
@@ -34,9 +34,9 @@ namespace cc::core::platform
         symbols.unregisterProvider<WindowsSymbolsProvider>();
     }
 
-    void register_providers(const std::string &exec_name)
+    void register_providers(const fs::path &exec_path)
     {
-        register_windows_providers(exec_name);
+        register_windows_providers(exec_path);
     }
 
     void unregister_providers()

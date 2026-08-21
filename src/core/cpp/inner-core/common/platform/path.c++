@@ -52,9 +52,9 @@ namespace cc::core::platform
     // PathProvider
 
     PathProvider::PathProvider(const std::string &provider_name,
-                               const std::string &exec_name)
+                               const fs::path &exec_path)
         : Super(provider_name),
-          exec_name_(exec_name)
+          exec_path_(exec_path)
     {
     }
 
@@ -120,7 +120,7 @@ namespace cc::core::platform
 
     fs::path PathProvider::exec_path() const noexcept
     {
-        return this->exec_name_;
+        return this->exec_path_;
     }
 
     fs::path PathProvider::exec_folder_path() const noexcept

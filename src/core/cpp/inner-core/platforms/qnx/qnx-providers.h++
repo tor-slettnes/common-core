@@ -6,9 +6,10 @@
 //==============================================================================
 
 #pragma once
+#include "types/filesystem.h++"
 
 namespace cc::core::platform
 {
-    void register_qnx_providers(const std::string &exec_name);
+    void register_qnx_providers(const fs::path &exec_path);
     void unregister_qnx_providers();
 }  // namespace cc::core::platform

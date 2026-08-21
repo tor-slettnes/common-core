@@ -9,7 +9,7 @@
 
 namespace cc::core::platform
 {
-    QNXPathProvider::QNXPathProvider(const std::string &exec_path)
+    QNXPathProvider::QNXPathProvider(const fs::path &exec_path)
         : Super("QNXPathProvider", exec_path)
     {
     }

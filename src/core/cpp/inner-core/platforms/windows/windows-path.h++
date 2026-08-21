@@ -16,7 +16,7 @@ namespace cc::core::platform
         using Super = PathProvider;
 
     public:
-        WindowsPathProvider(const std::string &programpath);
+        WindowsPathProvider(const fs::path &programpath);
 
         FileStats get_stats(const fs::path &path,
                             bool dereference) const override;

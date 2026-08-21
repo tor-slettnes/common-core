@@ -6,9 +6,10 @@
 //==============================================================================
 
 #pragma once
+#include "types/filesystem.h++"
 
 namespace cc::core::platform
 {
-    void register_windows_providers(const std::string &exec_name);
+    void register_windows_providers(const fs::path &exec_path);
     void unregister_windows_providers();
 }  // namespace cc::core::platform

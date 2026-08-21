@@ -11,10 +11,10 @@
 namespace cc::core::platform
 {
     PosixLogSinkProvider::PosixLogSinkProvider(
-        const std::string &application_id,
+        const fs::path &exec_path,
         const std::string &sink_id)
         : LogSinkProvider("PosixLogSinkProvider", sink_id),
-          application_id_(application_id)
+          application_id_(exec_path.filename().string())
     {
     }
 
@@ -48,7 +48,7 @@ namespace cc::core::platform
         }
     }
 
-    std::string PosixLogSinkProvider::application_id() const
+    const std::string &PosixLogSinkProvider::application_id() const
     {
         return this->application_id_;
     }

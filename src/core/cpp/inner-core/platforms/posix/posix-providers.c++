@@ -14,11 +14,11 @@
 
 namespace cc::core::platform
 {
-    void register_posix_providers(const std::string &exec_name)
+    void register_posix_providers(const fs::path &exec_path)
     {
         runtime.registerProvider<PosixRunTimeProvider>();
         timezone.registerProvider<PosixTimeZoneProvider>();
-        logsink.registerProvider<PosixLogSinkProvider>(exec_name);
+        logsink.registerProvider<PosixLogSinkProvider>(exec_path);
         process.registerProvider<PosixProcessProvider>();
         serialport.registerProvider<PosixSerialPortProvider>();
         user.registerProvider<PosixUserProvider>();
