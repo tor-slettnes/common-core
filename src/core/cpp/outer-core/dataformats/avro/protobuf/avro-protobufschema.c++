@@ -43,7 +43,7 @@ namespace cc::avro
             auto context = std::make_shared<BuilderContext>();
             auto [it, inserted] = cached_schemas.insert_or_assign(
                 descriptor,
-                ProtoBufSchema::from_descriptor(
+                This::from_descriptor(
                     context,
                     descriptor));
             return it->second;
@@ -84,7 +84,7 @@ namespace cc::avro
     }
 
     core::types::Value ProtoBufSchema::field(
-        const google::protobuf::FieldDescriptor *fd) const
+        const google::protobuf::FieldDescriptor *fd)
     {
         core::types::Value schema;
         if (fd->is_map())
@@ -105,7 +105,7 @@ namespace cc::avro
     }
 
     core::types::Value ProtoBufSchema::field_schema(
-        const google::protobuf::FieldDescriptor *fd) const
+        const google::protobuf::FieldDescriptor *fd)
     {
         core::types::Value schema;
 
@@ -153,9 +153,18 @@ namespace cc::avro
 
         case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
         case google::protobuf::FieldDescriptor::TYPE_GROUP:
-            schema = This::from_descriptor(
-                this->context,
-                fd->message_type());
+            if (const google::protobuf::Descriptor *md = fd->message_type())
+            {
+                std::string schema_name = This::schema_name(md);
+                if (this->context->defined_schemas.count(schema_name))
+                {
+                    schema = schema_name;
+                }
+                else
+                {
+                    schema = This::from_descriptor(this->context, md);
+                }
+            }
             break;
 
         default:
@@ -167,7 +176,7 @@ namespace cc::avro
 
     EnumSchema ProtoBufSchema::enum_schema(
         const google::protobuf::EnumDescriptor *ed,
-        const google::protobuf::EnumValueDescriptor *default_value) const
+        const google::protobuf::EnumValueDescriptor *default_value)
     {
         return {
             this->context,
@@ -177,7 +186,7 @@ namespace cc::avro
     }
 
     MapSchema ProtoBufSchema::map_schema(
-        const google::protobuf::Descriptor *md) const
+        const google::protobuf::Descriptor *md)
     {
         return This::field_schema(md->map_value());
     }

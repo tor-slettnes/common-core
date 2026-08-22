@@ -29,7 +29,7 @@ namespace cc::avro
                                                 SchemaWrapper>;
         using NameTranslationMap = core::types::ValueMap<std::string, std::string>;
 
-    public:
+    protected:
         // @param[in] descriptor
         //     ProtoBuf message descriptor
 
@@ -57,17 +57,17 @@ namespace cc::avro
         void add_fields();
 
         core::types::Value field(
-            const google::protobuf::FieldDescriptor *fd) const;
+            const google::protobuf::FieldDescriptor *fd);
 
         core::types::Value field_schema(
-            const google::protobuf::FieldDescriptor *fd) const;
+            const google::protobuf::FieldDescriptor *fd);
 
         EnumSchema enum_schema(
             const google::protobuf::EnumDescriptor *ed,
-            const google::protobuf::EnumValueDescriptor *default_value) const;
+            const google::protobuf::EnumValueDescriptor *default_value);
 
         MapSchema map_schema(
-            const google::protobuf::Descriptor *md) const;
+            const google::protobuf::Descriptor *md);
 
         static SchemaWrapper from_descriptor(
             const ContextRef &context,

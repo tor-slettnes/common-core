@@ -80,8 +80,9 @@ namespace cc::avro
     //--------------------------------------------------------------------------
     // BuilderContext
 
-    core::types::Value BuilderContext::build(const std::string &name,
-                                             core::types::TaggedValueList &&spec)
+    core::types::Value BuilderContext::build(
+        const std::string &name,
+        core::types::TaggedValueList &&spec)
     {
         if (this->defined_schemas.count(name))
         {
@@ -265,8 +266,8 @@ namespace cc::avro
         subtypes.push_back(TypeName_Double);   // VT_DOUBLE
         // subtypes.push_back(TimeIntervalSchema(context));  // VT_INTERVAL
         // subtypes.push_back(TimestampSchema(context));     // VT_TIMESTAMP
-        // subtypes.push_back(MapSchema(TypeName_Variant));    // VT_MAP
-        // subtypes.push_back(ArraySchema(TypeName_Variant));  // VT_ARRAY
+        subtypes.push_back(MapSchema(TypeName_Variant));    // VT_MAP
+        subtypes.push_back(ArraySchema(TypeName_Variant));  // VT_ARRAY
         this->add_field(SchemaField_VariantValue, subtypes, default_value);
     }
 

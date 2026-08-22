@@ -106,8 +106,9 @@ namespace cc::avro
     class BuilderContext
     {
     public:
-        core::types::Value build(const std::string &name,
-                                 core::types::TaggedValueList &&spec);
+        core::types::Value build(
+            const std::string &name,
+            core::types::TaggedValueList &&spec);
 
     public:
         std::unordered_set<std::string> defined_schemas;
@@ -223,10 +224,8 @@ namespace cc::avro
             VT_BOOL,    // 3
             VT_LONG,    // 4
             VT_DOUBLE,  // 5
-            // VT_INTERVAL,   // 6
-            // VT_TIMESTAMP,  // 7
-            // VT_MAP,        // 6
-            // VT_ARRAY       // 7
+            VT_MAP,     // 6
+            VT_ARRAY    // 7
         };
 
         VariantSchema(const ContextRef &context,
