@@ -201,25 +201,13 @@ namespace cc::avro
 
     CalendarTimeIntervalSchema::CalendarTimeIntervalSchema(
         const ContextRef &context)
-        : SchemaWrapper(context->build(
-              TypeName_CalendarTimeInterval,
-              {
-                  {SchemaField_Type, TypeName_Fixed},
-                  {SchemaField_LogicalType, LogicalType_Duration},
-                  {SchemaField_Size, LogicalType_Duration_Size},
-              }))
+        : SchemaWrapper(core::types::TaggedValueList({
+              {SchemaField_Type, TypeName_Fixed},
+              {SchemaField_LogicalType, LogicalType_Duration},
+              {SchemaField_Size, LogicalType_Duration_Size},
+          }))
     {
     }
-
-    //--------------------------------------------------------------------------
-    // TimeIntervalSchema
-
-    // TimeIntervalSchema::TimeIntervalSchema(const ContextRef &context)
-    //     : RecordSchema(context, TypeName_TimeInterval)
-    // {
-    //     this->add_field(SchemaField_TimeSeconds, TypeName_Long);
-    //     this->add_field(SchemaField_TimeNanos, TypeName_Int);
-    // }
 
     TimeIntervalSchema::TimeIntervalSchema(
         const ContextRef &context)
@@ -229,16 +217,6 @@ namespace cc::avro
           }))
     {
     }
-
-    //--------------------------------------------------------------------------
-    // TimestampSchema
-
-    // TimestampSchema::TimestampSchema(const ContextRef &context)
-    //     : RecordSchema(context, TypeName_Timestamp)
-    // {
-    //     this->add_field(SchemaField_TimeSeconds, TypeName_Long);
-    //     this->add_field(SchemaField_TimeNanos, TypeName_Int);
-    // }
 
     TimestampSchema::TimestampSchema(
         const ContextRef &context)
