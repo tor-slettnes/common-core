@@ -104,10 +104,10 @@ namespace cc::avro
                 // two alternate fields of the same type. Therefore, we include
                 // each field from the oneof block as separate Avro fields, but
                 // with `null` as an alternate value type.
-                field.schema = core::types::ValueList({
-                    TypeName_Null,
-                    field.schema,
-                });
+                core::types::ValueList alternates;
+                alternates.push_back(TypeName_Null);
+                alternates.push_back(field.schema);
+                field.schema = SchemaWrapper(alternates);
                 field.default_value = core::types::Value();
             }
 
@@ -144,8 +144,6 @@ namespace cc::avro
     ProtoBufSchema::FieldData ProtoBufSchema::field_schema(
         const google::protobuf::FieldDescriptor *fd)
     {
-        FieldData field;
-
         switch (fd->type())
         {
         case google::protobuf::FieldDescriptor::TYPE_INT32:
@@ -153,49 +151,34 @@ namespace cc::avro
         case google::protobuf::FieldDescriptor::TYPE_SFIXED32:
         case google::protobuf::FieldDescriptor::TYPE_UINT32:
         case google::protobuf::FieldDescriptor::TYPE_FIXED32:
-            field.schema = TypeName_Int;
-            field.default_value = 0;
-            break;
+            return {SchemaWrapper(TypeName_Int), 0};
 
         case google::protobuf::FieldDescriptor::TYPE_INT64:
         case google::protobuf::FieldDescriptor::TYPE_SINT64:
         case google::protobuf::FieldDescriptor::TYPE_SFIXED64:
         case google::protobuf::FieldDescriptor::TYPE_UINT64:
         case google::protobuf::FieldDescriptor::TYPE_FIXED64:
-            field.schema = TypeName_Long;
-            field.default_value = 0;
-            break;
+            return {SchemaWrapper(TypeName_Long), 0};
 
         case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
-            field.schema = TypeName_Double;
-            field.default_value = 0.0;
-            break;
+            return {SchemaWrapper(TypeName_Double), 0.0};
 
         case google::protobuf::FieldDescriptor::TYPE_FLOAT:
-            field.schema = TypeName_Float;
-            field.default_value = 0.0;
-            break;
+            return {SchemaWrapper(TypeName_Float), 0.0};
 
         case google::protobuf::FieldDescriptor::TYPE_BOOL:
-            field.schema = TypeName_Boolean;
-            field.default_value = false;
-            break;
+            return {SchemaWrapper(TypeName_Boolean), false};
 
         case google::protobuf::FieldDescriptor::TYPE_ENUM:
-            field = This::enum_schema(
+            return This::enum_schema(
                 fd->enum_type(),
                 fd->default_value_enum());
-            break;
 
         case google::protobuf::FieldDescriptor::TYPE_STRING:
-            field.schema = TypeName_String;
-            field.default_value = ""s;
-            break;
+            return {SchemaWrapper(TypeName_String), ""s};
 
         case google::protobuf::FieldDescriptor::TYPE_BYTES:
-            field.schema = TypeName_Bytes;
-            field.default_value = ""s;
-            break;
+            return {SchemaWrapper(TypeName_Bytes), ""s};
 
         case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
         case google::protobuf::FieldDescriptor::TYPE_GROUP:
@@ -204,21 +187,17 @@ namespace cc::avro
                 std::string schema_name = This::schema_name(md);
                 if (this->context->defined_schemas.count(schema_name))
                 {
-                    field.schema = schema_name;
+                    return {SchemaWrapper(schema_name), {}};
                 }
                 else
                 {
-                    field = This::from_descriptor(this->context, md);
+                    return This::from_descriptor(this->context, md);
                 }
             }
             break;
-
-        default:
-            field.schema = TypeName_Null;
-            break;
         }
 
-        return field;
+        return {SchemaWrapper(TypeName_Null), {}};
     }
 
     ProtoBufSchema::FieldData ProtoBufSchema::enum_schema(
