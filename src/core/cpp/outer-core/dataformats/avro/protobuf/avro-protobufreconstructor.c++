@@ -126,14 +126,14 @@ namespace cc::avro
         if (envelope)
         {
             success &= reconstruct_proto_from_avro_value(
-                wrapper.get_field_by_index(1, ENVELOPE_FIELD),
+                wrapper.get_field_by_index(0, ENVELOPE_FIELD),
                 envelope);
         }
 
         if (success && msg)
         {
             success &= reconstruct_proto_from_avro_value(
-                wrapper.get_field_by_index(0, CONTENTS_FIELD),
+                wrapper.get_field_by_index(1, CONTENTS_FIELD),
                 msg);
         }
         return success;

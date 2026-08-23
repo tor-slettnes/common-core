@@ -33,12 +33,7 @@ namespace cc::avro
                   envelope.GetDescriptor()))
     {
         avro_value_reset(&this->value);
-
-        avro_value_t envelope_field = avro::get_field_by_index(this->value, 0, ENVELOPE_FIELD);
-        avro_value_t envelope_branch;
-        avro_value_set_branch(&envelope_field, 1, &envelope_branch);
-        This::assign_from_message(&envelope_branch, envelope);
-
+        This::assign_field_from_message(&this->value, 0, ENVELOPE_FIELD, envelope);
         This::assign_field_from_message(&this->value, 1, CONTENTS_FIELD, msg);
     }
 

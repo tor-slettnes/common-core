@@ -69,11 +69,9 @@ namespace cc::avro
                 schema_name.value_or(
                     This::schema_name(contents_descriptor) + "Message"));
 
-            core::types::ValueList union_value;
-            union_value.push_back(TypeName_Null);
-            union_value.push_back(This::from_descriptor(context, envelope_descriptor).schema);
-
-            wrapper.add_field(ENVELOPE_FIELD, union_value, core::types::nullvalue);
+            wrapper.add_field(
+                ENVELOPE_FIELD,
+                This::from_descriptor(context, envelope_descriptor).schema);
 
             wrapper.add_field(
                 CONTENTS_FIELD,
@@ -82,6 +80,7 @@ namespace cc::avro
             auto [it, inserted] = cached_schemas.insert_or_assign(
                 contents_descriptor,
                 wrapper);
+
             return it->second;
         }
     }
