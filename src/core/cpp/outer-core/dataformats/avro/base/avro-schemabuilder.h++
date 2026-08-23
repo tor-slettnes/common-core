@@ -61,10 +61,12 @@ namespace cc::avro
     class SchemaWrapper : public core::types::Value
     {
     public:
-        SchemaWrapper(const core::types::Value &value);
+        SchemaWrapper(const core::types::Value &value = {});
         ~SchemaWrapper();
 
     public:
+        using core::types::Value::operator=;
+
         // @brief
         //     Convert this wrapper into a Avro-C compatible schema.
         // @return
@@ -225,7 +227,7 @@ namespace cc::avro
         };
 
         VariantSchema(const ContextRef &context,
-                      const std::optional<core::types::Value> &default_value = {});
+                      const core::types::Value &default_value = {});
 
     private:
         static core::types::ValueList alternates;

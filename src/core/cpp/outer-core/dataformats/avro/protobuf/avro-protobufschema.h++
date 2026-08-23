@@ -15,6 +15,9 @@
 
 namespace cc::avro
 {
+    constexpr auto ENVELOPE_FIELD = "envelope";
+    constexpr auto CONTENTS_FIELD = "contents";
+
     //--------------------------------------------------------------------------
     /// @class ProtoBufSchema
     /// @brief Build Avro schema from ProtoBuf message type
@@ -25,9 +28,16 @@ namespace cc::avro
         using Super = RecordSchema;
 
         using DescriptorSet = std::unordered_set<const google::protobuf::Descriptor *>;
-        using SchemaMap = core::types::ValueMap<const google::protobuf::Descriptor *,
-                                                SchemaWrapper>;
         using NameTranslationMap = core::types::ValueMap<std::string, std::string>;
+        using SchemaMap = core::types::ValueMap<
+            const google::protobuf::Descriptor *,
+            SchemaWrapper>;
+
+        struct FieldData
+        {
+            SchemaWrapper schema;
+            std::optional<core::types::Value> default_value;
+        };
 
     protected:
         // @param[in] descriptor
@@ -53,23 +63,28 @@ namespace cc::avro
         static const SchemaWrapper &from_proto(
             const google::protobuf::Descriptor *descriptor);
 
+        static const SchemaWrapper &from_proto_with_envelope(
+            const google::protobuf::Descriptor *contents_descriptor,
+            const google::protobuf::Descriptor *envelope_descriptor,
+            const std::optional<std::string> &schema_name = {});
+
     private:
         void add_fields();
 
-        core::types::Value field(
+        FieldData field(
             const google::protobuf::FieldDescriptor *fd);
 
-        core::types::Value field_schema(
+        FieldData field_schema(
             const google::protobuf::FieldDescriptor *fd);
 
-        EnumSchema enum_schema(
+        FieldData enum_schema(
             const google::protobuf::EnumDescriptor *ed,
             const google::protobuf::EnumValueDescriptor *default_value);
 
-        MapSchema map_schema(
+        FieldData map_schema(
             const google::protobuf::Descriptor *md);
 
-        static SchemaWrapper from_descriptor(
+        static FieldData from_descriptor(
             const ContextRef &context,
             const google::protobuf::Descriptor *descriptor);
 

@@ -16,18 +16,40 @@
 
 namespace cc::avro
 {
-    ProtoBufValue::ProtoBufValue(const google::protobuf::Message &msg)
+    ProtoBufValue::ProtoBufValue(
+        const google::protobuf::Message &msg)
         : CompoundValue(ProtoBufSchema::from_proto(msg.GetDescriptor()))
     {
-        this->assign_from_message(msg);
+        avro_value_reset(&this->value);
+        this->assign_from_message(&this->value, msg);
     }
 
-    ProtoBufValue &ProtoBufValue::assign_from_message(
-        const google::protobuf::Message &msg)
+    ProtoBufValue::ProtoBufValue(
+        const google::protobuf::Message &msg,
+        const google::protobuf::Message &envelope)
+        : CompoundValue(
+              ProtoBufSchema::from_proto_with_envelope(
+                  msg.GetDescriptor(),
+                  envelope.GetDescriptor()))
     {
         avro_value_reset(&this->value);
-        This::assign_from_message(&this->value, msg);
-        return *this;
+
+        avro_value_t envelope_field = avro::get_field_by_index(this->value, 0, ENVELOPE_FIELD);
+        avro_value_t envelope_branch;
+        avro_value_set_branch(&envelope_field, 1, &envelope_branch);
+        This::assign_from_message(&envelope_branch, envelope);
+
+        This::assign_field_from_message(&this->value, 1, CONTENTS_FIELD, msg);
+    }
+
+    void ProtoBufValue::assign_field_from_message(
+        avro_value_t *avro_value,
+        int index,
+        const std::string &field_name,
+        const google::protobuf::Message &msg)
+    {
+        avro_value_t field = avro::get_field_by_index(*avro_value, index, field_name);
+        This::assign_from_message(&field, msg);
     }
 
     void ProtoBufValue::assign_from_message(

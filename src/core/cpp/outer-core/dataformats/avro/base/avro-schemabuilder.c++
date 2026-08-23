@@ -232,7 +232,7 @@ namespace cc::avro
 
     VariantSchema::VariantSchema(
         const ContextRef &context,
-        const std::optional<core::types::Value> &default_value)
+        const core::types::Value &default_value)
         : RecordSchema(context, TypeName_Variant)
     {
         core::types::ValueList subtypes;

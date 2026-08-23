@@ -19,12 +19,20 @@ namespace cc::avro
         using Super = CompoundValue;
 
     public:
-        ProtoBufValue(const google::protobuf::Message &msg);
-
-        ProtoBufValue &assign_from_message(
+        ProtoBufValue(
             const google::protobuf::Message &msg);
 
+        ProtoBufValue(
+            const google::protobuf::Message &msg,
+            const google::protobuf::Message &envelope);
+
     private:
+        static void assign_field_from_message(
+            avro_value_t *avro_value,
+            int index,
+            const std::string &field_name,
+            const google::protobuf::Message &msg);
+
         static void assign_from_message(
             avro_value_t *avro_value,
             const google::protobuf::Message &msg);

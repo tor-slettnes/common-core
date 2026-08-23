@@ -139,8 +139,15 @@ namespace cc::avro
 
         cc::protobuf::status::Error msg;
         cc::protobuf::encode(event, &msg);
-        avro::ProtoBufValue avro_wrapper(msg);
 
+        auto avro_schema = ProtoBufSchema::from_proto(msg.GetDescriptor());
+        std::string schema_text = avro_schema.as_json();
+        {
+            std::ofstream of1("schema-text.json");
+            of1.write(schema_text.data(), schema_text.size());
+        }
+
+        avro::ProtoBufValue avro_wrapper(msg);
         // EXPECT_EQ(avro_wrapper.as_value().get("attributes").get("duration").as_bytevector().size(), 12);
 
         std::string json_text = avro_wrapper.as_json();

@@ -41,11 +41,47 @@ namespace cc::avro
         catch (std::out_of_range)
         {
             auto context = std::make_shared<BuilderContext>();
+            FieldData schema_data = This::from_descriptor(context, descriptor);
             auto [it, inserted] = cached_schemas.insert_or_assign(
                 descriptor,
-                This::from_descriptor(
-                    context,
-                    descriptor));
+                schema_data.schema);
+
+            return it->second;
+        }
+    }
+
+    const SchemaWrapper &ProtoBufSchema::from_proto_with_envelope(
+        const google::protobuf::Descriptor *contents_descriptor,
+        const google::protobuf::Descriptor *envelope_descriptor,
+        const std::optional<std::string> &schema_name)
+    {
+        static SchemaMap cached_schemas;
+
+        try
+        {
+            return cached_schemas.at(contents_descriptor);
+        }
+        catch (std::out_of_range)
+        {
+            auto context = std::make_shared<BuilderContext>();
+            RecordSchema wrapper(
+                context,
+                schema_name.value_or(
+                    This::schema_name(contents_descriptor) + "Message"));
+
+            core::types::ValueList union_value;
+            union_value.push_back(TypeName_Null);
+            union_value.push_back(This::from_descriptor(context, envelope_descriptor).schema);
+
+            wrapper.add_field(ENVELOPE_FIELD, union_value, core::types::nullvalue);
+
+            wrapper.add_field(
+                CONTENTS_FIELD,
+                This::from_descriptor(context, contents_descriptor).schema);
+
+            auto [it, inserted] = cached_schemas.insert_or_assign(
+                contents_descriptor,
+                wrapper);
             return it->second;
         }
     }
@@ -58,8 +94,7 @@ namespace cc::avro
         {
             const google::protobuf::FieldDescriptor *fd = this->descriptor->field(i);
 
-            core::types::Value field_schema = This::field(fd);
-            std::optional<core::types::Value> default_value;
+            FieldData field = This::field(fd);
             if (const google::protobuf::OneofDescriptor *ood = fd->containing_oneof())
             {
                 // Avro does not have an exact counterpart to ProtoBuf `oneof`
@@ -69,45 +104,47 @@ namespace cc::avro
                 // two alternate fields of the same type. Therefore, we include
                 // each field from the oneof block as separate Avro fields, but
                 // with `null` as an alternate value type.
-                field_schema = core::types::ValueList({
+                field.schema = core::types::ValueList({
                     TypeName_Null,
-                    field_schema,
+                    field.schema,
                 });
-                default_value = core::types::Value();
+                field.default_value = core::types::Value();
             }
 
             this->add_field(fd->name(),
-                            field_schema,
-                            default_value,
+                            field.schema,
+                            field.default_value,
                             This::field_comment(fd));
         }
     }
 
-    core::types::Value ProtoBufSchema::field(
+    ProtoBufSchema::FieldData ProtoBufSchema::field(
         const google::protobuf::FieldDescriptor *fd)
     {
-        core::types::Value schema;
+        FieldData field;
+
         if (fd->is_map())
         {
-            schema = This::map_schema(fd->message_type());
+            field = This::map_schema(fd->message_type());
         }
         else
         {
-            schema = This::field_schema(fd);
+            field = This::field_schema(fd);
 
             if (fd->is_repeated())
             {
-                schema = ArraySchema(schema);
+                field.schema = ArraySchema(field.schema);
+                field.default_value = core::types::ValueList();
             }
         }
 
-        return schema;
+        return field;
     }
 
-    core::types::Value ProtoBufSchema::field_schema(
+    ProtoBufSchema::FieldData ProtoBufSchema::field_schema(
         const google::protobuf::FieldDescriptor *fd)
     {
-        core::types::Value schema;
+        FieldData field;
 
         switch (fd->type())
         {
@@ -116,7 +153,8 @@ namespace cc::avro
         case google::protobuf::FieldDescriptor::TYPE_SFIXED32:
         case google::protobuf::FieldDescriptor::TYPE_UINT32:
         case google::protobuf::FieldDescriptor::TYPE_FIXED32:
-            schema = TypeName_Int;
+            field.schema = TypeName_Int;
+            field.default_value = 0;
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_INT64:
@@ -124,31 +162,39 @@ namespace cc::avro
         case google::protobuf::FieldDescriptor::TYPE_SFIXED64:
         case google::protobuf::FieldDescriptor::TYPE_UINT64:
         case google::protobuf::FieldDescriptor::TYPE_FIXED64:
-            schema = TypeName_Long;
+            field.schema = TypeName_Long;
+            field.default_value = 0;
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
-            schema = TypeName_Double;
+            field.schema = TypeName_Double;
+            field.default_value = 0.0;
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_FLOAT:
-            schema = TypeName_Float;
+            field.schema = TypeName_Float;
+            field.default_value = 0.0;
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_BOOL:
-            schema = TypeName_Boolean;
+            field.schema = TypeName_Boolean;
+            field.default_value = false;
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_ENUM:
-            schema = This::enum_schema(fd->enum_type(), fd->default_value_enum());
+            field = This::enum_schema(
+                fd->enum_type(),
+                fd->default_value_enum());
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_STRING:
-            schema = TypeName_String;
+            field.schema = TypeName_String;
+            field.default_value = ""s;
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_BYTES:
-            schema = TypeName_Bytes;
+            field.schema = TypeName_Bytes;
+            field.default_value = ""s;
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
@@ -158,99 +204,105 @@ namespace cc::avro
                 std::string schema_name = This::schema_name(md);
                 if (this->context->defined_schemas.count(schema_name))
                 {
-                    schema = schema_name;
+                    field.schema = schema_name;
                 }
                 else
                 {
-                    schema = This::from_descriptor(this->context, md);
+                    field = This::from_descriptor(this->context, md);
                 }
             }
             break;
 
         default:
-            schema = TypeName_Null;
+            field.schema = TypeName_Null;
             break;
         }
-        return schema;
+
+        return field;
     }
 
-    EnumSchema ProtoBufSchema::enum_schema(
+    ProtoBufSchema::FieldData ProtoBufSchema::enum_schema(
         const google::protobuf::EnumDescriptor *ed,
         const google::protobuf::EnumValueDescriptor *default_value)
     {
         return {
-            this->context,
-            This::translated_namespace(ed->full_name()),
-            cc::protobuf::enum_names(ed),
-            cc::protobuf::enum_name(default_value->number(), ed)};
+            EnumSchema(
+                this->context,
+                This::translated_namespace(ed->full_name()),
+                cc::protobuf::enum_names(ed)),
+            cc::protobuf::enum_name(default_value->number(), ed),
+        };
     }
 
-    MapSchema ProtoBufSchema::map_schema(
+    ProtoBufSchema::FieldData ProtoBufSchema::map_schema(
         const google::protobuf::Descriptor *md)
     {
-        return This::field_schema(md->map_value());
+        return {
+            MapSchema(This::field_schema(md->map_value()).schema),
+            core::types::KeyValueMap(),
+        };
     }
 
-    SchemaWrapper ProtoBufSchema::from_descriptor(
+    ProtoBufSchema::FieldData ProtoBufSchema::from_descriptor(
         const ContextRef &context,
         const google::protobuf::Descriptor *descriptor)
     {
         switch (descriptor->well_known_type())
         {
         case google::protobuf::Descriptor::WELLKNOWNTYPE_DOUBLEVALUE:
-            return SchemaWrapper(TypeName_Double);
+            return {SchemaWrapper(TypeName_Double), 0.0};
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_FLOATVALUE:
-            return SchemaWrapper(TypeName_Float);
+            return {SchemaWrapper(TypeName_Float), 0.0};
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_INT64VALUE:
         case google::protobuf::Descriptor::WELLKNOWNTYPE_UINT64VALUE:
-            return SchemaWrapper(TypeName_Long);
+            return {SchemaWrapper(TypeName_Long), 0};
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_INT32VALUE:
         case google::protobuf::Descriptor::WELLKNOWNTYPE_UINT32VALUE:
-            return SchemaWrapper(TypeName_Int);
+            return {SchemaWrapper(TypeName_Int), 0};
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_STRINGVALUE:
-            return SchemaWrapper(TypeName_String);
+            return {SchemaWrapper(TypeName_String), ""s};
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_BYTESVALUE:
-            return SchemaWrapper(TypeName_Bytes);
+            return {SchemaWrapper(TypeName_Bytes), ""s};
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_BOOLVALUE:
-            return SchemaWrapper(TypeName_Boolean);
+            return {SchemaWrapper(TypeName_Boolean), false};
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_DURATION:
-            return TimeIntervalSchema(context);
+            return {TimeIntervalSchema(context), 0};
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_TIMESTAMP:
-            return TimestampSchema(context);
+            return {TimestampSchema(context), 0};
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_VALUE:
-            return VariantSchema(context);
+            return {VariantSchema(context), core::types::Value()};
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_LISTVALUE:
-            return VariantListSchema(context);
+            return {VariantListSchema(context), core::types::ValueList()};
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_STRUCT:
-            return VariantMapSchema(context);
+            return {VariantMapSchema(context), core::types::KeyValueMap()};
 
         default:
             if (descriptor == cc::protobuf::variant::Value::GetDescriptor())
             {
-                return VariantSchema(context);
+                return {VariantSchema(context), core::types::Value()};
             }
             else if (descriptor == cc::protobuf::variant::KeyValueMap::GetDescriptor())
             {
-                return VariantMapSchema(context);
+                return {VariantMapSchema(context), core::types::KeyValueMap()};
             }
             else if (descriptor == cc::protobuf::variant::ValueList::GetDescriptor())
             {
-                return VariantListSchema(context);
+                return {VariantListSchema(context), core::types::ValueList()};
             }
             else
             {
-                return ProtoBufSchema(context, descriptor);
+                return {ProtoBufSchema(context, descriptor), {}};
             }
         }
     }
