@@ -71,38 +71,38 @@ namespace cc::avro
             msg);
     }
 
-    bool reconstruct_proto_with_envelope(
+    bool reconstruct_proto_with_metadata(
         const core::types::ByteVector &payload,
         google::protobuf::Message *msg,
-        google::protobuf::Message *envelope)
+        google::protobuf::Message *metadata)
     {
         if (sr::extract_schema_id(payload))
         {
-            return reconstruct_proto_with_envelope_from_tagged_payload(
+            return reconstruct_proto_with_metadata_from_tagged_payload(
                 payload,
                 msg,
-                envelope);
+                metadata);
         }
         else
         {
-            return reconstruct_proto_with_envelope_from_raw_payload(
+            return reconstruct_proto_with_metadata_from_raw_payload(
                 payload,
                 msg,
-                envelope);
+                metadata);
         }
     }
 
-    bool reconstruct_proto_with_envelope_from_tagged_payload(
+    bool reconstruct_proto_with_metadata_from_tagged_payload(
         const core::types::ByteVector &payload,
         google::protobuf::Message *msg,
-        google::protobuf::Message *envelope)
+        google::protobuf::Message *metadata)
     {
         if (auto serialized = sr::extract_payload(payload))
         {
-            return reconstruct_proto_with_envelope_from_raw_payload(
+            return reconstruct_proto_with_metadata_from_raw_payload(
                 *serialized,
                 msg,
-                envelope);
+                metadata);
         }
         else
         {
@@ -110,30 +110,30 @@ namespace cc::avro
         }
     }
 
-    bool reconstruct_proto_with_envelope_from_raw_payload(
+    bool reconstruct_proto_with_metadata_from_raw_payload(
         const core::types::ByteVector &payload,
         google::protobuf::Message *msg,
-        google::protobuf::Message *envelope)
+        google::protobuf::Message *metadata)
     {
-        auto schema = ProtoBufSchema::from_proto_with_envelope(
+        auto schema = ProtoBufSchema::from_proto(
             msg->GetDescriptor(),
-            envelope->GetDescriptor());
+            metadata->GetDescriptor());
 
         CompoundValue wrapper(schema);
         wrapper.set_from_serialized(payload);
 
         bool success = true;
-        if (envelope)
+        if (metadata)
         {
             success &= reconstruct_proto_from_avro_value(
-                wrapper.get_field_by_index(0, ENVELOPE_FIELD),
-                envelope);
+                wrapper.get_field_by_index(0, METADATA_FIELD),
+                metadata);
         }
 
         if (success && msg)
         {
             success &= reconstruct_proto_from_avro_value(
-                wrapper.get_field_by_index(1, CONTENTS_FIELD),
+                wrapper,
                 msg);
         }
         return success;

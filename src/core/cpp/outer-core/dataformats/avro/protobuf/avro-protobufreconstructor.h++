@@ -34,20 +34,20 @@ namespace cc::avro
         const BaseValue &avro_value,
         google::protobuf::Message *msg);
 
-    bool reconstruct_proto_with_envelope(
+    bool reconstruct_proto_with_metadata(
         const core::types::ByteVector &payload,
         google::protobuf::Message *msg,
-        google::protobuf::Message *envelope);
+        google::protobuf::Message *metadata = nullptr);
 
-    bool reconstruct_proto_with_envelope_from_tagged_payload(
+    bool reconstruct_proto_with_metadata_from_tagged_payload(
         const core::types::ByteVector &payload,
         google::protobuf::Message *msg,
-        google::protobuf::Message *envelope);
+        google::protobuf::Message *metadata = nullptr);
 
-    bool reconstruct_proto_with_envelope_from_raw_payload(
+    bool reconstruct_proto_with_metadata_from_raw_payload(
         const core::types::ByteVector &payload,
         google::protobuf::Message *msg,
-        google::protobuf::Message *envelope);
+        google::protobuf::Message *metadata = nullptr);
 
 
 }  // namespace cc::avro

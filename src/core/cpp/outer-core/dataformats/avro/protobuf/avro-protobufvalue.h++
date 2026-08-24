@@ -24,7 +24,7 @@ namespace cc::avro
 
         ProtoBufValue(
             const google::protobuf::Message &msg,
-            const google::protobuf::Message &envelope);
+            const google::protobuf::Message &metadata);
 
     private:
         static void assign_field_from_message(

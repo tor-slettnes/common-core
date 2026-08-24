@@ -15,8 +15,7 @@
 
 namespace cc::avro
 {
-    constexpr auto ENVELOPE_FIELD = "envelope";
-    constexpr auto CONTENTS_FIELD = "contents";
+    constexpr auto METADATA_FIELD = "metadata";
 
     //--------------------------------------------------------------------------
     /// @class ProtoBufSchema
@@ -29,9 +28,6 @@ namespace cc::avro
 
         using DescriptorSet = std::unordered_set<const google::protobuf::Descriptor *>;
         using NameTranslationMap = core::types::ValueMap<std::string, std::string>;
-        using SchemaMap = core::types::ValueMap<
-            const google::protobuf::Descriptor *,
-            SchemaWrapper>;
 
         struct FieldData
         {
@@ -39,13 +35,18 @@ namespace cc::avro
             std::optional<core::types::Value> default_value;
         };
 
+        using SchemaMap = core::types::ValueMap<
+            const google::protobuf::Descriptor *,
+            SchemaWrapper>;
+
     protected:
         // @param[in] descriptor
         //     ProtoBuf message descriptor
 
         ProtoBufSchema(
             const ContextRef &context,
-            const google::protobuf::Descriptor *descriptor);
+            const google::protobuf::Descriptor *contents,
+            const google::protobuf::Descriptor *metadata = nullptr);
 
     public:
         //--------------------------------------------------------------------------
@@ -61,12 +62,8 @@ namespace cc::avro
         /// instance.  New instances are cached for future reuse.
 
         static const SchemaWrapper &from_proto(
-            const google::protobuf::Descriptor *descriptor);
-
-        static const SchemaWrapper &from_proto_with_envelope(
-            const google::protobuf::Descriptor *contents_descriptor,
-            const google::protobuf::Descriptor *envelope_descriptor,
-            const std::optional<std::string> &schema_name = {});
+            const google::protobuf::Descriptor *contents,
+            const google::protobuf::Descriptor *metadata = nullptr);
 
     private:
         void add_fields();
@@ -100,6 +97,7 @@ namespace cc::avro
 
     private:
         const google::protobuf::Descriptor *descriptor;
+        const google::protobuf::Descriptor *metadata;
     };
 
 }  // namespace cc::avro

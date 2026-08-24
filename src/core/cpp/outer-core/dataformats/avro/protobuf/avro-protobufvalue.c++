@@ -26,15 +26,15 @@ namespace cc::avro
 
     ProtoBufValue::ProtoBufValue(
         const google::protobuf::Message &msg,
-        const google::protobuf::Message &envelope)
+        const google::protobuf::Message &metadata)
         : CompoundValue(
-              ProtoBufSchema::from_proto_with_envelope(
+              ProtoBufSchema::from_proto(
                   msg.GetDescriptor(),
-                  envelope.GetDescriptor()))
+                  metadata.GetDescriptor()))
     {
         avro_value_reset(&this->value);
-        This::assign_field_from_message(&this->value, 0, ENVELOPE_FIELD, envelope);
-        This::assign_field_from_message(&this->value, 1, CONTENTS_FIELD, msg);
+        This::assign_field_from_message(&this->value, 0, METADATA_FIELD, metadata);
+        This::assign_from_custom(&this->value, msg);
     }
 
     void ProtoBufValue::assign_field_from_message(
@@ -161,7 +161,7 @@ namespace cc::avro
         for (int i = 0; i < nfields; i++)
         {
             const google::protobuf::FieldDescriptor *fd = descriptor->field(i);
-            avro_value_t field_value = avro::get_field_by_index(*avro_value, i, fd->name());
+            avro_value_t field_value = avro::get_field_by_name(*avro_value, fd->name());
             This::assign_from_field(&field_value, msg, fd);
         }
     }

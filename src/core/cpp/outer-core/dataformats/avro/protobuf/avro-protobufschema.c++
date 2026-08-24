@@ -23,15 +23,23 @@ namespace cc::avro
 
     ProtoBufSchema::ProtoBufSchema(
         const ContextRef &context,
-        const google::protobuf::Descriptor *descriptor)
+        const google::protobuf::Descriptor *descriptor,
+        const google::protobuf::Descriptor *metadata)
         : RecordSchema(context, This::schema_name(descriptor)),
-          descriptor(descriptor)
+          descriptor(descriptor),
+          metadata(metadata)
     {
+        if (metadata)
+        {
+            this->add_field(METADATA_FIELD, This::from_proto(metadata));
+        }
+
         this->add_fields();
     }
 
     const SchemaWrapper &ProtoBufSchema::from_proto(
-        const google::protobuf::Descriptor *descriptor)
+        const google::protobuf::Descriptor *descriptor,
+        const google::protobuf::Descriptor *metadata)
     {
         static SchemaMap cached_schemas;
         try
@@ -41,46 +49,12 @@ namespace cc::avro
         catch (std::out_of_range)
         {
             auto context = std::make_shared<BuilderContext>();
-            FieldData schema_data = This::from_descriptor(context, descriptor);
             auto [it, inserted] = cached_schemas.insert_or_assign(
                 descriptor,
-                schema_data.schema);
-
-            return it->second;
-        }
-    }
-
-    const SchemaWrapper &ProtoBufSchema::from_proto_with_envelope(
-        const google::protobuf::Descriptor *contents_descriptor,
-        const google::protobuf::Descriptor *envelope_descriptor,
-        const std::optional<std::string> &schema_name)
-    {
-        static SchemaMap cached_schemas;
-
-        try
-        {
-            return cached_schemas.at(contents_descriptor);
-        }
-        catch (std::out_of_range)
-        {
-            auto context = std::make_shared<BuilderContext>();
-            RecordSchema wrapper(
-                context,
-                schema_name.value_or(
-                    This::schema_name(contents_descriptor) + "Message"));
-
-            wrapper.add_field(
-                ENVELOPE_FIELD,
-                This::from_descriptor(context, envelope_descriptor).schema);
-
-            wrapper.add_field(
-                CONTENTS_FIELD,
-                This::from_descriptor(context, contents_descriptor).schema);
-
-            auto [it, inserted] = cached_schemas.insert_or_assign(
-                contents_descriptor,
-                wrapper);
-
+                ProtoBufSchema(
+                    context,
+                    descriptor,
+                    metadata));
             return it->second;
         }
     }
