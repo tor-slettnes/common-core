@@ -41,16 +41,25 @@ namespace cc::avro
         const google::protobuf::Descriptor *descriptor,
         const google::protobuf::Descriptor *metadata)
     {
+        using DescriptorPair = std::pair<
+            const google::protobuf::Descriptor *,
+            const google::protobuf::Descriptor *>;
+
+        using SchemaMap = core::types::ValueMap<
+            DescriptorPair,
+            SchemaWrapper>;
+
         static SchemaMap cached_schemas;
+
         try
         {
-            return cached_schemas.at(descriptor);
+            return cached_schemas.at({descriptor, metadata});
         }
         catch (std::out_of_range)
         {
             auto context = std::make_shared<BuilderContext>();
             auto [it, inserted] = cached_schemas.insert_or_assign(
-                descriptor,
+                {descriptor, metadata},
                 ProtoBufSchema(
                     context,
                     descriptor,

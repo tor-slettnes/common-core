@@ -35,10 +35,6 @@ namespace cc::avro
             std::optional<core::types::Value> default_value;
         };
 
-        using SchemaMap = core::types::ValueMap<
-            const google::protobuf::Descriptor *,
-            SchemaWrapper>;
-
     protected:
         // @param[in] descriptor
         //     ProtoBuf message descriptor

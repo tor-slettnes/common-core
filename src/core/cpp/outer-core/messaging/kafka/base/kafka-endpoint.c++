@@ -16,7 +16,7 @@ namespace cc::kafka
                        const core::types::KeyValueMap &settings)
         : Super("Kafka", endpoint_type, profile_name),
           conf_(RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL)),
-          log_capture_(endpoint_type, profile_name)
+          log_capture_(this->to_string())
     {
         this->init_logging();
         this->init_conf(settings);

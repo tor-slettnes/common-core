@@ -27,16 +27,14 @@ namespace cc::kafka
 
     public:
         LogCapture(
-            const std::string &endpoint_type,
-            const std::string &profile_name);
+            const std::string &preamble);
 
     protected:
         void event_cb(RdKafka::Event &event) override;
 
     private:
         static const LevelMap level_map;
-        std::string endpoint_type;
-        std::string profile_name;
+        std::string preamble;
     };
 
     //--------------------------------------------------------------------------

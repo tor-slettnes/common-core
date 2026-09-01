@@ -55,7 +55,7 @@ namespace cc::sr
             {
                 std::size_t payload_size = unwrapped_size(wrapped);
                 payload->resize(payload_size);
-                memcpy(payload,
+                memcpy(payload->data(),
                        wrapped.data() + ENVELOPE_SIZE,
                        payload_size);
             }

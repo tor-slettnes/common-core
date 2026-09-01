@@ -72,7 +72,7 @@ namespace cc::avro
         // @return
         //     New `avro_schema_t` reference.
         std::string schema_name() const;
-        avro_schema_t as_avro_schema() const;
+        const avro_schema_t &as_avro_schema() const;
         virtual std::string as_json() const;
 
     protected:

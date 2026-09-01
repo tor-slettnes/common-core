@@ -28,7 +28,11 @@ namespace cc::kafka
     ProducerBase::~ProducerBase()
     {
         this->shutdown();
-        delete this->producer_handle_;
+        if (this->producer_handle_)
+        {
+            delete this->producer_handle_;
+            this->producer_handle_ = nullptr;
+        }
     }
 
     void ProducerBase::initialize()
@@ -120,7 +124,7 @@ namespace cc::kafka
 
     void ProducerBase::produce(
         const std::string &topic,
-        const core::types::Bytes &payload,
+        const core::types::ByteVector &payload,
         const std::optional<core::dt::TimePoint> &timepoint,
         const std::optional<std::string_view> &key,
         const HeaderMap &headers,

@@ -22,7 +22,11 @@ namespace cc::avro
           take_schema(take_schema),
           iface(checkstatus(avro_generic_class_from_schema(schema)))
     {
-        checkstatus(avro_generic_value_new(this->iface, &this->value),
+        if (!take_schema)
+        {
+            avro_schema_incref(schema);
+        }
+        checkstatus(avro_generic_value_new(this->iface, this->c_value()),
                     "avro_generic_value_new");
     }
 
@@ -36,39 +40,54 @@ namespace cc::avro
     {
     }
 
+    CompoundValue::CompoundValue(const avro_value_t &avro_value)
+        : CompoundValue(avro_value_get_schema(&avro_value), false)
+    {
+        checkstatus(avro_value_copy(this->c_value(), &avro_value));
+    }
+
+    CompoundValue::CompoundValue(const BaseValue &other)
+        : CompoundValue(other.avro_schema(), false)
+    {
+        checkstatus(avro_value_copy(this->c_value(), other.c_value()));
+    }
+
     CompoundValue::~CompoundValue()
     {
         avro_value_iface_decref(this->iface);
-        if (this->take_schema)
-        {
-            avro_schema_decref(schema);
-        }
+        avro_schema_decref(schema);
+    }
+
+    CompoundValue &CompoundValue::operator=(const BaseValue &other)
+    {
+        checkstatus(avro_value_copy(this->c_value(), other.c_value()));
+        return *this;
     }
 
     avro_value_t CompoundValue::get_field_by_index(
         int index,
         const std::optional<std::string> &expected_name) const
     {
-        return avro::get_field_by_index(this->value, index, expected_name);
+        return avro::get_field_by_index(this->avro_value(), index, expected_name);
     }
 
     avro_value_t CompoundValue::get_field_by_name(
         const std::string &name,
         const std::optional<std::size_t> &expected_index) const
     {
-        return avro::get_field_by_name(this->value, name, expected_index);
+        return avro::get_field_by_name(this->avro_value(), name, expected_index);
     }
 
     void CompoundValue::set_from_value(
         const core::types::Value &value)
     {
-        avro::set_value(&this->value, value);
+        avro::set_value(this->c_value(), value);
     }
 
     void CompoundValue::set_from_serialized(
         const core::types::Bytes &bytes)
     {
-        avro::set_from_serialized(&this->value, bytes);
+        avro::set_from_serialized(this->c_value(), bytes);
     }
 
 }  // namespace cc::avro

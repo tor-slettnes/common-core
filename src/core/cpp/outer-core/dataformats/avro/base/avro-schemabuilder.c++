@@ -36,7 +36,7 @@ namespace cc::avro
         return avro_schema_name(this->avro_schema);
     }
 
-    avro_schema_t SchemaWrapper::as_avro_schema() const
+    const avro_schema_t &SchemaWrapper::as_avro_schema() const
     {
         if (!this->avro_schema)
         {

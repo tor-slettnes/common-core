@@ -20,8 +20,8 @@ namespace cc::avro
         const google::protobuf::Message &msg)
         : CompoundValue(ProtoBufSchema::from_proto(msg.GetDescriptor()))
     {
-        avro_value_reset(&this->value);
-        this->assign_from_message(&this->value, msg);
+        avro_value_reset(this->c_value());
+        this->assign_from_message(this->c_value(), msg);
     }
 
     ProtoBufValue::ProtoBufValue(
@@ -32,9 +32,9 @@ namespace cc::avro
                   msg.GetDescriptor(),
                   metadata.GetDescriptor()))
     {
-        avro_value_reset(&this->value);
-        This::assign_field_from_message(&this->value, 0, METADATA_FIELD, metadata);
-        This::assign_from_custom(&this->value, msg);
+        avro_value_reset(this->c_value());
+        This::assign_field_from_message(this->c_value(), 0, METADATA_FIELD, metadata);
+        This::assign_from_custom(this->c_value(), msg);
     }
 
     void ProtoBufValue::assign_field_from_message(

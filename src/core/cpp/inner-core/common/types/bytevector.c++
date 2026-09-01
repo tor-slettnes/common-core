@@ -67,9 +67,10 @@ namespace cc::core::types
         const void *ptr,
         std::size_t size) noexcept
     {
-        return ByteVector(
+        return {
             static_cast<const Byte *>(ptr),
-            static_cast<const Byte *>(ptr) + size);
+            static_cast<const Byte *>(ptr) + size,
+        };
     }
 
     ByteVector ByteVector::from_string(
@@ -214,8 +215,10 @@ namespace cc::core::types
         }
     }
 
-    std::string ByteVector::to_hex(bool uppercase,
-                                   std::size_t groupsize) const
+    std::string ByteVector::to_hex(
+        bool uppercase,
+        std::size_t groupsize,
+        std::size_t maxsize) const
     {
         static const std::vector<std::string> hex_digits = {
             "0123456789abcdef",
@@ -223,21 +226,33 @@ namespace cc::core::types
         };
         const std::string &xdigits = hex_digits.at(uppercase);
 
-        std::string encoded;
-        uint ndigits = this->size() * 2;
-        uint nspaces = groupsize ? (this->size() / groupsize) : 0;
-        encoded.reserve(ndigits + nspaces);
-
-        std::size_t counter = 0;
-        for (std::uint8_t byte : *this)
+        std::string ellipsis;
+        std::size_t size  = this->size();
+        if ((maxsize > 0) && (maxsize < size))
         {
-            encoded.push_back(xdigits.at((byte >> 4) & 0xF));
-            encoded.push_back(xdigits.at(byte & 0xF));
-            if (groupsize && (++counter % groupsize == 0) && (counter < this->size()))
+            size = maxsize;
+            ellipsis = "...";
+        }
+
+        uint ndigits = size * 2;
+        uint nspaces = groupsize ? (size / groupsize) : 0;
+
+        std::string encoded;
+        encoded.reserve(ndigits + nspaces + ellipsis.size());
+
+        for (std::size_t counter = 0; counter < size; counter++)
+        {
+            if (groupsize && counter && (counter % groupsize == 0))
             {
                 encoded.push_back(' ');
             }
+
+            std::uint8_t byte = this->at(counter);
+            encoded.push_back(xdigits.at((byte >> 4) & 0xF));
+            encoded.push_back(xdigits.at(byte & 0xF));
         }
+
+        encoded += ellipsis;
         return encoded;
     }
 

@@ -43,7 +43,7 @@ namespace cc::kafka
 
         void produce(
             const std::string &topic,
-            const core::types::Bytes &payload,
+            const core::types::ByteVector &payload,
             const std::optional<core::dt::TimePoint> &timepoint = {},
             const std::optional<std::string_view> &key = {},
             const HeaderMap &headers = {},

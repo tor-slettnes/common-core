@@ -431,78 +431,127 @@ namespace cc::avro
                     core::str::format("set_variant_branch (%d)", type));
     }
 
-    void set_value(avro_value_t *avro_value,
+    bool set_value(avro_value_t *avro_value,
                    const core::types::Value &value)
     {
+        bool assigned = false;
         switch (avro::type(*avro_value))
         {
         case AVRO_STRING:
         case AVRO_LINK:
-            avro::set_string(avro_value, value.get_string());
+            if (auto *string = value.get_if<std::string>())
+            {
+                avro::set_string(avro_value, *string);
+                assigned = true;
+            }
             break;
 
         case AVRO_BYTES:
-            avro::set_bytes(avro_value, value.as_bytevector());
+            if (auto *bv = value.get_if<core::types::ByteVector>())
+            {
+                avro::set_bytes(avro_value, *bv);
+                assigned = true;
+            }
             break;
 
         case AVRO_INT32:
-            avro::set_int(avro_value, value.as_sint32());
+            if (auto opt = value.try_as_sint32())
+            {
+                avro::set_int(avro_value, opt.value());
+                assigned = true;
+            }
             break;
 
         case AVRO_INT64:
-            avro::set_long(avro_value, value.as_sint64());
+            if (auto opt = value.try_as_sint64())
+            {
+                avro::set_long(avro_value, opt.value());
+                assigned = true;
+            }
             break;
 
         case AVRO_FLOAT:
-            avro::set_float(avro_value, value.as_float());
+            if (auto opt = value.try_as_float())
+            {
+                avro::set_float(avro_value, opt.value());
+                assigned = true;
+            }
             break;
 
         case AVRO_DOUBLE:
-            avro::set_double(avro_value, value.as_double());
+            if (auto opt = value.try_as_double())
+            {
+                avro::set_double(avro_value, opt.value());
+                assigned = true;
+            }
             break;
 
         case AVRO_BOOLEAN:
-            avro::set_boolean(avro_value, value.as_bool());
+            if (auto opt = value.try_as_bool())
+            {
+                avro::set_boolean(avro_value, opt.value());
+                assigned = true;
+            }
             break;
 
         case AVRO_NULL:
             avro::set_null(avro_value);
+            assigned = true;
             break;
 
         case AVRO_ENUM:
             if (value.is_numeric())
             {
                 avro::set_enum(avro_value, value.as_uint());
+                assigned = true;
             }
-            else
+            else if (value.is_string())
             {
                 avro::set_enum(avro_value, value.as_string());
+                assigned = true;
             }
             break;
 
         case AVRO_FIXED:
-            avro::set_fixed(avro_value, value.get_bytevector());
+            if (auto *bv = value.get_if<core::types::ByteVector>())
+            {
+                avro::set_fixed(avro_value, *bv);
+                assigned = true;
+            }
             break;
 
         case AVRO_MAP:
-            avro::set_map(avro_value, value.get_kvmap());
+            if (auto kvmap = value.as_kvmap_ptr())
+            {
+                avro::set_map(avro_value, *kvmap);
+                assigned = true;
+            }
             break;
 
         case AVRO_RECORD:
-            avro::set_record(avro_value, value.get_kvmap());
+            if (auto kvmap = value.as_kvmap_ptr())
+            {
+                avro::set_record(avro_value, *kvmap);
+                assigned = true;
+            }
             break;
 
         case AVRO_ARRAY:
-            avro::set_array(avro_value, value.get_valuelist());
+            if (auto vlist = value.as_valuelist_ptr())
+            {
+                avro::set_array(avro_value, *vlist);
+                assigned = true;
+            }
             break;
 
         case AVRO_UNION:
-            avro::set_union(avro_value, value);
+            assigned = avro::set_union(avro_value, value);
             break;
 
         default:
             break;
         }
+        return assigned;
     }
 
     void set_map(avro_value_t *avro_value,
@@ -605,7 +654,7 @@ namespace cc::avro
     //     avro::set_value(&field_value, value);
     // }
 
-    void set_union(avro_value_t *avro_value,
+    bool set_union(avro_value_t *avro_value,
                    const core::types::Value &value)
     {
         assertf(avro_value_get_type(avro_value) == AVRO_UNION,
@@ -625,7 +674,7 @@ namespace cc::avro
             {
             case AVRO_STRING:
             case AVRO_LINK:
-                hit = value.empty();
+                hit = value.is_string();
                 break;
 
             case AVRO_BYTES:
@@ -681,20 +730,15 @@ namespace cc::avro
             }
         }
 
-        if (!hit)
-        {
-            throwf(core::exception::InvalidArgument,
-                   "Avro union %s does not accept value type %s",
-                   avro::type_name(*avro_value),
-                   value.type_name());
-        }
+        return hit;
     }
 
     void set_from_serialized(avro_value_t *value,
                              const core::types::Bytes &bytes)
     {
         avro_reader_t reader = avro_reader_memory(
-            reinterpret_cast<const char *>(bytes.data()), bytes.size());
+            reinterpret_cast<const char *>(bytes.data()),
+            bytes.size());
 
         checkstatus(avro_value_read(reader, value));
     }

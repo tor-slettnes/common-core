@@ -21,6 +21,10 @@ namespace cc::avro
         CompoundValue(avro_schema_t schema, bool take_schema);
         CompoundValue(const std::string &json_schema);
         CompoundValue(const SchemaWrapper &wrapper);
+        CompoundValue(const avro_value_t &avro_value);
+        CompoundValue(const BaseValue &other);
+
+        CompoundValue &operator=(const BaseValue &other);
 
     public:
         ~CompoundValue();

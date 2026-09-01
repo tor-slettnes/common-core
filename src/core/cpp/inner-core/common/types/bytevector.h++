@@ -129,10 +129,13 @@ namespace cc::core::types
         ///     use uppercase digits 'A'..'F'.
         /// @param[in] groupsize
         ///     Group digits using a locale-specific separator
+        /// @param[in] maxsize
+        ///     Optional limit to number of bytes encoded.
         /// @return
         ///     Byte array represented as a hexadecimal string
         std::string to_hex(bool uppercase = false,
-                           std::size_t groupsize = 0) const;
+                           std::size_t groupsize = 0,
+                           std::size_t maxsize = 0) const;
 
         /// @brief
         ///     Create a new ByteVector instance from a hexadecimal string.

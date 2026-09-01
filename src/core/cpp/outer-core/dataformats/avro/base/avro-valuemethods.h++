@@ -109,7 +109,7 @@ namespace cc::avro
         VariantSchema::Type type,
         avro_value_t *branch);
 
-    void set_value(
+    bool set_value(
         avro_value_t *avro_value,
         const core::types::Value &value);
 
@@ -135,7 +135,7 @@ namespace cc::avro
     //     const std::uint64_t &field_index,
     //     const core::types::Value &value);
 
-    void set_union(
+    bool set_union(
         avro_value_t *avro_value,
         const core::types::Value &value);
 

@@ -27,7 +27,6 @@ namespace cc::kafka
           keep_consuming_(false)
     {
         this->init_consumer_properties(client_id, group_id);
-
     }
 
     ConsumerBase::~ConsumerBase()
@@ -36,6 +35,7 @@ namespace cc::kafka
         if (this->consumer_handle_)
         {
             delete this->consumer_handle_;
+            this->consumer_handle_ = nullptr;
         }
     }
 
@@ -131,28 +131,28 @@ namespace cc::kafka
     {
         while (this->keep_consuming_)
         {
-            if (RdKafka::Message *message = this->handle()->consume(1000))
+            if (RdKafka::Message *message = this->handle()->consume(2000))
             {
                 switch (message->err())
                 {
                 case RdKafka::ErrorCode::ERR_NO_ERROR:
                     this->handle_message(message);
-                    delete message;
                     break;
 
                 case RdKafka::ErrorCode::ERR__TIMED_OUT:
                 case RdKafka::ErrorCode::ERR__MSG_TIMED_OUT:
-                    delete message;
                     break;
 
                 default:
-                    delete message;
-                    this->check(message->err(),
-                                {
-                                    {"profile", this->profile_name()},
-                                });
+                    logf_error(
+                        "%s: Kafka error %d: %s",
+                        *this,
+                        message->err(),
+                        RdKafka::err2str(message->err()));
                     break;
                 }
+
+                delete message;
             }
         }
     }
@@ -165,7 +165,7 @@ namespace cc::kafka
             message->key() ? *message->key() : "",
             this->extract_headers(message->headers()),
             core::types::ByteVector::from_pointer(
-                message->msg_opaque(),
+                message->payload(),
                 message->len()));
     }
 
@@ -176,12 +176,13 @@ namespace cc::kafka
         const HeaderMap &header,
         const core::types::ByteVector &payload)
     {
-        logf_info("Received Kafka message, topic=%r, key=%r, header=%s: %s",
+        logf_info("%s: received Kafka message, topic=%r, key=%r, header=%s: %s",
+                  *this,
                   tp,
                   topic,
                   key,
                   header,
-                  payload.to_hex());
+                  payload.to_hex(false, 2, 20));
     }
 
     void ConsumerBase::set_consumer_key(const std::optional<std::string> &key)

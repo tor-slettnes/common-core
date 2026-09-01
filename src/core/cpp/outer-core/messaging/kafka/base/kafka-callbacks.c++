@@ -21,10 +21,8 @@ namespace cc::kafka
     // LogCapture
 
     LogCapture::LogCapture(
-        const std::string &endpoint_type,
-        const std::string &profile_name)
-        : endpoint_type(endpoint_type),
-          profile_name(profile_name)
+        const std::string &preamble)
+        : preamble(preamble)
     {
     }
 
@@ -42,10 +40,7 @@ namespace cc::kafka
             0,                       // lineno
             "");                     // function
 
-        msg->format("%s(%r): %s",
-                    this->endpoint_type,
-                    this->profile_name,
-                    event.str());
+        msg->add(this->preamble, ": ", event.str());
         msg->dispatch();
     }
 

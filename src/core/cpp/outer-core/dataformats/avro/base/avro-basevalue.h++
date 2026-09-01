@@ -28,21 +28,7 @@ namespace cc::avro
         BaseValue() {}
 
     public:
-        /// @brief
-        ///     RAII constructor for C `avro_value_t` instances.
-        /// @param[in] avro_value
-        ///     `avro_value_t` pointer
-
-        BaseValue(const avro_value_t &avro_value);
-        BaseValue(avro_value_t &&avro_value);
-
-        BaseValue(const BaseValue &other);
-        BaseValue(BaseValue &&other);
-
         virtual ~BaseValue();
-
-        BaseValue &operator=(const BaseValue &other);
-        BaseValue &operator=(BaseValue &&other);
 
         bool operator==(const BaseValue &other) const;
         bool operator==(const avro_value_t &other) const;
@@ -69,7 +55,7 @@ namespace cc::avro
         std::string as_json(bool pretty = false) const;
         virtual core::types::Value as_value(bool enums_as_strings = true) const;
 
-    protected:
-        avro_value_t value;
+    private:
+        avro_value_t avro_value_;
     };
 }  // namespace cc::avro
