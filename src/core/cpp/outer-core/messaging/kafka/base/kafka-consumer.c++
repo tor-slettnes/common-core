@@ -18,7 +18,8 @@ namespace cc::kafka
     ConsumerBase::ConsumerBase(const std::string &profile_name,
                                const core::types::KeyValueMap &settings,
                                const std::string &client_id,
-                               const std::optional<std::string> &group_id)
+                               const std::optional<std::string> &group_id,
+                               const std::optional<std::string> &reset_policy)
         : Super("Consumer", profile_name, settings),
           consumer_handle_(nullptr),
           shutdown_timeout_(
@@ -26,7 +27,7 @@ namespace cc::kafka
                   .as_duration()),
           keep_consuming_(false)
     {
-        this->init_consumer_properties(client_id, group_id);
+        this->init_consumer_properties(client_id, group_id, reset_policy);
     }
 
     ConsumerBase::~ConsumerBase()
@@ -54,13 +55,19 @@ namespace cc::kafka
 
     void ConsumerBase::init_consumer_properties(
         const std::string &client_id,
-        const std::optional<std::string> &group_id)
+        const std::optional<std::string> &group_id,
+        const std::optional<std::string> &reset_policy)
     {
         this->set_config("client.id", client_id);
         if (group_id || !this->get_config("group.id"))
         {
             this->set_config("group.id", group_id.value_or(client_id));
         }
+        if (reset_policy)
+        {
+            this->set_config("auto.offset.reset", reset_policy.value());
+        }
+
     }
 
     void ConsumerBase::init_handle()

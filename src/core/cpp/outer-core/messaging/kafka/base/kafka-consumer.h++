@@ -25,7 +25,8 @@ namespace cc::kafka
         ConsumerBase(const std::string &profile_name,
                      const core::types::KeyValueMap &settings,
                      const std::string &client_id,
-                     const std::optional<std::string> &group_id = {});
+                     const std::optional<std::string> &group_id = {},
+                     const std::optional<std::string> &reset_policy = {});
         ~ConsumerBase();
 
     public:
@@ -35,7 +36,8 @@ namespace cc::kafka
     protected:
         void init_consumer_properties(
             const std::string &client_id,
-            const std::optional<std::string> &group_id);
+            const std::optional<std::string> &group_id,
+            const std::optional<std::string> &reset_policy);
 
         void init_handle();
         RdKafka::KafkaConsumer *handle() override;
