@@ -7,6 +7,7 @@
 
 #include "command.h++"
 #include "status/exceptions.h++"
+#include "platform/symbols.h++"
 
 namespace cc::core::argparse
 {
@@ -15,6 +16,7 @@ namespace cc::core::argparse
 
     CommandOptions::CommandOptions()
         : ClientOptions(),
+          signal_handle(TYPE_NAME_FULL(This)),
           use_exit_status(false),
           current_arg(this->args.begin())
     {

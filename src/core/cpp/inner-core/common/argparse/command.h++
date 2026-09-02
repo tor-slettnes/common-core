@@ -7,6 +7,8 @@
 
 #pragma once
 #include "client.h++"
+#include "chrono/date-time.h++"
+#include "thread/signaltemplate.h++"
 
 namespace cc::core::argparse
 {
@@ -14,6 +16,7 @@ namespace cc::core::argparse
     /// Option parser for command-line utilities with subcommands
     class CommandOptions : public ClientOptions
     {
+        using This = CommandOptions;
         using Super = ClientOptions;
         using CommandDescription = std::tuple<
             std::string,               // command
@@ -77,11 +80,67 @@ namespace cc::core::argparse
             }
         }
 
+        template <class T>
+        void connect_to_print(signal::DataSignal<T> *signal)
+        {
+            signal->connect(
+                this->signal_handle,
+                [=](const T &data) {
+                    core::str::format(std::cout,
+                                      "[%.3s] %s(%s)\n",
+                                      dt::Clock::now(),
+                                      signal->name(),
+                                      data);
+                });
+        }
+
+        template <class T>
+        void connect_to_print(signal::SharedDataSignal<T> *signal)
+        {
+            signal->connect(
+                this->signal_handle,
+                [=](const std::shared_ptr<T> &data) {
+                    if (data)
+                    {
+                        core::str::format(std::cout,
+                                          "[%.3s] %s(%s)\n",
+                                          dt::Clock::now(),
+                                          signal->name(),
+                                          *data);
+                    }
+                });
+        }
+
+        template <class T>
+        void connect_to_print(signal::MappingSignal<T> *signal)
+        {
+            signal->connect(
+                this->signal_handle,
+                [=](signal::MappingAction mapping_action,
+                    const std::string &mapping_key,
+                    const T &data) {
+                    core::str::format(std::cout,
+                                      "[%.3s] %s(%s, %r, %s)\n",
+                                      dt::Clock::now(),
+                                      signal->name(),
+                                      mapping_action,
+                                      mapping_key,
+                                      data);
+                });
+        }
+
+        template <class S>
+        void disconnect_from_print(S *signal)
+        {
+            signal->disconnect(this->signal_handle);
+        }
+
     protected:
+        std::string signal_handle;
+        bool use_exit_status;
+        std::vector<std::string>::iterator current_arg;
         std::string command;
         std::vector<std::string> args;
-        std::vector<std::string>::iterator current_arg;
-        bool use_exit_status;
         std::unordered_map<std::string, Handler> handlers;
         std::vector<CommandDescription> command_descriptions;
     };
