@@ -73,6 +73,7 @@ namespace cc::kafka
     void ConsumerBase::init_handle()
     {
         std::string error_string;
+        logf_debug("%s: Creating with global properties: %s", *this, this->get_config());
         if (RdKafka::KafkaConsumer *consumer = RdKafka::KafkaConsumer::create(
                 this->conf(),
                 error_string))

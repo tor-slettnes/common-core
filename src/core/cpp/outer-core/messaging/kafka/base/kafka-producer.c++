@@ -57,6 +57,7 @@ namespace cc::kafka
     void ProducerBase::init_handle()
     {
         std::string error_string;
+        logf_debug("%s: Creating with global properties: %s", *this, this->get_config());
         if (RdKafka::Producer *producer = RdKafka::Producer::create(
                 this->conf(),
                 error_string))

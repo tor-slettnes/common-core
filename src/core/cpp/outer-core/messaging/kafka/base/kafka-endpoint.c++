@@ -121,6 +121,23 @@ namespace cc::kafka
         return nullptr;
     }
 
+    std::map<std::string, std::string> Endpoint::get_config() const
+    {
+        std::map<std::string, std::string> kvmap;
+        if (auto *plist = this->conf()->dump())
+        {
+            for (auto it = plist->begin(); it != plist->end(); it++)
+            {
+                std::string key = *it++;
+                if (it != plist->end())
+                {
+                    kvmap.insert_or_assign(key, *it);
+                }
+            }
+        }
+        return kvmap;
+    }
+
     std::optional<std::string> Endpoint::get_config(
         const std::string &key) const
     {
