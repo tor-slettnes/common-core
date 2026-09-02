@@ -131,7 +131,11 @@ namespace cc::kafka
                 std::string key = *it++;
                 if (it != plist->end())
                 {
-                    kvmap.insert_or_assign(key, *it);
+                    std::string value =
+                        key.find("pass") != std::string::npos
+                            ? "*****"s
+                            : *it;
+                    kvmap.insert_or_assign(std::move(key), std::move(value));
                 }
             }
         }
