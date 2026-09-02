@@ -121,6 +121,20 @@ namespace cc::kafka
         return nullptr;
     }
 
+    std::optional<std::string> Endpoint::get_config(
+        const std::string &key) const
+    {
+        std::string value;
+        if (this->conf()->get(key, value) == RdKafka::Conf::CONF_OK)
+        {
+            return value;
+        }
+        else
+        {
+            return {};
+        }
+    }
+
     void Endpoint::set_config(const std::string &key,
                               const std::string &value)
     {

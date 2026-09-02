@@ -57,7 +57,10 @@ namespace cc::kafka
         const std::optional<std::string> &group_id)
     {
         this->set_config("client.id", client_id);
-        this->set_config("group.id", group_id.value_or(client_id));
+        if (group_id || !this->get_config("group.id"))
+        {
+            this->set_config("group.id", group_id.value_or(client_id));
+        }
     }
 
     void ConsumerBase::init_handle()

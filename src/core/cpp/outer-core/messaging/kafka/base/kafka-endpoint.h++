@@ -74,6 +74,9 @@ namespace cc::kafka
                    const std::string &errstr) const;
 
     protected:
+        std::optional<std::string> get_config(
+            const std::string &key) const;
+
         void set_config(const std::string &key,
                         const std::string &value);
 

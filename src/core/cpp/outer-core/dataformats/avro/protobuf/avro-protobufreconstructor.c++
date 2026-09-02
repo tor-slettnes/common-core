@@ -68,10 +68,6 @@ namespace cc::avro
             success &= reconstruct_proto_from_avro_value(
                 wrapper,
                 msg);
-            logf_info("Reconstructed ProtoBuf %s from Avro value: %s -> %s",
-                      msg->GetDescriptor()->full_name(),
-                      wrapper,
-                      *msg);
         }
 
         return success;
