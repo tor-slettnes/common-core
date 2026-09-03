@@ -67,7 +67,6 @@ namespace cc::kafka
         {
             this->set_config("auto.offset.reset", reset_policy.value());
         }
-
     }
 
     void ConsumerBase::init_handle()
@@ -147,7 +146,7 @@ namespace cc::kafka
                 switch (message->err())
                 {
                 case RdKafka::ErrorCode::ERR_NO_ERROR:
-                    this->handle_message(message);
+                    this->handle_kafka_message(message);
                     break;
 
                 case RdKafka::ErrorCode::ERR__TIMED_OUT:
@@ -168,9 +167,9 @@ namespace cc::kafka
         }
     }
 
-    void ConsumerBase::handle_message(RdKafka::Message *message)
+    void ConsumerBase::handle_kafka_message(RdKafka::Message *message)
     {
-        this->handle_message(
+        this->try_handle_message(
             core::dt::ms_to_timepoint(message->timestamp().timestamp),
             message->topic_name(),
             message->key() ? *message->key() : "",
@@ -180,20 +179,36 @@ namespace cc::kafka
                 message->len()));
     }
 
-    void ConsumerBase::handle_message(
+    void ConsumerBase::try_handle_message(
         const core::dt::TimePoint &tp,
         const std::string &topic,
         const std::string &key,
         const HeaderMap &header,
         const core::types::ByteVector &payload)
     {
-        logf_info("%s: received Kafka message, topic=%r, key=%r, header=%s: %s",
-                  *this,
-                  tp,
-                  topic,
-                  key,
-                  header,
-                  payload.to_hex(false, 2, 20));
+        try
+        {
+            this->handle_message(tp, topic, key, header, payload);
+        }
+        catch (...)
+        {
+            logf_error(
+                "%s: caught exception while handling Kafka message on topic %r: %s",
+                *this,
+                topic,
+                std::current_exception());
+
+            logf_info(
+                "%s: Kafka message details related to the above exception: "
+                "topic=%r, key=%r, timepoint=%s, header=%r, size=%d, payload: %s",
+                *this,
+                topic,
+                key,
+                tp,
+                header,
+                payload.size(),
+                payload.to_hex(false, 2, 20));
+        }
     }
 
     void ConsumerBase::set_consumer_key(const std::optional<std::string> &key)

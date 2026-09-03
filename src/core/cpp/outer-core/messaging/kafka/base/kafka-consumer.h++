@@ -51,15 +51,21 @@ namespace cc::kafka
         void stop_consuming();
         void consume_worker();
 
-    protected:
-        virtual void handle_message(RdKafka::Message *message);
-
-        virtual void handle_message(
+        void handle_kafka_message(RdKafka::Message *message);
+        void try_handle_message(
             const core::dt::TimePoint &tp,
             const std::string &topic,
             const std::string &key,
             const HeaderMap &header,
             const core::types::ByteVector &payload);
+
+    protected:
+        virtual void handle_message(
+            const core::dt::TimePoint &tp,
+            const std::string &topic,
+            const std::string &key,
+            const HeaderMap &header,
+            const core::types::ByteVector &payload) = 0;
 
     protected:
         void set_consumer_key(const std::optional<std::string> &key);
