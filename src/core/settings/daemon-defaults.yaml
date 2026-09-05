@@ -6,9 +6,11 @@
 #===============================================================================
 
 ## These settings take precedence over those in `defaults.yaml` for
-## daemon applications.
+## daemon/server applications.
 
 log sinks:
-  # Log to standard error (when running interactively)
-  stderr:
+  "stderr":
+    threshold: INFO
+
+  "syslog":
     threshold: INFO
