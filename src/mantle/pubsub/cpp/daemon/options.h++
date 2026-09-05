@@ -34,6 +34,7 @@ namespace cc::platform::pubsub
     public:
         bool enable_grpc;
         bool enable_zmq;
+        bool enable_logging;
 
         std::string zmq_producer_interface;
         std::string zmq_consumer_interface;

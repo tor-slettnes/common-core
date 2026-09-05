@@ -18,7 +18,8 @@ namespace cc::platform::pubsub
     Options::Options()
         : Super(),
           enable_grpc(false),
-          enable_zmq(false)
+          enable_zmq(false),
+          enable_logging(false)
     {
         this->describe("Message Relay.");
     }
@@ -55,22 +56,28 @@ namespace cc::platform::pubsub
             &this->zmq_consumer_interface);
 #endif
         core::types::Value log_options = core::settings->get("message logging");
+        this->add_flag(
+            {"--enable-logging"},
+            "Log published messages via MultiLogger interface. "
+            "See also `--log-contract` and `--log-host`. "
+            "Default: %default",
+            &this->enable_logging,
+            log_options.get("enable", false).as_bool());
 
         this->add_opt(
             {"--log-contract"},
             "CONTRACT_ID",
-            "Log published messages via MultiLogger service. Default: %default."
+            "Log contract identifier for logging. Default: \"%default\". "
             "See also `--log-host`.",
             &this->log_contract,
-            log_options.get("contract").as_string());
+            log_options.get("contract", "publication").as_string());
 
         this->add_opt(
             {"--log-host"},
             "HOST",
             "Log published messages via MultiLogger service on HOST. "
-            "If not specified, messages are logged locally. "
-            "Requires `--log-contract`. "
-            "Default: [%default].",
+            "If empty, log messages locally. "
+            "Default: \"%default\".",
             &this->log_host,
             log_options.get("host").as_string());
     }
@@ -78,39 +85,39 @@ namespace cc::platform::pubsub
     void Options::enact()
     {
         Super::enact();
-        this->init_logging();
+        if (this->enable_logging)
+        {
+            this->init_logging();
+        }
     }
 
     void Options::init_logging()
     {
-        if (!this->log_contract.empty())
+        if (!this->log_host.empty())
         {
-            if (!this->log_host.empty())
-            {
-                logf_info(
-                    "Logging publications by contract %r via MultiLogger service on %s",
-                    this->log_contract,
-                    this->log_host);
-                this->multilogger = multilogger::grpc::ClientImpl::create_shared(
-                    this->log_host);
-            }
-            else
-            {
-                logf_info(
-                    "Logging publications by contract %r locally.",
-                    this->log_contract);
-                this->multilogger = multilogger::native::Logger::create_shared();
-            }
-
-            using namespace std::placeholders;
-            std::string signal_handle = signal_publication.connect(
-                std::bind(&This::on_message, this, _1, _2, _3));
-
-            core::platform::signal_shutdown.connect(
-                [=] {
-                    signal_publication.disconnect(signal_handle);
-                });
+            logf_info(
+                "Logging publications by contract %r via MultiLogger service on %s",
+                this->log_contract,
+                this->log_host);
+            this->multilogger = multilogger::grpc::ClientImpl::create_shared(
+                this->log_host);
         }
+        else
+        {
+            logf_info(
+                "Logging publications by contract %r locally.",
+                this->log_contract);
+            this->multilogger = multilogger::native::Logger::create_shared();
+        }
+
+        using namespace std::placeholders;
+        std::string signal_handle = signal_publication.connect(
+            std::bind(&This::on_message, this, _1, _2, _3));
+
+        core::platform::signal_shutdown.connect(
+            [=] {
+                signal_publication.disconnect(signal_handle);
+            });
     }
 
     void Options::on_message(

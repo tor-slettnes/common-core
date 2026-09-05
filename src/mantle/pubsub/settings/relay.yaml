@@ -5,6 +5,7 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-# message logging:
-#   contract: "publication"
-#   host: "localhost"
+message logging:
+  enable: false
+  contract: "publication"
+  host: "localhost"
