@@ -246,9 +246,7 @@ namespace cc::core::logging
                 this->expiration_interval(),
                 this->use_local_time());
 
-            fs::path plain_pattern("*");
-            plain_pattern += this->current_suffix();
-
+            fs::path plain_pattern(this->wildcard_pattern());
             fs::path compressed_pattern(plain_pattern);
             compressed_pattern += COMPRESSION_SUFFIX;
 
@@ -285,7 +283,7 @@ namespace cc::core::logging
     {
         if (this->compress_after_use())
         {
-            fs::path pattern = fs::path("*") += this->current_suffix();
+            fs::path pattern = this->wildcard_pattern();
 
             for (const fs::path &candidate_path : platform::path->locate(
                      {pattern},
@@ -321,6 +319,22 @@ namespace cc::core::logging
                              std::current_exception());
             }
         }
+    }
+
+    fs::path RotatingPath::wildcard_pattern() const
+    {
+        std::unordered_map<std::string, std::string> expansions;
+        for (const auto &[key, replacement] : this->expansions())
+        {
+            expansions.insert_or_assign(key, "*");
+        }
+        fs::path pattern(str::expand(this->filename_template(), expansions));
+
+        if (!pattern.has_extension())
+        {
+            pattern += this->current_suffix();
+        }
+        return pattern;
     }
 
     fs::path RotatingPath::default_root_folder;

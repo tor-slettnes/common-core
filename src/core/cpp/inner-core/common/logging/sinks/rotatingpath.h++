@@ -86,6 +86,8 @@ namespace cc::core::logging
         void compress_all_after_use();
         void compress(const fs::path &logfile);
 
+        fs::path wildcard_pattern() const;
+
     public:
         static fs::path default_root_folder;
 
