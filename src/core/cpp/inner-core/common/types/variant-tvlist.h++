@@ -85,6 +85,10 @@ namespace cc::core::types
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
+        TaggedValueList get_all_of(
+            const std::vector<std::string> &tags,
+            bool ignoreCase = false) const noexcept;
+
         /// Get the value at the specified index
         std::optional<Value> try_get(uint index) const noexcept;
         std::optional<Value> try_get(int index) const noexcept;

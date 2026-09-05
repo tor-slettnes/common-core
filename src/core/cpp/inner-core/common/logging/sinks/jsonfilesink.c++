@@ -20,6 +20,25 @@ namespace cc::core::logging
     {
         Super::load_settings(settings);
         this->load_rotation(settings);
+        this->load_keys(settings);
+    }
+
+    void JsonFileSink::load_keys(const types::KeyValueMap &settings)
+    {
+        if (auto keys = settings.get(SETTING_KEYS).get_valuelist_ptr())
+        {
+            this->set_keys(keys->filter_by_type<std::string>());
+        }
+    }
+
+    const std::vector<std::string> &JsonFileSink::keys() const
+    {
+        return this->keys_;
+    }
+
+    void JsonFileSink::set_keys(std::vector<std::string> keys)
+    {
+        this->keys_ = std::move(keys);
     }
 
     void JsonFileSink::open()
@@ -37,7 +56,9 @@ namespace cc::core::logging
     void JsonFileSink::open_file(const dt::TimePoint &tp)
     {
         RotatingPath::open_file(tp);
-        this->writer_ = std::make_shared<json::Writer>(this->current_path());
+        this->writer_ = std::make_shared<json::Writer>(
+            this->current_path(),
+            std::ios_base::app);
     }
 
     void JsonFileSink::close_file()
@@ -54,9 +75,15 @@ namespace cc::core::logging
         if (this->writer_)
         {
             this->check_rotation(item->timepoint());
-            this->writer_->write(item->as_tvlist(),  // value
-                                 false,              // pretty
-                                 true);              // newline
+
+            types::TaggedValueList fields =
+                !this->keys().empty() ? item->get_fields(this->keys())
+                                      : item->as_tvlist();
+
+            this->writer_->write(fields,  // value
+                                 false,   // pretty
+                                 true);   // newline
+
             return true;
         }
         else

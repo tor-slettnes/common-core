@@ -98,7 +98,8 @@ namespace cc::core::types
         return This::loggable_fields();
     }
 
-    types::Value Loggable::get_field_as_value(const std::string &field_name) const
+    types::Value Loggable::get_field_as_value(
+        const std::string &field_name) const
     {
         if (field_name == This::FIELD_TIME)
         {
@@ -112,6 +113,18 @@ namespace cc::core::types
         {
             return this->attribute(field_name);
         }
+    }
+
+    types::TaggedValueList Loggable::get_fields(
+        const std::vector<std::string> &field_names) const
+    {
+        types::TaggedValueList fields;
+        fields.reserve(field_names.size());
+        for (const std::string &field_name: field_names)
+        {
+            fields.emplace_back(field_name, this->get_field_as_value(field_name));
+        }
+        return fields;
     }
 
     void Loggable::to_tvlist(types::TaggedValueList *tvlist) const

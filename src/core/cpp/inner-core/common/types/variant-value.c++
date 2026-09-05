@@ -493,16 +493,9 @@ namespace cc::core::types
         return this->try_as_complex().value_or(fallback);
     }
 
-    std::string Value::as_string() const noexcept
+    std::string Value::as_string(const std::string &fallback) const noexcept
     {
-        switch (this->type())
-        {
-        case ValueType::STRING:
-            return this->get<std::string>();
-
-        default:
-            return this->to_string();
-        }
+        return this->try_as_string().value_or(fallback);
     }
 
     ByteVector Value::as_bytevector(const ByteVector &fallback) const noexcept
@@ -948,6 +941,21 @@ namespace cc::core::types
         }
 
         return {};
+    }
+
+    std::optional<std::string> Value::try_as_string() const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::NONE:
+            return {};
+
+        case ValueType::STRING:
+            return this->get<std::string>();
+
+        default:
+            return this->to_string();
+        }
     }
 
     std::optional<ByteVector> Value::try_as_bytevector() const noexcept

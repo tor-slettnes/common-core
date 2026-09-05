@@ -7,6 +7,7 @@
 
 #pragma once
 #include "argparse/server.h++"
+#include "multilogger-api.h++"
 
 namespace cc::platform::pubsub
 {
@@ -20,12 +21,28 @@ namespace cc::platform::pubsub
 
         void add_options() override;
 
+        void enact() override;
+
+    private:
+        void init_logging();
+
+        void on_message(
+            core::signal::MappingAction mapping_action,
+            const std::string &topic,
+            const core::types::Value &payload);
+
     public:
         bool enable_grpc;
         bool enable_zmq;
 
         std::string zmq_producer_interface;
         std::string zmq_consumer_interface;
+
+    private:
+        std::string log_contract;
+        std::string log_host;
+        std::shared_ptr<multilogger::API> multilogger;
+        multilogger::SinkSpec logsink_spec;
     };
 
 }  // namespace cc::platform::pubsub

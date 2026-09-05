@@ -263,7 +263,7 @@ namespace cc::core::logging
             }
             catch (const fs::filesystem_error &e)
             {
-                logf_warning("Failed to expire old logs: ", e);
+                log_warning("Failed to expire old logs: ", e);
             }
         }
     }

@@ -36,6 +36,18 @@ namespace cc::core::types
         return this->try_get_any_of(candidates, ignoreCase).value_or(fallback);
     }
 
+    KeyValueMap KeyValueMap::get_all_of(
+        const std::vector<std::string> &keys,
+        bool ignoreCase) const noexcept
+    {
+        KeyValueMap result;
+        for (const auto &key: keys)
+        {
+            result.insert_or_assign(key, this->get(key, {}, ignoreCase));
+        }
+        return result;
+    }
+
     Value KeyValueMap::get_nested(
         const std::vector<std::string> &path,
         const Value &fallback,

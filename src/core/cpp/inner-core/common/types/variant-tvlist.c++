@@ -183,6 +183,19 @@ namespace cc::core::types
         return this->try_get_any_of(candidates, ignoreCase).value_or(fallback);
     }
 
+    TaggedValueList TaggedValueList::get_all_of(
+        const std::vector<std::string> &tags,
+        bool ignoreCase) const noexcept
+    {
+        TaggedValueList result;
+        result.reserve(tags.size());
+        for (const auto &tag: tags)
+        {
+            result.emplace_back(tag, this->get(tag, {}, ignoreCase));
+        }
+        return result;
+    }
+
     std::optional<Value> TaggedValueList::try_get(
         uint index) const noexcept
     {

@@ -67,7 +67,12 @@ namespace cc::core::types
 
     public:
         virtual std::vector<std::string> field_names() const noexcept;
-        virtual types::Value get_field_as_value(const std::string &field_name) const;
+
+        virtual types::Value get_field_as_value(
+            const std::string &field_name) const;
+
+        virtual types::TaggedValueList get_fields(
+            const std::vector<std::string> &field_names) const;
 
     public:
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;

@@ -15,6 +15,8 @@ set(LIB_DEPS
   cc_relay_grpc_service
   cc_relay_zmq_run
   cc_relay_broker
+  cc_multilogger_native
+  cc_multilogger_grpc_client
   cc_core_platform
 )
 

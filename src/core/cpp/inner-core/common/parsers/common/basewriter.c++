@@ -16,9 +16,11 @@ namespace cc::core::parsers
     {
     }
 
-    BaseWriter::BaseWriter(const std::string &name, const fs::path &path)
+    BaseWriter::BaseWriter(const std::string &name,
+                           const fs::path &path,
+                           std::ios_base::openmode mode)
         : name(name),
-          stream_(std::make_unique<std::ofstream>(path))
+          stream_(std::make_unique<std::ofstream>(path, mode))
     {
     }
 

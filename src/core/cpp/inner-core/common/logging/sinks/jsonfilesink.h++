@@ -20,6 +20,8 @@
 
 namespace cc::core::logging
 {
+    constexpr auto SETTING_KEYS = "keys";
+
     //--------------------------------------------------------------------------
     // JsonFileSink
 
@@ -35,6 +37,11 @@ namespace cc::core::logging
 
     protected:
         void load_settings(const types::KeyValueMap &settings) override;
+        void load_keys(const types::KeyValueMap &settings);
+
+        const std::vector<std::string> &keys() const;
+        void set_keys(std::vector<std::string> keys);
+
         void open() override;
         void close() override;
         void open_file(const dt::TimePoint &tp) override;
@@ -43,6 +50,7 @@ namespace cc::core::logging
 
     private:
         std::shared_ptr<json::Writer> writer_;
+        std::vector<std::string> keys_;
     };
 
     //--------------------------------------------------------------------------

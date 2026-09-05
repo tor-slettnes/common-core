@@ -8,14 +8,14 @@
 # See `defaults.yaml` for default values and descriptions
 
 log sinks:
-  syslog:
+  "syslog":
     enabled: false
 
-  stderr:
+  "stderr":
     include context: true
     threshold    : DEBUG
 
-  logfile:
+  "logfile":
     enabled      : true
     threshold    : INFO
     rotate after : 1 day
@@ -23,7 +23,7 @@ log sinks:
     expire after : 1 year
     name template: "{isodate}-{hour}{minute}{zoneoffset}"
 
-  csvfile:
+  "csvfile":
     enabled      : true
     threshold    : DEBUG
     rotate after : 1 day
@@ -31,7 +31,7 @@ log sinks:
     expire after : 2 weeks
     name template: "{isodate}-{hour}{minute}{zoneoffset}"
 
-  lologger:
+  "lologger":
     enabled      : false
     type         : "lologger"
     threshold    : INFO
@@ -62,3 +62,13 @@ log sinks:
       FAILED   : 40
       CRITICAL : 50
       FATAL    : 60
+
+  "publications":
+    enabled: true
+    type: "jsonfile"
+    contract_id: "publication"
+    name template: "{isodate}-publications.jsonlog"
+    keys: ["timestamp", "topic", "payload"]
+    local time: true
+    rotate after: 1 day
+    expire after: 7 days

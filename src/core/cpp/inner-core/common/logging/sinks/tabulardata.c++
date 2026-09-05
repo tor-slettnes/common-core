@@ -86,9 +86,9 @@ namespace cc::core::logging
         return this->level_map_;
     }
 
-    void TabularData::set_level_map(const LevelMap &level_map)
+    void TabularData::set_level_map(LevelMap level_map)
     {
-        this->level_map_ = level_map;
+        this->level_map_ = std::move(level_map);
     }
 
     const ColumnSpecs &TabularData::columns() const
@@ -96,9 +96,9 @@ namespace cc::core::logging
         return this->columns_;
     }
 
-    void TabularData::set_columns(const ColumnSpecs &columns)
+    void TabularData::set_columns(ColumnSpecs columns)
     {
-        this->columns_ = columns;
+        this->columns_ = std::move(columns);
     }
 
     std::vector<std::string> TabularData::column_names() const

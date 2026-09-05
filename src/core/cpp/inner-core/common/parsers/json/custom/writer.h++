@@ -17,7 +17,8 @@ namespace cc::core::json
 
     public:
         CustomWriter();
-        CustomWriter(const fs::path &path);
+        CustomWriter(const fs::path &path,
+                     std::ios_base::openmode mode = std::ios_base::out);
 
         void write_stream(std::ostream &stream,
                           const types::Value &value,

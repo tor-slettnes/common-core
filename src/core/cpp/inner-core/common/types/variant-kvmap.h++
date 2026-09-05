@@ -64,6 +64,10 @@ namespace cc::core::types
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
+        KeyValueMap get_all_of(
+            const std::vector<std::string> &keys,
+            bool ignoreCase = false) const noexcept;
+
         Value get_nested(
             const std::vector<std::string> &path,
             const Value &fallback = {},

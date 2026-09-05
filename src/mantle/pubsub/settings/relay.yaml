@@ -1,0 +1,10 @@
+# -*- yaml -*-
+#===============================================================================
+## @file relay.yaml
+## @brief Settings for Pub/Sub Relay
+## @author Tor Slettnes
+#===============================================================================
+
+# message logging:
+#   contract: "publication"
+#   host: "localhost"

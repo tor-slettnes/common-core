@@ -19,7 +19,8 @@ namespace cc::core::parsers
         BaseWriter(const std::string &name);
 
         BaseWriter(const std::string &name,
-                   const fs::path &path);
+                   const fs::path &path,
+                   std::ios_base::openmode mode = std::ios_base::out);
 
         virtual void write(
             const types::Value &value,

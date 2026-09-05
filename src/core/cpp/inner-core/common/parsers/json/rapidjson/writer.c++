@@ -16,8 +16,10 @@ namespace cc::core::json
     {
     }
 
-    RapidWriter::RapidWriter(const fs::path &path)
-        : Super("RapidWriter", path)
+    RapidWriter::RapidWriter(
+        const fs::path &path,
+        std::ios_base::openmode mode)
+        : Super("RapidWriter", path, mode)
     {
     }
 

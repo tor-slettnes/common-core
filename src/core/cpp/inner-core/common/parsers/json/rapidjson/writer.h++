@@ -18,7 +18,8 @@ namespace cc::core::json
 
     public:
         RapidWriter();
-        RapidWriter(const fs::path &path);
+        RapidWriter(const fs::path &path,
+                    std::ios_base::openmode mode = std::ios_base::out);
 
         void write_stream(std::ostream &stream,
                           const types::Value &value,

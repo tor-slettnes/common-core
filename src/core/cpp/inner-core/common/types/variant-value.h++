@@ -146,7 +146,7 @@ namespace cc::core::types
             double multiplier,
             const dt::Duration &fallback = {}) const noexcept;
 
-        std::string as_string() const noexcept;
+        std::string as_string(const std::string &fallback = {}) const noexcept;
         ByteVector as_bytevector(const ByteVector &fallback = {}) const noexcept;
 
         ValueList as_valuelist() const noexcept;
@@ -184,6 +184,7 @@ namespace cc::core::types
         std::optional<float> try_as_float() const noexcept;
         std::optional<double> try_as_double() const noexcept;
         std::optional<complex> try_as_complex() const noexcept;
+        std::optional<std::string> try_as_string() const noexcept;
         std::optional<ByteVector> try_as_bytevector() const noexcept;
 
         std::optional<dt::TimePoint> try_as_timepoint(

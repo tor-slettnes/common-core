@@ -127,7 +127,7 @@ log sinks:
 
 
   # Log to standard error
-  stderr:
+  "stderr":
     #include context: false
     threshold: WARNING
 
@@ -136,7 +136,7 @@ log sinks:
     # enabled: true
 
   # UNIX SysLog settings
-  syslog:
+  "syslog":
     # Minimum log level to capture
     threshold: NOTICE
 
@@ -148,7 +148,7 @@ log sinks:
     # enabled: true
 
   # Log each event as a single-line JSON object
-  jsonfile:
+  "jsonfile":
     # Log to JSON file enabled.  Defaults to `false`
     # enabled : false
 
@@ -172,7 +172,7 @@ log sinks:
     expire after: 1 year
 
   # Log to plaintext `.log` files
-  logfile:
+  "logfile":
     # Log to text file enabled.  Defaults to `false`.
     # enabled : true
 
@@ -199,7 +199,7 @@ log sinks:
     expire after: 1 year
 
   # Log specific event fields to comma-separated value files (with suffix `.csv`)
-  csvfile:
+  "csvfile":
     # Log to text file enabled.  Defaults to `false`.
     # enabled: true
 
@@ -243,7 +243,7 @@ log sinks:
     expire after: 1 year
 
   # Log to SQLite3 `.db` files
-  sqlite3:
+  "sqlite3":
     # Log to text file enabled.  Defaults to `false`.
     # enabled: false
 
@@ -284,18 +284,18 @@ log sinks:
     contract_id: "text"
 
   # Log via RTI distributed logger (if built with option `USE_RTI_DISTRIBUTED_LOGGER`)
-  rti-dl:
+  "rti-dl":
     enabled: false
     threshold: TRACE
 
   # Log via DDS (Topic `cc::protobuf::status::LogEvent`)
-  dds:
+  "dds":
     enabled: false
     threshold: TRACE
 
 
   # Log via MultiLogger gRPC service
-  multilogger:
+  "multilogger":
     # MultiLogger sink enabled.  Default: false
     enabled: true
 

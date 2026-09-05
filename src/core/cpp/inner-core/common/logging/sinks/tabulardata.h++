@@ -19,8 +19,8 @@
 
 namespace cc::core::logging
 {
-    const std::string SETTING_COLUMNS = "columns";
-    const std::string SETTING_LEVEL_MAP = "level map";
+    constexpr auto SETTING_COLUMNS = "columns";
+    constexpr auto SETTING_LEVEL_MAP = "level map";
 
     //--------------------------------------------------------------------------
     // Column specifications
@@ -60,10 +60,10 @@ namespace cc::core::logging
 
     public:
         const ColumnSpecs &columns() const;
-        void set_columns(const ColumnSpecs &columns);
+        void set_columns(ColumnSpecs columns);
 
         const LevelMap &level_map() const;
-        void set_level_map(const LevelMap &level_map);
+        void set_level_map(LevelMap level_map);
 
         std::vector<std::string> column_names() const;
 

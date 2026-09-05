@@ -15,8 +15,10 @@ namespace cc::core::json
     {
     }
 
-    CustomWriter::CustomWriter(const fs::path &path)
-        : Super("CustomWriter", path)
+    CustomWriter::CustomWriter(
+        const fs::path &path,
+        std::ios_base::openmode mode)
+        : Super("CustomWriter", path, mode)
     {
     }
 
