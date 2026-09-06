@@ -172,7 +172,7 @@ namespace cc::core::types
         /// @brief
         ///     Add an item to the end of the queue
         /// @param[in] value
-        ///     Value to copy to the end of the queue. \sa void put(T && value).
+        ///     Value to append.
         /// @param[in] reopen
         ///     Reopen the queue if it had been closed
         /// @param[in] notify
@@ -188,75 +188,28 @@ namespace cc::core::types
         /// has been reached) then the oldest item is removed from the front of
         /// the queue.
 
-        inline bool put(const T &value,
+        inline bool put(T value,
                         bool reopen = false,
                         bool notify = true)
         {
+            bool pushed = false;
             if (reopen || !this->closed_)
             {
+                std::unique_lock<std::mutex> lock(this->mtx);
+                this->closed_ = false;
+                if (this->pushable(&lock))
                 {
-                    std::unique_lock<std::mutex> lock(this->mtx);
-                    this->closed_ = false;
-                    if (this->pushable(&lock))
-                    {
-                        this->queue.push_back(value);
-                    }
+                    this->queue.push_back(std::move(value));
+                    pushed = true;
                 }
+                lock.unlock();
+
                 if (notify)
                 {
                     this->item_available.notify_one();
                 }
-                return true;
             }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// @brief
-        ///     Add an item to the queue
-        /// @param[in] value
-        ///     Value which is moved to the end of the queue.
-        /// @param[in] reopen
-        ///     Reopen the queue if it had been closed
-        /// @param[in] notify
-        ///     Notify anyone waiting for items.  Disabling this may
-        ///     allow for multiple pushes without waiting.
-        /// @return
-        ///     Whether the item was actually pushed
-        ///
-        /// Add a new item at the end of the queue.  This unblocks exactly one
-        /// pending or future `.get()` call.
-        ///
-        /// If the queue is full (i.e. if there is a maximum queue size and it
-        /// has been reached) then the oldest item is removed from the front of
-        /// the queue.
-
-        inline bool put(T &&value,
-                        bool reopen = false,
-                        bool notify = true)
-        {
-            if (reopen || !this->closed_)
-            {
-                {
-                    std::unique_lock<std::mutex> lock(this->mtx);
-                    this->closed_ = false;
-                    if (this->pushable(&lock))
-                    {
-                        this->queue.push_back(std::move(value));
-                    }
-                }
-                if (notify)
-                {
-                    this->item_available.notify_one();
-                }
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return pushed;
         }
 
         /// @brief

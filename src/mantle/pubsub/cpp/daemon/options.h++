@@ -31,6 +31,9 @@ namespace cc::platform::pubsub
             const std::string &topic,
             const core::types::Value &payload);
 
+    private:
+        std::string signal_handle;
+
     public:
         bool enable_grpc;
         bool enable_zmq;

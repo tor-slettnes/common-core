@@ -12,14 +12,32 @@
 
 namespace cc::platform::multilogger::grpc
 {
-    void ClientImpl::submit(const core::types::Loggable::ptr &item)
+    Client::~Client()
+    {
+        this->close_writer();
+    }
+
+    void Client::initialize()
+    {
+        API::initialize();
+        Super::initialize();
+    }
+
+    void Client::deinitialize()
+    {
+        this->close_writer();
+        Super::deinitialize();
+        API::deinitialize();
+    }
+
+    void Client::submit(const core::types::Loggable::ptr &item)
     {
         this->call_check(
             &Stub::Submit,
             cc::protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(item));
     }
 
-    bool ClientImpl::add_sink(const SinkSpec &spec)
+    bool Client::add_sink(const SinkSpec &spec)
     {
         return this->call_check(
                        &Stub::AddSink,
@@ -27,7 +45,7 @@ namespace cc::platform::multilogger::grpc
             .added();
     }
 
-    bool ClientImpl::remove_sink(const SinkID &id)
+    bool Client::remove_sink(const SinkID &id)
     {
         return this->call_check(
                        &Stub::RemoveSink,
@@ -35,7 +53,7 @@ namespace cc::platform::multilogger::grpc
             .removed();
     }
 
-    SinkSpec ClientImpl::get_sink_spec(const SinkID &id) const
+    SinkSpec Client::get_sink_spec(const SinkID &id) const
     {
         return cc::protobuf::decoded<SinkSpec>(
             this->call_check(
@@ -43,47 +61,47 @@ namespace cc::platform::multilogger::grpc
                 cc::protobuf::encoded<cc::platform::multilogger::protobuf::SinkID>(id)));
     }
 
-    SinkSpecs ClientImpl::get_all_sink_specs() const
+    SinkSpecs Client::get_all_sink_specs() const
     {
         return cc::protobuf::decoded<SinkSpecs>(
             this->call_check(&Stub::GetAllSinks));
     }
 
-    SinkIDs ClientImpl::list_sinks() const
+    SinkIDs Client::list_sinks() const
     {
         return cc::protobuf::assign_to_vector<SinkID>(
             this->call_check(&Stub::ListSinks).sink_names());
     }
 
-    SinkTypes ClientImpl::list_sink_types() const
+    SinkTypes Client::list_sink_types() const
     {
         return cc::protobuf::assign_to_vector<SinkType>(
             this->call_check(&Stub::ListSinkTypes).sink_types());
     }
 
-    FieldNames ClientImpl::list_message_fields() const
+    FieldNames Client::list_message_fields() const
     {
         return cc::protobuf::assign_to_vector<std::string>(
             this->call_check(&Stub::ListMessageFields).field_names());
     }
 
-    FieldNames ClientImpl::list_error_fields() const
+    FieldNames Client::list_error_fields() const
     {
         return cc::protobuf::assign_to_vector<std::string>(
             this->call_check(&Stub::ListErrorFields).field_names());
     }
 
-    std::shared_ptr<LogSource> ClientImpl::listen(const ListenerSpec &spec)
+    std::shared_ptr<LogSource> Client::listen(const ListenerSpec &spec)
     {
         return ClientListener::create_shared(this->stub, spec);
     }
 
-    bool ClientImpl::is_writer_open() const
+    bool Client::is_writer_open() const
     {
         return bool(this->writer);
     }
 
-    void ClientImpl::open_writer()
+    void Client::open_writer()
     {
         if (!this->writer)
         {
@@ -96,7 +114,7 @@ namespace cc::platform::multilogger::grpc
         }
     }
 
-    void ClientImpl::close_writer()
+    void Client::close_writer()
     {
         if (this->writer)
         {
@@ -107,7 +125,7 @@ namespace cc::platform::multilogger::grpc
         }
     }
 
-    bool ClientImpl::write_item(const core::types::Loggable::ptr &item)
+    bool Client::write_item(const core::types::Loggable::ptr &item)
     {
         if (!this->writer)
         {

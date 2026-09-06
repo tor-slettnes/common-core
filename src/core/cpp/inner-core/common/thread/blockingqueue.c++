@@ -65,7 +65,7 @@ namespace cc::core::types
 
             case OverflowDisposition::DISCARD_OLDEST:
                 this->discard_oldest();
-                return true;
+                return !this->closed_;
 
             default:
                 return false;

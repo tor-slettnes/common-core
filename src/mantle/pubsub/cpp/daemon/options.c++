@@ -7,16 +7,18 @@
 
 #include "options.h++"
 #include "relay-types.h++"
-#include "multilogger-grpc-client.h++"
+#include "multilogger-grpc-queueing-client.h++"
 #include "multilogger-native.h++"
 #include "logging/telemetry/data.h++"
 #include "platform/init.h++"
+#include "platform/symbols.h++"
 #include "chrono/date-time.h++"
 
 namespace cc::platform::pubsub
 {
     Options::Options()
         : Super(),
+          signal_handle(TYPE_NAME_FULL(This)),
           enable_grpc(false),
           enable_zmq(false),
           enable_logging(false)
@@ -99,7 +101,7 @@ namespace cc::platform::pubsub
                 "Logging publications by contract %r via MultiLogger service on %s",
                 this->log_contract,
                 this->log_host);
-            this->multilogger = multilogger::grpc::ClientImpl::create_shared(
+            this->multilogger = multilogger::grpc::QueueingClient::create_shared(
                 this->log_host);
         }
         else
@@ -110,13 +112,17 @@ namespace cc::platform::pubsub
             this->multilogger = multilogger::native::Logger::create_shared();
         }
 
+        this->multilogger->initialize();
+
         using namespace std::placeholders;
-        std::string signal_handle = signal_publication.connect(
+        signal_publication.connect(
+            this->signal_handle,
             std::bind(&This::on_message, this, _1, _2, _3));
 
         core::platform::signal_shutdown.connect(
             [=] {
-                signal_publication.disconnect(signal_handle);
+                signal_publication.disconnect(this->signal_handle);
+                this->multilogger->deinitialize();
             });
     }
 

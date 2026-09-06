@@ -14,24 +14,30 @@
 
 namespace cc::platform::multilogger::grpc
 {
-    class ClientImpl
+    class Client
         : public API,
           public cc::grpc::ClientWrapper<MultiLogger>,
-          public core::types::enable_create_shared_from_this<ClientImpl>
+          public core::types::enable_create_shared_from_this<Client>
     {
-        using This = ClientImpl;
+        using This = Client;
         using Super = cc::grpc::ClientWrapper<MultiLogger>;
 
     protected:
         template <class... Args>
-        ClientImpl(const std::string &host = "",
-                   Args &&...args)
+        Client(
+            const std::string &host = "",
+            Args &&...args)
             : API(),
               Super(host, std::forward<Args>(args)...)
         {
         }
 
+        ~Client();
+
     public:
+        void initialize() override;
+        void deinitialize() override;
+
         void submit(const core::types::Loggable::ptr &item) override;
         bool add_sink(const SinkSpec &spec) override;
         bool remove_sink(const SinkID &id) override;
