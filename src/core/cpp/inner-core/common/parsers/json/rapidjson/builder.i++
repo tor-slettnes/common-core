@@ -19,7 +19,6 @@ namespace cc::core::json
     void RapidBuilder<WriterType>::write_stream(const types::Value &value)
     {
         this->encode_value(value);
-        this->stream << std::endl;
     }
 
     template <class WriterType>
