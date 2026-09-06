@@ -46,9 +46,11 @@ namespace cc::platform::multilogger::grpc
     {
         if (!this->client_)
         {
-            this->client_ = Client::create_shared(
+            this->client_ = BlockingClient::create_shared(
                 this->host(),  // host
                 true);         // wait_for_ready
+
+            this->client_->initialize();
         }
         Super::open();
     }
@@ -58,7 +60,7 @@ namespace cc::platform::multilogger::grpc
         Super::close();
         if (std::shared_ptr<Client> client = this->client_)
         {
-            client->close_writer();
+            client->deinitialize();
             this->client_.reset();
         }
     }

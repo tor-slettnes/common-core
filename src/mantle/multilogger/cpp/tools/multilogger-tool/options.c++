@@ -75,7 +75,7 @@ namespace cc::platform::multilogger
         switch (this->implementation)
         {
         case Implementation::GRPC:
-            return grpc::Client::create_shared(this->host);
+            return grpc::BlockingClient::create_shared(this->host);
 
         case Implementation::ZMQ:
             return zmq::ClientImpl::create_shared(this->host);

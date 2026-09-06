@@ -29,31 +29,14 @@ namespace cc::platform::multilogger::grpc
     void QueueingClient::submit(const core::types::Loggable::ptr &item)
     {
         this->start_worker();
-
-        if (!this->submission_queue_.put(item))
-        {
-            core::str::format(
-                std::cerr,
-                "%s: submission queue full, unable to log item: %s\n",
-                *this,
-                *item);
-        }
+        this->submission_queue_.put(item);
     }
 
     void QueueingClient::start_worker()
     {
         if (!this->writer_thread_.joinable())
         {
-            core::str::format(
-                std::cerr,
-                "%s: starting write worker\n");
             this->writer_thread_ = std::thread(&This::write_worker, this);
-        }
-        else
-        {
-            core::str::format(
-                std::cerr,
-                "%s: not starting write worker\n");
         }
     }
     void QueueingClient::stop_worker()
@@ -69,14 +52,7 @@ namespace cc::platform::multilogger::grpc
     {
         while (auto opt_item = this->submission_queue_.get())
         {
-            if (!this->write_item(opt_item.value()))
-            {
-                core::str::format(
-                    std::cerr,
-                    "%s: failed to stream item to MultiLogger service: %s\n",
-                    *this,
-                    *opt_item.value());
-            }
+            this->write_item(opt_item.value());
         }
     }
 }  // namespace cc::platform::multilogger::grpc

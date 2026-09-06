@@ -11,9 +11,11 @@
 
 namespace cc::platform::multilogger::grpc
 {
-    constexpr std::size_t SUBMISSION_QUEUE_SIZE = 1024;
+    constexpr std::size_t SUBMISSION_QUEUE_SIZE = 4096;
 
-    class QueueingClient : public Client
+    class QueueingClient
+        : public Client,
+          public core::types::enable_create_shared_from_this<QueueingClient>
     {
         using This = QueueingClient;
         using Super = Client;

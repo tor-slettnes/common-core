@@ -14,10 +14,12 @@
 
 namespace cc::platform::multilogger::grpc
 {
+    //--------------------------------------------------------------------------
+    // Client
+
     class Client
         : public API,
-          public cc::grpc::ClientWrapper<MultiLogger>,
-          public core::types::enable_create_shared_from_this<Client>
+          public cc::grpc::ClientWrapper<MultiLogger>
     {
         using This = Client;
         using Super = cc::grpc::ClientWrapper<MultiLogger>;
@@ -65,4 +67,17 @@ namespace cc::platform::multilogger::grpc
         std::unique_ptr<::google::protobuf::Empty> writer_response;
         cc::grpc::Status writer_status;
     };
+
+
+    //--------------------------------------------------------------------------
+    // BlockingClient
+
+    class BlockingClient
+        : public Client,
+          public core::types::enable_create_shared<BlockingClient>
+    {
+    protected:
+        using Client::Client;
+    };
+
 }  // namespace cc::platform::multilogger::grpc

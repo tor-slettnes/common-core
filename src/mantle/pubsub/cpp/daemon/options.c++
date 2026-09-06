@@ -102,7 +102,8 @@ namespace cc::platform::pubsub
                 this->log_contract,
                 this->log_host);
             this->multilogger = multilogger::grpc::QueueingClient::create_shared(
-                this->log_host);
+                this->log_host, // host
+                true);          // wait_for_ready
         }
         else
         {
