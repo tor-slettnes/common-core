@@ -1569,17 +1569,6 @@ namespace cc::core::types
             stream << "null";
             break;
 
-        case ValueType::REAL:
-            if (const auto opt_string = str::try_convert_from(this->as_real()))
-            {
-                stream << *opt_string;
-            }
-            else
-            {
-                stream << "null";
-            }
-            break;
-
         case ValueType::BYTEVECTOR:
             stream << "\"%" << this->get<ByteVector>().to_base64() << "%\"";
             break;

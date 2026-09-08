@@ -44,6 +44,17 @@ namespace cc::core::json
     {
         switch (value.type())
         {
+        case types::ValueType::REAL:
+            if (std::isfinite(value.as_real()))
+            {
+                value.to_literal_stream(stream);
+            }
+            else
+            {
+                str::to_literal(stream, value.as_string());
+            }
+            break;
+
         case types::ValueType::COMPLEX:
             // Encode complex value as object with "real" and "imag" keys.
             This::to_stream(stream, value.as_kvmap(), pretty, indent);

@@ -14,6 +14,7 @@
 #include <limits>
 #include <vector>
 #include <optional>
+#include <cctype>
 
 #include <iostream>  // temp
 #include <iomanip>   // temp
@@ -171,7 +172,7 @@ namespace cc::core::str
             }
 
             std::string result{chars.data(), ptr};
-            if (result.find(".") == std::string::npos)
+            if (StringConvert<T>::needs_decimal_point(result))
             {
                 result += ".0";
             }
@@ -185,6 +186,26 @@ namespace cc::core::str
         {
             stream << StringConvert<T>::to_string(value);
             return stream;
+        }
+
+    private:
+        static bool needs_decimal_point(const std::string &result)
+        {
+            bool decimal = false;
+            bool digits = false;
+            for (char c : result)
+            {
+                if (std::isdigit(c))
+                {
+                    digits = true;
+                }
+                else if (c == '.')
+                {
+                    decimal = true;
+                    break;
+                }
+            }
+            return digits && !decimal;
         }
     };
 
@@ -336,7 +357,7 @@ namespace cc::core::str
     }
 
     template <class T>
-    std::string convert_from(const std::optional<T> &value) noexcept
+    std::string convert_from(const std::optional<T> &value)
     {
         if (value)
         {
