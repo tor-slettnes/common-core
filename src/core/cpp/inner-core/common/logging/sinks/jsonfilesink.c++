@@ -58,7 +58,7 @@ namespace cc::core::logging
         RotatingPath::open_file(tp);
         this->writer_ = std::make_shared<json::FastWriter>(
             this->current_path(),
-            std::ios_base::ate);
+            std::ios_base::app);
     }
 
     void JsonFileSink::close_file()
