@@ -348,4 +348,17 @@ namespace cc::core::str
         }
     }
 
+    template <class T>
+    std::optional<std::string> try_convert_from(const T &value) noexcept
+    {
+        try
+        {
+            return StringConvert<T>::to_string(value);
+        }
+        catch (...)
+        {
+            return {};
+        }
+    }
+
 }  // namespace cc::core::str

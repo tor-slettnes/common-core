@@ -1516,7 +1516,10 @@ namespace cc::core::types
             break;
 
         case ValueType::REAL:
-            str::StringConvert<largest_real>::to_stream(stream, this->as_real());
+            if (const auto opt_string = str::try_convert_from(this->as_real()))
+            {
+                stream << *opt_string;
+            }
             break;
 
         case ValueType::COMPLEX:
@@ -1564,6 +1567,17 @@ namespace cc::core::types
         {
         case ValueType::NONE:
             stream << "null";
+            break;
+
+        case ValueType::REAL:
+            if (const auto opt_string = str::try_convert_from(this->as_real()))
+            {
+                stream << *opt_string;
+            }
+            else
+            {
+                stream << "null";
+            }
             break;
 
         case ValueType::BYTEVECTOR:
