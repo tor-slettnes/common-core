@@ -47,9 +47,9 @@ namespace cc::core::json
             return this->writer.Int64(value.as_sint64());
 
         case types::ValueType::REAL:
-            if (this->writer.Double(value.as_double()))
+            if (std::isfinite(value.as_double()))
             {
-                return true;
+                return this->writer.Double(value.as_double());
             }
             else if (auto opt_string = str::try_convert_from(value.as_double()))
             {
