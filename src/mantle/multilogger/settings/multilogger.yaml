@@ -70,6 +70,6 @@ log sinks:
     log folder: "/var/log/common-core/publications"
     name template: "{isodate}-{hour}{minute}{zoneoffset}.jsonlog"
     keys: ["timestamp", "topic", "payload"]
-    local time: true
+    local time: false
     rotate after: 1 hour
     expire after: 7 days

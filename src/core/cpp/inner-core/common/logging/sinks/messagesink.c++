@@ -17,13 +17,17 @@ namespace cc::core::logging
     const std::string SETTING_INCLUDE_SOURCE = "include source location";
     const bool DEFAULT_INCLUDE_SOURCE = false;
 
+    const std::string SETTING_LOCAL_TIME = "local time";
+    const bool DEFAULT_LOCAL_TIME = true;
+
     //--------------------------------------------------------------------------
     // MessageSink
 
     MessageSink::MessageSink(const std::string &sink_id)
         : Sink(sink_id, Message::CONTRACT),
           include_context_(DEFAULT_INCLUDE_CONTEXT),
-          include_source_(DEFAULT_INCLUDE_SOURCE)
+          include_source_(DEFAULT_INCLUDE_SOURCE),
+          use_local_time_(DEFAULT_LOCAL_TIME)
     {
     }
 
@@ -44,6 +48,11 @@ namespace cc::core::logging
         {
             this->set_include_source_location(value.as_bool());
         }
+
+        if (const types::Value &use_local_time = settings.get(SETTING_LOCAL_TIME))
+        {
+            this->set_use_local_time(use_local_time.as_bool());
+        }
     }
 
     void MessageSink::set_include_context(bool include_context)
@@ -62,14 +71,24 @@ namespace cc::core::logging
         This::all_include_context_ = include_context;
     }
 
+    bool MessageSink::include_source_location() const
+    {
+        return This::all_include_source_.value_or(this->include_source_);
+    }
+
     void MessageSink::set_include_source_location(bool include_source)
     {
         this->include_source_ = include_source;
     }
 
-    bool MessageSink::include_source_location() const
+    bool MessageSink::use_local_time() const
     {
-        return This::all_include_source_.value_or(this->include_source_);
+        return this->use_local_time_;
+    }
+
+    void MessageSink::set_use_local_time(bool use_local_time)
+    {
+        this->use_local_time_ = use_local_time;
     }
 
     void MessageSink::set_all_include_source_location(bool include_source)
@@ -104,7 +123,12 @@ namespace cc::core::logging
     void MessageSink::send_preamble(std::ostream &stream,
                                     const Message::ptr &message) const
     {
-        dt::tp_to_stream(stream, message->timepoint(), true, 3, "%T");
+        dt::tp_to_stream(
+            stream,                  // stream
+            message->timepoint(),    // tp
+            this->use_local_time(),  // local
+            3,                       // decimals
+            "%T");                   // format
 
         // stream << "|"
         //        << std::right

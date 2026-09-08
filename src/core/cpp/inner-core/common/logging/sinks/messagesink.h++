@@ -35,11 +35,15 @@ namespace cc::core::logging
     protected:
         void load_message_settings(const types::KeyValueMap &settings);
 
-        virtual void set_include_context(bool include_context);
         bool include_context() const;
+        virtual void set_include_context(bool include_context);
 
-        virtual void set_include_source_location(bool include_source);
         bool include_source_location() const;
+        virtual void set_include_source_location(bool include_source);
+
+        bool use_local_time() const;
+        virtual void set_use_local_time(bool use_local_time);
+
 
     public:
         static void set_all_include_context(bool include_context);
@@ -65,6 +69,7 @@ namespace cc::core::logging
         status::Level threshold_;
         bool include_context_;
         bool include_source_;
+        bool use_local_time_;
         static std::optional<bool> all_include_context_;
         static std::optional<bool> all_include_source_;
     };
