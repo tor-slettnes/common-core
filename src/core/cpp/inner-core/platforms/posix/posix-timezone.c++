@@ -32,7 +32,7 @@ namespace cc::core::platform
         const std::time_t &time,
         const std::string &timezone) const
     {
-        auto lck = std::scoped_lock(const_cast<This *>(this)->mtx);
+        std::scoped_lock lck(const_cast<This *>(this)->mtx);
         SavedValue saved = this->apply_zone(timezone);
         std::tm dt = this->localtime(time);
         this->restore_zone(saved);
@@ -50,7 +50,7 @@ namespace cc::core::platform
         const std::string &timezone,
         const std::time_t &time) const
     {
-        auto lck = std::scoped_lock(const_cast<This *>(this)->mtx);
+        std::scoped_lock lck(const_cast<This *>(this)->mtx);
         SavedValue saved = this->apply_zone(timezone);
         dt::TimeZoneInfo zi = this->tzinfo(time);
         this->restore_zone(saved);
@@ -59,6 +59,7 @@ namespace cc::core::platform
 
     dt::TimeZoneInfo PosixTimeZoneProvider::tzinfo(const std::time_t &time) const
     {
+        std::scoped_lock lck(const_cast<This *>(this)->mtx);
         tzset();
 
         std::tm local_tm;
@@ -79,6 +80,7 @@ namespace cc::core::platform
     PosixTimeZoneProvider::SavedValue PosixTimeZoneProvider::apply_zone(
         const std::string &zonename) const
     {
+        std::scoped_lock lck(const_cast<This *>(this)->mtx);
         std::optional<std::string> tzrestore = platform::runtime->getenv(TZENV);
 
         // Change zone
@@ -89,6 +91,7 @@ namespace cc::core::platform
 
     void PosixTimeZoneProvider::restore_zone(const SavedValue &saved) const
     {
+        std::scoped_lock lck(const_cast<This *>(this)->mtx);
         // Restore zone
         if (saved)
         {

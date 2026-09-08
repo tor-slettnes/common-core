@@ -1008,21 +1008,30 @@ namespace cc::core
             {
                 reference -= local_adjustment(tp);
             }
-            return last_aligned(tp,
-                                reference,
-                                std::chrono::floor<std::chrono::seconds>(interval));
+            return last_aligned(
+                tp,
+                reference,
+                std::chrono::floor<std::chrono::seconds>(interval));
         }
 
         TimePoint last_aligned(const TimePoint &tp,
                                const TimePoint &reference,
                                const Duration &interval)
         {
-            Duration offset = (tp - reference) % interval;
-            if (offset < Duration::zero())
+            if (interval != Duration::zero())
             {
-                offset += interval;
+                Duration offset;
+                offset = (tp - reference) % interval;
+                if (offset < Duration::zero())
+                {
+                    offset += std::chrono::abs(interval);
+                }
+                return tp - offset;
             }
-            return tp - offset;
+            else
+            {
+                return tp;
+            }
         }
 
         Duration local_adjustment(const TimePoint &tp)

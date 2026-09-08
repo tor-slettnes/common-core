@@ -17,7 +17,7 @@ namespace cc::platform::pubsub::zmq
     {
         Super::initialize();
 
-        // Connect local signals from `api/relay-common.h++` to this writer.
+        // Connect local signals from `api/relay-types.h++` to this writer.
         using namespace std::placeholders;
         pubsub::signal_publication.connect(
             TYPE_NAME_FULL(This),
