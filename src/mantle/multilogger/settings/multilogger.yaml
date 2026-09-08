@@ -68,7 +68,7 @@ log sinks:
     type: "jsonfile"
     contract_id: "publication"
     log folder: "/var/log/common-core/publications"
-    name template: "{isodate}-{hour}{minute}{zoneoffset}.jsonlog"
+    name template: "{isodate}-{hour}{minute}Z.jsonlog"
     keys: ["timestamp", "topic", "payload"]
     local time: false
     rotate after: 1 hour
