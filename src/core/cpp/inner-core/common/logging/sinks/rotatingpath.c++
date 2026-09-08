@@ -226,6 +226,7 @@ namespace cc::core::logging
     {
         std::string log_name = dt::to_string(
             starttime,                                                    // tp
+            this->use_local_time(),                                       // local
             0,                                                            // decimals
             str::expand(this->filename_template(), this->expansions()));  // format
 
