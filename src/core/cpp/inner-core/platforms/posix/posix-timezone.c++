@@ -69,18 +69,23 @@ namespace cc::core::platform
         dt::Duration offset = std::chrono::seconds(local_time - time);
         dt::Duration stdoffset = offset - std::chrono::hours(local_tm.tm_isdst);
 
+        std::string zonename;
+        if (const char *name = tzname[local_tm.tm_isdst > 0])
+        {
+            zonename = name;
+        }
+
         return {
-            tzname[local_tm.tm_isdst > 0],  // Effective zone, e.g., "PST" or "PDT"
-            offset,                         // Current timezone offset, east of UTC
-            stdoffset,                      // Standard timezone offset, east of UTC
-            local_tm.tm_isdst > 0,          // Daylight savings time flag
+            zonename,               // Effective zone, e.g., "PST" or "PDT"
+            offset,                 // Current timezone offset, east of UTC
+            stdoffset,              // Standard timezone offset, east of UTC
+            local_tm.tm_isdst > 0,  // Daylight savings time flag
         };
     }
 
     PosixTimeZoneProvider::SavedValue PosixTimeZoneProvider::apply_zone(
         const std::string &zonename) const
     {
-        std::scoped_lock lck(const_cast<This *>(this)->mtx);
         std::optional<std::string> tzrestore = platform::runtime->getenv(TZENV);
 
         // Change zone
@@ -91,7 +96,6 @@ namespace cc::core::platform
 
     void PosixTimeZoneProvider::restore_zone(const SavedValue &saved) const
     {
-        std::scoped_lock lck(const_cast<This *>(this)->mtx);
         // Restore zone
         if (saved)
         {
