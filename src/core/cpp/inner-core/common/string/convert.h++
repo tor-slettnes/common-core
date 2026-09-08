@@ -11,6 +11,8 @@
 #include <string>
 #include <string_view>
 #include <sstream>
+#include <limits>
+#include <vector>
 #include <optional>
 
 #include <iostream>  // temp
@@ -45,8 +47,16 @@ namespace cc::core::str
         static std::string to_string(const T &value)
         {
             std::ostringstream ss;
-            ss << value;
+            StringConvert<T>::to_stream(ss, value);
             return ss.str();
+        }
+
+        static std::ostream &to_stream(
+            std::ostream &stream,
+            const T &value)
+        {
+            stream << value;
+            return stream;
         }
     };
 
@@ -97,8 +107,16 @@ namespace cc::core::str
         static std::string to_string(const T &value)
         {
             std::ostringstream ss;
-            ss << value;
+            StringConvert<T>::to_stream(ss, value);
             return ss.str();
+        }
+
+        static std::ostream &to_stream(
+            std::ostream &stream,
+            const T &value)
+        {
+            stream << value;
+            return stream;
         }
     };
 
@@ -136,9 +154,37 @@ namespace cc::core::str
 
         static std::string to_string(const T &value)
         {
-            std::ostringstream ss;
-            ss << value;
-            return ss.str();
+            static const std::errc ok{};
+
+            int precision = std::numeric_limits<T>::digits10 + 1;
+            std::vector<char> chars(precision + 12);
+            auto [ptr, ec] = std::to_chars(
+                chars.data(),
+                chars.data() + chars.size(),
+                value,
+                std::chars_format::general,
+                precision);
+
+            if (ec != ok)
+            {
+                throw std::invalid_argument(std::make_error_code(ec).message());
+            }
+
+            std::string result{chars.data(), ptr};
+            if (result.find(".") == std::string::npos)
+            {
+                result += ".0";
+            }
+
+            return result;
+        }
+
+        static std::ostream &to_stream(
+            std::ostream &stream,
+            const T &value)
+        {
+            stream << StringConvert<T>::to_string(value);
+            return stream;
         }
     };
 
@@ -149,7 +195,12 @@ namespace cc::core::str
     {
     public:
         static std::string from_string(const std::string_view &s);
+
         static std::string to_string(const std::string &s);
+
+        static std::ostream &to_stream(
+            std::ostream &stream,
+            const std::string &value);
     };
 
     //==========================================================================
@@ -159,7 +210,12 @@ namespace cc::core::str
     {
     public:
         static bool from_string(const std::string_view &s);
+
         static std::string to_string(const bool &value);
+
+        static std::ostream &to_stream(
+            std::ostream &stream,
+            const bool &value);
     };
 
     //==========================================================================

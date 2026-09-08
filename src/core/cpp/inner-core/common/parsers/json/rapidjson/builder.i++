@@ -75,6 +75,10 @@ namespace cc::core::json
                          ? this->encode_object(*tvlist)
                          : this->encode_array(tvlist->values());
             }
+            else
+            {
+                return this->writer.Null();
+            }
 
         default:
             // logf_warning("%s cannot be converted to JSON: %s",

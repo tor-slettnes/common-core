@@ -1516,11 +1516,7 @@ namespace cc::core::types
             break;
 
         case ValueType::REAL:
-            if (std::abs(this->as_real()) < 1e16)
-            {
-                stream << std::fixed;
-            }
-            stream << this->as_real();
+            str::StringConvert<largest_real>::to_stream(stream, this->as_real());
             break;
 
         case ValueType::COMPLEX:

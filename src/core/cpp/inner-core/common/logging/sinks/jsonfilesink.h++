@@ -49,7 +49,7 @@ namespace cc::core::logging
         bool handle_item(const types::Loggable::ptr &loggable) override;
 
     private:
-        std::shared_ptr<json::FastWriter> writer_;
+        std::shared_ptr<parsers::BaseWriter> writer_;
         std::vector<std::string> keys_;
     };
 

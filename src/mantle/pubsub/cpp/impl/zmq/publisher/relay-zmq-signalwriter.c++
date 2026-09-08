@@ -45,7 +45,7 @@ namespace cc::platform::pubsub::zmq
                 {
                     publisher->publish(
                         topic,
-                        core::json::fast_writer.encoded(payload));
+                        core::json::writer.encoded(payload));
                 }
             }
             break;

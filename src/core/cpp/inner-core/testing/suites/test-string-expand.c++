@@ -34,7 +34,7 @@ namespace cc::core::str
         std::string expected{
             "one=true, "
             "two=2, "
-            "three=3.141593, "
+            "three=3.141592653589793, "
             "four=IV, "
             "five=5h"};
 
