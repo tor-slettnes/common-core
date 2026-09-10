@@ -41,14 +41,6 @@ namespace cc::core::str
         return s;
     }
 
-    std::ostream &StringConvert<std::string>::to_stream(
-        std::ostream &stream,
-        const std::string &value)
-    {
-        stream << value;
-        return stream;
-    }
-
     //==========================================================================
     // Boolean integer conversions
 
@@ -91,14 +83,6 @@ namespace cc::core::str
     std::string StringConvert<bool>::to_string(const bool &value)
     {
         return value ? "true" : "false";
-    }
-
-    std::ostream &StringConvert<bool>::to_stream(
-        std::ostream &stream,
-        const bool &value)
-    {
-        stream << StringConvert<bool>::to_string(value);
-        return stream;
     }
 
 }  // namespace cc::core::str

@@ -743,13 +743,13 @@ namespace cc::core
             double scalar,
             const std::optional<int> &multiplier_decimal_exponent)
         {
-            if (scalar <= 0)
-            {
-                scalar = 0;
-            }
-            else if (multiplier_decimal_exponent)
+            if (multiplier_decimal_exponent)
             {
                 scalar *= pow(10.0, 9 + *multiplier_decimal_exponent);
+            }
+            else if (scalar <= 0)
+            {
+                scalar = 0;
             }
             else
             {
@@ -765,16 +765,16 @@ namespace cc::core
             std::int64_t scalar,
             const std::optional<int> &multiplier_decimal_exponent)
         {
-            if (scalar <= 0)
-            {
-                scalar = 0;
-            }
-            else if (multiplier_decimal_exponent)
+            if (multiplier_decimal_exponent)
             {
                 for (int exp = *multiplier_decimal_exponent; exp > -9; --exp)
                 {
                     scalar *= 10;
                 }
+            }
+            else if (scalar <= 0)
+            {
+                scalar = 0;
             }
             else
             {

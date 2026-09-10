@@ -66,6 +66,10 @@ namespace cc::grpc
 
     protected:
         using SignalReader = std::unique_ptr<::grpc::ClientReader<SignalT>>;
+        using SignalWatch = SignalReader (ServiceT::Stub::*)(
+            ::grpc::ClientContext *,
+            const cc::protobuf::signal::Filter &filter);
+
 
     protected:
         template <class... Args>
@@ -113,7 +117,7 @@ namespace cc::grpc
         ///     By default the server will connect to and stream back all of its
         ///     known signals.  Use \sa set_signal_filter() to apply a filter.
 
-        inline virtual void start_watching()
+        inline void start_watching(const SignalWatch &watch = &ServiceT::Stub::Watch)
         {
             // if (this->slots.empty())
             // {
@@ -130,7 +134,7 @@ namespace cc::grpc
                            this->host(),
                            filter);
                 this->receiver.start(
-                    &ServiceT::Stub::Watch,
+                    watch,
                     this->stub.get(),
                     filter);
             }

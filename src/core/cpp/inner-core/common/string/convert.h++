@@ -14,7 +14,6 @@
 #include <limits>
 #include <vector>
 #include <optional>
-#include <cctype>
 
 #include <iostream>  // temp
 #include <iomanip>   // temp
@@ -48,16 +47,8 @@ namespace cc::core::str
         static std::string to_string(const T &value)
         {
             std::ostringstream ss;
-            StringConvert<T>::to_stream(ss, value);
+            ss << value;
             return ss.str();
-        }
-
-        static std::ostream &to_stream(
-            std::ostream &stream,
-            const T &value)
-        {
-            stream << value;
-            return stream;
         }
     };
 
@@ -108,16 +99,8 @@ namespace cc::core::str
         static std::string to_string(const T &value)
         {
             std::ostringstream ss;
-            StringConvert<T>::to_stream(ss, value);
+            ss << value;
             return ss.str();
-        }
-
-        static std::ostream &to_stream(
-            std::ostream &stream,
-            const T &value)
-        {
-            stream << value;
-            return stream;
         }
     };
 
@@ -157,14 +140,11 @@ namespace cc::core::str
         {
             static const std::errc ok{};
 
-            int precision = std::numeric_limits<T>::digits10 + 1;
-            std::vector<char> chars(precision + 12);
+            std::vector<char> chars(std::numeric_limits<T>::max_digits10);
             auto [ptr, ec] = std::to_chars(
                 chars.data(),
                 chars.data() + chars.size(),
-                value,
-                std::chars_format::general,
-                precision);
+                value);
 
             if (ec != ok)
             {
@@ -180,32 +160,17 @@ namespace cc::core::str
             return result;
         }
 
-        static std::ostream &to_stream(
-            std::ostream &stream,
-            const T &value)
-        {
-            stream << StringConvert<T>::to_string(value);
-            return stream;
-        }
-
     private:
         static bool needs_decimal_point(const std::string &result)
         {
-            bool decimal = false;
-            bool digits = false;
             for (char c : result)
             {
-                if (std::isdigit(c))
+                if (!std::isdigit(c) && (c != '+') && (c != '-'))
                 {
-                    digits = true;
-                }
-                else if (c == '.')
-                {
-                    decimal = true;
-                    break;
+                    return false;
                 }
             }
-            return digits && !decimal;
+            return true;
         }
     };
 
@@ -233,10 +198,6 @@ namespace cc::core::str
         static bool from_string(const std::string_view &s);
 
         static std::string to_string(const bool &value);
-
-        static std::ostream &to_stream(
-            std::ostream &stream,
-            const bool &value);
     };
 
     //==========================================================================

@@ -137,10 +137,19 @@ namespace cc::core::status
                << "] "
                << this->text();
 
+
         if (!this->attributes().empty())
         {
-            stream << ", attributes="
-                   << this->attributes();
+            std::string delimiter = " (";
+            for (const auto &[key, value] : this->attributes())
+            {
+                stream << delimiter
+                       << key
+                       << "=";
+                value.to_literal_stream(stream);
+                delimiter = ", ";
+            }
+            stream << ")";
         }
     }
 
