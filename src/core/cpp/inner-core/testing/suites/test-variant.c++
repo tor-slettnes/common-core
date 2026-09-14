@@ -89,6 +89,12 @@ namespace cc::core::types
         Value double_control = Value(3.141592653589793238);
         EXPECT_EQ(double_parsed, double_control);
 
+        Value double_exponent = Value::from_literal("3.141592653589793238e-20");
+        EXPECT_EQ(double_exponent.type(), ValueType::REAL);
+
+        Value double_exponent_control = Value(3.141592653589793238e-20);
+        EXPECT_EQ(double_exponent, double_exponent_control);
+
         // Value complex_parsed = Value::from_literal("(3.141592653589793238,-2.0)");
         // EXPECT_EQ(complex_parsed.type(), ValueType::COMPLEX);
 

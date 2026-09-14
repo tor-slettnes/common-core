@@ -38,16 +38,22 @@ if(BUILD_PYTHON)
 endif()
 
 
+set(DEB_REPLACES cc-common)
+
 cc_cpack_add_debian_component("${SETTINGS_INSTALL_COMPONENT}"
   GROUP "${INSTALL_GROUP}"
   SUMMARY "Common Core - Common settings"
   DESCRIPTION "Shared settings files for Common Core application framework."
+  DEB_REPLACES "${DEB_REPLACES}"
+  DEB_CONFLICTS "${DEB_REPLACES}"
 )
 
 cc_cpack_add_debian_component("${PYTHON_REQUIREMENTS_INSTALL_COMPONENT}"
   GROUP "${INSTALL_GROUP}"
   SUMMARY "Common Core - Required 3rd party Python distributions"
   DESCRIPTION "Required 3rd party Python distributions for shared Python modules."
+  DEB_REPLACES "${DEB_REPLACES}"
+  DEB_CONFLICTS "${DEB_REPLACES}"
 )
 
 cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
@@ -56,6 +62,8 @@ cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
   DESCRIPTION "Common Core application framework for Python."
   DEPENDS ${SETTINGS_INSTALL_COMPONENT} ${PYTHON_REQUIREMENTS_INSTALL_COMPONENT}
   DEB_DEPENDS python3-grpcio python3-protobuf python3-yaml
+  DEB_REPLACES "${DEB_REPLACES}"
+  DEB_CONFLICTS "${DEB_REPLACES}"
 )
 
 cc_cpack_add_group("${INSTALL_GROUP}"

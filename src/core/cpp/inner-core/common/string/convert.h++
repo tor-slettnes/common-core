@@ -140,7 +140,7 @@ namespace cc::core::str
         {
             static const std::errc ok{};
 
-            std::vector<char> chars(std::numeric_limits<T>::max_digits10);
+            std::vector<char> chars(std::numeric_limits<T>::max_digits10+8);
             auto [ptr, ec] = std::to_chars(
                 chars.data(),
                 chars.data() + chars.size(),

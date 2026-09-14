@@ -22,7 +22,7 @@ namespace cc::core::str
         if (is.fail() || !is.eof())
         {
             throw std::invalid_argument(
-                str::format("Failed to convert string literal to %s: %r",
+                str::format("Invalid string literal for %s: %r",
                             core::platform::symbols->cpp_demangle(ti.name(), false),
                             s));
         }
