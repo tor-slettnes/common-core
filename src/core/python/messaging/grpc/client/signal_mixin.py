@@ -292,5 +292,10 @@ class SignalMixIn:
         return self.signal_store.wait_complete(timeout)
 
 
-    def watch(self, signal_filter : Filter = Filter()):
-        return self.stub.Watch(signal_filter, wait_for_ready=True)
+    def watch(self,
+              signal_filter : Filter = Filter(),
+              rpc_name = 'Watch',
+              ):
+
+        watch = getattr(self.stub, rpc_name)
+        return watch(signal_filter, wait_for_ready=True)
