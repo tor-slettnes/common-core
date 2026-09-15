@@ -245,7 +245,10 @@ class SignalMixIn:
             self.signal_store.disconnect_all(callback)
 
 
-    def start_watching(self, watch_all: bool = True):
+    def start_watching(self,
+                       watch_all: bool = True,
+                       rpc_name: str = 'Watch',
+                       ):
         '''
         Start watching for signals.
 
@@ -261,7 +264,11 @@ class SignalMixIn:
         '''
 
         if not self.signal_reader.active():
-            stream = self.watch(self.signal_store.signal_filter(watch_all))
+            stream = self.watch(
+                signal_filter = self.signal_store.signal_filter(watch_all),
+                rpc_name = rpc_name,
+            )
+
             return self.signal_reader.start(stream, self.signal_store.emit)
 
     def stop_watching(self):
@@ -294,7 +301,7 @@ class SignalMixIn:
 
     def watch(self,
               signal_filter : Filter = Filter(),
-              rpc_name = 'Watch',
+              rpc_name: str = 'Watch',
               ):
 
         watch = getattr(self.stub, rpc_name)
