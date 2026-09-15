@@ -9,6 +9,7 @@
 set(TARGET cc_core_common)
 
 ### Library type.  We use static linking for convenience.
+message(NOTICE ${TARGET}: LIB_TYPE = ${DEFAULT_LIB_TYPE})
 cc_add_library(${TARGET}
   LIB_TYPE ${DEFAULT_LIB_TYPE}
 )

@@ -13,4 +13,5 @@ target_sources(${TARGET} PRIVATE
 
 cc_add_package_dependencies(${TARGET}
   DEPENDS zlib
+  LIB_TYPE ${DEFAULT_LIB_TYPE}
 )

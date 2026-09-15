@@ -36,6 +36,11 @@ set(SOURCES
   protobuf-message-encoder.c++
 )
 
+# if(BUILD_CPP_STATIC_LIBS)
+#   set(Protobuf_USE_STATIC_LIBS ON)
+# endif()
+
+
 ### Recepies to build the library
 cc_add_library("${TARGET}"
   LIB_DEPS ${LIB_DEPS}

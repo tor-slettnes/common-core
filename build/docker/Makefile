@@ -33,7 +33,7 @@ docker_build:
 docker_clean: docker_down
 	@if docker image inspect $(CONTAINERTAG) >/dev/null 2>&1; then \
 		echo '--- Removing Docker image: $(CONTAINERTAG)'; \
-		docker image rm $(CONTAINERTAG); \
+		docker image rm -f $(CONTAINERTAG); \
 	fi
 
 .PHONY: docker_up

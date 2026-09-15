@@ -17,6 +17,7 @@ target_compile_definitions(${TARGET} PUBLIC
 
 cc_add_package_dependencies(${TARGET}
   DEPENDS RapidJSON
+  LIB_TYPE INTERFACE
 )
 
 # cc_pkgconf(RapidJSON RapidJSON)

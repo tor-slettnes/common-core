@@ -48,7 +48,11 @@ function(cc_add_executable TARGET)
 
   add_executable("${TARGET}" ${exclude_from_all} ${arg_SOURCES})
   target_include_directories(${TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-  target_link_libraries(${TARGET} PRIVATE ${arg_LIB_DEPS} ${arg_OBJ_DEPS})
+
+  target_link_libraries(${TARGET} PRIVATE
+    ${arg_LIB_DEPS}
+    ${arg_OBJ_DEPS}
+  )
 
   if(arg_PKG_DEPS)
     cc_add_package_dependencies("${TARGET}"

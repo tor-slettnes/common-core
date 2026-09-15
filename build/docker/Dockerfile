@@ -10,6 +10,10 @@ ARG UID
 ARG GID
 ARG DEBS
 
+# Remove preinstalled `ubuntu` user (if we are using an Ubuntu base)
+RUN userdel --force --remove ubuntu || true
+RUN groupdel --force ubuntu || true
+
 RUN groupadd --force --gid "${GID}" "${USER}"
 RUN useradd --create-home --non-unique --uid "${UID}" --gid "${USER}" --groups sudo,staff "${USER}"
 

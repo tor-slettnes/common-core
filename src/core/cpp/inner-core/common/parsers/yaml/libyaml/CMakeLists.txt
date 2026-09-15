@@ -16,4 +16,5 @@ target_compile_definitions(${TARGET} PUBLIC
 
 cc_add_package_dependencies(${TARGET}
   DEPENDS yaml-0.1
+  LIB_TYPE ${DEFAULT_LIB_TYPE}
 )

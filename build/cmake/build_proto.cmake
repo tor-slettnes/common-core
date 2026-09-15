@@ -38,6 +38,10 @@ function(cc_add_proto TARGET)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if(BUILD_PROTOBUF)
+    # if(BUILD_CPP_STATIC_LIBS)
+    #   set(Protobuf_USE_STATIC_LIBS ON)
+    # endif()
+
     find_package(Protobuf REQUIRED)
   endif()
 
@@ -248,8 +252,6 @@ function(cc_add_proto_python TARGET)
   # endif()
 
   if(BUILD_PROTOBUF AND arg_PROTOBUF_SOURCES)
-    find_package(Protobuf REQUIRED)
-
     cc_protogen_protobuf_py(PROTO_PY
       TARGET "${TARGET}"
       DEPENDS "${arg_DEPENDS}"
