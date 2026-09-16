@@ -153,8 +153,10 @@ class SignalMixIn:
     def __init__(self,
                  signal_store: SignalStore|None = None,
                  signal_type: SignalMessage|None = None,
+                 watch_rpc: str = 'Watch',
                  watch_all: bool = True,
-                 use_cache: bool = True):
+                 use_cache: bool = True,
+                 ):
         '''
         @param signal_store
             Use an existing `SignalStore()` instance instead of creating a new
@@ -169,6 +171,15 @@ class SignalMixIn:
             using this ProtoBuf message type as its signal type.  This argument
             may also be provided as a class attribute.
 
+        @param watch_rpc
+            RPC method used to stream signals back from the server.
+
+        @param watch_all
+            Watch all signals (specify an empty filter to server), even if
+            not connected to slots. This is useful in order to populate the
+            local signal cache, which can later be queried. A side effect
+            is that the watching thread automatically starts once instantiated.
+
         @param use_cache
             If creating a new `SignalStore` instance (i.e. if `signal_store` is
             not provided), use the derived `CachedSignalStore` type. This
@@ -176,12 +187,6 @@ class SignalMixIn:
             server.  If the signal includes a `key` field (i.e., if it is a
             `MappingSignal` instance), keep the most recent data value per key.
             These values can later be queried using `get_cached_map()`.
-
-        @param watch_all
-            Watch all signals (specify an empty filter to server), even if
-            not connected to slots. This is useful in order to populate the
-            local signal cache, which can later be queried. A side effect
-            is that the watching thread automatically starts once instantiated.
         '''
 
         if signal_store:
@@ -205,6 +210,7 @@ class SignalMixIn:
         ### `self.create_reader()` is provided by `GenericClient` or
         ### `AsyncMixIn`
         self.signal_reader = self.create_reader()
+        self.watch_rpc = watch_rpc
         self.watch_all = watch_all
 
     def initialize(self):
@@ -247,10 +253,14 @@ class SignalMixIn:
 
     def start_watching(self,
                        watch_all: bool = True,
-                       rpc_name: str = 'Watch',
+                       rpc_name: str|None = None,
                        ):
         '''
         Start watching for signals.
+
+        Optionally, `rpc_name` is the RPC method name to invoke to stream back
+        signal messages from the server, overriding any `watch_rpc` input given
+        to `__init__()`.  If neither is specified, the default is `Watch`.
 
         If `watch_all` is `True`, watch all signals, not just those that were
         previously connected to slots.  This is mainly useful if not all
@@ -301,8 +311,21 @@ class SignalMixIn:
 
     def watch(self,
               signal_filter : Filter = Filter(),
-              rpc_name: str = 'Watch',
+              rpc_name: str|None = None,
               ):
+        '''
+        Stream back messages from the server.
+
+        @param signal_filter
+            Input signal filter for the RPC
+
+        @param rpc_name
+            RPC method to invoke, overriding any `watch_rpc` input given to
+            `__init__()`.  If neither is specified, the default is `Watch`.
+        '''
+
+        if rpc_name is None:
+            rpc_name = self.watch_rpc
 
         watch = getattr(self.stub, rpc_name)
         return watch(signal_filter, wait_for_ready=True)

@@ -32,6 +32,7 @@ class SignalClient (SignalMixIn, GenericClient):
                  intercept_errors: bool = True,
                  signal_store: SignalStore|None = None,
                  signal_type: SignalMessage|None = None,
+                 watch_rpc: str = 'Watch',
                  watch_all: bool = True,
                  use_cache: bool = True):
         '''
@@ -85,6 +86,9 @@ class SignalClient (SignalMixIn, GenericClient):
             `MappingSignal` instance), keep the most recent data value per key.
             These values can later be queried using `get_cached_map()`.
 
+        @param watch_rpc
+            RPC method used to stream signals back from the server.
+
         @param watch_all
             Watch all signals (specify an empty filter to server), even if
             not connected to slots. This is useful in order to populate the
@@ -105,6 +109,7 @@ class SignalClient (SignalMixIn, GenericClient):
             self,
             signal_store = signal_store,
             signal_type = signal_type,
+            watch_rpc = watch_rpc,
             watch_all = watch_all,
             use_cache = use_cache,
         )
