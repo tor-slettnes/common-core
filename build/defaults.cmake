@@ -218,9 +218,16 @@ option(BUILD_GRPC            "Build support for gRPC Remote Procedure Calls" ON)
 option(BUILD_ZMQ             "Build support for ZeroMQ" ON)
 option(BUILD_HTTP            "Build support for HTTP requests, incl. REST API" ON)
 option(BUILD_WEBSOCKETS      "Build support for WebSockets" OFF)
+
 option(BUILD_KAFKA           "Build support for Apache Kafka" ON)
-option(BUILD_SCHEMA_WRAPPER  "Build support for schema ID wrappers" ON)
-option(BUILD_SCHEMA_REGISTRY "Build support for Confluent schema registry" ON)
+cmake_dependent_option(BUILD_SCHEMA_WRAPPER
+  "Build support for tagging payloads with schema IDs"
+  ON "BUILD_KAFKA"
+  OFF)
+cmake_dependent_option(BUILD_SCHEMA_REGISTRY
+  "Build support for Confluent schema registry"
+  ON "BUILD_KAFKA"
+  OFF)
 
 option(BUILD_DDS             "Build support for Distributed Data Service (DDS)" OFF)
 cmake_dependent_option(BUILD_RTI_DDS
