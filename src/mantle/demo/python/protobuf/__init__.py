@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file __init__.py
 ## @brief Support for ProtoBuf types from `demo.proto`.
-## @author Tor Slettnes <tslettnes@picarro.com>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Generated from `.../protos/cc/demo/protobuf/demo_types.proto`

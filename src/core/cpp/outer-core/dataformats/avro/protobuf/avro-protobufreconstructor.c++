@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file avro-probobufreconstructor.c++
+/// @file avro-protobufreconstructor.c++
 /// @brief Populate ProtoBuf message from Avro value
 /// @author Tor Slettnes
 //==============================================================================

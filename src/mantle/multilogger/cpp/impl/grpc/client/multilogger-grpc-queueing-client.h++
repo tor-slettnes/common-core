@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file multilogger-grpc-queuing-client.h++
+/// @file multilogger-grpc-queueing-client.h++
 /// @brief MultiLogger gRPC client that submits messages in the background.
 /// @author Tor Slettnes
 //==============================================================================

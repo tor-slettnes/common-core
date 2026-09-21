@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file protobuf-relay-types.h++
+/// @file protobuf-relay-types.c++
 /// @brief conversions to/from Protocol Buffer messages in "pubsub_types.proto"
 /// @author Tor Slettnes
 //==============================================================================
