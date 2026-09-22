@@ -5,7 +5,8 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-set(TARGET ${EXEC_NAME_PREFIX}vfs-tool)
+set(TOOL_NAME vfs-tool)
+set(TARGET ${EXEC_NAME_PREFIX}${TOOL_NAME})
 
 set(LIB_DEPS
   cc_core_platform
@@ -23,4 +24,5 @@ cc_add_executable("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
   INSTALL_COMPONENT "${TOOLS_INSTALL_COMPONENT}"
+  SYMLINKS ${TOOL_NAME}
 )

@@ -23,6 +23,7 @@ function(cc_add_executable TARGET)
     OBJ_DEPS              # CMake "OBJECT" library dependencies
     PKG_DEPS              # 3rd party package dependencies; requires `pkg-conf`.
     MOD_DEPS              # CMake `Find*` module dependencies
+    SYMLINKS              # Create symbolic links for the target
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -38,7 +39,14 @@ function(cc_add_executable TARGET)
   cc_get_argument_or_default(install
     INSTALL
     "${arg_INSTALL_COMPONENT}"
-    "${arg_KEYWORDS_MISSING_VALUES}")
+    "${arg_KEYWORDS_MISSING_VALUES}"
+  )
+
+  cc_get_argument_or_default(destination
+    DESTINATION
+    "bin"
+    "${arg_KEYWORDS_MISSING_VALUES}"
+  )
 
   if (install OR BUILD_ALL_BINARIES)
     set(exclude_from_all "")
@@ -62,15 +70,28 @@ function(cc_add_executable TARGET)
   endif()
 
   if(install AND arg_INSTALL_COMPONENT)
-    set(install_args
+    set(_install_args
       TARGETS "${TARGET}"
       RUNTIME
     )
 
     if(arg_DESTINATION)
-      list(APPEND install_args DESTINATION ${arg_DESTINATION})
+      list(APPEND _install_args DESTINATION "${arg_DESTINATION}")
     endif()
 
-    install(${install_args} COMPONENT "${arg_INSTALL_COMPONENT}")
+    install(${_install_args} COMPONENT "${arg_INSTALL_COMPONENT}")
+
+    foreach(symlink ${arg_SYMLINKS})
+      cmake_path(
+        APPEND CMAKE_INSTALL_PREFIX ${destination} ${symlink}
+        OUTPUT_VARIABLE symlink_path)
+
+      install(
+        CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${TARGET} ${symlink_path})"
+        COMPONENT "${arg_INSTALL_COMPONENT}"
+      )
+    endforeach()
+
   endif()
 endfunction()
+
