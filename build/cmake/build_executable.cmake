@@ -70,6 +70,8 @@ function(cc_add_executable TARGET)
   endif()
 
   if(install AND arg_INSTALL_COMPONENT)
+    set(_dest_arg DESTINATION "${arg_DESTINATION}")
+
     set(_install_args
       TARGETS "${TARGET}"
       RUNTIME
@@ -81,13 +83,13 @@ function(cc_add_executable TARGET)
 
     install(${_install_args} COMPONENT "${arg_INSTALL_COMPONENT}")
 
-    foreach(symlink ${arg_SYMLINKS})
-      cmake_path(
-        APPEND CMAKE_INSTALL_PREFIX ${destination} ${symlink}
-        OUTPUT_VARIABLE symlink_path)
+    cc_get_value_or_default(staging_dir DESTDIR "${CMAKE_INSTALL_PREFIX}")
 
+    foreach(symlink ${arg_SYMLINKS})
       install(
-        CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${TARGET} ${symlink_path})"
+        CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
+              ${TARGET}
+              \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${destination}/${symlink})"
         COMPONENT "${arg_INSTALL_COMPONENT}"
       )
     endforeach()
