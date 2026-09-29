@@ -144,8 +144,30 @@ namespace cc::core
 
         DateTimeInterval::operator bool() const noexcept
         {
-            return (this->unit == TimeUnit::ETERNITY) ||
-                   ((this->unit != TimeUnit::ZERO_TIME) && (this->count != 0));
+            return this->is_interval() || this->is_eternity();
+        }
+
+        bool DateTimeInterval::is_eternity() const noexcept
+        {
+            return this->unit == TimeUnit::ETERNITY;
+        }
+
+        bool DateTimeInterval::is_finite() const noexcept
+        {
+            return this->unit != TimeUnit::ETERNITY;
+        }
+
+        bool DateTimeInterval::is_interval() const noexcept
+        {
+            switch (this->unit)
+            {
+            case TimeUnit::ZERO_TIME:
+            case TimeUnit::ETERNITY:
+                return false;
+
+            default:
+                return this->count != 0;
+            }
         }
 
         void DateTimeInterval::reset()
@@ -162,22 +184,22 @@ namespace cc::core
                 return Duration::zero();
 
             case TimeUnit::NANOSECOND:
-                return std::chrono::nanoseconds(1);
+                return std::chrono::nanoseconds(this->count);
 
             case TimeUnit::MICROSECOND:
-                return std::chrono::microseconds(1);
+                return std::chrono::microseconds(this->count);
 
             case TimeUnit::MILLISECOND:
-                return std::chrono::milliseconds(1);
+                return std::chrono::milliseconds(this->count);
 
             case TimeUnit::SECOND:
-                return std::chrono::seconds(1);
+                return std::chrono::seconds(this->count);
 
             case TimeUnit::MINUTE:
-                return std::chrono::minutes(1);
+                return std::chrono::minutes(this->count);
 
             case TimeUnit::HOUR:
-                return std::chrono::hours(1);
+                return std::chrono::hours(this->count);
 
             default:
                 return {};
@@ -195,16 +217,16 @@ namespace cc::core
                 switch (this->unit)
                 {
                 case TimeUnit::DAY:
-                    return std::chrono::hours(24);
+                    return std::chrono::hours(this->count * 24);
 
                 case TimeUnit::WEEK:
-                    return std::chrono::hours(24 * 7);
+                    return std::chrono::hours(this->count * 24 * 7);
 
                 case TimeUnit::MONTH:
-                    return std::chrono::hours(24 * 30);
+                    return std::chrono::hours(this->count * 24 * 30);
 
                 case TimeUnit::YEAR:
-                    return std::chrono::hours(24 * 365 + 8);
+                    return std::chrono::hours(this->count * 24 * 365 + 8);
 
                 case TimeUnit::ETERNITY:
                     return std::chrono::hours::max();

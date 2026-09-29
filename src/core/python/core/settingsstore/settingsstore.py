@@ -87,6 +87,7 @@ class SettingsStore (dict):
     parser_map = {
         '.json': JsonReader.parse_text,
         '.yaml': yaml.safe_load,
+        '.yml': yaml.safe_load,
         '.ini': INIFileReader.parse_text,
     }
 

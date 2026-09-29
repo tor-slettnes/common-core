@@ -243,8 +243,8 @@ namespace cc::core::logging
         if (this->expiration_interval())
         {
             core::dt::TimePoint expiration_time = dt::last_aligned(
-                tp,
-                this->expiration_interval(),
+                tp - this->expiration_interval().as_approximate_duration(),
+                this->rotation_interval(),
                 this->use_local_time());
 
             fs::path plain_pattern(this->wildcard_pattern());

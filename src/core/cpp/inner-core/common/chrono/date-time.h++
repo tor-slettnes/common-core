@@ -86,6 +86,9 @@ namespace cc::core
         struct DateTimeInterval
         {
             operator bool() const noexcept;
+            bool is_eternity() const noexcept;
+            bool is_finite() const noexcept;
+            bool is_interval() const noexcept;
             void reset();
             std::optional<Duration> as_duration() const;
             Duration as_approximate_duration() const;
