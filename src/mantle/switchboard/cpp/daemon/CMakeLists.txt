@@ -54,7 +54,7 @@ if(SERVER_INSTALL_COMPONENT)
       PROGRAM "sbin/${TARGET}"
       DESCRIPTION "Switchboard service"
       INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"
-      UNIT_OPTIONS "Conflicts=switchboard.service"
+      INSTALL_OPTIONS "Alias=switchboard.service"
       ENABLE
     )
   endif()

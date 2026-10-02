@@ -30,6 +30,7 @@ function(cc_add_debian_service UNIT)
   )
   set(_multiargs
     UNIT_OPTIONS                # Additional SystemD unit options
+    INSTALL_OPTIONS             # Additional SystemD install options, e.g., "Alias=FOOBAR"
     ARGS                        # Command arguments
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -67,8 +68,10 @@ function(cc_add_debian_service UNIT)
 
   list(JOIN arg_ARGS " " SERVICE_ARGS)
   list(JOIN arg_UNIT_OPTIONS "\n" UNIT_OPTIONS)
+  list(JOIN arg_INSTALL_OPTIONS "\n" INSTALL_OPTIONS)
   set(SERVICE_DESCRIPTION "${arg_DESCRIPTION}")
   set(SERVICE_USER "${arg_USERNAME}")
+
 
   cc_get_value_or_default(service_template
     arg_SERVICE_TEMPLATE

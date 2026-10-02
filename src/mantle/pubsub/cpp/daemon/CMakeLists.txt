@@ -40,6 +40,7 @@ if(ENABLE_SERVICES)
     DESCRIPTION "${COMMON_SUMMARY}"
     INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"
     UNIT_OPTIONS "After=${EXEC_NAME_PREFIX}multilogger"
+    INSTALL_OPTIONS "Alias=pubsub-relay.service"
     ENABLE
   )
 endif()

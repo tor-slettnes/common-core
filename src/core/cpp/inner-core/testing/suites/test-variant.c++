@@ -178,6 +178,20 @@ namespace cc::core::types
         EXPECT_NE(kvmap, kvmap_copy);
     }
 
+    TEST(Variant, GetAnyOf)
+    {
+        types::KeyValueMap kvmap = {
+            {"first", 1},
+            {"third", "foo"},
+        };
+
+        EXPECT_EQ(kvmap.get_any_of({"second", "third"}, "bar"), "foo");
+        // DerivedValue value3(value2);
+        // EXPECT_EQ(value2, value3);
+    }
+
+
+
     // TEST(StringTest, WideString)
     // {
     //     std::string latin1_no("abcdefghijklmnopqrstuvwxyz\xe6\xf8\xe5");
