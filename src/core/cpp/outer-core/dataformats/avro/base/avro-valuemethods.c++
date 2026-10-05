@@ -304,6 +304,17 @@ namespace cc::avro
         avro::set_long(avro_value, core::dt::to_milliseconds(tp));
     }
 
+    void set_uuid(
+        avro_value_t *value,
+        const core::types::UUID &uuid)
+    {
+        avro_value_reset(value);
+        checkstatus(avro_value_set_fixed(
+            value,
+            const_cast<core::types::Byte *>(uuid.data()),
+            uuid.size()));
+    }
+
     void set_variant(avro_value_t *value,
                      const core::types::Value &variant)
     {

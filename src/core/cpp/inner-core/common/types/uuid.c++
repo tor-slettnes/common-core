@@ -14,14 +14,35 @@ namespace cc::core::types
 {
     UUID UUID::from_string(const std::string &string)
     {
-        return This::from_bytevector(ByteVector::from_hex(string, {'-'}));
+        UUID uuid;
+        uuid.populate_from_string(string);
+        return uuid;
     }
 
     UUID UUID::from_bytevector(const ByteVector &bytes)
     {
+        UUID uuid;
+        uuid.populate_from_bytevector(bytes);
+        return uuid;
+    }
+
+    UUID UUID::from_raw_bytes(const Byte *bytes)
+    {
+        UUID uuid;
+        uuid.populate_from_raw_bytes(bytes);
+        return uuid;
+    }
+
+    void UUID::populate_from_string(const std::string &string)
+    {
+        this->populate_from_bytevector(ByteVector::from_hex(string, {'-'}));
+    }
+
+    void UUID::populate_from_bytevector(const ByteVector &bytes)
+    {
         if (bytes.size() == UUID_SIZE)
         {
-            return This::from_raw_bytes(bytes.data());
+            this->populate_from_raw_bytes(bytes.data());
         }
         else
         {
@@ -33,14 +54,12 @@ namespace cc::core::types
         }
     }
 
-    UUID UUID::from_raw_bytes(const Byte *bytes)
+    void UUID::populate_from_raw_bytes(const Byte *bytes)
     {
-        UUID uuid;
-        for (std::size_t i=0; i<UUID_SIZE; i++)
+        for (std::size_t i = 0; i < UUID_SIZE; i++)
         {
-            uuid[i] = bytes[i];
+            this->at(i) = bytes[i];
         }
-        return uuid;
     }
 
     ByteVector UUID::to_bytevector() const noexcept
@@ -50,7 +69,7 @@ namespace cc::core::types
 
     void UUID::to_stream(std::ostream &stream) const
     {
-        static std::unordered_set<std::size_t> dash_positions{4,6,8,10};
+        static std::unordered_set<std::size_t> dash_positions{4, 6, 8, 10};
         std::ios::fmtflags original_flags{stream.flags()};
         stream << std::hex
                << std::noshowbase

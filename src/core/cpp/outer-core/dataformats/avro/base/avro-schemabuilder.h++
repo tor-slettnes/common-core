@@ -53,6 +53,8 @@ namespace cc::avro
     constexpr auto LogicalType_TimeOfDayMillis = "time-millis";
     constexpr auto LogicalType_Duration = "duration";
     constexpr auto LogicalType_Duration_Size = 12;
+    constexpr auto LogicalType_UUID = "uuid";
+    constexpr auto LogicalType_UUID_SIZE = 16;
 
     //--------------------------------------------------------------------------
     // @class SchemaWrapper
@@ -206,6 +208,17 @@ namespace cc::avro
     {
     public:
         TimestampSchema(const ContextRef &context);
+    };
+
+    //--------------------------------------------------------------------------
+    /// @class UUIDSchema
+    /// @brief
+    ///     Represents a RFC-4122 compliant universally unique identifier
+
+    class UUIDSchema : public SchemaWrapper
+    {
+    public:
+        UUIDSchema(const ContextRef &context);
     };
 
     //--------------------------------------------------------------------------

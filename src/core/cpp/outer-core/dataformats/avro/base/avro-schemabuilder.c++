@@ -228,6 +228,18 @@ namespace cc::avro
     }
 
     //--------------------------------------------------------------------------
+    /// UUIDSchema
+
+    UUIDSchema::UUIDSchema(const ContextRef &context)
+        : SchemaWrapper(core::types::TaggedValueList({
+              {SchemaField_Type, TypeName_Fixed},
+              {SchemaField_LogicalType, LogicalType_UUID},
+              {SchemaField_Size, LogicalType_UUID_SIZE},
+          }))
+    {
+    }
+
+    //--------------------------------------------------------------------------
     // VariantSchema
 
     VariantSchema::VariantSchema(

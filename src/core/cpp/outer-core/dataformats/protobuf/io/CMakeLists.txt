@@ -31,6 +31,7 @@ set(SOURCES
   protobuf-datetime-types.c++
   protobuf-version.c++
   protobuf-quantities.c++
+  protobuf-uuid.c++
   protobuf-message.c++
   protobuf-message-decoder.c++
   protobuf-message-encoder.c++

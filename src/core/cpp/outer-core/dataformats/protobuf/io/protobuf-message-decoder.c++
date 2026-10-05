@@ -8,6 +8,7 @@
 #include "protobuf-message-decoder.h++"
 #include "protobuf-variant-types.h++"
 #include "protobuf-standard-types.h++"
+#include "protobuf-uuid.h++"
 #include "protobuf-enum.h++"
 #include "protobuf-inline.h++"
 #include "platform/symbols.h++"
@@ -98,6 +99,10 @@ namespace cc::protobuf
             else if (const auto *kvmap = dynamic_cast<const variant::KeyValueMap *>(&this->msg))
             {
                 return decoded<core::types::KeyValueMap>(*kvmap);
+            }
+            else if (const auto *uuid = dynamic_cast<const uuid::UUID *>(&this->msg))
+            {
+                return ByteVector::from_string(uuid->value());
             }
             else
             {

@@ -8,6 +8,8 @@
 #include "avro-protobufschema.h++"
 #include "protobuf-variant-types.h++"
 #include "protobuf-standard-types.h++"
+#include "protobuf-datetime-types.h++"
+#include "protobuf-uuid.h++"
 #include "protobuf-enum.h++"
 #include "string/misc.h++"
 #include "logging/logging.h++"
@@ -260,6 +262,10 @@ namespace cc::avro
             else if (descriptor == cc::protobuf::variant::ValueList::GetDescriptor())
             {
                 return {VariantListSchema(context), core::types::ValueList()};
+            }
+            else if (descriptor == cc::protobuf::uuid::UUID::GetDescriptor())
+            {
+                return {UUIDSchema(context), {}};
             }
             else
             {

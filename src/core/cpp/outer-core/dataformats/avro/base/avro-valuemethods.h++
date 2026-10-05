@@ -8,6 +8,7 @@
 #pragma once
 #include "avro-schemabuilder.h++"
 #include "types/value.h++"
+#include "types/uuid.h++"
 
 #include <cstdint>
 // #include <memory>
@@ -91,6 +92,10 @@ namespace cc::avro
     void set_timestamp(
         avro_value_t *value,
         const core::dt::TimePoint &tp);
+
+    void set_uuid(
+        avro_value_t *value,
+        const core::types::UUID &uuid);
 
     void set_variant(
         avro_value_t *value,

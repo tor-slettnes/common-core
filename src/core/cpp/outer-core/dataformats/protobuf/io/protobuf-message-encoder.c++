@@ -8,6 +8,7 @@
 #include "protobuf-message-encoder.h++"
 #include "protobuf-standard-types.h++"
 #include "protobuf-variant-types.h++"
+#include "protobuf-uuid.h++"
 #include "protobuf-enum.h++"
 #include "protobuf-inline.h++"
 #include "status/exceptions.h++"
@@ -63,6 +64,11 @@ namespace cc::protobuf
             }
         }
 
+        else if (auto *proto_value = dynamic_cast<cc::protobuf::uuid::UUID *>(msg))
+        {
+            encode(value.get_bytevector(), proto_value);
+            encoded = true;
+        }
         else
         {
             encoded = This::encode_custom(value, msg);

@@ -15,6 +15,7 @@ set(SOURCES
   cc/protobuf/signal/signal.proto
   cc/protobuf/datetime/datetime.proto
   cc/protobuf/quantities/quantities.proto
+  cc/protobuf/uuid/uuid.proto
   cc/protobuf/request_reply/request_reply.proto
   cc/protobuf/version/version.proto
 )

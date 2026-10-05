@@ -26,6 +26,10 @@ namespace cc::core::types
         static UUID from_bytevector(const ByteVector &bytes);
         static UUID from_raw_bytes(const Byte *bytes);
 
+        void populate_from_string(const std::string &string);
+        void populate_from_bytevector(const ByteVector &bytes);
+        void populate_from_raw_bytes(const Byte *bytes);
+
         ByteVector to_bytevector() const noexcept;
         void to_stream(std::ostream &stream) const override;
     };

@@ -11,6 +11,7 @@
 #include "avro-status.h++"
 #include "protobuf-standard-types.h++"
 #include "protobuf-variant-types.h++"
+#include "protobuf-uuid.h++"
 #include "protobuf-inline.h++"
 #include "logging/logging.h++"
 
@@ -77,6 +78,12 @@ namespace cc::avro
             avro::set_variant_map(
                 avro_value,
                 cc::protobuf::decoded<core::types::KeyValueMap>(*proto));
+        }
+        else if (auto *proto = dynamic_cast<const cc::protobuf::uuid::UUID *>(&msg))
+        {
+            avro::set_uuid(
+                avro_value,
+                cc::protobuf::decoded<core::types::UUID>(*proto));
         }
         else
         {
@@ -183,7 +190,7 @@ namespace cc::avro
         {
             // This is an optional field, either because it is marked as
             // `optional` or because it is part of a `oneof` block. In either
-            // case our Avro schema treats this as a union between a Null value
+            // case our Avro schema treats this as a union between a null value
             // (discriminator index 0) and the actual field type (index 1).
 
             bool has_value = msg.GetReflection()->HasField(msg, fd);
