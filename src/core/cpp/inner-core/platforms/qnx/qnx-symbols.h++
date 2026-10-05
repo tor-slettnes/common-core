@@ -17,8 +17,6 @@ namespace cc::core::platform
 
     public:
         QNXSymbolsProvider(const std::string &name = "QNXSymbolsProvider");
-
-        std::string uuid() const noexcept override;
     };
 
 }  // namespace cc::core::platform

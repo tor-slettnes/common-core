@@ -46,7 +46,7 @@ namespace cc::grpc
                            SignalT().GetTypeName(),
                            cxt->peer(),
                            *req);
-                SignalQueueT queue(core::platform::symbols->uuid(), *req);
+                SignalQueueT queue(core::platform::symbols->uuid_string(), *req);
                 queue.initialize();
                 // Append an empty message in the queue to signify the end of the cache.
                 queue.put(SignalT());

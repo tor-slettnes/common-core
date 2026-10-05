@@ -9,9 +9,11 @@
 set(TARGET core-tests)
 
 add_executable(${TARGET}
+  test-bytevector.c++
   test-string-misc.c++
   test-string-expand.c++
   test-variant.c++
+  test-uuid.c++
 )
 
 target_link_libraries(${TARGET}

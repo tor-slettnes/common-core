@@ -37,7 +37,7 @@ namespace cc::core::signal
 
     Handle BaseSignal::unique_handle() const
     {
-        return platform::symbols->uuid();
+        return platform::symbols->uuid_string();
     }
 
     bool BaseSignal::safe_invoke(const std::string &receiver,

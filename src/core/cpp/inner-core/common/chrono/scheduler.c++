@@ -39,7 +39,7 @@ namespace cc::core
                                      uint retries,
                                      bool catchup)
     {
-        Handle handle = platform::symbols->uuid();
+        Handle handle = platform::symbols->uuid_string();
         this->add(handle, invocation, interval, align, loglevel, count, retries, catchup);
         return handle;
     }

@@ -227,7 +227,7 @@ namespace cc::core::types
         const std::string &xdigits = hex_digits.at(uppercase);
 
         std::string ellipsis;
-        std::size_t size  = this->size();
+        std::size_t size = this->size();
         if ((maxsize > 0) && (maxsize < size))
         {
             size = maxsize;
@@ -256,42 +256,80 @@ namespace cc::core::types
         return encoded;
     }
 
-    ByteVector ByteVector::from_hex(const std::string &input)
+    ByteVector ByteVector::from_hex(
+        const std::string &input,
+        const std::unordered_set<char> &allowed_fillers)
     {
-        static std::vector<std::uint8_t> digit_values;
 
-        if (input.length() % 2 > 0)
+        ByteVector decoded;
+        decoded.reserve(input.size() / 2);
+        bool needs_shrinking = false;
+        const char *high_nibble = nullptr;
+        for (const char &c : input)
+        {
+            if (std::isxdigit(static_cast<unsigned char>(c)))
+            {
+                if (high_nibble)
+                {
+                    decoded.push_back(
+                        This::digit_value(*high_nibble) << 4 |
+                        This::digit_value(c));
+                    high_nibble = nullptr;
+                }
+                else
+                {
+                    high_nibble = &c;
+                }
+            }
+            else if (allowed_fillers.count(c))
+            {
+                needs_shrinking = true;
+            }
+            else
+            {
+                throwf(std::invalid_argument,
+                       "Invalid hexadecimal literal: '%c'",
+                       c);
+            }
+        }
+
+        if (high_nibble)
         {
             throwf(std::invalid_argument,
-                   "Invalid hexadecimal string length %d, must be a multiple of 2",
-                   input.size());
+                   "Hexadecimal string must contain an even number of digits, found %d",
+                   decoded.size() * 2 + 1);
         }
+
+        if (needs_shrinking)
+        {
+            decoded.shrink_to_fit();
+        }
+
+        return decoded;
+    }
+
+    Byte ByteVector::digit_value(char c)
+    {
+        static std::vector<std::uint8_t> digit_values;
 
         // On first invocation, initialize hex digit lookup table
         if (digit_values.empty())
         {
-            digit_values.reserve(2 << 8);
+            digit_values.resize(2 << 8);
             for (char c = '0'; c <= '9'; c++)
             {
                 digit_values.at(c) = c - '0';
             }
             for (char c = 'A'; c <= 'F'; c++)
             {
-                digit_values.at(c) = c - 'A';
+                digit_values.at(c) = (c - 'A') + 0xA;
             }
             for (char c = 'a'; c <= 'f'; c++)
             {
-                digit_values.at(c) = c - 'a';
+                digit_values.at(c) = (c - 'a') + 0xA;
             }
         }
-
-        ByteVector decoded;
-        decoded.reserve(input.size() / 2);
-        for (auto it = input.begin(); it != input.end(); it += 2)
-        {
-            decoded.push_back((digit_values.at(*it) << 4) | digit_values.at(*(it + 1)));
-        }
-        return decoded;
+        return digit_values.at(static_cast<std::uint8_t>(c));
     }
 
 }  // namespace cc::core::types

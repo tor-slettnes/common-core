@@ -18,7 +18,8 @@ namespace cc::core::platform
     public:
         LinuxSymbolsProvider(const std::string &name = "LinuxSymbolsProvider");
 
-        std::string uuid() const noexcept override;
+        types::UUID uuid() const noexcept override;
+        std::string uuid_string() const noexcept override;
         std::string errno_name(int num) const noexcept override;
     };
 

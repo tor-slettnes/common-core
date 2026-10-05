@@ -11,18 +11,8 @@
 namespace cc::core::platform
 {
     QNXSymbolsProvider::QNXSymbolsProvider(const std::string &name)
-        : PosixSymbolsProvdier(name)
+        : PosixSymbolsProvider(name)
     {
-    }
-
-    std::string QNXSymbolsProvider::uuid() const noexcept
-    {
-        uuid_t uuid;
-        uuid_generate(uuid);
-
-        char buffer[UUID_STR_LEN];
-        uuid_unparse(uuid, buffer);
-        return buffer;
     }
 };
 

@@ -13,6 +13,7 @@
 #include <ostream>
 #include <optional>
 #include <vector>
+#include <unordered_set>
 #include <iomanip>
 
 using uint = unsigned int;
@@ -30,6 +31,8 @@ namespace cc::core::types
                        public Streamable,
                        public enable_create_shared<ByteVector>
     {
+        using This = ByteVector;
+
     public:
         // Inherit available constructors from base
         using Bytes::Bytes;
@@ -141,11 +144,18 @@ namespace cc::core::types
         ///     Create a new ByteVector instance from a hexadecimal string.
         /// @param[in] string
         ///     A string comprised of pairs of hexadecimal digits
+        /// @param[in] allowed_fillers
+        ///     A set of characters that will be ignored/skipped rather than raising an error
         /// @return
         ///     A new ByteVector instance
         /// @exception exception::InvalidArgument
         ///     Invalid hexadecimal digits encountered
-        static ByteVector from_hex(const std::string &string);
+        static ByteVector from_hex(
+            const std::string &string,
+            const std::unordered_set<char> &allowed_fillers = {});
+
+    private:
+        static Byte digit_value(char c);
     };
 }  // namespace cc::core::types
 

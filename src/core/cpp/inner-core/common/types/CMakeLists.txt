@@ -10,6 +10,7 @@ target_sources(${TARGET} PRIVATE
   listable.c++
   loggable.c++
   bytevector.c++
+  uuid.c++
   variant-types.c++
   variant-value.c++
   variant-list.c++

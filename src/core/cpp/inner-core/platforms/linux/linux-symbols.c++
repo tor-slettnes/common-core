@@ -17,7 +17,14 @@ namespace cc::core::platform
     {
     }
 
-    std::string LinuxSymbolsProvider::uuid() const noexcept
+    types::UUID LinuxSymbolsProvider::uuid() const noexcept
+    {
+        types::UUID uuid;
+        uuid_generate(uuid.data());
+        return uuid;
+    }
+
+    std::string LinuxSymbolsProvider::uuid_string() const noexcept
     {
         uuid_t uuid;
         uuid_generate(uuid);

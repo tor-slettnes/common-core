@@ -7,6 +7,7 @@
 
 #pragma once
 #include "provider.h++"
+#include "types/uuid.h++"
 
 #define TYPE_NAME_FULL(entity) ::cc::core::platform::symbols->cpp_demangle(typeid(entity).name(), false)
 #define TYPE_NAME_BASE(entity) ::cc::core::platform::symbols->cpp_demangle(typeid(entity).name(), true)
@@ -24,7 +25,8 @@ namespace cc::core::platform
         using Super::Super;
 
         /// @brief Generate a Universally Unique IDentifier
-        virtual std::string uuid() const noexcept = 0;
+        virtual types::UUID uuid() const noexcept;
+        virtual std::string uuid_string() const noexcept;
 
         virtual std::string errno_name(int num) const noexcept;
         virtual std::string errno_string(int num) const noexcept;
