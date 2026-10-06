@@ -28,6 +28,7 @@ namespace cc::avro
     constexpr auto TypeName_Fixed = "fixed";
 
     constexpr auto TypeName_Variant = "Variant";
+    constexpr auto TypeName_UUID = "UUID";
 
     constexpr auto SchemaField_Type = "type";
     constexpr auto SchemaField_Name = "name";

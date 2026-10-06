@@ -309,6 +309,7 @@ namespace cc::avro
         const core::types::UUID &uuid)
     {
         avro_value_reset(value);
+        // avro::set_string(value, uuid.to_string());
         checkstatus(avro_value_set_fixed(
             value,
             const_cast<core::types::Byte *>(uuid.data()),
