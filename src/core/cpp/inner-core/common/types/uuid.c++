@@ -67,7 +67,6 @@ namespace cc::core::types
         std::ios::fmtflags original_flags{stream.flags()};
         stream << std::hex
                << std::noshowbase
-               << std::setw(2)
                << std::setfill('0');
 
         for (std::size_t i = 0; i < UUID_SIZE; i++)
@@ -76,7 +75,7 @@ namespace cc::core::types
             {
                 stream << "-";
             }
-            stream << +this->at(i);
+            stream << std::setw(2) << +this->at(i);
         }
         stream.flags(original_flags);
     }

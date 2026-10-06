@@ -30,10 +30,10 @@ namespace cc::core::types
             0x56,
             0x47,
             0x78,
-            0x89,
-            0x9A,
-            0xAB,
-            0xBC,
+            0x80,
+            0x00,
+            0x01,
+            0x00,
             0xCD,
             0xDE,
             0xEF,
@@ -41,7 +41,7 @@ namespace cc::core::types
         };
 
         UUID uuid{bv};
-        EXPECT_EQ(uuid.to_string(), "01122334-4556-4778-899a-abbccddeeff0");
+        EXPECT_EQ(uuid.to_string(), "01122334-4556-4778-8000-0100cddeeff0");
     }
 
     TEST(UUID, ConstructFromString)
