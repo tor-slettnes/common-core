@@ -21,7 +21,7 @@ namespace cc::core::types
 
     TEST(UUID, ToString)
     {
-        UUID uuid = UUID::from_bytevector({
+        ByteVector bv{
             0x01,
             0x12,
             0x23,
@@ -38,15 +38,16 @@ namespace cc::core::types
             0xDE,
             0xEF,
             0xF0,
-        });
+        };
 
+        UUID uuid{bv};
         EXPECT_EQ(uuid.to_string(), "01122334-4556-4778-899a-abbccddeeff0");
     }
 
     TEST(UUID, ConstructFromString)
     {
         std::string uuid_string{"12345678-9abc-4567-89ab-123456789abc"};
-        EXPECT_EQ(UUID::from_string(uuid_string).to_string(), uuid_string);
+        EXPECT_EQ(UUID(uuid_string).to_string(), uuid_string);
     }
 
 }  // namespace cc::core::types

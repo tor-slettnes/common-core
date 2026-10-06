@@ -20,16 +20,18 @@ namespace cc::core::types
         using Super = std::array<Byte, UUID_SIZE>;
 
     public:
-        using Super::Super;
-
-        static UUID from_string(const std::string &string);
-        static UUID from_bytevector(const ByteVector &bytes);
-        static UUID from_raw_bytes(const Byte *bytes);
+        UUID() {}
+        UUID(const UUID &other);
+        UUID(const std::string &string);
+        UUID(const ByteVector &bytes);
 
         void populate_from_string(const std::string &string);
         void populate_from_bytevector(const ByteVector &bytes);
+
+    protected:
         void populate_from_raw_bytes(const Byte *bytes);
 
+    public:
         ByteVector to_bytevector() const noexcept;
         void to_stream(std::ostream &stream) const override;
     };

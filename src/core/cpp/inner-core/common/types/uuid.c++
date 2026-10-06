@@ -12,25 +12,19 @@
 
 namespace cc::core::types
 {
-    UUID UUID::from_string(const std::string &string)
+    UUID::UUID(const UUID &other)
     {
-        UUID uuid;
-        uuid.populate_from_string(string);
-        return uuid;
+        this->populate_from_raw_bytes(other.data());
     }
 
-    UUID UUID::from_bytevector(const ByteVector &bytes)
+    UUID::UUID(const std::string &string)
     {
-        UUID uuid;
-        uuid.populate_from_bytevector(bytes);
-        return uuid;
+        this->populate_from_string(string);
     }
 
-    UUID UUID::from_raw_bytes(const Byte *bytes)
+    UUID::UUID(const ByteVector &bytes)
     {
-        UUID uuid;
-        uuid.populate_from_raw_bytes(bytes);
-        return uuid;
+        this->populate_from_bytevector(bytes);
     }
 
     void UUID::populate_from_string(const std::string &string)
