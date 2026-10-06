@@ -72,6 +72,11 @@ namespace cc::avro
 
     void ProtoBufSchema::add_fields()
     {
+        using OneofFields = core::types::ValueMap<
+            const google::protobuf::OneofDescriptor *,
+            core::types::ValueListPtr>;
+
+        OneofFields oneofs;
         int n_fields = this->descriptor->field_count();
 
         for (int i = 0; i < n_fields; i++)
@@ -81,24 +86,36 @@ namespace cc::avro
             FieldData field = This::field(fd);
             if (const google::protobuf::OneofDescriptor *ood = fd->containing_oneof())
             {
-                // Avro does not have an exact counterpart to ProtoBuf `oneof`
-                // fields. Specifically, an Avro Union is not suitable, since it
-                // contains only (mutually exclusive) value types and no field
-                // names. It would be impossible, for instance, to represents
-                // two alternate fields of the same type. Therefore, we include
-                // each field from the oneof block as separate Avro fields, but
-                // with `null` as an alternate value type.
-                core::types::ValueList alternates;
-                alternates.push_back(TypeName_Null);
-                alternates.push_back(field.schema);
-                field.schema = SchemaWrapper(alternates);
-                field.default_value = core::types::Value();
-            }
+                if (auto oneof = oneofs.get(ood))
+                {
+                    oneof->push_back(field.schema);
+                }
+                else
+                {
+                    auto alternates = std::make_shared<core::types::ValueList>();
+                    oneofs.insert_or_assign(ood, alternates);
 
-            this->add_field(fd->name(),
-                            field.schema,
-                            field.default_value,
-                            This::field_comment(fd));
+                    alternates->push_back(TypeName_Null);
+                    alternates->push_back(field.schema);
+
+                    std::string field_name = ood->is_synthetic()
+                                               ? fd->name()
+                                               : ood->name();
+
+                    this->add_field(
+                        field_name,                 // name
+                        SchemaWrapper(alternates),  // type
+                        core::types::Value(),       // default_value
+                        This::oneof_comment(ood));  // doc
+                }
+            }
+            else
+            {
+                this->add_field(fd->name(),
+                                field.schema,
+                                field.default_value,
+                                This::field_comment(fd));
+            }
         }
     }
 
@@ -279,6 +296,20 @@ namespace cc::avro
     {
         google::protobuf::SourceLocation source;
         if (fd->GetSourceLocation(&source))
+        {
+            return source.leading_comments;
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    std::optional<std::string> ProtoBufSchema::oneof_comment(
+        const google::protobuf::OneofDescriptor *ood)
+    {
+        google::protobuf::SourceLocation source;
+        if (ood->GetSourceLocation(&source))
         {
             return source.leading_comments;
         }

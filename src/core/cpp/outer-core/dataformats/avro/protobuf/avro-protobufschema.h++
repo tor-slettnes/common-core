@@ -84,6 +84,9 @@ namespace cc::avro
         static std::optional<std::string> field_comment(
             const google::protobuf::FieldDescriptor *fd);
 
+        static std::optional<std::string> oneof_comment(
+            const google::protobuf::OneofDescriptor *ood);
+
     public:
         static std::string schema_name(
             const google::protobuf::Descriptor *descriptor);

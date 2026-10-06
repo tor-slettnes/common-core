@@ -74,5 +74,9 @@ namespace cc::avro
         static void assign_from_enum_field(
             avro_value_t *avro_value,
             const google::protobuf::EnumValueDescriptor *enum_value);
+
+        static int oneof_index(
+            const google::protobuf::FieldDescriptor *fd,
+            const google::protobuf::OneofDescriptor *ood);
     };
 }  // namespace cc::avro

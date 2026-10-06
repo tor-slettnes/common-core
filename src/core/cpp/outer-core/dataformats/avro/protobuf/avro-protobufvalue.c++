@@ -164,10 +164,19 @@ namespace cc::avro
         const google::protobuf::Message &msg)
     {
         const google::protobuf::Descriptor *descriptor = msg.GetDescriptor();
+
+        int nalternatives = descriptor->oneof_decl_count();
+        for (int i = 0; i < nalternatives; i++)
+        {
+            const google::protobuf::OneofDescriptor *ood = descriptor->oneof_decl(i);
+            // HERE 
+        }
+
         int nfields = descriptor->field_count();
         for (int i = 0; i < nfields; i++)
         {
             const google::protobuf::FieldDescriptor *fd = descriptor->field(i);
+
             avro_value_t field_value = avro::get_field_by_name(*avro_value, fd->name());
             This::assign_from_field(&field_value, msg, fd);
         }
@@ -186,26 +195,24 @@ namespace cc::avro
         {
             This::assign_from_repeated_field(avro_value, msg, fd);
         }
-        else if (fd->containing_oneof())
+        else if (const google::protobuf::OneofDescriptor *ood = fd->containing_oneof())
         {
-            // This is an optional field, either because it is marked as
-            // `optional` or because it is part of a `oneof` block. In either
-            // case our Avro schema treats this as a union between a null value
-            // (discriminator index 0) and the actual field type (index 1).
-
-            bool has_value = msg.GetReflection()->HasField(msg, fd);
-            avro_value_t branch;
-
-            if (has_value)
+            if (msg.GetReflection()->HasField(msg, fd))
             {
-                avro_value_set_branch(avro_value, 1, &branch);
-                This::assign_from_single_field(&branch, msg, fd);
+                int which = This::oneof_index(fd, ood);
+                avro_value_t branch;
+                avro_value_set_branch(avro_value, which, &branch);
+
+                if (which)
+                {
+                    This::assign_from_single_field(&branch, msg, fd);
+                }
             }
-            else
-            {
-                avro_value_set_branch(avro_value, 0, &branch);
-                avro::set_null(&branch);
-            }
+            // else
+            // {
+            //     avro_value_set_branch(avro_value, 0, &branch);
+            //     avro::set_null(&branch);
+            // }
         }
         else
         {
@@ -430,6 +437,20 @@ namespace cc::avro
         //                      enum_value->index(),
         //                      enum_value->number());
         avro::set_enum(avro_value, enum_value->index());
+    }
+
+    int ProtoBufValue::oneof_index(
+        const google::protobuf::FieldDescriptor *fd,
+        const google::protobuf::OneofDescriptor *ood)
+    {
+        for (int c = 0; c < ood->field_count(); c++)
+        {
+            if (ood->field(c) == fd)
+            {
+                return c + 1;
+            }
+        }
+        return 0;
     }
 
 }  // namespace cc::avro
