@@ -7,7 +7,28 @@
 ## To use this file, copy, uncomment, and modify the following in your "CMakeLists.txt":
 #===============================================================================
 
-#===============================================================================
+#-------------------------------------------------------------------------------
+## @fn cc_install_symlink
+## @brief Install `LICENESE.txt` into `share/doc/PACKAGE_NAME`
+
+function(cc_add_symlink)
+  set(_singleargs
+    LINK               # Symbolic link to install, relative to CMAKE_INSTALL_PREFIX
+    TARGET             # Link target
+    INSTALL_COMPONENT  # CPack components to which we're adding the doc
+  )
+  cmake_parse_arguments(arg "" "${_singleargs}" "" ${ARGN})
+
+  install(
+    CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
+          ${arg_TARGET}
+          \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${arg_LINK})"
+    COMPONENT "${arg_INSTALL_COMPONENT}"
+  )
+endfunction()
+
+
+#-------------------------------------------------------------------------------
 ## @fn cc_add_executable
 
 function(cc_add_executable TARGET)
@@ -86,11 +107,10 @@ function(cc_add_executable TARGET)
     cc_get_value_or_default(staging_dir DESTDIR "${CMAKE_INSTALL_PREFIX}")
 
     foreach(symlink ${arg_SYMLINKS})
-      install(
-        CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
-              ${TARGET}
-              \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${destination}/${symlink})"
-        COMPONENT "${arg_INSTALL_COMPONENT}"
+      cc_add_symlink(
+        LINK "${destination}/${symlink}"
+        TARGET "${TARGET}"
+        INSTALL_COMPONENT "${arg_INSTALL_COMPONENT}"
       )
     endforeach()
 
