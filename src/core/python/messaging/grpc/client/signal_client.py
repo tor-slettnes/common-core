@@ -5,7 +5,7 @@ Inherits `SignalMixIn` on top of `GenericClient`.
 '''
 
 ### Common Core modules
-from cc.protobuf.signal import SignalStore, SignalMessage, Slot
+from cc.protobuf.signal import SignalStore, SignalMessage
 
 ### Modules within package
 from .signal_mixin import SignalMixIn
@@ -121,19 +121,3 @@ class SignalClient (SignalMixIn, GenericClient):
     def deinitialize(self):
         SignalMixIn.deinitialize(self)
         GenericClient.deinitialize(self)
-
-
-    def start_notify_signals(self, callback: Slot):
-        '''
-        Register a callback whenver any signal event is received.
-
-        If we are not yet watching signals from the server, do so now.
-        '''
-        self.signal_store.connect_all(callback)
-
-
-    def stop_notify_signals(self):
-        '''
-        Unregister a callback from signal notifications
-        '''
-        self.signal_store.disconnect_all()
