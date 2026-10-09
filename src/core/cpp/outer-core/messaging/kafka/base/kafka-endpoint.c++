@@ -167,9 +167,11 @@ namespace cc::kafka
     {
         if (code != RdKafka::ERR_NO_ERROR)
         {
-            throwf_args(core::exception::RuntimeError,
-                        ("Kafka error %d: %s", code, RdKafka::err2str(code)),
-                        attributes);
+            throwf(core::exception::RuntimeError,
+                   "Kafka error %d, %s: %s",
+                   code,
+                   attributes,
+                   RdKafka::err2str(code));
         }
     }
 

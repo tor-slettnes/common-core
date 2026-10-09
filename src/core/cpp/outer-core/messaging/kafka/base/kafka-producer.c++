@@ -14,8 +14,9 @@ namespace cc::kafka
     const auto SETTING_SHUTDOWN_TIMEOUT = "shutdown timeout";
     const auto DEFAULT_SHUTDOWN_TIMEOUT = 2.0;
 
-    ProducerBase::ProducerBase(const std::string &profile_name,
-                               const core::types::KeyValueMap &settings)
+    ProducerBase::ProducerBase(
+        const std::string &profile_name,
+        const core::types::KeyValueMap &settings)
         : Super("Producer", profile_name, settings),
           producer_handle_(nullptr),
           shutdown_timeout_(
@@ -81,7 +82,8 @@ namespace cc::kafka
         return this->producer_handle_;
     }
 
-    void ProducerBase::set_dr_callback(const DeliveryReportCapture::Callback &callback)
+    void ProducerBase::set_dr_callback(
+        const DeliveryReportCapture::Callback &callback)
     {
         this->dr_capture_.set_callback(callback);
     }
@@ -113,7 +115,8 @@ namespace cc::kafka
         }
     }
 
-    void ProducerBase::set_producer_key(const std::optional<std::string> &key)
+    void ProducerBase::set_producer_key(
+        const std::optional<std::string> &key)
     {
         this->producer_key_ = key;
     }

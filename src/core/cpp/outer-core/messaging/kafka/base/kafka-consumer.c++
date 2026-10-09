@@ -44,7 +44,6 @@ namespace cc::kafka
     {
         Super::initialize();
         this->init_handle();
-        this->start_consuming();
     }
 
     void ConsumerBase::deinitialize()

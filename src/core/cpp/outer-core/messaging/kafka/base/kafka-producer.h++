@@ -18,12 +18,14 @@ namespace cc::kafka
         using Super = Endpoint;
 
     protected:
-        ProducerBase(const std::string &profile_name,
-                     const core::types::KeyValueMap &settings = {});
+        ProducerBase(
+            const std::string &profile_name,
+            const core::types::KeyValueMap &settings = {});
         ~ProducerBase();
 
     public:
-        void set_dr_callback(const DeliveryReportCapture::Callback &callback);
+        void set_dr_callback(
+            const DeliveryReportCapture::Callback &callback);
         void initialize() override;
         void deinitialize() override;
 
@@ -38,7 +40,9 @@ namespace cc::kafka
         void poll_worker();
 
     protected:
-        void set_producer_key(const std::optional<std::string> &key);
+        void set_producer_key(
+            const std::optional<std::string> &key);
+
         const std::optional<std::string> &producer_key() const;
 
         void produce(
