@@ -82,20 +82,14 @@ You'll probably start with scaffolding like the following:
                     text: str,
                     data: dict = {}):
 
-          request = cc.protobuf.demo.Greeting(...)
-          self.stub.say_hello(request)
-  ```
-
-In order to construct the `request` message, you may have some custom code like this:
-
-  ```python
           request = Greeting(
               text = text,
               identity = self.identity,
               birth = cc.protobuf.wellknown.encodeTimestamp(self.birth),
               data = cc.protobuf.variant.encodeKeyValueMap(data),
           )
-   ```
+          self.stub.say_hello(request)
+  ```
 
 Not too bad.  Now, what happens as the message types get more complex, with more
 input arguments? Moreover, what happens if you need to do build that very same

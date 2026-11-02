@@ -6,15 +6,15 @@
 //==============================================================================
 
 #include "serialport.h++"
+#include <algorithm>
 
 namespace cc::core::platform
 {
     //==========================================================================
     /// @class SerialPort
 
-    SerialPort::SerialPort(const std::string &device, BaudRate speed)
-        : device_(device),
-          speed_(speed)
+    SerialPort::SerialPort(const std::string &device)
+        : device_(device)
     {
     }
 
@@ -23,10 +23,22 @@ namespace cc::core::platform
         return this->device_;
     }
 
-    SerialPort::BaudRate SerialPort::speed() const
+    SerialPort::BaudRate SerialPort::baud_rate() const
     {
-        return this->speed_;
+        const Speed &variant = this->parameters().speed;
+        switch (variant.index())
+        {
+        case 1:
+            return std::get<1>(variant);
+
+        case 2:
+            return std::max(std::get<2>(variant).first,
+                            std::get<2>(variant).second);
+        default:
+            return 0;
+        }
     }
+
 
     //==========================================================================
     /// Global instance, populated with the "best" provider for this system.
