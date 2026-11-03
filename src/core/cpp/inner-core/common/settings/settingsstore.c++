@@ -116,7 +116,6 @@ namespace cc::core
     bool SettingsStore::load_from_file(const fs::path &abspath)
     {
         types::Value value;
-
         try
         {
             if (abspath.extension() == YAML_SUFFIX)

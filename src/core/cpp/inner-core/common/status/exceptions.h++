@@ -285,19 +285,16 @@ namespace cc::core::exception
 
     public:
         SystemError(const status::Error &event);
-        SystemError(const std::system_error &e,
-                    const std::optional<std::string> &preamble = {});
+        SystemError(const std::system_error &e);
 
-        explicit SystemError(int errcode, const std::string &what);
-        explicit SystemError(int errcode = errno);
-        explicit SystemError(const std::string &preamble,
-                             int errcode,
-                             const std::string &what);
+        explicit SystemError(
+            int errcode = errno,
+            const std::error_category &category = std::generic_category());
 
-        explicit SystemError(const std::string &preamble, int errcode = errno);
-        explicit SystemError(const std::error_category &category,
-                             int errorcode,
-                             const std::string &what);
+        explicit SystemError(
+            const std::string &preamble,
+            int errcode = errno,
+            const std::error_category &category = std::generic_category());
     };
 
     //==========================================================================

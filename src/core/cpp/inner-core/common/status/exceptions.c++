@@ -263,11 +263,9 @@ namespace cc::core::exception
     {
     }
 
-    SystemError::SystemError(const std::system_error &e,
-                             const std::optional<std::string> &preamble)
+    SystemError::SystemError(const std::system_error &e)
         : Super(status::Error(
-                    preamble ? preamble.value() + ": " + e.what()
-                             : e.what(),         // text
+                    e.what(),                    // text
                     status::Domain::SYSTEM,      // domain
                     e.code().category().name(),  // origin
                     e.code().value(),            // code
@@ -275,43 +273,29 @@ namespace cc::core::exception
                     status::Level::ERROR,        // level
                     {},                          // timepoint
                     {}),                         // attributes
-                std::system_error(e),
+                e,
                 TYPE_NAME_BASE(This))
     {
     }
 
     SystemError::SystemError(int errcode,
-                             const std::string &what)
+                             const std::error_category &category)
         : SystemError(
               std::system_error(
-                  std::error_code(errcode, std::generic_category()),
-                  what))
-    {
-    }
-
-    SystemError::SystemError(int errcode)
-        : SystemError(errcode, strerror(errcode))
+                  std::error_code(errcode, category)))
     {
     }
 
     SystemError::SystemError(const std::string &preamble,
                              int errcode,
-                             const std::string &what)
-        : SystemError(errcode, str::format("%s: %s", preamble, what))
+                             const std::error_category &category)
+        : SystemError(
+              std::system_error(
+                  std::error_code(errcode, category),
+                  preamble))
     {
     }
 
-    SystemError::SystemError(const std::string &preamble, int errcode)
-        : SystemError(preamble, errcode, strerror(errcode))
-    {
-    }
-
-    SystemError::SystemError(const std::error_category &category,
-                             int errorcode,
-                             const std::string &what)
-        : SystemError(std::system_error(errorcode, category, what))
-    {
-    }
 
     //==========================================================================
     // PermissionDenied

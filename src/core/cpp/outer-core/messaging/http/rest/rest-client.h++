@@ -114,7 +114,7 @@ namespace cc::http
 
         core::types::Value put_json(const std::string &path,
                                     const core::types::TaggedValueList &query,
-                                    const core::types::KeyValueMap &data,
+                                    const core::types::Value &data,
                                     bool fail_on_error = true,
                                     ResponseCode *response_code = nullptr) const;
 
@@ -139,7 +139,7 @@ namespace cc::http
         ///    `fail_on_error` is `false`.
 
         core::types::Value put_json(const std::string &path,
-                                    const core::types::KeyValueMap &data,
+                                    const core::types::Value &data,
                                     bool fail_on_error = true,
                                     ResponseCode *response_code = nullptr) const;
 

@@ -91,7 +91,7 @@ namespace cc::http
     core::types::Value RESTClient::put_json(
         const std::string &path,
         const core::types::TaggedValueList &query,
-        const core::types::KeyValueMap &data,
+        const core::types::Value &data,
         bool fail_on_error,
         ResponseCode *response_code) const
     {
@@ -101,7 +101,7 @@ namespace cc::http
 
     core::types::Value RESTClient::put_json(
         const std::string &path,
-        const core::types::KeyValueMap &data,
+        const core::types::Value &data,
         bool fail_on_error,
         ResponseCode *response_code) const
     {

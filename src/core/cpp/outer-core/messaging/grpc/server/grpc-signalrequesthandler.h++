@@ -44,7 +44,7 @@ namespace cc::grpc
             {
                 logf_debug("Opening %s stream to client %s with filter %s",
                            SignalT().GetTypeName(),
-                           cxt->peer(),
+                           this->peer(cxt),
                            *req);
                 SignalQueueT queue(core::platform::symbols->uuid_string(), *req);
                 queue.initialize();
@@ -73,7 +73,7 @@ namespace cc::grpc
             }
             catch (...)
             {
-                return this->failure(std::current_exception(), *req, cxt->peer());
+                return this->failure(std::current_exception(), *req, this->peer(cxt));
             }
         }
     };

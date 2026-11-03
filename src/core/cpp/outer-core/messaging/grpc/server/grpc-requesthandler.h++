@@ -105,7 +105,7 @@ namespace cc::grpc
     ///        }
     ///        catch (std::exception &e)
     ///        {
-    ///          return this->failure(e, *request, cxt->peer());
+    ///          return this->failure(e, *request, this->peer(cxt));
     ///        }
     ///      }
     ///    ```
