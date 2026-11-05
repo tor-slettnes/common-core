@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "protobuf-version.h++"
+#include "string/convert.h++"
 #include "buildinfo/buildinfo.h++"
 
 #include <iostream>
@@ -36,6 +37,46 @@ namespace cc::protobuf
         version->set_patch(patch);
         version->set_build_number(build_number);
         version->set_printable_version(printable_version);
+    }
+
+    void parse_version(
+        const std::string &version_string,
+        Version *version)
+    {
+        static const std::regex rx_version(
+            "^(\\d+)"            // (1) major
+            "(?:\\.(\\d+))?"     // (2) minor
+            "(?:\\.(\\d+))?"     // (3) patch
+            "(?:\\W+(\\d+))?");  // (4) build_number
+
+        version->Clear();
+
+        std::smatch match;
+        if (std::regex_search(version_string, match, rx_version))
+        {
+            version->set_major(
+                core::str::convert_to<std::uint64_t>(match.str(1)));
+
+            if (match.length(2))
+            {
+                version->set_minor(
+                    core::str::convert_to<std::uint64_t>(match.str(2)));
+            }
+
+            if (match.length(3))
+            {
+                version->set_patch(
+                    core::str::convert_to<std::uint64_t>(match.str(3)));
+            }
+
+            if (match.length(4))
+            {
+                version->set_build_number(
+                    core::str::convert_to<std::uint64_t>(match.str(4)));
+            }
+        }
+
+        version->set_printable_version(version_string);
     }
 
     Version create_version(std::uint64_t major,

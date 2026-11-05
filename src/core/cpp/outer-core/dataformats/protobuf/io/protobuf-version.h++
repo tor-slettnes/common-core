@@ -23,17 +23,24 @@ namespace cc::protobuf
         const std::string &printable_version,
         Version *version);
 
-    Version create_version(std::uint64_t major,
-                           std::uint64_t minor = 0,
-                           std::uint64_t patch = 0,
-                           std::uint64_t build_number = 0,
-                           const std::string printable_version = "");
+    void parse_version(
+        const std::string &version_string,
+        Version *version);
 
-    std::string to_string(const Version &version);
+    Version create_version(
+        std::uint64_t major,
+        std::uint64_t minor = 0,
+        std::uint64_t patch = 0,
+        std::uint64_t build_number = 0,
+        const std::string printable_version = "");
 
-    bool is_compatible(const Version &client,
-                       const Version &server,
-                       bool strict = true);
+    std::string to_string(
+        const Version &version);
+
+    bool is_compatible(
+        const Version &client,
+        const Version &server,
+        bool strict = true);
 
     namespace version
     {

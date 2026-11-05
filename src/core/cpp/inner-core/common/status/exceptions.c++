@@ -269,7 +269,7 @@ namespace cc::core::exception
                     status::Domain::SYSTEM,      // domain
                     e.code().category().name(),  // origin
                     e.code().value(),            // code
-                    {},                          // id
+                    {},                          // symbol
                     status::Level::ERROR,        // level
                     {},                          // timepoint
                     {}),                         // attributes
@@ -295,7 +295,6 @@ namespace cc::core::exception
                   preamble))
     {
     }
-
 
     //==========================================================================
     // PermissionDenied
@@ -344,7 +343,7 @@ namespace cc::core::exception
                     status::Domain::SYSTEM,      // domain
                     e.code().category().name(),  // origin
                     e.code().value(),            // code
-                    TYPE_NAME_BASE(This),        // id
+                    TYPE_NAME_BASE(This),        // symbol
                     status::Level::ERROR,        // level
                     {},                          // timepoint
                     {
@@ -406,7 +405,7 @@ namespace cc::core::exception
     DeviceError::DeviceError(const std::string &text,
                              const std::string &device,
                              Code code,
-                             const std::string &id,
+                             const std::string &symbol,
                              status::Level level,
                              const dt::TimePoint &dt,
                              const types::KeyValueMap &attributes)
@@ -415,7 +414,7 @@ namespace cc::core::exception
                     status::Domain::DEVICE,  // domain
                     device,                  // origin
                     code,                    // code
-                    id,                      // id
+                    symbol,                  // symbol
                     level,                   // level
                     dt,                      // timepoint
                     attributes),             // attributes
@@ -430,7 +429,7 @@ namespace cc::core::exception
     ServiceError::ServiceError(const std::string &text,
                                const std::string &service,
                                Code code,
-                               const std::string &id,
+                               const std::string &symbol,
                                status::Level level,
                                const dt::TimePoint &dt,
                                const types::KeyValueMap &attributes)
@@ -439,7 +438,7 @@ namespace cc::core::exception
                     status::Domain::SERVICE,  // domain
                     service,                  // origin
                     code,                     // code
-                    id,                       // id
+                    symbol,                   // symbol
                     level,                    // level
                     dt,                       // timepoint
                     attributes),              // attributes

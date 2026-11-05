@@ -60,6 +60,7 @@ namespace cc::core::types
             const types::Value &fallback = {}) const noexcept;
 
     protected:
+        virtual std::string name() const noexcept;
         virtual std::string class_name() const noexcept;
 
     public:
@@ -77,6 +78,7 @@ namespace cc::core::types
     public:
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
         void to_stream(std::ostream &stream) const override;
+        void to_literal_stream(std::ostream &stream) const override;
 
     private:
         dt::TimePoint timepoint_;

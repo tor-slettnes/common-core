@@ -10,6 +10,7 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+#include <poll.h>
 
 namespace cc::core::platform
 {
@@ -33,7 +34,7 @@ namespace cc::core::platform
         if (!this->is_open())
         {
             int fd = ::open(this->device().data(), O_RDWR);
-            if (!this->is_open())
+            if (fd < 0)
             {
                 throwf(core::exception::SystemError,
                        "opening serial device %r",
@@ -86,23 +87,14 @@ namespace cc::core::platform
     {
         if (this->tty_)
         {
-            // Parameters params;
-            // params.speed = This::extract_speed(*this->tty_);
-            // params.rts_cts = (this->tty_->c_cflag & CRTSCTS) != 0;
-            // params.xon_xoff = (this->tty_->c_cflag & (IXON | IXOFF)) != 0;
-            // params.data_bits = This::extract_data_bits(*this->tty_);
-            // params.parity = This::extract_parity(*this->tty_);
-            // params.stop_bits = (this->tty_->c_cflag & CSTOPB) ? 2 : 1;
-            // return params;
-
-            return {
-                .speed = This::extract_speed(*this->tty_),
-                .rts_cts = (this->tty_->c_cflag & CRTSCTS) != 0,
-                .xon_xoff = (this->tty_->c_cflag & (IXON | IXOFF)) != 0,
-                .data_bits = This::extract_data_bits(*this->tty_),
-                .parity = This::extract_parity(*this->tty_),
-                .stop_bits = (this->tty_->c_cflag & CSTOPB) ? 2u : 1u,
-            };
+            Parameters params;
+            params.speed = This::extract_speed(*this->tty_);
+            params.rts_cts = (this->tty_->c_cflag & CRTSCTS) != 0;
+            params.xon_xoff = (this->tty_->c_cflag & (IXON | IXOFF)) != 0;
+            params.data_bits = This::extract_data_bits(*this->tty_);
+            params.parity = This::extract_parity(*this->tty_);
+            params.stop_bits = (this->tty_->c_cflag & CSTOPB) ? 2 : 1;
+            return params;
         }
         else
         {
@@ -128,7 +120,7 @@ namespace cc::core::platform
         }
     }
 
-    void PosixSerialPort::write(const std::string &text) const
+    void PosixSerialPort::write(const std::string &text)
     {
         if (int fd = this->fd_; this->fd_ >= 0)
         {
@@ -147,67 +139,83 @@ namespace cc::core::platform
         }
     }
 
-    std::optional<char> PosixSerialPort::readchar() const
+    std::size_t PosixSerialPort::read(void *buffer, std::size_t nbytes) const
     {
-        if (int fd = this->fd_; this->fd_ >= 0)
-        {
-            char c;
-            ssize_t size = ::read(fd, &c, 1);
-            if (size > 0)
-            {
-                return c;
-            }
-            else if (size == 0)
-            {
-                return {};
-            }
-            else
-            {
-                throwf(core::exception::SystemError,
-                       "Reading from %s",
-                       this->device());
-            }
-        }
-        else
+        if (!this->is_open())
         {
             throwf(core::exception::FailedPrecondition,
                    "Serial device %r must be open in order to read",
                    this->device());
+        }
+
+        struct pollfd pfd;
+        pfd.events = POLLIN;
+        pfd.revents = 0;
+        for (pfd.fd = this->fd_; !pfd.revents; pfd.fd = this->fd_)
+        {
+            if (poll(&pfd, 1, 1000) < 0)
+            {
+                throwf(core::exception::SystemError,
+                       "Failed to poll serial device %s",
+                       this->device());
+            }
+
+            if (pfd.revents & POLLIN)
+            {
+                return ::read(pfd.fd, buffer, nbytes);
+            }
+            else if (pfd.revents & POLLERR)
+            {
+                throwf(core::exception::SystemError,
+                       "Failed to read from serial device %s",
+                       this->device());
+            }
+        }
+
+        return 0;
+    }
+
+    std::optional<char> PosixSerialPort::readchar()
+    {
+        char c;
+        if (this->read(&c, 1))
+        {
+            return c;
+        }
+        else
+        {
+            return {};
         }
     }
 
-    std::string PosixSerialPort::readline() const
+    std::optional<std::string> PosixSerialPort::readline(bool strip)
     {
-        if (int fd = this->fd_; this->fd_ >= 0)
+        std::string buf;
+        char c;
+        while (this->read(&c, 1))
         {
-            std::string buf;
-            char c;
-            ssize_t nread;
-            while ((nread = ::read(fd, &c, 1)) > 0)
+            if (buf.size() >= buf.capacity())
             {
-                if (buf.size() >= buf.capacity())
-                {
-                    buf.reserve(buf.capacity() + 256);
-                }
-                buf.push_back(c);
-                if (c == '\n')
-                {
-                    break;
-                }
+                buf.reserve(buf.capacity() + 256);
             }
-            if (nread < 0)
+            buf.push_back(c);
+            if (c == '\n')
             {
-                throwf(core::exception::SystemError,
-                       "reading from serial device %r",
-                       this->device());
+                break;
             }
-            return buf;
+        }
+
+        if (buf.empty())
+        {
+            return {};
+        }
+        else if (strip)
+        {
+            return core::str::strip(buf);
         }
         else
         {
-            throwf(core::exception::FailedPrecondition,
-                   "Serial device %r must be open in order to read",
-                   this->device());
+            return buf;
         }
     }
 
@@ -245,8 +253,8 @@ namespace cc::core::platform
     SerialPort::Parity PosixSerialPort::extract_parity(const struct termios &tty)
     {
         return (tty.c_cflag & PARENB) == 0 ? Parity::NONE
-             : (tty.c_cflag & PARODD) == 0  ? Parity::EVEN
-                                            : Parity::ODD;
+             : (tty.c_cflag & PARODD) == 0 ? Parity::EVEN
+                                           : Parity::ODD;
     }
 
     std::shared_ptr<struct termios> PosixSerialPort::load_attributes(int fd)
@@ -359,7 +367,9 @@ namespace cc::core::platform
 
         // Wait for up to 1s (10 deciseconds), returning as soon as any data is received.
         tty->c_cc[VTIME] = 10;
-        tty->c_cc[VMIN] = 0;
+
+        // Return at end of above wait, even if no characters are received
+        tty->c_cc[VMIN] = 1;
     }
 
     void PosixSerialPort::apply_speed(

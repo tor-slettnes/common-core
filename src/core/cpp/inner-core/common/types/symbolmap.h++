@@ -1,7 +1,7 @@
 /// -*- c++ -*-
 //==============================================================================
 /// @file symbolmap.h++
-/// @brief Unordered string map with symbol lookup
+/// @brief Unordered string map with two-way symbol lookup
 /// @author Tor Slettnes
 //==============================================================================
 

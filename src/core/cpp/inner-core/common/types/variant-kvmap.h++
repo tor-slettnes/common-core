@@ -262,6 +262,11 @@ namespace cc::core::types
 
     public:
         void to_stream(std::ostream &stream) const override;
+        void to_stream(std::ostream &stream,
+                       const std::string &prefix,
+                       const std::string &infix,
+                       const std::string &kvsep,
+                       const std::string &postfix) const;
     };
 
     //--------------------------------------------------------------------------

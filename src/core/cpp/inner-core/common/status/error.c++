@@ -88,6 +88,13 @@ namespace cc::core::status
         }
     }
 
+    std::string Error::name() const noexcept
+    {
+        return This::domain_error_names.to_string(
+            this->domain(),
+            this->class_name());
+    }
+
     std::string Error::contract_id() const noexcept
     {
         return This::CONTRACT;
@@ -133,29 +140,14 @@ namespace cc::core::status
     void Error::to_stream(std::ostream &stream) const
     {
         stream << "["
-               << this->class_name()
+               << this->name()
                << "] "
                << this->text();
 
-
-        if (!this->attributes().empty())
+        if (this->attributes().size())
         {
-            std::string delimiter = " (";
-            for (const auto &[key, value] : this->attributes())
-            {
-                stream << delimiter
-                       << key
-                       << "=";
-                value.to_literal_stream(stream);
-                delimiter = ", ";
-            }
-            stream << ")";
+            this->attributes().to_stream(stream, " (", ", ", "=", ")");
         }
-    }
-
-    void Error::to_literal_stream(std::ostream &stream) const
-    {
-        return Super::to_stream(stream);
     }
 
     std::vector<std::string> Error::error_fields() noexcept
@@ -262,4 +254,11 @@ namespace cc::core::status
         return std::make_exception_ptr<exception::UnknownError>(*this);
     }
 
+    types::SymbolMap<Domain> Error::domain_error_names = {
+        {Domain::APPLICATION, "ApplicationError"},
+        {Domain::SYSTEM, "SystemError"},
+        {Domain::PROCESS, "ProcessSignal"},
+        {Domain::DEVICE, "DeviceError"},
+        {Domain::SERVICE, "ServiceError"},
+    };
 }  // namespace cc::core::status

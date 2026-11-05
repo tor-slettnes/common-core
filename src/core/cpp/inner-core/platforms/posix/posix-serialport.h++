@@ -37,11 +37,13 @@ namespace cc::core::platform
         Parameters parameters() const override;
         void set_parameters(const Parameters &parameters) override;
 
-        void write(const std::string &text) const override;
-        std::optional<char> readchar() const override;
-        std::string readline() const override;
+        void write(const std::string &text) override;
+        std::optional<char> readchar() override;
+        std::optional<std::string> readline(
+            bool strip=false) override;
 
     public:
+        std::size_t read(void *buffer, std::size_t nbytes) const;
         static Speed extract_speed(const struct termios &tty);
         static std::uint8_t extract_data_bits(const struct termios &tty);
         static Parity extract_parity(const struct termios &tty);

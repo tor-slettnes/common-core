@@ -80,6 +80,11 @@ namespace cc::core::types
         return this->attributes_.get(key, fallback);
     }
 
+    std::string Loggable::name() const noexcept
+    {
+        return this->class_name();
+    }
+
     std::string Loggable::class_name() const noexcept
     {
         return "Loggable";
@@ -138,7 +143,16 @@ namespace cc::core::types
 
     void Loggable::to_stream(std::ostream &stream) const
     {
-        stream << this->class_name() << this->as_tvlist();
+        this->to_literal_stream(stream);
+    }
+
+    void Loggable::to_literal_stream(std::ostream &stream) const
+    {
+        stream << "["
+               << this->name()
+               << "] ";
+
+        this->as_tvlist().to_stream(stream, "", ", ", "");
     }
 
 }  // namespace cc::core::types

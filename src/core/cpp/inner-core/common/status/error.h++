@@ -63,7 +63,8 @@ namespace cc::core::status
         ///     sufficient to distinghish a repeated instance of this from
         ///     another type of status.  For example, status codes and texts are
         ///     compared, but not timestamps.
-        std::string contract_id() const noexcept override;
+        std::string name() const noexcept override;
+        virtual std::string contract_id() const noexcept override;
         virtual Domain domain() const noexcept;
         virtual Code code() const noexcept;
         virtual Symbol symbol() const noexcept;
@@ -72,7 +73,6 @@ namespace cc::core::status
         virtual bool is_error() const noexcept;
 
         void to_stream(std::ostream &stream) const override;
-        void to_literal_stream(std::ostream &stream) const override;
 
     protected:
         std::string class_name() const noexcept override;
@@ -93,6 +93,7 @@ namespace cc::core::status
         virtual std::exception_ptr as_service_error() const;
 
     private:
+        static types::SymbolMap<Domain> domain_error_names;
         Domain domain_ = Domain::NONE;
         Code code_ = 0;
         Symbol symbol_;

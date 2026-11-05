@@ -364,7 +364,7 @@ namespace cc::core::exception
         DeviceError(const std::string &text,
                     const std::string &device,
                     Code code,
-                    const std::string &id,
+                    const std::string &symbol,
                     status::Level level = status::Level::ERROR,
                     const dt::TimePoint &timepoint = {},
                     const types::KeyValueMap &attributes = {});
@@ -385,7 +385,7 @@ namespace cc::core::exception
         ServiceError(const std::string &text,
                      const std::string &service,
                      Code code,
-                     const std::string &id,
+                     const std::string &symbol,
                      status::Level level = status::Level::ERROR,
                      const dt::TimePoint &timepoint = {},
                      const types::KeyValueMap &attributes = {});

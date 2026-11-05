@@ -41,7 +41,7 @@ namespace cc::core::types
         bool ignoreCase) const noexcept
     {
         KeyValueMap result;
-        for (const auto &key: keys)
+        for (const auto &key : keys)
         {
             result.insert_or_assign(key, this->get(key, {}, ignoreCase));
         }
@@ -431,22 +431,32 @@ namespace cc::core::types
 
     void KeyValueMap::to_stream(std::ostream &stream) const
     {
+        this->to_stream(stream, "[", ", ", ": ", "]");
+    }
+
+    void KeyValueMap::to_stream(
+        std::ostream &stream,
+        const std::string &prefix,
+        const std::string &infix,
+        const std::string &kvsep,
+        const std::string &postfix) const
+    {
         bool comma = false;
-        stream << "{";
+        stream << prefix;
         for (const auto &[key, value] : *this)
         {
             if (comma)
             {
-                stream << ", ";
+                stream << infix;
             }
             else
             {
                 comma = true;
             }
-            stream << key << ": ";
+            stream << key << kvsep;
             value.to_literal_stream(stream);
         }
-        stream << "}";
+        stream << postfix;
     }
 
 }  // namespace cc::core::types

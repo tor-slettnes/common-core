@@ -59,19 +59,19 @@ namespace cc::core::exception
 
     public:
         inline Exception(const status::Error &event,
-                         const std::string class_name = "Exception")
+                         const std::optional<std::string> &name = {})
             : Super(event),
               E(event.text()),
-              class_name_(class_name)
+              name_(name)
         {
         }
 
         inline Exception(const status::Error &event,
                          const E &exc,
-                         const std::string class_name = "Exception")
+                         const std::optional<std::string> &name = {})
             : Super(event),
               E(exc),
-              class_name_(class_name)
+              name_(name)
         {
         }
 
@@ -83,13 +83,20 @@ namespace cc::core::exception
         // }
 
     protected:
-        inline std::string class_name() const noexcept override
+        inline std::string name() const noexcept override
         {
-            return this->class_name_;
+            if (this->name_)
+            {
+                return *this->name_;
+            }
+            else
+            {
+                return Error::name();
+            }
         }
 
     private:
-        const std::string class_name_;
+        const std::optional<std::string> name_;
     };
 
 }  // namespace cc::core::exception

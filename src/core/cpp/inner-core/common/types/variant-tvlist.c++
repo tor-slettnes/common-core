@@ -189,7 +189,7 @@ namespace cc::core::types
     {
         TaggedValueList result;
         result.reserve(tags.size());
-        for (const auto &tag: tags)
+        for (const auto &tag : tags)
         {
             result.emplace_back(tag, this->get(tag, {}, ignoreCase));
         }
@@ -510,10 +510,11 @@ namespace cc::core::types
         this->to_stream(stream, "[", ", ", "]");
     }
 
-    void TaggedValueList::to_stream(std::ostream &stream,
-                                    const std::string &prefix,
-                                    const std::string &infix,
-                                    const std::string &postfix) const
+    void TaggedValueList::to_stream(
+        std::ostream &stream,
+        const std::string &prefix,
+        const std::string &infix,
+        const std::string &postfix) const
     {
         // auto lck = std::scoped_lock(this->mtx);
         stream << prefix;

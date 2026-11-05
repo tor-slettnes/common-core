@@ -7,9 +7,12 @@
 
 #pragma once
 #include "provider.h++"
+#include "types/listable.h++"
+#include "types/symbolmap.h++"
 #include <string>
 #include <memory>
 #include <variant>
+#include <iostream>
 
 namespace cc::core::platform
 {
@@ -29,6 +32,9 @@ namespace cc::core::platform
             BaudRate,        // uniform input and output speed
             BaudRatePair>;   // separate input and output speeds
 
+        //----------------------------------------------------------------------
+        // Parity
+
         enum class Parity
         {
             NONE,  // No parity
@@ -36,8 +42,16 @@ namespace cc::core::platform
             EVEN,  // Even parity
         };
 
-        struct Parameters
+        //----------------------------------------------------------------------
+        // Serial port parameters
+
+        class Parameters : public types::Listable
         {
+        public:
+            void to_tvlist(types::TaggedValueList *tvlist) const override;
+            BaudRate get_speed(int direction = -1) const;
+
+        public:
             Speed speed;                   // e.g. 115200 or {115200, 115200}
             bool rts_cts = false;          // harware flow control
             bool xon_xoff = false;         // software flow control
@@ -67,11 +81,6 @@ namespace cc::core::platform
         // or -1 if the device is not open.
         virtual int fd() const = 0;
 
-        // Return serial port speed.
-        // If unknown, return 0.
-        // If input and output speed are different, return the higher value.
-        BaudRate baud_rate() const;
-
         // Return current serial port parameters.
         // Device must be opened first.
         virtual Parameters parameters() const = 0;
@@ -81,13 +90,14 @@ namespace cc::core::platform
         virtual void set_parameters(const Parameters &parameters) = 0;
 
         // Send a text string to the serial port.
-        virtual void write(const std::string &text) const = 0;
+        virtual void write(const std::string &text) = 0;
 
         // read a single character from the serial port.
-        virtual std::optional<char> readchar() const = 0;
+        virtual std::optional<char> readchar() = 0;
 
         // read one line of text from the serial port.
-        virtual std::string readline() const = 0;
+        virtual std::optional<std::string> readline(
+            bool strip = false) = 0;
 
     private:
         std::string device_;
