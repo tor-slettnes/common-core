@@ -76,7 +76,7 @@ def verify(function: Callable,
             "Expected %s() %s of type %s, got %s: %r"%(
                 function.__name__,
                 item_description,
-                expected.__name__,
+                expected.__name__ if isinstance(expected, type) else expected,
                 type(encountered).__name__,
                 encountered,
             ))
