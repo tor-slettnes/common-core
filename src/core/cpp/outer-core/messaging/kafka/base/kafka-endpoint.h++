@@ -40,8 +40,8 @@ namespace cc::kafka
         void deinitialize() override;
 
     protected:
-        void init_conf(const core::types::KeyValueMap &settings);
-        void init_logging();
+        virtual void init_conf(const core::types::KeyValueMap &settings);
+        virtual void init_logging();
         void set_server_address(const std::string &server_address);
 
     public:
