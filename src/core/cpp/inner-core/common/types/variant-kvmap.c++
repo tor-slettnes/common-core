@@ -431,7 +431,7 @@ namespace cc::core::types
 
     void KeyValueMap::to_stream(std::ostream &stream) const
     {
-        this->to_stream(stream, "[", ", ", ": ", "]");
+        this->to_stream(stream, "{", ", ", ": ", "}");
     }
 
     void KeyValueMap::to_stream(

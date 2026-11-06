@@ -139,42 +139,6 @@ namespace cc::core::platform
         }
     }
 
-    std::size_t PosixSerialPort::read(void *buffer, std::size_t nbytes) const
-    {
-        if (!this->is_open())
-        {
-            throwf(core::exception::FailedPrecondition,
-                   "Serial device %r must be open in order to read",
-                   this->device());
-        }
-
-        struct pollfd pfd;
-        pfd.events = POLLIN;
-        pfd.revents = 0;
-        for (pfd.fd = this->fd_; !pfd.revents; pfd.fd = this->fd_)
-        {
-            if (poll(&pfd, 1, 1000) < 0)
-            {
-                throwf(core::exception::SystemError,
-                       "Failed to poll serial device %s",
-                       this->device());
-            }
-
-            if (pfd.revents & POLLIN)
-            {
-                return ::read(pfd.fd, buffer, nbytes);
-            }
-            else if (pfd.revents & POLLERR)
-            {
-                throwf(core::exception::SystemError,
-                       "Failed to read from serial device %s",
-                       this->device());
-            }
-        }
-
-        return 0;
-    }
-
     std::optional<char> PosixSerialPort::readchar()
     {
         char c;
@@ -217,6 +181,42 @@ namespace cc::core::platform
         {
             return buf;
         }
+    }
+
+    std::size_t PosixSerialPort::read(void *buffer, std::size_t nbytes) const
+    {
+        if (!this->is_open())
+        {
+            throwf(core::exception::FailedPrecondition,
+                   "Serial device %r must be open in order to read",
+                   this->device());
+        }
+
+        struct pollfd pfd;
+        pfd.events = POLLIN;
+        pfd.revents = 0;
+        for (pfd.fd = this->fd_; !pfd.revents; pfd.fd = this->fd_)
+        {
+            if (poll(&pfd, 1, 1000) < 0)
+            {
+                throwf(core::exception::SystemError,
+                       "Failed to poll serial device %s",
+                       this->device());
+            }
+
+            if (pfd.revents & POLLIN)
+            {
+                return ::read(pfd.fd, buffer, nbytes);
+            }
+            else if (pfd.revents & POLLERR)
+            {
+                throwf(core::exception::SystemError,
+                       "Failed to read from serial device %s",
+                       this->device());
+            }
+        }
+
+        return 0;
     }
 
     SerialPort::Speed PosixSerialPort::extract_speed(const struct termios &tty)
