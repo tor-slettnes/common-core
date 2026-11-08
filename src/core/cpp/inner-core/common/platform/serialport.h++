@@ -65,7 +65,7 @@ namespace cc::core::platform
             const std::string &device);
 
     public:
-        std::string device() const;
+        const std::string &device() const;
 
         // Open the device. No serial port parameters are set.
         // Returns file desriptor to the serial device.

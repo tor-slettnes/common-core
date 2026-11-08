@@ -144,9 +144,10 @@ namespace cc::core::status
                << "] "
                << this->text();
 
-        if (this->attributes().size())
+        core::types::KeyValueMap attributes = this->attributes().filtered();
+        if (attributes.size())
         {
-            this->attributes().to_stream(stream, " (", ", ", "=", ")");
+            attributes.to_stream(stream, " (", ", ", "=", ")");
         }
     }
 

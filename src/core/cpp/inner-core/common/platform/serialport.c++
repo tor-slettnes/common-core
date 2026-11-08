@@ -70,7 +70,7 @@ namespace cc::core::platform
     {
     }
 
-    std::string SerialPort::device() const
+    const std::string &SerialPort::device() const
     {
         return this->device_;
     }
