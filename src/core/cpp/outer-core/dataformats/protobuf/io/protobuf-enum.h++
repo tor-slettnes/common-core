@@ -6,6 +6,8 @@
 //==============================================================================
 
 #pragma once
+#include "types/symbolmap.h++"
+
 #include <google/protobuf/message.h>
 
 #include <string>
@@ -36,5 +38,29 @@ namespace cc::protobuf
     std::size_t common_prefix_length(
         const google::protobuf::EnumDescriptor *desc,
         const std::string &delimiter = "_");
+
+
+    template <class EnumType>
+    core::types::SymbolMap<EnumType> symbol_map(
+        const google::protobuf::EnumDescriptor *desc,
+        const std::optional<std::string> &delimiter = "_")
+    {
+        std::size_t prefix_length = 0;
+        if (delimiter)
+        {
+            prefix_length = common_prefix_length(desc, *delimiter);
+        }
+
+        core::types::SymbolMap<EnumType> symbol_map;
+        for (int i = 0; i < desc->value_count(); i++)
+        {
+            std::string symbol = desc->value(i)->name();
+            symbol_map.insert_or_assign(
+                static_cast<EnumType>(i),
+                symbol.substr(prefix_length));
+        }
+        return symbol_map;
+    }
+
 
 }  // namespace cc::protobuf
