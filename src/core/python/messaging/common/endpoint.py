@@ -96,7 +96,7 @@ class EndpointBase (DocBase, LogBase):
 
 
     def __repr__ (self):
-        return "%s()"%(type(self).__qualname__,))
+        return "%s()"%(type(self).__qualname__,)
 
     def initialize(self):
         self.initialized = True
