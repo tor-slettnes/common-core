@@ -40,12 +40,12 @@ namespace cc::platform::multilogger::grpc
         {
             this->provider->submit(cc::protobuf::decode_loggable(
                 *request,
-                core::str::url_decoded(this->peer(context))));
+                this->peer(context)));
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -61,7 +61,7 @@ namespace cc::platform::multilogger::grpc
             {
                 this->provider->submit(cc::protobuf::decode_loggable(
                     loggable,
-                    core::str::url_decoded(this->peer(context))));
+                    this->peer(context)));
             }
             return ::grpc::Status::OK;
         }
@@ -81,7 +81,7 @@ namespace cc::platform::multilogger::grpc
             auto spec = cc::protobuf::decoded<multilogger::ListenerSpec>(*request);
             if (spec.sink_id.empty())
             {
-                spec.sink_id = core::str::url_decoded(this->peer(context));
+                spec.sink_id = this->peer(context);
             }
 
             auto listener = this->provider->listen(spec);
@@ -100,7 +100,7 @@ namespace cc::platform::multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -114,7 +114,7 @@ namespace cc::platform::multilogger::grpc
             auto spec = cc::protobuf::decoded<multilogger::SinkSpec>(*request);
             if (spec.sink_id.empty())
             {
-                spec.sink_id = core::str::url_decoded(this->peer(context));
+                spec.sink_id = this->peer(context);
             }
 
             response->set_added(
@@ -124,7 +124,7 @@ namespace cc::platform::multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -142,7 +142,7 @@ namespace cc::platform::multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -161,7 +161,7 @@ namespace cc::platform::multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -179,7 +179,7 @@ namespace cc::platform::multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -198,7 +198,7 @@ namespace cc::platform::multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -217,7 +217,7 @@ namespace cc::platform::multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -236,7 +236,7 @@ namespace cc::platform::multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -255,7 +255,7 @@ namespace cc::platform::multilogger::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 

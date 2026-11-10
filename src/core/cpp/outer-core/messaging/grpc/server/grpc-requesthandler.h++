@@ -38,15 +38,15 @@ namespace cc::grpc
                        const std::string &function = __builtin_FUNCTION());
 
         Status failure(const std::exception &exception,
-                       const ::google::protobuf::Message &request,
-                       const std::string &peer = {},
+                       const ::grpc::ServerContext *context,
+                       const ::google::protobuf::Message *request = nullptr,
                        const fs::path &path = __builtin_FILE(),
                        const int &line = __builtin_LINE(),
                        const std::string &function = __builtin_FUNCTION());
 
         Status failure(std::exception_ptr eptr,
-                       const ::google::protobuf::Message &request,
-                       const std::string &peer = {},
+                       const ::grpc::ServerContext *context,
+                       const ::google::protobuf::Message *request = nullptr,
                        const fs::path &path = __builtin_FILE(),
                        const int &line = __builtin_LINE(),
                        const std::string &function = __builtin_FUNCTION());
@@ -57,8 +57,8 @@ namespace cc::grpc
                         const int &line = __builtin_LINE(),
                         const std::string &function = __builtin_FUNCTION());
 
-        std::string request_description(const ::google::protobuf::Message &request,
-                                        const std::string &peer,
+        std::string request_description(const ::google::protobuf::Message *request,
+                                        const ::grpc::ServerContext *context,
                                         const std::string &function);
     };
 
@@ -103,9 +103,9 @@ namespace cc::grpc
     ///        {
     ///          handle(request);
     ///        }
-    ///        catch (std::exception &e)
+    ///        catch (const std::exception &e)
     ///        {
-    ///          return this->failure(e, *request, this->peer(cxt));
+    ///          return this->failure(e, cxt, request);
     ///        }
     ///      }
     ///    ```
@@ -140,8 +140,8 @@ namespace cc::grpc
             catch (...)
             {
                 return this->failure(std::current_exception(),
-                                     *request,
-                                     this->peer(context),
+                                     context,
+                                     request,
                                      src_path,
                                      src_line,
                                      src_function);

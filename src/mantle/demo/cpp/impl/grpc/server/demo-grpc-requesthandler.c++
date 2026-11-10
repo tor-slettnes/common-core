@@ -53,7 +53,7 @@ namespace cc::demo::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -69,7 +69,7 @@ namespace cc::demo::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -85,7 +85,7 @@ namespace cc::demo::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -101,7 +101,7 @@ namespace cc::demo::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 

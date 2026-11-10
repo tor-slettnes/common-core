@@ -125,7 +125,7 @@ namespace cc::platform::pubsub::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *message, this->peer(context));
+            return this->failure(std::current_exception(), context, message);
         }
     }
 
@@ -169,7 +169,7 @@ namespace cc::platform::pubsub::grpc
         catch (...)
         {
             queue.deinitialize();
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 

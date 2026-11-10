@@ -73,7 +73,7 @@ namespace cc::grpc
             }
             catch (...)
             {
-                return this->failure(std::current_exception(), *req, this->peer(cxt));
+                return this->failure(std::current_exception(), cxt, req);
             }
         }
     };

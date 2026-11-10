@@ -67,28 +67,28 @@ namespace cc::grpc
     }
 
     Status RequestHandlerBase::failure(const std::exception &exception,
-                                       const ::google::protobuf::Message &request,
-                                       const std::string &peer,
+                                       const ::grpc::ServerContext *context,
+                                       const ::google::protobuf::Message *request,
                                        const fs::path &path,
                                        const int &lineno,
                                        const std::string &function)
     {
         return this->failure(exception,
-                             this->request_description(request, peer, function),
+                             this->request_description(request, context, function),
                              path,
                              lineno,
                              function);
     }
 
     Status RequestHandlerBase::failure(std::exception_ptr eptr,
-                                       const ::google::protobuf::Message &request,
-                                       const std::string &peer,
+                                       const ::grpc::ServerContext *context,
+                                       const ::google::protobuf::Message *request,
                                        const fs::path &path,
                                        const int &lineno,
                                        const std::string &function)
     {
         return this->failure(eptr,
-                             this->request_description(request, peer, function),
+                             this->request_description(request, context, function),
                              path,
                              lineno,
                              function);
@@ -120,16 +120,23 @@ namespace cc::grpc
     }
 
     std::string RequestHandlerBase::request_description(
-        const ::google::protobuf::Message &request,
-        const std::string &peer,
+        const ::google::protobuf::Message *request,
+        const ::grpc::ServerContext *context,
         const std::string &function)
     {
         std::stringstream ss;
-        if (peer.size())
+        if (context)
         {
-            ss << "request from " << core::str::url_decoded(peer) << ": ";
+            ss << "request from " << core::str::url_decoded(context->peer()) << ": ";
         }
-        ss << function << "(" << cc::protobuf::to_string(request) << ")";
+
+        ss << function << "(";
+        if (request)
+        {
+            ss << cc::protobuf::to_string(*request);
+        }
+        ss << ")";
+
         return ss.str();
     }
 

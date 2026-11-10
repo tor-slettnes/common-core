@@ -55,7 +55,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -75,7 +75,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -94,7 +94,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -113,7 +113,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -133,7 +133,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -153,7 +153,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -173,7 +173,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -201,7 +201,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -221,7 +221,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -241,7 +241,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -265,7 +265,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -284,7 +284,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -326,7 +326,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -363,9 +363,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(),
-                                 google::protobuf::Empty(),
-                                 this->peer(cxt));
+            return this->failure(std::current_exception(), cxt);
         }
     }
 
@@ -384,7 +382,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -402,7 +400,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 
@@ -418,7 +416,7 @@ namespace cc::platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(cxt));
+            return this->failure(std::current_exception(), cxt, request);
         }
     }
 

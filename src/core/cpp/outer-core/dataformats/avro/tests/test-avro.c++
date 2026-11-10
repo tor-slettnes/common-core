@@ -159,12 +159,14 @@ namespace cc::avro
 
         EXPECT_EQ(readback.get("text").as_string(), text);
         EXPECT_EQ(readback.get("domain").as_string(), "APPLICATION");
-        EXPECT_EQ(readback.get("origin").as_string(), origin);
-        EXPECT_EQ(readback.get("code").as_uint(), code);
-        EXPECT_EQ(readback.get("symbol").as_string(), symbol);
-        EXPECT_EQ(readback.get("timestamp").as_sint64(), core::dt::to_milliseconds(tp));
+        EXPECT_EQ(readback.get("origin").get("string").as_string(), origin);
+        EXPECT_EQ(readback.get("code").get("long").as_uint(), code);
+        EXPECT_EQ(readback.get("symbol").get("string").as_string(), symbol);
 
-        core::types::KeyValueMap attributes = readback.get("attributes").as_kvmap();
+        EXPECT_EQ(readback.get("timestamp").get("long").as_sint64(),
+                  core::dt::to_milliseconds(tp));
+
+        core::types::KeyValueMap attributes = readback.get("attributes").get("map").as_kvmap();
 
         EXPECT_EQ(attributes.get("my_bool").get("value").get("boolean").as_bool(),
                   bool_value);

@@ -49,7 +49,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -65,7 +65,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -84,7 +84,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -103,7 +103,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -120,7 +120,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -136,7 +136,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -152,7 +152,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -170,7 +170,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -186,7 +186,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -204,7 +204,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -237,7 +237,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -256,7 +256,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -275,7 +275,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -291,7 +291,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -307,7 +307,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -325,7 +325,7 @@ namespace cc::platform::netconfig::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 

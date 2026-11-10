@@ -51,7 +51,7 @@ namespace cc::platform::upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -67,7 +67,7 @@ namespace cc::platform::upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -85,7 +85,7 @@ namespace cc::platform::upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -103,7 +103,7 @@ namespace cc::platform::upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -122,7 +122,7 @@ namespace cc::platform::upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -138,7 +138,7 @@ namespace cc::platform::upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -156,7 +156,7 @@ namespace cc::platform::upgrade::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), this->peer(context));
+            return this->failure(std::current_exception(), context, filter);
         }
     }
 

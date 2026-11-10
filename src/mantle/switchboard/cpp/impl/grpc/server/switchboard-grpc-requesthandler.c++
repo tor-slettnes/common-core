@@ -54,7 +54,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -77,7 +77,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -96,7 +96,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -115,7 +115,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -133,7 +133,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -156,7 +156,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -184,7 +184,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -216,7 +216,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -237,7 +237,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -264,7 +264,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -285,7 +285,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -302,7 +302,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -319,7 +319,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -336,7 +336,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -353,7 +353,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -395,7 +395,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -457,7 +457,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -474,7 +474,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -511,7 +511,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -581,7 +581,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -602,7 +602,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -622,7 +622,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -644,7 +644,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -669,7 +669,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 
@@ -686,7 +686,7 @@ namespace cc::platform::switchboard::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *request, this->peer(context));
+            return this->failure(std::current_exception(), context, request);
         }
     }
 

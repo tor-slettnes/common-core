@@ -8,9 +8,16 @@ The `Error` type is
 '''
 
 from .status import (
-    Error, Level, Domain,
     level_map,
-    is_error, is_empty,
-    encodeError, encodePossibleError,
     decodeLogLevel, encodeLogLevel,
 )
+
+from .errors import (
+    Error, Level, Domain,
+    BaseError, ApplicationError, SystemError,
+    SignalError, DeviceError, ServiceError,
+    is_error, is_empty,
+    encodeError, encodePossibleError,
+    decodeError, raise_error,
+)
+
