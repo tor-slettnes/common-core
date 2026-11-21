@@ -27,8 +27,16 @@ set(SOURCES
   posix-user.c++
 )
 
+if(BUILD_CRYPTO)
+  list(APPEND SOURCES
+    posix-aes.c++
+  )
+endif()
+
+
 ### Build library
 cc_add_library("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
+  MOD_DEPS ${MOD_DEPS}
   SOURCES ${SOURCES}
 )

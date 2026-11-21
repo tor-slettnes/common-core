@@ -36,6 +36,7 @@ namespace cc::core::str
     constexpr auto NEWLINE = "\n";
 #endif
 
+
     inline const std::string UNICODE_BOM = "\uFEFF";
 
     /// Convert string to uppercase in place, using the specified locale or current locale.
@@ -97,11 +98,11 @@ namespace cc::core::str
     ///      Locale
     /// @return
     ///      Wide string
-    [[nodiscard]] std::wstring to_wstring(
+    std::wstring to_wstring(
         const std::string &str,
         const std::locale &loc = {});
 
-    [[nodiscard]] std::wstring to_wstring(
+    std::wstring to_wstring(
         const char *begin,
         std::size_t size,
         const std::locale &loc = {});

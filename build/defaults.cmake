@@ -213,6 +213,9 @@ option(BUILD_ALL_BINARIES    "Build all executables even if not used (to validat
 option(BUILD_RAPIDJSON       "Build fast JSON parsing using RapidJSON" ON)
 option(BUILD_YAML            "Build support for YAML parsing" ON)
 
+# Cryptographics
+option(BUILD_CRYPTO          "Build cryptographic support (e.g. key/password store)" ON)
+
 # Messaging frameworks
 option(BUILD_GRPC            "Build support for gRPC Remote Procedure Calls" ON)
 option(BUILD_ZMQ             "Build support for ZeroMQ" ON)

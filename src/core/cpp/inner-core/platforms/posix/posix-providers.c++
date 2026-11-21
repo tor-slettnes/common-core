@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "posix-runtime.h++"
+#include "posix-aes.h++"
 #include "posix-timezone.h++"
 #include "posix-logsink.h++"
 #include "posix-process.h++"
@@ -17,6 +18,7 @@ namespace cc::core::platform
     void register_posix_providers(const fs::path &exec_path)
     {
         runtime.registerProvider<PosixRunTimeProvider>();
+        aes.registerProvider<PosixAESProvider>();
         timezone.registerProvider<PosixTimeZoneProvider>();
         logsink.registerProvider<PosixLogSinkProvider>(exec_path);
         process.registerProvider<PosixProcessProvider>();
@@ -31,6 +33,7 @@ namespace cc::core::platform
         process.unregisterProvider<PosixProcessProvider>();
         logsink.unregisterProvider<PosixLogSinkProvider>();
         timezone.unregisterProvider<PosixTimeZoneProvider>();
+        aes.unregisterProvider<PosixAESProvider>();
         runtime.unregisterProvider<PosixRunTimeProvider>();
     }
 }  // namespace cc::core::platform

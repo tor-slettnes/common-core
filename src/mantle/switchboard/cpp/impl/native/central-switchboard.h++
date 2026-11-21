@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file switchboard-central.h++
+/// @file central-switchboard.h++
 /// @brief Switchboard provider supporting only local switches
 /// @author Tor Slettnes
 //==============================================================================

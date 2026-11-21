@@ -343,6 +343,12 @@ namespace cc::core::types
         inline const T *get_if_nonempty() const;
 
         template <class T>
+        std::optional<T> try_as() const noexcept;
+
+        template <class T>
+        T as(const T &fallback = {}) const noexcept;
+
+        template <class T>
         inline T &emplace_from(const Value &other);
 
         /// Returns true if the value type is contained in any of the provdied

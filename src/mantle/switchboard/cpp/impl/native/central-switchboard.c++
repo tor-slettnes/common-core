@@ -1,11 +1,11 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file switchboard-central.c++
+/// @file central-switchboard.c++
 /// @brief Switchboard provider supporting only local switches
 /// @author Tor Slettnes
 //==============================================================================
 
-#include "switchboard-central.h++"
+#include "central-switchboard.h++"
 #include "central-switch.h++"
 #include "switch-dependency.h++"
 #include "platform/symbols.h++"

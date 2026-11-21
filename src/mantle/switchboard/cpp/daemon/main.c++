@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "options.h++"
-#include "switchboard-central.h++"
+#include "central-switchboard.h++"
 #include "application/init.h++"
 #include "thread/supervised-thread.h++"
 

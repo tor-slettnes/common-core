@@ -1,0 +1,19 @@
+// -*- c++ -*-
+//==============================================================================
+/// @file main.c++
+/// @brief VFS service control tool - main
+/// @author Tor Slettnes
+//==============================================================================
+
+#include "options.h++"
+#include "application/init.h++"
+
+int main(int argc, char **argv)
+{
+    cc::core::application::initialize(argc, argv);
+
+    auto options = std::make_unique<cc::core::platform::Options>();
+    options->apply(argc, argv);
+
+    return options->handle_command() ? 0 : 1;
+}

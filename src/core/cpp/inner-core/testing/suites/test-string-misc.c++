@@ -39,26 +39,30 @@ namespace cc::core::str
         // EXPECT_EQ(tolower(utf8_mixed, locale_utf8), utf8_lower);
     }
 
-    // TEST(StringTest, WideString)
-    // {
-    //     std::string latin1_no("abcdefghijklmnopqrstuvwxyz\xe6\xf8\xe5");
-    //     std::string utf8_no("abcdefghijklmnopqrstuvwxyz\xc3\xa6\xc3\xb8\xc3\xa5");
+    TEST(StringTest, WideString)
+    {
+        std::locale LOCALE_UTF8("C.utf8");
+        std::locale LOCALE_LATIN1("en_US.iso885915");
 
-    //     std::wstring widened_latin1_no(to_wstring(latin1_no, LATIN1));
-    //     std::wstring widened_utf8_no(to_wstring(utf8_no, UTF8));
 
-    //     EXPECT_THROW(to_wstring(latin1_no, UTF8), std::invalid_argument);
+        std::string latin1_no("abcdefghijklmnopqrstuvwxyz\xe6\xf8\xe5");
+        std::string utf8_no("abcdefghijklmnopqrstuvwxyz\xc3\xa6\xc3\xb8\xc3\xa5");
 
-    //     EXPECT_EQ(widened_latin1_no.size(), 29);
-    //     EXPECT_EQ(widened_utf8_no.size(), 29);
-    //     EXPECT_EQ(widened_latin1_no, widened_utf8_no);
+        std::wstring widened_latin1_no(to_wstring(latin1_no, LOCALE_LATIN1));
+        std::wstring widened_utf8_no(to_wstring(utf8_no, LOCALE_UTF8));
 
-    //     std::string narrowed_latin1_no(from_wstring(widened_latin1_no, LATIN1));
-    //     std::string narrowed_utf8_no(from_wstring(widened_utf8_no, UTF8));
+        EXPECT_THROW(to_wstring(latin1_no, LOCALE_UTF8), std::invalid_argument);
 
-    //     EXPECT_EQ(narrowed_latin1_no, latin1_no);
-    //     EXPECT_EQ(narrowed_utf8_no, utf8_no);
-    // }
+        EXPECT_EQ(widened_latin1_no.size(), 29);
+        EXPECT_EQ(widened_utf8_no.size(), 29);
+        EXPECT_EQ(widened_latin1_no, widened_utf8_no);
+
+        std::string narrowed_latin1_no(from_wstring(widened_latin1_no, LATIN1));
+        std::string narrowed_utf8_no(from_wstring(widened_utf8_no, UTF8));
+
+        EXPECT_EQ(narrowed_latin1_no, latin1_no);
+        EXPECT_EQ(narrowed_utf8_no, utf8_no);
+    }
 
     // TEST(StringTest, ObfuscateWide)
     // {

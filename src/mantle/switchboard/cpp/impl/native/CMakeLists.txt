@@ -13,7 +13,7 @@ set(LIB_DEPS
 
 set(SOURCES
   central-switch.c++
-  switchboard-central.c++
+  central-switchboard.c++
 )
 
 cc_add_library("${TARGET}"

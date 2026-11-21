@@ -5,6 +5,8 @@
 /// @author Tor Slettnes
 //==============================================================================
 
+#include <iostream>
+
 namespace cc::core::types
 {
     // Partially specialized class template to create appropriate Value instances
@@ -23,7 +25,7 @@ namespace cc::core::types
         }
     };
 
-    template<>
+    template <>
     class ValueBuilder<Value>
     {
     public:
@@ -33,7 +35,7 @@ namespace cc::core::types
         }
     };
 
-    template<>
+    template <>
     class ValueBuilder<ValueList>
     {
     public:
@@ -43,7 +45,7 @@ namespace cc::core::types
         }
     };
 
-    template<>
+    template <>
     class ValueBuilder<TaggedValueList>
     {
     public:
@@ -53,7 +55,7 @@ namespace cc::core::types
         }
     };
 
-    template<>
+    template <>
     class ValueBuilder<KeyValueMap>
     {
     public:
@@ -106,7 +108,6 @@ namespace cc::core::types
         return ValueBuilder<T>::create_from(input);
     }
 
-
     //==========================================================================
 
     // Convencience wrapper around std::get<T>(*this)
@@ -135,6 +136,80 @@ namespace cc::core::types
         {
             return nullptr;
         }
+    }
+
+    template <class T>
+    std::optional<T> Value::try_as() const noexcept
+    {
+        switch (typeid(T))
+        {
+        case typeid(bool):
+            return this->try_as_bool();
+
+        case typeid(char):
+            return this->try_as_char();
+
+        case typeid(std::string):
+            return this->try_as_string();
+
+        case typeid(complex):
+            return this->try_as_complex();
+
+        case typeid(dt::TimePoint):
+            return this->try_as_timepoint();
+
+        case typeid(dt::Duration):
+            return this->try_as_duration();
+
+        case typeid(ByteVector):
+            return this->try_as_bytevector();
+
+        case typeid(ValueList):
+            if (auto ptr = this->as_valuelist_ptr())
+            {
+                return *ptr;
+            }
+            else
+            {
+                return {};
+            }
+
+        case typeid(TaggedValueList):
+            if (auto ptr = this->as_tvlist_ptr())
+            {
+                return *ptr;
+            }
+            else
+            {
+                return {};
+            }
+
+        case typeid(KeyValueMap):
+            if (auto ptr = this->as_kvmap_ptr())
+            {
+                return *ptr;
+            }
+            else
+            {
+                return {};
+            }
+
+        default:
+            if (std::is_arithmetic_v<T>)
+            {
+                return this->try_numeric_cast<T>();
+            }
+            else
+            {
+                return {};
+            }
+        }
+    }
+
+    template <class T>
+    T Value::as(const T &fallback) const noexcept
+    {
+        return this->try_as<T>(fallback).value();
     }
 
     template <class T>

@@ -55,7 +55,7 @@ namespace cc::core::str
     {
         static const std::string bullet = "\u2022";
         std::stringstream ss;
-        for (auto it = s.begin(); it != s.end(); it++)
+        for (const auto &c: s)
         {
             ss << bullet;
         }
