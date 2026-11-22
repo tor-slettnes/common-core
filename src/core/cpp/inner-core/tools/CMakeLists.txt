@@ -1,6 +1,4 @@
 # -*- cmake -*-
 
-if(BUILD_CRYPTO)
-  add_subdirectory(secret-tool)
-endif()
+add_subdirectory(keycrypt-tool)
 

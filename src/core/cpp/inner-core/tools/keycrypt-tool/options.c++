@@ -6,14 +6,14 @@
 //==============================================================================
 
 #include "options.h++"
-#include "platform/aes.h++"
+#include "platform/keycrypt.h++"
 
 namespace cc::core::platform
 {
     Options::Options()
         : Super()
     {
-        this->describe("Secrets encoder/decoder service.");
+        this->describe("Key encryption/decryption tool.");
     }
 
     void Options::add_options()
@@ -45,7 +45,7 @@ namespace cc::core::platform
 
     void Options::showkey()
     {
-        std::cout << platform::aes->key().to_hex()
+        std::cout << platform::keycrypt->key().to_hex()
                   << std::endl;
     }
 
@@ -53,7 +53,7 @@ namespace cc::core::platform
     {
         std::string secret = this->get_arg("SECRET");
 
-        std::cout << platform::aes->encrypt(secret).to_base64()
+        std::cout << platform::keycrypt->encrypt(secret).to_base64()
                   << std::endl;
     }
 
@@ -61,7 +61,7 @@ namespace cc::core::platform
     {
         std::string encoded = this->get_arg("CIPHERTEXT");
 
-        std::cout << platform::aes->decrypt(types::ByteVector::from_base64(encoded))
+        std::cout << platform::keycrypt->decrypt(types::ByteVector::from_base64(encoded))
                   << std::endl;
     }
-}  // namespace cc::platform::vfs
+}  // namespace cc::core::platform

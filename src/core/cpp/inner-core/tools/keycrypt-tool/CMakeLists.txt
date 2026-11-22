@@ -5,7 +5,7 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-set(TOOL_NAME secret-tool)
+set(TOOL_NAME keycrypt-tool)
 set(TARGET ${EXEC_NAME_PREFIX}${TOOL_NAME})
 
 set(LIB_DEPS

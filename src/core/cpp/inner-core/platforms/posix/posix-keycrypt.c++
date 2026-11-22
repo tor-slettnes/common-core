@@ -1,20 +1,17 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file aes.c++
-/// @brief Symmetric encryption/decryption of text (e.g. saved secrets)
+/// @file posix-keycrypt.c++
+/// @brief KeyCrypt crypto functions on POSIX compatible hosts
 /// @author Tor Slettnes
 //==============================================================================
 
-#include "aes.h++"
-#include "platform/symbols.h++"
+#include "posix-keycrypt.h++"
 #include "status/exceptions.h++"
 
 #include <openssl/aes.h>
 #include <openssl/rand.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
-// #include <openssl/pem.h>
-// #include <openssl/hmac.h>
 
 namespace cc::core::platform
 {
@@ -28,18 +25,40 @@ namespace cc::core::platform
         }
     };
 
-    AESProvider::AESProvider(const std::string &provider_name)
-        : Provider(provider_name)
+
+    PosixKeyCryptProvider::PosixKeyCryptProvider(const std::string &provider_name)
+        : Super(provider_name)
     {
     }
 
-    void AESProvider::initialize()
+    void PosixKeyCryptProvider::initialize()
     {
-        Provider::initialize();
+        KeyCryptProvider::initialize();
         this->set_key(this->generate_default_key());
     }
 
-    types::ByteVector AESProvider::generate_default_key() const
+    void PosixKeyCryptProvider::set_key(const types::ByteVector &key)
+    {
+        if (key.size() > AES_KEY_SIZE)
+        {
+            this->key_.assign(key.begin(), key.begin() + AES_KEY_SIZE);
+        }
+        else
+        {
+            this->key_ = key;
+            if (int fill_count = AES_KEY_SIZE - key.size())
+            {
+                this->key_.insert(this->key_.end(), fill_count, ' ');
+            }
+        }
+    }
+
+    const types::ByteVector &PosixKeyCryptProvider::key() const
+    {
+        return this->key_;
+    }
+
+    types::ByteVector PosixKeyCryptProvider::generate_default_key() const
     {
         types::ByteVector key;
         key.reserve(AES_KEY_SIZE);
@@ -64,66 +83,23 @@ namespace cc::core::platform
         return key;
     }
 
-    types::Byte AESProvider::salt_byte(const unsigned int index) const
+    types::Byte PosixKeyCryptProvider::salt_byte(const unsigned int index) const
     {
-        static const std::vector<types::ByteVector> salts{
-            types::ByteVector::from_hex(SALT_1),
-            types::ByteVector::from_hex(SALT_2),
-            types::ByteVector::from_hex(SALT_3),
-            types::ByteVector::from_hex(SALT_4),
-            types::ByteVector::from_hex(SALT_5),
-            types::ByteVector::from_hex(SALT_6),
-            types::ByteVector::from_hex(SALT_7),
-            types::ByteVector::from_hex(SALT_8),
-            types::ByteVector::from_hex(SALT_9),
-            types::ByteVector::from_hex(SALT_10),
-            types::ByteVector::from_hex(SALT_11),
-            types::ByteVector::from_hex(SALT_12),
-            types::ByteVector::from_hex(SALT_13),
-            types::ByteVector::from_hex(SALT_14),
-            types::ByteVector::from_hex(SALT_15),
-            types::ByteVector::from_hex(SALT_16),
-        };
-        return salts.at((index >> 4) & 0xF).at(index & 0xF);
+        static const types::ByteVector salts{SALTS};
+        return salts.at(index % salts.size());
     }
 
-    void AESProvider::set_key(const std::string &key)
-    {
-        this->set_key(types::ByteVector(key));
-    }
-
-    void AESProvider::set_key(const types::ByteVector &key)
-    {
-        if (key.size() > AES_KEY_SIZE)
-        {
-            this->key_.assign(key.begin(), key.begin() + AES_KEY_SIZE);
-        }
-        else
-        {
-            this->key_ = key;
-            if (int fill_count = AES_KEY_SIZE - key.size())
-            {
-                this->key_.insert(this->key_.end(), fill_count, ' ');
-            }
-        }
-    }
-
-    const types::ByteVector &AESProvider::key() const
-    {
-        return this->key_;
-    }
-
-    types::ByteVector AESProvider::encrypt(const std::string &plaintext) const
+    types::ByteVector PosixKeyCryptProvider::encrypt(const std::string &plaintext) const
     {
         return this->evp_encrypt(plaintext);
     }
 
-    std::string AESProvider::decrypt(const types::ByteVector &encrypted) const
+    std::string PosixKeyCryptProvider::decrypt(const types::ByteVector &encrypted) const
     {
         return this->evp_decrypt(encrypted).as_string();
     }
 
-    types::ByteVector AESProvider::evp_encrypt(const types::ByteVector &input) const
+    types::ByteVector PosixKeyCryptProvider::evp_encrypt(const types::ByteVector &input) const
     {
         std::unique_ptr<EVP_CIPHER_CTX, CipherContextDeleter> ctx(
             EVP_CIPHER_CTX_new());
@@ -180,7 +156,7 @@ namespace cc::core::platform
         return output;
     }
 
-    types::ByteVector AESProvider::evp_decrypt(const types::ByteVector &input) const
+    types::ByteVector PosixKeyCryptProvider::evp_decrypt(const types::ByteVector &input) const
     {
         std::unique_ptr<EVP_CIPHER_CTX, CipherContextDeleter> ctx(
             EVP_CIPHER_CTX_new());
@@ -246,7 +222,4 @@ namespace cc::core::platform
         output.resize(update_size + finalize_size);
         return output;
     }
-
-    /// Global instance, populated with the "best" provider for this system.
-    ProviderProxy<AESProvider> aes("aes");
 }  // namespace cc::core::platform
