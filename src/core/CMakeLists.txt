@@ -9,6 +9,7 @@ if(BUILD_SHARED_APPS)
   set(INSTALL_GROUP "core")
 
   set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
+  set(TOOLS_INSTALL_COMPONENT "${INSTALL_GROUP}-tools")
 
   if(BUILD_PYTHON)
     set(PYTHON_INSTALL_COMPONENT "${INSTALL_GROUP}-python")
@@ -64,6 +65,12 @@ cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
   DEB_DEPENDS python3-grpcio python3-protobuf python3-yaml
   DEB_REPLACES "${DEB_REPLACES}"
   DEB_CONFLICTS "${DEB_REPLACES}"
+)
+
+cc_cpack_add_debian_component("${TOOLS_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  SUMMARY "Common Core - Common tools"
+  DESCRIPTION "Common command-line utilities"
 )
 
 cc_cpack_add_group("${INSTALL_GROUP}"

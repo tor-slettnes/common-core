@@ -31,33 +31,6 @@ namespace cc::core::platform
     {
     }
 
-    void PosixKeyCryptProvider::initialize()
-    {
-        KeyCryptProvider::initialize();
-        this->set_key(this->generate_default_key());
-    }
-
-    void PosixKeyCryptProvider::set_key(const types::ByteVector &key)
-    {
-        if (key.size() > AES_KEY_SIZE)
-        {
-            this->key_.assign(key.begin(), key.begin() + AES_KEY_SIZE);
-        }
-        else
-        {
-            this->key_ = key;
-            if (int fill_count = AES_KEY_SIZE - key.size())
-            {
-                this->key_.insert(this->key_.end(), fill_count, ' ');
-            }
-        }
-    }
-
-    const types::ByteVector &PosixKeyCryptProvider::key() const
-    {
-        return this->key_;
-    }
-
     types::ByteVector PosixKeyCryptProvider::generate_default_key() const
     {
         types::ByteVector key;
@@ -81,6 +54,27 @@ namespace cc::core::platform
         }
 
         return key;
+    }
+
+    void PosixKeyCryptProvider::set_key(const types::ByteVector &key)
+    {
+        if (key.size() > AES_KEY_SIZE)
+        {
+            this->key_.assign(key.begin(), key.begin() + AES_KEY_SIZE);
+        }
+        else
+        {
+            this->key_ = key;
+            if (int fill_count = AES_KEY_SIZE - key.size())
+            {
+                this->key_.insert(this->key_.end(), fill_count, ' ');
+            }
+        }
+    }
+
+    const types::ByteVector &PosixKeyCryptProvider::key() const
+    {
+        return this->key_;
     }
 
     types::Byte PosixKeyCryptProvider::salt_byte(const unsigned int index) const

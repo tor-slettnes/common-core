@@ -20,7 +20,7 @@ namespace cc::core::platform
         PosixKeyCryptProvider(const std::string &provider_name = "PosixKeyCryptProvider");
 
     public:
-        void initialize() override;
+        types::ByteVector generate_default_key() const override;
 
         void set_key(const types::ByteVector &key) override;
         const types::ByteVector &key() const override;
@@ -29,7 +29,6 @@ namespace cc::core::platform
         std::string decrypt(const types::ByteVector &encrypted) const override;
 
     private:
-        types::ByteVector generate_default_key() const;
         types::Byte salt_byte(const unsigned int index) const;
         types::ByteVector evp_encrypt(const types::ByteVector &input) const;
         types::ByteVector evp_decrypt(const types::ByteVector &input) const;

@@ -18,6 +18,10 @@ namespace cc::core::platform
     protected:
         KeyCryptProvider(const std::string &provider_name);
 
+        void initialize() override;
+        virtual void initialize_key();
+        virtual types::ByteVector generate_default_key() const = 0;
+
     public:
         virtual void set_key(
             const types::ByteVector &key) = 0;

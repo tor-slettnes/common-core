@@ -7,15 +7,36 @@
 
 #include "keycrypt.h++"
 #include "status/exceptions.h++"
+#include "runtime.h++"
 
 namespace cc::core::platform
 {
+    const std::string ENV_MASTER_KEY = "KEYCRYPT_MASTER_KEY";
+
     const std::string ENCODE_PREAMBLE{"KEYCRYPT"};
     const std::string ENCODE_PREFIX{ENCODE_PREAMBLE + ".v1"};
 
     KeyCryptProvider::KeyCryptProvider(const std::string &provider_name)
         : Provider(provider_name)
     {
+    }
+
+    void KeyCryptProvider::initialize()
+    {
+        Provider::initialize();
+        this->initialize_key();
+    }
+
+    void KeyCryptProvider::initialize_key()
+    {
+        if (auto master_key = runtime->getenv(ENV_MASTER_KEY))
+        {
+            this->set_key(master_key.value());
+        }
+        else
+        {
+            this->set_key(this->generate_default_key());
+        }
     }
 
     std::string KeyCryptProvider::encrypt_and_encode(
