@@ -7,7 +7,9 @@
 
 #include "kafka-endpoint.h++"
 #include "status/exceptions.h++"
+#include "platform/keycrypt.h++"
 #include "logging/logging.h++"
+
 
 namespace cc::kafka
 {
@@ -51,7 +53,13 @@ namespace cc::kafka
     {
         for (const auto &[key, value] : settings)
         {
-            this->set_config(key, value.as_string());
+            std::string s = value.as_string();
+            if (core::platform::keycrypt->is_keycrypt_blob(s))
+            {
+                s = core::platform::keycrypt->extract_and_decrypt(s);
+            }
+
+            this->set_config(key, s);
         }
     }
 

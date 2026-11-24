@@ -33,6 +33,7 @@ namespace cc::core
                           public types::enable_create_shared<SettingsStore>
     {
         using This = SettingsStore;
+        using Super = KeyValueMap;
 
     public:
         using ptr = std::shared_ptr<SettingsStore>;
@@ -56,8 +57,9 @@ namespace cc::core
         ///        during upgrades.
         ///     This default search path may be overriden by the CONFIGPATH
         ///     environment variable.
-        SettingsStore(const types::PathList &filenames = {},
-                      const types::PathList &directories = platform::path->settings_paths());
+        SettingsStore(
+            const types::PathList &filenames = {},
+            const types::PathList &directories = platform::path->settings_paths());
 
         /// @brief
         ///     Constructor that loads from a file on creation.
@@ -67,8 +69,9 @@ namespace cc::core
         /// @param[in] directories
         ///     A list of folders in which to look for relative settings file paths.
         ///     @sa SettingsStore() default constructor.
-        SettingsStore(const fs::path &filename,
-                      const types::PathList &directories = platform::path->settings_paths());
+        SettingsStore(
+            const fs::path &filename,
+            const types::PathList &directories = platform::path->settings_paths());
 
     public:
         using types::enable_create_shared<SettingsStore>::create_shared;
@@ -103,11 +106,13 @@ namespace cc::core
         /// Each resulting path is loaded using the YAML parser if it ends in
         /// `.yaml`, or the JSON parser otherwise.
 
-        bool load(const fs::path &filename,
-                  bool update_filenames = true);
+        bool load(
+            const fs::path &filename,
+            bool update_filenames = true);
 
-        bool load(const std::vector<fs::path> &filenames,
-                  bool update_filenames = true);
+        bool load(
+            const std::vector<fs::path> &filenames,
+            bool update_filenames = true);
 
         /// @brief
         ///     Load and merge in settings from an absolute file or directory
@@ -123,13 +128,15 @@ namespace cc::core
         /// filename suffix (`.json` or `.yaml`, respectively). If the file does
         /// not exist, each of those suffixes is tried in order.
 
-        bool load_from(const fs::path &abspath);
+        bool load_from(
+            const fs::path &abspath);
 
         /// @brief
         ///     Load and merge in settings from an absolute file path.
         /// @param[in] abspath
         ///     Settings file to load.
-        bool load_from_file(const fs::path &abspath);
+        bool load_from_file(
+            const fs::path &abspath);
 
         /// @brief
         ///     Save current settings to the default .json file for this store,
@@ -152,8 +159,9 @@ namespace cc::core
         /// settings were originally loaded from `my-settings.json` (in either
         /// of these folders or merged in from both), then the updated settings
         /// will be saved in `"/etc/local-settings/my-settings.json"`.
-        virtual void save(bool delta_only = false,
-                          bool use_temp_file = true);
+        virtual void save(
+            bool delta_only = false,
+            bool use_temp_file = true);
 
         /// @brief
         ///     Save the delta between default and current current settings to
@@ -162,7 +170,8 @@ namespace cc::core
         /// @note
         ///     Identical to `save(true, use_temp_file)`
 
-        void save_delta(bool use_temp_file = true);
+        void save_delta(
+            bool use_temp_file = true);
 
         /// @brief
         ///     Save current settings to `filename[.json]`.
@@ -191,19 +200,22 @@ namespace cc::core
         ///
         /// If the name does not include a suffix, ".json" is appended.
         ///
-        void save_to(const fs::path &filename,
-                     bool delta_only = false,
-                     bool use_temp_file = true) const;
+        void save_to(
+            const fs::path &filename,
+            bool delta_only = false,
+            bool use_temp_file = true) const;
 
         fs::path filename() const;
         types::PathList filenames() const;
         types::PathList directories() const;
         types::PathList filepaths() const;
 
-    private:
-        types::Value extract_value(const types::ValueList &path,
-                                   const types::Value &fallback = {}) const noexcept;
+        using Super::get;
+        types::Value get(
+            const types::ValueList &path,
+            const types::Value &fallback = {}) const noexcept;
 
+    private:
         /// @brief
         ///    Insert or update a key/value pair into a subtree within the settings store
         /// @param[in] path
@@ -213,20 +225,27 @@ namespace cc::core
         /// @param[in] save
         ///    Save updated settings to the default filename for this store.
         ///    @sa save_delta()
-
-        std::pair<iterator, bool>
-        insert_value(const std::vector<std::string> &path,
-                     const types::Value &value,
-                     bool save);
+        /// @return
+        //     `true` iff insertion took place
+        bool insert(
+            const std::vector<std::string> &path,
+            const types::Value &value,
+            bool save);
 
     private:
-        void write_to(const fs::path &path,
-                      bool delta_only) const;
+        void write_to(
+            const fs::path &path,
+            bool delta_only) const;
 
         SettingsStore default_settings() const;
 
-        static void append_path(const fs::path &path, types::PathList *list);
-        static std::vector<fs::path> extended_paths(const fs::path &path);
+        static void append_path(
+            const fs::path &path,
+            types::PathList *list);
+
+        static std::vector<fs::path> extended_paths(
+            const fs::path &path);
+
         static std::set<fs::path> settings_suffixes();
 
     private:

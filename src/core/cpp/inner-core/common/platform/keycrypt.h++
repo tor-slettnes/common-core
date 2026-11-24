@@ -19,11 +19,32 @@ namespace cc::core::platform
         KeyCryptProvider(const std::string &provider_name);
 
     public:
-        virtual void set_key(const types::ByteVector &key) = 0;
+        virtual void set_key(
+            const types::ByteVector &key) = 0;
+
         virtual const types::ByteVector &key() const = 0;
 
-        virtual types::ByteVector encrypt(const std::string &plaintext) const = 0;
-        virtual std::string decrypt(const types::ByteVector &encrypted) const = 0;
+        virtual types::ByteVector encrypt(
+            const std::string &plaintext) const = 0;
+
+        virtual std::string decrypt(
+            const types::ByteVector &encrypted) const = 0;
+
+        std::string encrypt_and_encode(
+            const std::string &plaintext) const;
+
+        std::string extract_and_decrypt(
+            const std::string &encoded) const;
+
+        std::optional<std::string> try_extract_and_decrypt(
+            const std::string &encoded) const;
+
+        bool is_keycrypt_blob(
+            const std::string &encoded_text) const;
+
+    private:
+        std::pair<std::string, std::string> extract_preamble_and_payload(
+            const std::string &encoded_text) const;
     };
 
     /// Global instance, populated with the "best" provider for this system.

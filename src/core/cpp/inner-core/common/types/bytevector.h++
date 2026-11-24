@@ -115,7 +115,9 @@ namespace cc::core::types
         ///     A new ByteVector instance
         /// @exception exception::InvalidArgument
         ///     Invalid Base64 data encountered
-        static ByteVector from_base64(const std::string_view &string);
+        static ByteVector from_base64(
+            const std::string_view &string,
+            bool ignore_whitespace = true);
 
         /// @brief
         ///     Try to create a new ByteVector instance from a Base64-encoded string.
@@ -155,7 +157,15 @@ namespace cc::core::types
             const std::unordered_set<char> &allowed_fillers = {});
 
     private:
-        static Byte digit_value(char c);
+        static void init_hex_values();
+        static void init_b64_values();
+
+    private:
+        static std::vector<std::uint8_t> hex_values;
+        static const std::vector<std::string> hex_digits;
+
+        static std::vector<int> b64_values;
+        static const std::string b64_symbols;
     };
 }  // namespace cc::core::types
 

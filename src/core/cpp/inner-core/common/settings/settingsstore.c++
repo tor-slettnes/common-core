@@ -22,8 +22,9 @@ namespace cc::core
     constexpr auto JSON_SUFFIX = ".json";
     constexpr auto YAML_SUFFIX = ".yaml";
 
-    SettingsStore::SettingsStore(const types::PathList &filenames,
-                                 const types::PathList &directories)
+    SettingsStore::SettingsStore(
+        const types::PathList &filenames,
+        const types::PathList &directories)
         : directories_(directories)
     {
         for (const auto &filename : filenames)
@@ -32,8 +33,9 @@ namespace cc::core
         }
     }
 
-    SettingsStore::SettingsStore(const fs::path &filename,
-                                 const types::PathList &directories)
+    SettingsStore::SettingsStore(
+        const fs::path &filename,
+        const types::PathList &directories)
         : directories_(directories)
     {
         this->load(filename);
@@ -51,8 +53,9 @@ namespace cc::core
         return this->load(this->filenames_, false);
     }
 
-    bool SettingsStore::load(const std::vector<fs::path> &filenames,
-                             bool update_filenames)
+    bool SettingsStore::load(
+        const std::vector<fs::path> &filenames,
+        bool update_filenames)
     {
         bool success = false;
         for (const fs::path &filename : filenames)
@@ -62,8 +65,9 @@ namespace cc::core
         return success;
     }
 
-    bool SettingsStore::load(const fs::path &filename,
-                             bool update_filenames)
+    bool SettingsStore::load(
+        const fs::path &filename,
+        bool update_filenames)
     {
         bool success = false;
         if (update_filenames)
@@ -88,7 +92,8 @@ namespace cc::core
         return success;
     }
 
-    bool SettingsStore::load_from(const fs::path &abspath)
+    bool SettingsStore::load_from(
+        const fs::path &abspath)
     {
         bool success = false;
         if (!This::settings_suffixes().count(abspath.extension()) &&
@@ -113,7 +118,8 @@ namespace cc::core
         return success;
     }
 
-    bool SettingsStore::load_from_file(const fs::path &abspath)
+    bool SettingsStore::load_from_file(
+        const fs::path &abspath)
     {
         types::Value value;
         try
@@ -156,7 +162,8 @@ namespace cc::core
         }
     }
 
-    void SettingsStore::save_delta(bool use_temp_file)
+    void SettingsStore::save_delta(
+        bool use_temp_file)
     {
         this->save(true, use_temp_file);
     }
@@ -170,9 +177,10 @@ namespace cc::core
         }
     }
 
-    void SettingsStore::save_to(const fs::path &filename,
-                                bool delta_only,
-                                bool use_temp_file) const
+    void SettingsStore::save_to(
+        const fs::path &filename,
+        bool delta_only,
+        bool use_temp_file) const
     {
         fs::path path = platform::path->config_folder() /
                         platform::path->extended_filename(filename, JSON_SUFFIX);
@@ -196,8 +204,9 @@ namespace cc::core
         }
     }
 
-    void SettingsStore::write_to(const fs::path &path,
-                                 bool delta_only) const
+    void SettingsStore::write_to(
+        const fs::path &path,
+        bool delta_only) const
     {
         if (delta_only)
         {
@@ -246,8 +255,9 @@ namespace cc::core
         return this->filepaths_;
     }
 
-    types::Value SettingsStore::extract_value(const types::ValueList &path,
-                                              const types::Value &fallback) const noexcept
+    types::Value SettingsStore::get(
+        const types::ValueList &path,
+        const types::Value &fallback) const noexcept
     {
         types::Value value = KeyValueMap::create_shared(*this);
         for (const types::Value &element : path)
@@ -268,13 +278,13 @@ namespace cc::core
         return value;
     }
 
-    std::pair<SettingsStore::iterator, bool>
-    SettingsStore::insert_value(const std::vector<std::string> &path,
-                                const types::Value &value,
-                                bool save)
+    bool SettingsStore::insert(
+        const std::vector<std::string> &path,
+        const types::Value &value,
+        bool save)
     {
         types::KeyValueMap *current = this;
-        std::pair<SettingsStore::iterator, bool> result = {{}, false};
+        bool inserted = false;
         if (path.size())
         {
             for (auto path_it = path.begin(); path_it != path.end() - 1; path_it++)
@@ -289,7 +299,7 @@ namespace cc::core
                     current = next_map->get();
                 }
             }
-            result = current->insert_or_assign(path.back(), value);
+            inserted = current->insert_or_assign(path.back(), value).second;
         }
 
         if (save)
@@ -297,11 +307,12 @@ namespace cc::core
             this->save(true);
         }
 
-        return result;
+        return inserted;
     }
 
-    void SettingsStore::append_path(const fs::path &path,
-                                    types::PathList *list)
+    void SettingsStore::append_path(
+        const fs::path &path,
+        types::PathList *list)
     {
         if (std::none_of(list->begin(),
                          list->end(),
@@ -313,7 +324,8 @@ namespace cc::core
         }
     }
 
-    std::vector<fs::path> SettingsStore::extended_paths(const fs::path &path)
+    std::vector<fs::path> SettingsStore::extended_paths(
+        const fs::path &path)
     {
         std::vector<fs::path> paths = {path};
 

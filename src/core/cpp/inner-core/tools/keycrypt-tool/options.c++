@@ -53,7 +53,7 @@ namespace cc::core::platform
     {
         std::string secret = this->get_arg("SECRET");
 
-        std::cout << platform::keycrypt->encrypt(secret).to_base64()
+        std::cout << platform::keycrypt->encrypt_and_encode(secret)
                   << std::endl;
     }
 
@@ -61,7 +61,16 @@ namespace cc::core::platform
     {
         std::string encoded = this->get_arg("CIPHERTEXT");
 
-        std::cout << platform::keycrypt->decrypt(types::ByteVector::from_base64(encoded))
-                  << std::endl;
+        if (platform::keycrypt->is_keycrypt_blob(encoded))
+        {
+            std::cout << platform::keycrypt->extract_and_decrypt(encoded)
+                      << std::endl;
+        }
+        else
+        {
+            auto bytes = types::ByteVector::from_base64(encoded);
+            std::cout << platform::keycrypt->decrypt(bytes)
+                      << std::endl;
+        }
     }
 }  // namespace cc::core::platform

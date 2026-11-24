@@ -10,6 +10,7 @@
 
 #include <stdexcept>
 #include <cstddef>
+#include <cctype>
 
 namespace cc::core::types
 {
@@ -32,7 +33,7 @@ namespace cc::core::types
 
     void ByteVector::to_stream(std::ostream &stream) const
     {
-        static const std::string hex_digits = "0123456789abcdef";
+        const std::string &digits = This::hex_digits.at(0);
 
         for (Byte byte : *this)
         {
@@ -46,7 +47,9 @@ namespace cc::core::types
             }
             else
             {
-                stream << "\\x" << hex_digits.at(byte >> 4) << hex_digits.at(byte & 0xF);
+                stream << "\\x"
+                       << digits.at(byte >> 4)
+                       << digits.at(byte & 0xF);
             }
         }
     }
@@ -87,11 +90,6 @@ namespace cc::core::types
 
     std::string ByteVector::to_base64() const
     {
-        static const char code_table[] =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "abcdefghijklmnopqrstuvwxyz"
-            "0123456789+/";
-
         const std::size_t size = this->size();
         std::string encoded;
         encoded.reserve(((size / 3) + (size % 3 > 0)) * 4);
@@ -104,102 +102,97 @@ namespace cc::core::types
             temp = (*it++) << 16;
             temp += (*it++) << 8;
             temp += (*it++);
-            encoded.append(1, code_table[(temp & 0x00FC0000) >> 18]);
-            encoded.append(1, code_table[(temp & 0x0003F000) >> 12]);
-            encoded.append(1, code_table[(temp & 0x00000FC0) >> 6]);
-            encoded.append(1, code_table[(temp & 0x0000003F)]);
+            encoded.append(1, This::b64_symbols[(temp & 0x00FC0000) >> 18]);
+            encoded.append(1, This::b64_symbols[(temp & 0x0003F000) >> 12]);
+            encoded.append(1, This::b64_symbols[(temp & 0x00000FC0) >> 6]);
+            encoded.append(1, This::b64_symbols[(temp & 0x0000003F)]);
         }
 
         switch (size % 3)
         {
         case 1:
             temp = (*it++) << 16;
-            encoded.append(1, code_table[(temp & 0x00FC0000) >> 18]);
-            encoded.append(1, code_table[(temp & 0x0003F000) >> 12]);
+            encoded.append(1, This::b64_symbols[(temp & 0x00FC0000) >> 18]);
+            encoded.append(1, This::b64_symbols[(temp & 0x0003F000) >> 12]);
             encoded.append(2, pad_char);
             break;
 
         case 2:
             temp = (*it++) << 16;
             temp += (*it++) << 8;
-            encoded.append(1, code_table[(temp & 0x00FC0000) >> 18]);
-            encoded.append(1, code_table[(temp & 0x0003F000) >> 12]);
-            encoded.append(1, code_table[(temp & 0x00000FC0) >> 6]);
+            encoded.append(1, This::b64_symbols[(temp & 0x00FC0000) >> 18]);
+            encoded.append(1, This::b64_symbols[(temp & 0x0003F000) >> 12]);
+            encoded.append(1, This::b64_symbols[(temp & 0x00000FC0) >> 6]);
             encoded.append(1, pad_char);
             break;
         }
         return encoded;
     }
 
-    ByteVector ByteVector::from_base64(const std::string_view &input)
+    ByteVector ByteVector::from_base64(
+        const std::string_view &input,
+        bool ignore_whitespace)
     {
-        if (input.length() % 4 > 0)
+        ByteVector decoded;
+        decoded.reserve((input.length() / 4) * 3);
+
+        std::size_t sextet_group = 0;
+        std::uint32_t temp = 0;
+        This::init_b64_values();
+
+        for (auto it = input.begin(); it < input.end(); it++)
+        {
+            if (auto value = This::b64_values.at(*it); value >= 0)
+            {
+                temp = (temp << 6) | value;
+                if (++sextet_group == 4)
+                {
+                    decoded.push_back((temp >> 16) & 0x000000FF);
+                    decoded.push_back((temp >> 8) & 0x000000FF);
+                    decoded.push_back(temp & 0x000000FF);
+                    temp = 0;
+                    sextet_group = 0;
+                }
+            }
+            else if (*it == pad_char)
+            {
+                switch (sextet_group)
+                {
+                case 2:
+                    decoded.push_back((temp >> 4) & 0x000000FF);
+                    return decoded;
+
+                case 3:
+                    decoded.push_back((temp >> 10) & 0x000000FF);
+                    decoded.push_back((temp >> 2) & 0x000000FF);
+                    return decoded;
+
+                default:
+                    throwf(std::invalid_argument,
+                           "Misaligned padding in base64 input: "
+                           "expected final group of 2-4 sextets; got %d",
+                           sextet_group);
+                }
+            }
+            else if (!std::isspace(*it))
+            {
+                throwf(
+                    std::invalid_argument,
+                    "Invalid base64 character at input offset %d: '%c'",
+                    std::distance(input.begin(), it),
+                    *it);
+            }
+        }
+
+        if (sextet_group)
         {
             throwf(std::invalid_argument,
-                   "Invalid base64 string length %d, must be a multiple of 4",
-                   input.size());
+                   "Invalid base64 string length: "
+                   "must contain a multiple of 4 characters; got %s",
+                   decoded.size() * 4 / 3 + sextet_group);
         }
 
-        std::size_t padding = 0;
-        for (std::string::size_type i = 0; i < 2; i++)
-        {
-            if ((input.length() > i) && input[input.length() - 1 - i] == pad_char)
-            {
-                padding++;
-            }
-        }
-
-        ByteVector decoded;
-        decoded.reserve(((input.length() / 4) * 3) - padding);
-
-        for (auto it = input.begin(); it < input.end();)
-        {
-            std::uint32_t temp = 0;
-            for (std::size_t i = 0; i < 4; i++)
-            {
-                temp <<= 6;
-                if ('A' <= *it && *it <= 'Z')
-                    temp |= *it - 0x41;
-                else if ('a' <= *it && *it <= 'z')
-                    temp |= *it - 0x47;
-                else if ('0' <= *it && *it <= '9')
-                    temp |= *it + 0x04;
-                else if ('+' == *it)
-                    temp |= 0x3E;
-                else if ('/' == *it)
-                    temp |= 0x3F;
-                else if (pad_char == *it)
-                {
-                    switch (input.end() - it)
-                    {
-                    case 1:
-                        decoded.push_back((temp >> 16) & 0x000000FF);
-                        decoded.push_back((temp >> 8) & 0x000000FF);
-                        return decoded;
-
-                    case 2:
-                        decoded.push_back((temp >> 10) & 0x000000FF);
-                        return decoded;
-
-                    default:
-                        throwf(std::invalid_argument,
-                               "Invalid padding length %d in base64!",
-                               input.end() - it);
-                    }
-                }
-                else
-                {
-                    throwf(std::invalid_argument,
-                           "Invalid character '%c' in base64!",
-                           *it);
-                }
-                ++it;
-            }
-
-            decoded.push_back((temp >> 16) & 0x000000FF);
-            decoded.push_back((temp >> 8) & 0x000000FF);
-            decoded.push_back(temp & 0x000000FF);
-        }
+        decoded.shrink_to_fit();
         return decoded;
     }
 
@@ -220,11 +213,7 @@ namespace cc::core::types
         std::size_t groupsize,
         std::size_t maxsize) const
     {
-        static const std::vector<std::string> hex_digits = {
-            "0123456789abcdef",
-            "0123456789ABCDEF",
-        };
-        const std::string &xdigits = hex_digits.at(uppercase);
+        const std::string &xdigits = This::hex_digits.at(uppercase);
 
         std::string ellipsis;
         std::size_t size = this->size();
@@ -260,36 +249,39 @@ namespace cc::core::types
         const std::string &input,
         const std::unordered_set<char> &allowed_fillers)
     {
-
         ByteVector decoded;
         decoded.reserve(input.size() / 2);
         bool needs_shrinking = false;
         const char *high_nibble = nullptr;
-        for (const char &c : input)
+        This::init_hex_values();
+
+        for (auto it = input.begin(); it != input.end(); it++)
         {
-            if (std::isxdigit(static_cast<unsigned char>(c)))
+            if (std::isxdigit(static_cast<unsigned char>(*it)))
             {
                 if (high_nibble)
                 {
                     decoded.push_back(
-                        This::digit_value(*high_nibble) << 4 |
-                        This::digit_value(c));
+                        This::hex_values.at(*high_nibble) << 4 |
+                        This::hex_values.at(*it));
                     high_nibble = nullptr;
                 }
                 else
                 {
-                    high_nibble = &c;
+                    high_nibble = &*it;
                 }
             }
-            else if (allowed_fillers.count(c))
+            else if (allowed_fillers.count(*it))
             {
                 needs_shrinking = true;
             }
             else
             {
-                throwf(std::invalid_argument,
-                       "Invalid hexadecimal literal: '%c'",
-                       c);
+                throwf(
+                    std::invalid_argument,
+                    "Invalid hexadecimal literal at input offset %d: '%c'",
+                    std::distance(input.begin(), it),
+                    *it);
             }
         }
 
@@ -308,28 +300,45 @@ namespace cc::core::types
         return decoded;
     }
 
-    Byte ByteVector::digit_value(char c)
+    void ByteVector::init_hex_values()
     {
-        static std::vector<std::uint8_t> digit_values;
-
         // On first invocation, initialize hex digit lookup table
-        if (digit_values.empty())
+        if (This::hex_values.empty())
         {
-            digit_values.resize(2 << 8);
-            for (char c = '0'; c <= '9'; c++)
+            This::hex_values.resize(2 << 8);
+            for (const std::string &digits : This::hex_digits)
             {
-                digit_values.at(c) = c - '0';
-            }
-            for (char c = 'A'; c <= 'F'; c++)
-            {
-                digit_values.at(c) = (c - 'A') + 0xA;
-            }
-            for (char c = 'a'; c <= 'f'; c++)
-            {
-                digit_values.at(c) = (c - 'a') + 0xA;
+                int value = 0;
+                for (char digit : digits)
+                {
+                    This::hex_values.at(digit) = value++;
+                }
             }
         }
-        return digit_values.at(static_cast<std::uint8_t>(c));
     }
 
+    void ByteVector::init_b64_values()
+    {
+        if (This::b64_values.empty())
+        {
+            This::b64_values.assign(256, -1);
+            int value = 0;
+            for (char symbol : This::b64_symbols)
+            {
+                This::b64_values[symbol] = value++;
+            }
+        }
+    }
+
+    std::vector<std::uint8_t> ByteVector::hex_values;
+    const std::vector<std::string> ByteVector::hex_digits = {
+        "0123456789abcdef",
+        "0123456789ABCDEF",
+    };
+
+    std::vector<int> ByteVector::b64_values;
+    const std::string ByteVector::b64_symbols =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz"
+        "0123456789+/";
 }  // namespace cc::core::types
