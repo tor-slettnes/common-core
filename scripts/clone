@@ -44,7 +44,7 @@ copyfile()
 
 
         sed -e "s,tor@slett.net,${email},g" \
-            -e "s,\([^[:alnum:]_.]\|^\)cc,\1${shortname,,},g" \
+            -e "s,\([^[:alnum:]_.<]\|^\)cc,\1${shortname,,},g" \
             -e "s,\([^[:alnum:]_.]\|^\)CC_,\1${shortname^^}_,g" \
             -e "s,\([^[:alnum:]_.]\|^\)CC\([^A-Z]\|$\),\1${shortname}\2,g" \
             -e "s,Common Core,${longname},g" \

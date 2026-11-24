@@ -42,7 +42,7 @@ namespace cc::core::platform
     std::string KeyCryptProvider::encrypt_and_encode(
         const std::string &plaintext) const
     {
-        return ENCODE_PREFIX + ":" + this->encrypt(plaintext).to_base64();
+        return ENCODE_PREFIX + ";" + this->encrypt(plaintext).to_base64();
     }
 
     std::string KeyCryptProvider::extract_and_decrypt(
@@ -92,8 +92,8 @@ namespace cc::core::platform
     {
         const std::regex rx_preamble_and_payload{
             "^(?:\\s*(" + ENCODE_PREAMBLE +
-            "\\.v\\d+):)?"  // (1) preamble
-            "([^=]+=*)$"    // (2) payload
+            "\\.v\\d+)[\\W]?)?"  // (1) preamble
+            "\\s*([^=]+=*)$"     // (2) payload
         };
 
         std::smatch match;
