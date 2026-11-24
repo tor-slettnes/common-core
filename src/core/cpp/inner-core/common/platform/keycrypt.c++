@@ -97,8 +97,6 @@ namespace cc::core::platform
         };
 
         std::smatch match;
-        std::pair<std::string, std::string> value_pair;
-
         if (std::regex_search(encoded_text, match, rx_preamble_and_payload))
         {
             return {match.str(1), match.str(2)};
