@@ -7,7 +7,7 @@
 
 #pragma once
 #include "provider.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 #include <unordered_set>
 

@@ -7,7 +7,7 @@
 
 #pragma once
 #include "switch.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 namespace cc::platform::switchboard
 {

@@ -10,7 +10,7 @@
 #include "platform/init.h++"
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 #include <curl/curl.h>
 

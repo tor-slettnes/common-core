@@ -9,7 +9,7 @@
 #include "sysconfig-types.h++"
 #include "platform/provider.h++"
 #include "chrono/date-time.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 namespace cc::platform::sysconfig
 {

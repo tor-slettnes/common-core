@@ -36,6 +36,6 @@ add_subdirectory(platform)
 add_subdirectory(logging)
 add_subdirectory(settings)
 add_subdirectory(status)
+add_subdirectory(signal)
 add_subdirectory(thread)
 add_subdirectory(types)
-

@@ -249,6 +249,7 @@ option(BUILD_PROTOBUF        "Build support for Google Protocol Buffers" ON)
 option(BUILD_PYTHON_IO       "Build Python embedded environment for C++" ON)
 
 # Platform integration
+option(BUILD_UDEV            "Build support for UDev" ON)
 option(BUILD_DBUS            "Build support for D-Bus" ON)
 option(BUILD_DNSSD_AVAHI     "Build suport for DNS-SD via Avahi" ON)
 

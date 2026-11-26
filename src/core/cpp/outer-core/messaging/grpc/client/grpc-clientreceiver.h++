@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 #include "status/exceptions.h++"
 
 #include <grpcpp/impl/codegen/sync_stream.h>

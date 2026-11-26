@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "netconfig-signals.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 namespace cc::platform::netconfig
 {

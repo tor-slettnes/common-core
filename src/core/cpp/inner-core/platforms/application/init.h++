@@ -5,7 +5,7 @@
 //==============================================================================
 
 #pragma once
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 #include "platform/init.h++"
 
 namespace cc::core::application

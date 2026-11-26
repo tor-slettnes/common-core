@@ -8,7 +8,7 @@
 #pragma once
 #include "sysconfig-types.h++"
 #include "platform/provider.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 #include "types/listable.h++"
 
 namespace cc::platform::sysconfig

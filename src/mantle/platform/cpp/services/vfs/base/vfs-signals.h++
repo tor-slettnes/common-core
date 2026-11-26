@@ -7,7 +7,7 @@
 
 #pragma once
 #include "vfs-context.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 namespace cc::platform::vfs
 {

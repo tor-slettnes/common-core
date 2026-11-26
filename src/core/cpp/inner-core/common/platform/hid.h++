@@ -10,7 +10,7 @@
 #include "types/bytevector.h++"
 #include "types/filesystem.h++"
 #include "chrono/date-time.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 #include <tuple>
 

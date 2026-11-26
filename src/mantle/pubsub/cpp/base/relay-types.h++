@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 #include "logging/logging.h++"
 #include "types/value.h++"
 #include "types/getter.h++"

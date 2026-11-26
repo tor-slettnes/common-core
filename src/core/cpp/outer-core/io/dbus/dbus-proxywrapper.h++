@@ -8,7 +8,7 @@
 #pragma once
 #include "dbus-types.h++"
 #include "glib-variant.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 #include <unordered_map>
 #include <map>

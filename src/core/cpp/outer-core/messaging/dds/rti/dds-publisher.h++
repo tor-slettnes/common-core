@@ -7,7 +7,7 @@
 
 #pragma once
 #include "dds-endpoint.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 #include "logging/logging.h++"
 
 #include <dds/pub/ddspub.hpp>

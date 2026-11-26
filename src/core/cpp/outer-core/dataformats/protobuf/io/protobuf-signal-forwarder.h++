@@ -10,7 +10,7 @@
 //==============================================================================
 
 #pragma once
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 #include "platform/symbols.h++"
 #include "platform/init.h++"
 #include "cc/protobuf/signal/signal.pb.h"  // Generated from `signal.proto`

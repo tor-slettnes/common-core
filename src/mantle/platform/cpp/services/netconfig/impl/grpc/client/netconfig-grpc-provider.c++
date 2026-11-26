@@ -9,7 +9,7 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-netconfig-types.h++"
 #include "protobuf-inline.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 namespace cc::platform::netconfig::grpc
 {

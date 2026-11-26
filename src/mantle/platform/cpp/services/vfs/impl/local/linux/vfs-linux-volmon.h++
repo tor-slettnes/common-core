@@ -8,7 +8,7 @@
 #pragma once
 #include "types/value.h++"
 #include "types/listable.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 #include <libudev.h>
 
@@ -57,6 +57,7 @@ namespace cc::platform::vfs::local::volume
 
     struct Event : public core::types::Listable
     {
+        using This = Event;
         using KeyValueMap = core::types::KeyValueMap;
         using ValueList = std::vector<std::string>;
         using ValueSet = std::set<std::string>;

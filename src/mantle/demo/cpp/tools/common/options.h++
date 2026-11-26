@@ -8,7 +8,7 @@
 #pragma once
 #include "argparse/command.h++"
 #include "demo-api.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 namespace cc::demo
 {

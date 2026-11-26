@@ -8,7 +8,7 @@
 #pragma once
 #include "multilogger-types.h++"
 #include "logging/message/scope.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 #include "types/loggable.h++"
 
 #include <optional>

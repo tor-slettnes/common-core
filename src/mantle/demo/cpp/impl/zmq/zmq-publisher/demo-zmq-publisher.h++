@@ -12,7 +12,7 @@
 #include "zmq-publisher.h++"
 
 #include "types/create-shared.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 namespace cc::demo::zmq
 {

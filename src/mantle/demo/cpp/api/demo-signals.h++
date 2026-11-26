@@ -10,7 +10,7 @@
 #include "demo-types.h++"
 
 // Shared modules
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 namespace cc::demo
 {

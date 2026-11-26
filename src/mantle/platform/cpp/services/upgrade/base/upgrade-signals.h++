@@ -7,7 +7,7 @@
 
 #pragma once
 #include "upgrade-types.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 namespace cc::platform::upgrade
 {

@@ -9,7 +9,7 @@
 #include "sysconfig-types.h++"
 #include "platform/provider.h++"
 #include "types/listable.h++"
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 
 namespace cc::platform::sysconfig
 {

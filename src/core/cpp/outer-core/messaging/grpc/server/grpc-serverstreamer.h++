@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "thread/signaltemplate.h++"
+#include "signal/signals.h++"
 #include "thread/blockingqueue.h++"
 #include "status/exceptions.h++"
 #include "platform/init.h++"

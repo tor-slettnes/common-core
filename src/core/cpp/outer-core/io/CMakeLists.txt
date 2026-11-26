@@ -8,3 +8,7 @@
 if(BUILD_DBUS)
   add_subdirectory(dbus)
 endif()
+
+# if(BUILD_UDEV)
+#   add_subdirectory(udev)
+# endif()
