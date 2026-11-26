@@ -160,7 +160,9 @@ namespace cc::core::signal
         ///     Signal value.
         /// @return
         ///     Whether or not the signal was emitted.
-        bool emit_if_changed(const KeyType &key, const DataType &value)
+        bool emit_if_changed(
+            const KeyType &key,
+            const DataType &value)
         {
             std::scoped_lock lck(this->signal_mtx);
             MappingAction action(
