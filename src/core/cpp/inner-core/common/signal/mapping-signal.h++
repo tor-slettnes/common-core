@@ -21,9 +21,9 @@ namespace cc::core::signal
     ///
     /// Example:
     /// @code
-    ///      void on_my_signal(MappingSignal::MappingAction change,
-    ///                       const std::string &key,
-    ///                       const MyDataType &data) {...}
+    ///      void on_my_signal(MappingAction change,
+    ///                        const std::string &key,
+    ///                        const MyDataType &data) {...}
     ///      ...
     ///      MappingSignal<MyDataType> my_mapping_signal;
     ///      signal.connect(on_my_mapping_signal);
@@ -42,7 +42,9 @@ namespace cc::core::signal
     public:
         using Slot = std::function<void(MappingAction, KeyType, DataType)>;
 
-        MappingSignal(const std::string &id, bool caching = false)
+        MappingSignal(
+            const std::string &id,
+            bool caching = false)
             : Super(id, caching)
         {
         }
@@ -52,7 +54,8 @@ namespace cc::core::signal
         ///     Signal handle.
         /// @return
         ///     Boolean indicating whether the specified signal handle is registered.
-        bool connected(const Handle &handle) const
+        bool connected(
+            const Handle &handle) const
         {
             return this->slots_.count(handle);
         }
@@ -64,7 +67,9 @@ namespace cc::core::signal
         ///     Invoke handler immediately with previously cached values, if any
         /// @return
         ///     Unique handle which can later be used to disconnect
-        Handle connect(const Slot &slot, bool emit_cached = true)
+        Handle connect(
+            const Slot &slot,
+            bool emit_cached = true)
         {
             Handle handle(this->unique_handle());
             this->connect(handle, slot, emit_cached);
@@ -93,7 +98,8 @@ namespace cc::core::signal
         /// @param[in] handle
         ///     Identity identity of the callback handler to be removed.
 
-        void disconnect(const Handle &handle) override
+        void disconnect(
+            const Handle &handle) override
         {
             std::scoped_lock lck(this->signal_mtx);
             this->slots_.erase(handle);
@@ -109,7 +115,10 @@ namespace cc::core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t emit(MappingAction action, const KeyType &key, const DataType &value)
+        std::size_t emit(
+            MappingAction action,
+            const KeyType &key,
+            const DataType &value)
         {
             std::scoped_lock lck(this->signal_mtx);
             if (this->caching())
@@ -140,7 +149,9 @@ namespace cc::core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t emit(const KeyType &key, const DataType &value)
+        std::size_t emit(
+            const KeyType &key,
+            const DataType &value)
         {
             MappingAction action(
                 !this->caching()       ? MAP_UPDATE
@@ -193,7 +204,9 @@ namespace cc::core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t clear(const KeyType &key, const DataType &value = {})
+        std::size_t clear(
+            const KeyType &key,
+            const DataType &value = {})
         {
             return this->emit(MAP_REMOVAL, key, value);
         }
@@ -202,7 +215,8 @@ namespace cc::core::signal
         ///     Emit a REMOVED signal if \p key is still in in the signal cache
         /// @param[in] key
         ///     Mapping key.
-        std::size_t clear_if_cached(const KeyType &key)
+        std::size_t clear_if_cached(
+            const KeyType &key)
         {
             std::scoped_lock lck(this->signal_mtx);
             if (auto nh = this->cached_.extract(key))
@@ -267,7 +281,9 @@ namespace cc::core::signal
         /// @return
         ///    Most recent data value emitted for the specified key, otherwise
         ///    the provided fallback value.
-        DataType get_cached(const std::string &key, const DataType &fallback)
+        DataType get_cached(
+            const std::string &key,
+            const DataType &fallback)
         {
             return this->get_cached(key).value_or(fallback);
         }
@@ -278,7 +294,8 @@ namespace cc::core::signal
         ///    Mapping key
         /// @return
         ///    Boolean indicator of whether the specified key exists
-        bool is_cached(const std::string &key) noexcept
+        bool is_cached(
+            const std::string &key) noexcept
         {
             std::scoped_lock lck(this->signal_mtx);
             return this->cached_.count(key);
@@ -310,7 +327,8 @@ namespace cc::core::signal
         /// @return
         ///     The number of signals emitted
         template <class MapType>
-        std::size_t synchronize(const MapType &update)
+        std::size_t synchronize(
+            const MapType &update)
         {
             std::unordered_map<KeyType, DataType> previous = this->get_cached();
             std::size_t count = 0;
@@ -339,13 +357,16 @@ namespace cc::core::signal
         }
 
     protected:
-        void update_cache(const KeyType &key, const DataType &value)
+        void update_cache(
+            const KeyType &key,
+            const DataType &value)
         {
             this->cached_.insert_or_assign(key, value);
         }
 
-        void emit_cached_to(const std::string &handle,
-                            const Slot &callback)
+        void emit_cached_to(
+            const std::string &handle,
+            const Slot &callback)
         {
             for (const auto &pair : this->cached_)
             {
@@ -353,9 +374,10 @@ namespace cc::core::signal
             }
         }
 
-        std::size_t sendall(MappingAction action,
-                            const KeyType &key,
-                            const DataType &value = {})
+        std::size_t sendall(
+            MappingAction action,
+            const KeyType &key,
+            const DataType &value = {})
         {
             std::size_t count = 0;
             for (const auto &[receiver, method] : this->slots_)
@@ -365,11 +387,12 @@ namespace cc::core::signal
             return count;
         }
 
-        bool callback(const std::string &receiver,
-                      const Slot &method,
-                      MappingAction action,
-                      const KeyType &key,
-                      const DataType &value)
+        bool callback(
+            const std::string &receiver,
+            const Slot &method,
+            MappingAction action,
+            const KeyType &key,
+            const DataType &value)
         {
             return this->safe_invoke(
                 str::format("%s(%r, %r, {...})", receiver, action, key),

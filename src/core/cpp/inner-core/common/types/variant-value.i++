@@ -18,10 +18,9 @@ namespace cc::core::types
     public:
         static Value create_from(const T &input)
         {
-            return input;
-            // std::ostringstream ss;
-            // ss << input;
-            // return ss.str();
+            std::ostringstream ss;
+            ss << input;
+            return ss.str();
         }
     };
 

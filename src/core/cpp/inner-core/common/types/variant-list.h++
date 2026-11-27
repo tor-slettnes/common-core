@@ -100,11 +100,7 @@ namespace cc::core::types
         template <class ContainerT>
         void populate_from(const ContainerT &container)
         {
-            this->reserve(this->size() + container.size());
-            for (const auto &item : container)
-            {
-                this->emplace_back(item);
-            }
+            (*this) << container;
         }
 
         template <class ContainerT>

@@ -238,10 +238,7 @@ namespace cc::core::types
         template <class ContainerT>
         void populate_from(const ContainerT &container)
         {
-            for (const auto &[key, value] : container)
-            {
-                this->insert_or_assign(key, value);
-            }
+            (*this) << container;
         }
 
         template <class ContainerT>

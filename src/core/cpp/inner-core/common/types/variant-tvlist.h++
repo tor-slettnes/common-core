@@ -195,16 +195,6 @@ namespace cc::core::types
             return this->get(index).try_convert_to<T>();
         }
 
-        template <class ContainerT>
-        void populate_from(const ContainerT &container)
-        {
-            this->reserve(this->size() + container.size());
-            for (const auto &[tag, value] : container)
-            {
-                this->emplace_back({tag, value});
-            }
-        }
-
         template <class T, class V = std::vector<std::pair<Tag, Value>>>
         V filter_by_type() const
         {
@@ -219,6 +209,12 @@ namespace cc::core::types
             }
             result.shrink_to_fit();
             return result;
+        }
+
+        template <class ContainerT>
+        void populate_from(const ContainerT &container)
+        {
+            (*this) << container;
         }
 
         template <class ContainerT>
